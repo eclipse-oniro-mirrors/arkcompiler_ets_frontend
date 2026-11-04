@@ -3,7 +3,7 @@
         "outDir": "outdir"
     },
     "files": [
-        "./src/file_1.ets",
-        "./src/file_2.ets"
+        "./src/file_1.ats",
+        "./src/file_2.ats"
     ]
 }

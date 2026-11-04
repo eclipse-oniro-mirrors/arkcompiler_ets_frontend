@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "FunctionalTypeAsTypeArgument.ets"
+              "program": "FunctionalTypeAsTypeArgument.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "FunctionalTypeAsTypeArgument.ets"
+              "program": "FunctionalTypeAsTypeArgument.ats"
             }
           }
         },
@@ -77,12 +77,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "FunctionalTypeAsTypeArgument.ets"
+                      "program": "FunctionalTypeAsTypeArgument.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "FunctionalTypeAsTypeArgument.ets"
+                      "program": "FunctionalTypeAsTypeArgument.ats"
                     }
                   }
                 },
@@ -90,12 +90,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "FunctionalTypeAsTypeArgument.ets"
+                    "program": "FunctionalTypeAsTypeArgument.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "FunctionalTypeAsTypeArgument.ets"
+                    "program": "FunctionalTypeAsTypeArgument.ats"
                   }
                 }
               },
@@ -103,12 +103,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "FunctionalTypeAsTypeArgument.ets"
+                  "program": "FunctionalTypeAsTypeArgument.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "FunctionalTypeAsTypeArgument.ets"
+                  "program": "FunctionalTypeAsTypeArgument.ats"
                 }
               }
             },
@@ -117,12 +117,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "FunctionalTypeAsTypeArgument.ets"
+                "program": "FunctionalTypeAsTypeArgument.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "FunctionalTypeAsTypeArgument.ets"
+                "program": "FunctionalTypeAsTypeArgument.ats"
               }
             }
           },
@@ -135,12 +135,12 @@
                 "start": {
                   "line": 16,
                   "column": 7,
-                  "program": "FunctionalTypeAsTypeArgument.ets"
+                  "program": "FunctionalTypeAsTypeArgument.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 11,
-                  "program": "FunctionalTypeAsTypeArgument.ets"
+                  "program": "FunctionalTypeAsTypeArgument.ats"
                 }
               }
             },
@@ -157,12 +157,12 @@
                       "start": {
                         "line": 16,
                         "column": 18,
-                        "program": "FunctionalTypeAsTypeArgument.ets"
+                        "program": "FunctionalTypeAsTypeArgument.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 23,
-                        "program": "FunctionalTypeAsTypeArgument.ets"
+                        "program": "FunctionalTypeAsTypeArgument.ats"
                       }
                     }
                   },
@@ -188,12 +188,12 @@
                                       "start": {
                                         "line": 16,
                                         "column": 31,
-                                        "program": "FunctionalTypeAsTypeArgument.ets"
+                                        "program": "FunctionalTypeAsTypeArgument.ats"
                                       },
                                       "end": {
                                         "line": 16,
                                         "column": 37,
-                                        "program": "FunctionalTypeAsTypeArgument.ets"
+                                        "program": "FunctionalTypeAsTypeArgument.ats"
                                       }
                                     }
                                   },
@@ -201,12 +201,12 @@
                                     "start": {
                                       "line": 16,
                                       "column": 31,
-                                      "program": "FunctionalTypeAsTypeArgument.ets"
+                                      "program": "FunctionalTypeAsTypeArgument.ats"
                                     },
                                     "end": {
                                       "line": 16,
                                       "column": 37,
-                                      "program": "FunctionalTypeAsTypeArgument.ets"
+                                      "program": "FunctionalTypeAsTypeArgument.ats"
                                     }
                                   }
                                 },
@@ -214,12 +214,12 @@
                                   "start": {
                                     "line": 16,
                                     "column": 31,
-                                    "program": "FunctionalTypeAsTypeArgument.ets"
+                                    "program": "FunctionalTypeAsTypeArgument.ats"
                                   },
                                   "end": {
                                     "line": 16,
                                     "column": 37,
-                                    "program": "FunctionalTypeAsTypeArgument.ets"
+                                    "program": "FunctionalTypeAsTypeArgument.ats"
                                   }
                                 }
                               },
@@ -227,12 +227,12 @@
                                 "start": {
                                   "line": 16,
                                   "column": 25,
-                                  "program": "FunctionalTypeAsTypeArgument.ets"
+                                  "program": "FunctionalTypeAsTypeArgument.ats"
                                 },
                                 "end": {
                                   "line": 16,
                                   "column": 37,
-                                  "program": "FunctionalTypeAsTypeArgument.ets"
+                                  "program": "FunctionalTypeAsTypeArgument.ats"
                                 }
                               }
                             },
@@ -240,12 +240,12 @@
                               "start": {
                                 "line": 16,
                                 "column": 25,
-                                "program": "FunctionalTypeAsTypeArgument.ets"
+                                "program": "FunctionalTypeAsTypeArgument.ats"
                               },
                               "end": {
                                 "line": 16,
                                 "column": 37,
-                                "program": "FunctionalTypeAsTypeArgument.ets"
+                                "program": "FunctionalTypeAsTypeArgument.ats"
                               }
                             }
                           }
@@ -256,12 +256,12 @@
                             "start": {
                               "line": 16,
                               "column": 42,
-                              "program": "FunctionalTypeAsTypeArgument.ets"
+                              "program": "FunctionalTypeAsTypeArgument.ats"
                             },
                             "end": {
                               "line": 16,
                               "column": 46,
-                              "program": "FunctionalTypeAsTypeArgument.ets"
+                              "program": "FunctionalTypeAsTypeArgument.ats"
                             }
                           }
                         },
@@ -269,12 +269,12 @@
                           "start": {
                             "line": 16,
                             "column": 24,
-                            "program": "FunctionalTypeAsTypeArgument.ets"
+                            "program": "FunctionalTypeAsTypeArgument.ats"
                           },
                           "end": {
                             "line": 16,
                             "column": 46,
-                            "program": "FunctionalTypeAsTypeArgument.ets"
+                            "program": "FunctionalTypeAsTypeArgument.ats"
                           }
                         }
                       }
@@ -283,12 +283,12 @@
                       "start": {
                         "line": 16,
                         "column": 23,
-                        "program": "FunctionalTypeAsTypeArgument.ets"
+                        "program": "FunctionalTypeAsTypeArgument.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 47,
-                        "program": "FunctionalTypeAsTypeArgument.ets"
+                        "program": "FunctionalTypeAsTypeArgument.ats"
                       }
                     }
                   },
@@ -296,12 +296,12 @@
                     "start": {
                       "line": 16,
                       "column": 18,
-                      "program": "FunctionalTypeAsTypeArgument.ets"
+                      "program": "FunctionalTypeAsTypeArgument.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 47,
-                      "program": "FunctionalTypeAsTypeArgument.ets"
+                      "program": "FunctionalTypeAsTypeArgument.ats"
                     }
                   }
                 },
@@ -309,12 +309,12 @@
                   "start": {
                     "line": 16,
                     "column": 18,
-                    "program": "FunctionalTypeAsTypeArgument.ets"
+                    "program": "FunctionalTypeAsTypeArgument.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 47,
-                    "program": "FunctionalTypeAsTypeArgument.ets"
+                    "program": "FunctionalTypeAsTypeArgument.ats"
                   }
                 }
               },
@@ -323,12 +323,12 @@
                 "start": {
                   "line": 16,
                   "column": 14,
-                  "program": "FunctionalTypeAsTypeArgument.ets"
+                  "program": "FunctionalTypeAsTypeArgument.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 1,
-                  "program": "FunctionalTypeAsTypeArgument.ets"
+                  "program": "FunctionalTypeAsTypeArgument.ats"
                 }
               }
             },
@@ -343,12 +343,12 @@
               "start": {
                 "line": 16,
                 "column": 7,
-                "program": "FunctionalTypeAsTypeArgument.ets"
+                "program": "FunctionalTypeAsTypeArgument.ats"
               },
               "end": {
                 "line": 17,
                 "column": 1,
-                "program": "FunctionalTypeAsTypeArgument.ets"
+                "program": "FunctionalTypeAsTypeArgument.ats"
               }
             }
           }
@@ -357,12 +357,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "FunctionalTypeAsTypeArgument.ets"
+            "program": "FunctionalTypeAsTypeArgument.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "FunctionalTypeAsTypeArgument.ets"
+            "program": "FunctionalTypeAsTypeArgument.ats"
           }
         }
       },
@@ -370,12 +370,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "FunctionalTypeAsTypeArgument.ets"
+          "program": "FunctionalTypeAsTypeArgument.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "FunctionalTypeAsTypeArgument.ets"
+          "program": "FunctionalTypeAsTypeArgument.ats"
         }
       }
     }
@@ -384,12 +384,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "FunctionalTypeAsTypeArgument.ets"
+      "program": "FunctionalTypeAsTypeArgument.ats"
     },
     "end": {
       "line": 17,
       "column": 1,
-      "program": "FunctionalTypeAsTypeArgument.ets"
+      "program": "FunctionalTypeAsTypeArgument.ats"
     }
   }
 }

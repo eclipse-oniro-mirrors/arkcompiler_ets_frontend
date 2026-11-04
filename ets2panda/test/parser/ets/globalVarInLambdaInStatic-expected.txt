@@ -11,12 +11,12 @@
             "start": {
               "line": 21,
               "column": 7,
-              "program": "globalVarInLambdaInStatic.ets"
+              "program": "globalVarInLambdaInStatic.ats"
             },
             "end": {
               "line": 21,
               "column": 19,
-              "program": "globalVarInLambdaInStatic.ets"
+              "program": "globalVarInLambdaInStatic.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 22,
                   "column": 5,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 19,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 22,
                       "column": 5,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 19,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -86,12 +86,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 23,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 29,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               }
                             }
                           },
@@ -99,12 +99,12 @@
                             "start": {
                               "line": 22,
                               "column": 23,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 29,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             }
                           }
                         },
@@ -112,12 +112,12 @@
                           "start": {
                             "line": 22,
                             "column": 23,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           },
                           "end": {
                             "line": 22,
                             "column": 29,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           }
                         }
                       },
@@ -125,12 +125,12 @@
                         "start": {
                           "line": 22,
                           "column": 20,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 29,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         }
                       }
                     },
@@ -138,12 +138,12 @@
                       "start": {
                         "line": 22,
                         "column": 20,
-                        "program": "globalVarInLambdaInStatic.ets"
+                        "program": "globalVarInLambdaInStatic.ats"
                       },
                       "end": {
                         "line": 22,
                         "column": 29,
-                        "program": "globalVarInLambdaInStatic.ets"
+                        "program": "globalVarInLambdaInStatic.ats"
                       }
                     }
                   }
@@ -154,12 +154,12 @@
                     "start": {
                       "line": 22,
                       "column": 31,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 35,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -170,12 +170,12 @@
                     "start": {
                       "line": 22,
                       "column": 36,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 38,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -183,12 +183,12 @@
                   "start": {
                     "line": 22,
                     "column": 19,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 38,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   }
                 }
               },
@@ -196,12 +196,12 @@
                 "start": {
                   "line": 22,
                   "column": 19,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 38,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -210,12 +210,12 @@
               "start": {
                 "line": 22,
                 "column": 5,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               },
               "end": {
                 "line": 22,
                 "column": 38,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               }
             }
           },
@@ -228,12 +228,12 @@
                 "start": {
                   "line": 21,
                   "column": 21,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 21,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -252,12 +252,12 @@
                     "start": {
                       "line": 21,
                       "column": 21,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 21,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -272,12 +272,12 @@
                     "start": {
                       "line": 21,
                       "column": 21,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 21,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -285,12 +285,12 @@
                   "start": {
                     "line": 21,
                     "column": 21,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   },
                   "end": {
                     "line": 21,
                     "column": 21,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   }
                 }
               },
@@ -298,12 +298,12 @@
                 "start": {
                   "line": 21,
                   "column": 21,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 21,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -326,12 +326,12 @@
           "start": {
             "line": 21,
             "column": 20,
-            "program": "globalVarInLambdaInStatic.ets"
+            "program": "globalVarInLambdaInStatic.ats"
           },
           "end": {
             "line": 23,
             "column": 2,
-            "program": "globalVarInLambdaInStatic.ets"
+            "program": "globalVarInLambdaInStatic.ats"
           }
         }
       },
@@ -339,12 +339,12 @@
         "start": {
           "line": 21,
           "column": 1,
-          "program": "globalVarInLambdaInStatic.ets"
+          "program": "globalVarInLambdaInStatic.ats"
         },
         "end": {
           "line": 23,
           "column": 2,
-          "program": "globalVarInLambdaInStatic.ets"
+          "program": "globalVarInLambdaInStatic.ats"
         }
       }
     },
@@ -358,12 +358,12 @@
             "start": {
               "line": 29,
               "column": 7,
-              "program": "globalVarInLambdaInStatic.ets"
+              "program": "globalVarInLambdaInStatic.ats"
             },
             "end": {
               "line": 29,
               "column": 19,
-              "program": "globalVarInLambdaInStatic.ets"
+              "program": "globalVarInLambdaInStatic.ats"
             }
           }
         },
@@ -379,12 +379,12 @@
                 "start": {
                   "line": 30,
                   "column": 12,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 30,
                   "column": 27,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -404,12 +404,12 @@
                     "start": {
                       "line": 30,
                       "column": 12,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 30,
                       "column": 27,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -431,12 +431,12 @@
                             "start": {
                               "line": 31,
                               "column": 9,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             },
                             "end": {
                               "line": 31,
                               "column": 23,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             }
                           }
                         },
@@ -466,12 +466,12 @@
                                             "start": {
                                               "line": 31,
                                               "column": 30,
-                                              "program": "globalVarInLambdaInStatic.ets"
+                                              "program": "globalVarInLambdaInStatic.ats"
                                             },
                                             "end": {
                                               "line": 31,
                                               "column": 36,
-                                              "program": "globalVarInLambdaInStatic.ets"
+                                              "program": "globalVarInLambdaInStatic.ats"
                                             }
                                           }
                                         },
@@ -479,12 +479,12 @@
                                           "start": {
                                             "line": 31,
                                             "column": 30,
-                                            "program": "globalVarInLambdaInStatic.ets"
+                                            "program": "globalVarInLambdaInStatic.ats"
                                           },
                                           "end": {
                                             "line": 31,
                                             "column": 36,
-                                            "program": "globalVarInLambdaInStatic.ets"
+                                            "program": "globalVarInLambdaInStatic.ats"
                                           }
                                         }
                                       },
@@ -492,12 +492,12 @@
                                         "start": {
                                           "line": 31,
                                           "column": 30,
-                                          "program": "globalVarInLambdaInStatic.ets"
+                                          "program": "globalVarInLambdaInStatic.ats"
                                         },
                                         "end": {
                                           "line": 31,
                                           "column": 36,
-                                          "program": "globalVarInLambdaInStatic.ets"
+                                          "program": "globalVarInLambdaInStatic.ats"
                                         }
                                       }
                                     },
@@ -505,12 +505,12 @@
                                       "start": {
                                         "line": 31,
                                         "column": 25,
-                                        "program": "globalVarInLambdaInStatic.ets"
+                                        "program": "globalVarInLambdaInStatic.ats"
                                       },
                                       "end": {
                                         "line": 31,
                                         "column": 36,
-                                        "program": "globalVarInLambdaInStatic.ets"
+                                        "program": "globalVarInLambdaInStatic.ats"
                                       }
                                     }
                                   },
@@ -518,12 +518,12 @@
                                     "start": {
                                       "line": 31,
                                       "column": 25,
-                                      "program": "globalVarInLambdaInStatic.ets"
+                                      "program": "globalVarInLambdaInStatic.ats"
                                     },
                                     "end": {
                                       "line": 31,
                                       "column": 36,
-                                      "program": "globalVarInLambdaInStatic.ets"
+                                      "program": "globalVarInLambdaInStatic.ats"
                                     }
                                   }
                                 }
@@ -534,12 +534,12 @@
                                   "start": {
                                     "line": 31,
                                     "column": 38,
-                                    "program": "globalVarInLambdaInStatic.ets"
+                                    "program": "globalVarInLambdaInStatic.ats"
                                   },
                                   "end": {
                                     "line": 31,
                                     "column": 42,
-                                    "program": "globalVarInLambdaInStatic.ets"
+                                    "program": "globalVarInLambdaInStatic.ats"
                                   }
                                 }
                               },
@@ -561,12 +561,12 @@
                                               "start": {
                                                 "line": 32,
                                                 "column": 13,
-                                                "program": "globalVarInLambdaInStatic.ets"
+                                                "program": "globalVarInLambdaInStatic.ats"
                                               },
                                               "end": {
                                                 "line": 32,
                                                 "column": 25,
-                                                "program": "globalVarInLambdaInStatic.ets"
+                                                "program": "globalVarInLambdaInStatic.ats"
                                               }
                                             }
                                           },
@@ -576,12 +576,12 @@
                                             "start": {
                                               "line": 32,
                                               "column": 13,
-                                              "program": "globalVarInLambdaInStatic.ets"
+                                              "program": "globalVarInLambdaInStatic.ats"
                                             },
                                             "end": {
                                               "line": 32,
                                               "column": 27,
-                                              "program": "globalVarInLambdaInStatic.ets"
+                                              "program": "globalVarInLambdaInStatic.ats"
                                             }
                                           }
                                         },
@@ -592,12 +592,12 @@
                                             "start": {
                                               "line": 32,
                                               "column": 28,
-                                              "program": "globalVarInLambdaInStatic.ets"
+                                              "program": "globalVarInLambdaInStatic.ats"
                                             },
                                             "end": {
                                               "line": 32,
                                               "column": 42,
-                                              "program": "globalVarInLambdaInStatic.ets"
+                                              "program": "globalVarInLambdaInStatic.ats"
                                             }
                                           }
                                         },
@@ -607,12 +607,12 @@
                                           "start": {
                                             "line": 32,
                                             "column": 13,
-                                            "program": "globalVarInLambdaInStatic.ets"
+                                            "program": "globalVarInLambdaInStatic.ats"
                                           },
                                           "end": {
                                             "line": 32,
                                             "column": 42,
-                                            "program": "globalVarInLambdaInStatic.ets"
+                                            "program": "globalVarInLambdaInStatic.ats"
                                           }
                                         }
                                       },
@@ -624,12 +624,12 @@
                                             "start": {
                                               "line": 32,
                                               "column": 43,
-                                              "program": "globalVarInLambdaInStatic.ets"
+                                              "program": "globalVarInLambdaInStatic.ats"
                                             },
                                             "end": {
                                               "line": 32,
                                               "column": 46,
-                                              "program": "globalVarInLambdaInStatic.ets"
+                                              "program": "globalVarInLambdaInStatic.ats"
                                             }
                                           }
                                         }
@@ -639,12 +639,12 @@
                                         "start": {
                                           "line": 32,
                                           "column": 13,
-                                          "program": "globalVarInLambdaInStatic.ets"
+                                          "program": "globalVarInLambdaInStatic.ats"
                                         },
                                         "end": {
                                           "line": 32,
                                           "column": 47,
-                                          "program": "globalVarInLambdaInStatic.ets"
+                                          "program": "globalVarInLambdaInStatic.ats"
                                         }
                                       }
                                     },
@@ -652,12 +652,12 @@
                                       "start": {
                                         "line": 32,
                                         "column": 13,
-                                        "program": "globalVarInLambdaInStatic.ets"
+                                        "program": "globalVarInLambdaInStatic.ats"
                                       },
                                       "end": {
                                         "line": 32,
                                         "column": 48,
-                                        "program": "globalVarInLambdaInStatic.ets"
+                                        "program": "globalVarInLambdaInStatic.ats"
                                       }
                                     }
                                   }
@@ -666,12 +666,12 @@
                                   "start": {
                                     "line": 31,
                                     "column": 46,
-                                    "program": "globalVarInLambdaInStatic.ets"
+                                    "program": "globalVarInLambdaInStatic.ats"
                                   },
                                   "end": {
                                     "line": 33,
                                     "column": 10,
-                                    "program": "globalVarInLambdaInStatic.ets"
+                                    "program": "globalVarInLambdaInStatic.ats"
                                   }
                                 }
                               },
@@ -679,12 +679,12 @@
                                 "start": {
                                   "line": 31,
                                   "column": 24,
-                                  "program": "globalVarInLambdaInStatic.ets"
+                                  "program": "globalVarInLambdaInStatic.ats"
                                 },
                                 "end": {
                                   "line": 33,
                                   "column": 10,
-                                  "program": "globalVarInLambdaInStatic.ets"
+                                  "program": "globalVarInLambdaInStatic.ats"
                                 }
                               }
                             },
@@ -692,12 +692,12 @@
                               "start": {
                                 "line": 31,
                                 "column": 24,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 10,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               }
                             }
                           }
@@ -707,12 +707,12 @@
                           "start": {
                             "line": 31,
                             "column": 9,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           },
                           "end": {
                             "line": 33,
                             "column": 11,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           }
                         }
                       },
@@ -720,12 +720,12 @@
                         "start": {
                           "line": 31,
                           "column": 9,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         },
                         "end": {
                           "line": 33,
                           "column": 12,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         }
                       }
                     }
@@ -734,12 +734,12 @@
                     "start": {
                       "line": 30,
                       "column": 30,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 34,
                       "column": 6,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -747,12 +747,12 @@
                   "start": {
                     "line": 30,
                     "column": 27,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   },
                   "end": {
                     "line": 34,
                     "column": 6,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   }
                 }
               },
@@ -760,12 +760,12 @@
                 "start": {
                   "line": 30,
                   "column": 27,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 34,
                   "column": 6,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -774,12 +774,12 @@
               "start": {
                 "line": 30,
                 "column": 12,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               },
               "end": {
                 "line": 34,
                 "column": 6,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               }
             }
           },
@@ -792,12 +792,12 @@
                 "start": {
                   "line": 29,
                   "column": 21,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 29,
                   "column": 21,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -816,12 +816,12 @@
                     "start": {
                       "line": 29,
                       "column": 21,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 29,
                       "column": 21,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -836,12 +836,12 @@
                     "start": {
                       "line": 29,
                       "column": 21,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 29,
                       "column": 21,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -849,12 +849,12 @@
                   "start": {
                     "line": 29,
                     "column": 21,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   },
                   "end": {
                     "line": 29,
                     "column": 21,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   }
                 }
               },
@@ -862,12 +862,12 @@
                 "start": {
                   "line": 29,
                   "column": 21,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 29,
                   "column": 21,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -890,12 +890,12 @@
           "start": {
             "line": 29,
             "column": 20,
-            "program": "globalVarInLambdaInStatic.ets"
+            "program": "globalVarInLambdaInStatic.ats"
           },
           "end": {
             "line": 35,
             "column": 2,
-            "program": "globalVarInLambdaInStatic.ets"
+            "program": "globalVarInLambdaInStatic.ats"
           }
         }
       },
@@ -903,12 +903,12 @@
         "start": {
           "line": 29,
           "column": 1,
-          "program": "globalVarInLambdaInStatic.ets"
+          "program": "globalVarInLambdaInStatic.ats"
         },
         "end": {
           "line": 35,
           "column": 2,
-          "program": "globalVarInLambdaInStatic.ets"
+          "program": "globalVarInLambdaInStatic.ats"
         }
       }
     },
@@ -922,12 +922,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "globalVarInLambdaInStatic.ets"
+              "program": "globalVarInLambdaInStatic.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "globalVarInLambdaInStatic.ets"
+              "program": "globalVarInLambdaInStatic.ats"
             }
           }
         },
@@ -988,12 +988,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -1001,12 +1001,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   }
                 }
               },
@@ -1014,12 +1014,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -1028,12 +1028,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               }
             }
           },
@@ -1046,12 +1046,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 24,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -1071,12 +1071,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 24,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -1108,12 +1108,12 @@
                                       "start": {
                                         "line": 16,
                                         "column": 37,
-                                        "program": "globalVarInLambdaInStatic.ets"
+                                        "program": "globalVarInLambdaInStatic.ats"
                                       },
                                       "end": {
                                         "line": 16,
                                         "column": 43,
-                                        "program": "globalVarInLambdaInStatic.ets"
+                                        "program": "globalVarInLambdaInStatic.ats"
                                       }
                                     }
                                   },
@@ -1121,12 +1121,12 @@
                                     "start": {
                                       "line": 16,
                                       "column": 37,
-                                      "program": "globalVarInLambdaInStatic.ets"
+                                      "program": "globalVarInLambdaInStatic.ats"
                                     },
                                     "end": {
                                       "line": 16,
                                       "column": 43,
-                                      "program": "globalVarInLambdaInStatic.ets"
+                                      "program": "globalVarInLambdaInStatic.ats"
                                     }
                                   }
                                 },
@@ -1134,12 +1134,12 @@
                                   "start": {
                                     "line": 16,
                                     "column": 37,
-                                    "program": "globalVarInLambdaInStatic.ets"
+                                    "program": "globalVarInLambdaInStatic.ats"
                                   },
                                   "end": {
                                     "line": 16,
                                     "column": 43,
-                                    "program": "globalVarInLambdaInStatic.ets"
+                                    "program": "globalVarInLambdaInStatic.ats"
                                   }
                                 }
                               },
@@ -1147,12 +1147,12 @@
                                 "start": {
                                   "line": 16,
                                   "column": 32,
-                                  "program": "globalVarInLambdaInStatic.ets"
+                                  "program": "globalVarInLambdaInStatic.ats"
                                 },
                                 "end": {
                                   "line": 16,
                                   "column": 43,
-                                  "program": "globalVarInLambdaInStatic.ets"
+                                  "program": "globalVarInLambdaInStatic.ats"
                                 }
                               }
                             },
@@ -1160,12 +1160,12 @@
                               "start": {
                                 "line": 16,
                                 "column": 32,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               },
                               "end": {
                                 "line": 16,
                                 "column": 43,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               }
                             }
                           }
@@ -1176,12 +1176,12 @@
                             "start": {
                               "line": 16,
                               "column": 47,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             },
                             "end": {
                               "line": 16,
                               "column": 51,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             }
                           }
                         },
@@ -1189,12 +1189,12 @@
                           "start": {
                             "line": 16,
                             "column": 31,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           },
                           "end": {
                             "line": 16,
                             "column": 51,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           }
                         }
                       },
@@ -1202,12 +1202,12 @@
                         "start": {
                           "line": 16,
                           "column": 25,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         },
                         "end": {
                           "line": 16,
                           "column": 51,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         }
                       }
                     },
@@ -1215,12 +1215,12 @@
                       "start": {
                         "line": 16,
                         "column": 25,
-                        "program": "globalVarInLambdaInStatic.ets"
+                        "program": "globalVarInLambdaInStatic.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 51,
-                        "program": "globalVarInLambdaInStatic.ets"
+                        "program": "globalVarInLambdaInStatic.ats"
                       }
                     }
                   }
@@ -1247,12 +1247,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 17,
-                                      "program": "globalVarInLambdaInStatic.ets"
+                                      "program": "globalVarInLambdaInStatic.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 23,
-                                      "program": "globalVarInLambdaInStatic.ets"
+                                      "program": "globalVarInLambdaInStatic.ats"
                                     }
                                   }
                                 },
@@ -1260,12 +1260,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 17,
-                                    "program": "globalVarInLambdaInStatic.ets"
+                                    "program": "globalVarInLambdaInStatic.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 23,
-                                    "program": "globalVarInLambdaInStatic.ets"
+                                    "program": "globalVarInLambdaInStatic.ats"
                                   }
                                 }
                               },
@@ -1273,12 +1273,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 17,
-                                  "program": "globalVarInLambdaInStatic.ets"
+                                  "program": "globalVarInLambdaInStatic.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 23,
-                                  "program": "globalVarInLambdaInStatic.ets"
+                                  "program": "globalVarInLambdaInStatic.ats"
                                 }
                               }
                             },
@@ -1286,12 +1286,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 9,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 15,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               }
                             }
                           },
@@ -1302,12 +1302,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 26,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 27,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               }
                             }
                           },
@@ -1315,12 +1315,12 @@
                             "start": {
                               "line": 17,
                               "column": 9,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 27,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             }
                           }
                         }
@@ -1330,12 +1330,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 28,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         }
                       }
                     },
@@ -1350,12 +1350,12 @@
                             "start": {
                               "line": 18,
                               "column": 5,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 9,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             }
                           }
                         },
@@ -1367,12 +1367,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 10,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 16,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               }
                             }
                           }
@@ -1382,12 +1382,12 @@
                           "start": {
                             "line": 18,
                             "column": 5,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 17,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           }
                         }
                       },
@@ -1395,12 +1395,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 18,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         }
                       }
                     }
@@ -1409,12 +1409,12 @@
                     "start": {
                       "line": 16,
                       "column": 52,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 2,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -1422,12 +1422,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 2,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   }
                 }
               },
@@ -1435,12 +1435,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 2,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -1449,12 +1449,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               },
               "end": {
                 "line": 19,
                 "column": 2,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               }
             }
           },
@@ -1467,12 +1467,12 @@
                 "start": {
                   "line": 25,
                   "column": 10,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 25,
                   "column": 22,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -1492,12 +1492,12 @@
                     "start": {
                       "line": 25,
                       "column": 10,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 22,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -1516,12 +1516,12 @@
                         "start": {
                           "line": 25,
                           "column": 26,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 38,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         }
                       }
                     },
@@ -1529,12 +1529,12 @@
                       "start": {
                         "line": 25,
                         "column": 26,
-                        "program": "globalVarInLambdaInStatic.ets"
+                        "program": "globalVarInLambdaInStatic.ats"
                       },
                       "end": {
                         "line": 25,
                         "column": 38,
-                        "program": "globalVarInLambdaInStatic.ets"
+                        "program": "globalVarInLambdaInStatic.ats"
                       }
                     }
                   },
@@ -1542,12 +1542,12 @@
                     "start": {
                       "line": 25,
                       "column": 26,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 38,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -1569,12 +1569,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 16,
-                                  "program": "globalVarInLambdaInStatic.ets"
+                                  "program": "globalVarInLambdaInStatic.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 28,
-                                  "program": "globalVarInLambdaInStatic.ets"
+                                  "program": "globalVarInLambdaInStatic.ats"
                                 }
                               }
                             },
@@ -1582,12 +1582,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 16,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 28,
-                                "program": "globalVarInLambdaInStatic.ets"
+                                "program": "globalVarInLambdaInStatic.ats"
                               }
                             }
                           },
@@ -1595,12 +1595,12 @@
                             "start": {
                               "line": 26,
                               "column": 16,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             },
                             "end": {
                               "line": 26,
                               "column": 28,
-                              "program": "globalVarInLambdaInStatic.ets"
+                              "program": "globalVarInLambdaInStatic.ats"
                             }
                           }
                         },
@@ -1609,12 +1609,12 @@
                           "start": {
                             "line": 26,
                             "column": 12,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           },
                           "end": {
                             "line": 26,
                             "column": 31,
-                            "program": "globalVarInLambdaInStatic.ets"
+                            "program": "globalVarInLambdaInStatic.ats"
                           }
                         }
                       },
@@ -1622,12 +1622,12 @@
                         "start": {
                           "line": 26,
                           "column": 5,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         },
                         "end": {
                           "line": 26,
                           "column": 31,
-                          "program": "globalVarInLambdaInStatic.ets"
+                          "program": "globalVarInLambdaInStatic.ats"
                         }
                       }
                     }
@@ -1636,12 +1636,12 @@
                     "start": {
                       "line": 25,
                       "column": 39,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 2,
-                      "program": "globalVarInLambdaInStatic.ets"
+                      "program": "globalVarInLambdaInStatic.ats"
                     }
                   }
                 },
@@ -1649,12 +1649,12 @@
                   "start": {
                     "line": 25,
                     "column": 10,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 2,
-                    "program": "globalVarInLambdaInStatic.ets"
+                    "program": "globalVarInLambdaInStatic.ats"
                   }
                 }
               },
@@ -1662,12 +1662,12 @@
                 "start": {
                   "line": 25,
                   "column": 10,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 2,
-                  "program": "globalVarInLambdaInStatic.ets"
+                  "program": "globalVarInLambdaInStatic.ats"
                 }
               }
             },
@@ -1676,12 +1676,12 @@
               "start": {
                 "line": 25,
                 "column": 1,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               },
               "end": {
                 "line": 27,
                 "column": 2,
-                "program": "globalVarInLambdaInStatic.ets"
+                "program": "globalVarInLambdaInStatic.ats"
               }
             }
           }
@@ -1690,12 +1690,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "globalVarInLambdaInStatic.ets"
+            "program": "globalVarInLambdaInStatic.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "globalVarInLambdaInStatic.ets"
+            "program": "globalVarInLambdaInStatic.ats"
           }
         }
       },
@@ -1703,12 +1703,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "globalVarInLambdaInStatic.ets"
+          "program": "globalVarInLambdaInStatic.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "globalVarInLambdaInStatic.ets"
+          "program": "globalVarInLambdaInStatic.ats"
         }
       }
     }
@@ -1717,12 +1717,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "globalVarInLambdaInStatic.ets"
+      "program": "globalVarInLambdaInStatic.ats"
     },
     "end": {
       "line": 36,
       "column": 1,
-      "program": "globalVarInLambdaInStatic.ets"
+      "program": "globalVarInLambdaInStatic.ats"
     }
   }
 }

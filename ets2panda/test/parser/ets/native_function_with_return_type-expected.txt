@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "native_function_with_return_type.ets"
+              "program": "native_function_with_return_type.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "native_function_with_return_type.ets"
+              "program": "native_function_with_return_type.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 17,
-                  "program": "native_function_with_return_type.ets"
+                  "program": "native_function_with_return_type.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 20,
-                  "program": "native_function_with_return_type.ets"
+                  "program": "native_function_with_return_type.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 17,
                       "column": 17,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 20,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 17,
                       "column": 24,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 28,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     }
                   }
                 },
@@ -89,12 +89,12 @@
                   "start": {
                     "line": 17,
                     "column": 17,
-                    "program": "native_function_with_return_type.ets"
+                    "program": "native_function_with_return_type.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 28,
-                    "program": "native_function_with_return_type.ets"
+                    "program": "native_function_with_return_type.ats"
                   }
                 }
               },
@@ -102,12 +102,12 @@
                 "start": {
                   "line": 17,
                   "column": 17,
-                  "program": "native_function_with_return_type.ets"
+                  "program": "native_function_with_return_type.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 28,
-                  "program": "native_function_with_return_type.ets"
+                  "program": "native_function_with_return_type.ats"
                 }
               }
             },
@@ -116,12 +116,12 @@
               "start": {
                 "line": 17,
                 "column": 1,
-                "program": "native_function_with_return_type.ets"
+                "program": "native_function_with_return_type.ats"
               },
               "end": {
                 "line": 17,
                 "column": 28,
-                "program": "native_function_with_return_type.ets"
+                "program": "native_function_with_return_type.ats"
               }
             }
           },
@@ -134,12 +134,12 @@
                 "start": {
                   "line": 19,
                   "column": 10,
-                  "program": "native_function_with_return_type.ets"
+                  "program": "native_function_with_return_type.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 14,
-                  "program": "native_function_with_return_type.ets"
+                  "program": "native_function_with_return_type.ats"
                 }
               }
             },
@@ -159,12 +159,12 @@
                     "start": {
                       "line": 19,
                       "column": 10,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 14,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     }
                   }
                 },
@@ -178,12 +178,12 @@
                     "start": {
                       "line": 19,
                       "column": 18,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 22,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     }
                   }
                 },
@@ -201,12 +201,12 @@
                             "start": {
                               "line": 20,
                               "column": 5,
-                              "program": "native_function_with_return_type.ets"
+                              "program": "native_function_with_return_type.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 8,
-                              "program": "native_function_with_return_type.ets"
+                              "program": "native_function_with_return_type.ats"
                             }
                           }
                         },
@@ -216,12 +216,12 @@
                           "start": {
                             "line": 20,
                             "column": 5,
-                            "program": "native_function_with_return_type.ets"
+                            "program": "native_function_with_return_type.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 10,
-                            "program": "native_function_with_return_type.ets"
+                            "program": "native_function_with_return_type.ats"
                           }
                         }
                       },
@@ -229,12 +229,12 @@
                         "start": {
                           "line": 20,
                           "column": 5,
-                          "program": "native_function_with_return_type.ets"
+                          "program": "native_function_with_return_type.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 11,
-                          "program": "native_function_with_return_type.ets"
+                          "program": "native_function_with_return_type.ats"
                         }
                       }
                     }
@@ -243,12 +243,12 @@
                     "start": {
                       "line": 19,
                       "column": 23,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 2,
-                      "program": "native_function_with_return_type.ets"
+                      "program": "native_function_with_return_type.ats"
                     }
                   }
                 },
@@ -256,12 +256,12 @@
                   "start": {
                     "line": 19,
                     "column": 10,
-                    "program": "native_function_with_return_type.ets"
+                    "program": "native_function_with_return_type.ats"
                   },
                   "end": {
                     "line": 21,
                     "column": 2,
-                    "program": "native_function_with_return_type.ets"
+                    "program": "native_function_with_return_type.ats"
                   }
                 }
               },
@@ -269,12 +269,12 @@
                 "start": {
                   "line": 19,
                   "column": 10,
-                  "program": "native_function_with_return_type.ets"
+                  "program": "native_function_with_return_type.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 2,
-                  "program": "native_function_with_return_type.ets"
+                  "program": "native_function_with_return_type.ats"
                 }
               }
             },
@@ -283,12 +283,12 @@
               "start": {
                 "line": 19,
                 "column": 1,
-                "program": "native_function_with_return_type.ets"
+                "program": "native_function_with_return_type.ats"
               },
               "end": {
                 "line": 21,
                 "column": 2,
-                "program": "native_function_with_return_type.ets"
+                "program": "native_function_with_return_type.ats"
               }
             }
           }
@@ -297,12 +297,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "native_function_with_return_type.ets"
+            "program": "native_function_with_return_type.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "native_function_with_return_type.ets"
+            "program": "native_function_with_return_type.ats"
           }
         }
       },
@@ -310,12 +310,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "native_function_with_return_type.ets"
+          "program": "native_function_with_return_type.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "native_function_with_return_type.ets"
+          "program": "native_function_with_return_type.ats"
         }
       }
     }
@@ -324,12 +324,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "native_function_with_return_type.ets"
+      "program": "native_function_with_return_type.ats"
     },
     "end": {
       "line": 22,
       "column": 1,
-      "program": "native_function_with_return_type.ets"
+      "program": "native_function_with_return_type.ats"
     }
   }
 }

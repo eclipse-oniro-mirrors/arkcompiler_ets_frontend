@@ -18,7 +18,7 @@ add_custom_target(es2panda-unit-test-fatal-error-unsupported_file_name1
     COMMAND python3 ${CMAKE_CURRENT_LIST_DIR}/../test_fatal_script.py
         --es2panda '${PANDA_RUN_PREFIX} $<TARGET_FILE:es2panda>'
         --config arktsconfig.json
-        --filepath test.ets
+        --filepath test.ats
         --stdlib ${PANDA_ROOT}/plugins/ets/stdlib
 )
 
@@ -29,7 +29,7 @@ add_custom_target(es2panda-unit-test-fatal-error-unsupported_file_name2
     COMMAND python3 ${CMAKE_CURRENT_LIST_DIR}/../test_fatal_script.py
         --es2panda '${PANDA_RUN_PREFIX} $<TARGET_FILE:es2panda>'
         --config arktsconfig.json
-        --filepath test.ets
+        --filepath test.ats
         --stdlib ${PANDA_ROOT}/plugins/ets/stdlib
 )
 

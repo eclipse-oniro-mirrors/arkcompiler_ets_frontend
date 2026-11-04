@@ -10,12 +10,12 @@ parser/as/test_type_annotation.ts
 parser/ts/test_decorator.ts
 parser/ts/test_decorator3.ts
 #32155
-ast/compiler/ets/annotation_new.ets
+ast/compiler/ets/annotation_new.ats
 
 #33676
-parser/ets/import_tests/packages/subpackage_1/package_module_1.ets
+parser/ets/import_tests/packages/subpackage_1/package_module_1.ats
 #33677
-parser/ets/import_tests/packages/subpackage_2/package_module_1.ets
+parser/ets/import_tests/packages/subpackage_2/package_module_1.ats
 #33678
-parser/ets/import_tests/packages/var_duplication/subpackage_module_1.ets
-parser/ets/import_tests/packages/var_duplication/subpackage_module_2.ets
+parser/ets/import_tests/packages/var_duplication/subpackage_module_1.ats
+parser/ets/import_tests/packages/var_duplication/subpackage_module_2.ats

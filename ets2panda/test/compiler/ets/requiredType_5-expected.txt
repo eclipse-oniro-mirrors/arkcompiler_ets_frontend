@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "requiredType_5.ets"
+              "program": "requiredType_5.ats"
             },
             "end": {
               "line": 16,
               "column": 8,
-              "program": "requiredType_5.ets"
+              "program": "requiredType_5.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 8,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -48,12 +48,12 @@
                 "start": {
                   "line": 17,
                   "column": 31,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 34,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -77,12 +77,12 @@
                         "start": {
                           "line": 17,
                           "column": 10,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 16,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         }
                       }
                     },
@@ -90,12 +90,12 @@
                       "start": {
                         "line": 17,
                         "column": 10,
-                        "program": "requiredType_5.ets"
+                        "program": "requiredType_5.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 16,
-                        "program": "requiredType_5.ets"
+                        "program": "requiredType_5.ats"
                       }
                     }
                   },
@@ -103,12 +103,12 @@
                     "start": {
                       "line": 17,
                       "column": 10,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 16,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 },
@@ -118,12 +118,12 @@
                     "start": {
                       "line": 17,
                       "column": 19,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 28,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 }
@@ -132,12 +132,12 @@
                 "start": {
                   "line": 17,
                   "column": 10,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 28,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -146,12 +146,12 @@
               "start": {
                 "line": 17,
                 "column": 5,
-                "program": "requiredType_5.ets"
+                "program": "requiredType_5.ats"
               },
               "end": {
                 "line": 17,
                 "column": 34,
-                "program": "requiredType_5.ets"
+                "program": "requiredType_5.ats"
               }
             }
           },
@@ -164,12 +164,12 @@
                 "start": {
                   "line": 18,
                   "column": 5,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 9,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -180,12 +180,12 @@
                 "start": {
                   "line": 18,
                   "column": 36,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 37,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -209,12 +209,12 @@
                         "start": {
                           "line": 18,
                           "column": 11,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 14,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         }
                       }
                     },
@@ -222,12 +222,12 @@
                       "start": {
                         "line": 18,
                         "column": 11,
-                        "program": "requiredType_5.ets"
+                        "program": "requiredType_5.ats"
                       },
                       "end": {
                         "line": 18,
                         "column": 14,
-                        "program": "requiredType_5.ets"
+                        "program": "requiredType_5.ats"
                       }
                     }
                   },
@@ -235,12 +235,12 @@
                     "start": {
                       "line": 18,
                       "column": 11,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 14,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 },
@@ -250,12 +250,12 @@
                     "start": {
                       "line": 18,
                       "column": 17,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 21,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 },
@@ -265,12 +265,12 @@
                     "start": {
                       "line": 18,
                       "column": 24,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 33,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 }
@@ -279,12 +279,12 @@
                 "start": {
                   "line": 18,
                   "column": 11,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 33,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -293,12 +293,12 @@
               "start": {
                 "line": 18,
                 "column": 5,
-                "program": "requiredType_5.ets"
+                "program": "requiredType_5.ats"
               },
               "end": {
                 "line": 18,
                 "column": 37,
-                "program": "requiredType_5.ets"
+                "program": "requiredType_5.ats"
               }
             }
           },
@@ -311,12 +311,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -335,12 +335,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 },
@@ -355,12 +355,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 },
@@ -368,12 +368,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "requiredType_5.ets"
+                    "program": "requiredType_5.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 10,
-                    "program": "requiredType_5.ets"
+                    "program": "requiredType_5.ats"
                   }
                 }
               },
@@ -381,12 +381,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -409,12 +409,12 @@
           "start": {
             "line": 16,
             "column": 9,
-            "program": "requiredType_5.ets"
+            "program": "requiredType_5.ats"
           },
           "end": {
             "line": 19,
             "column": 2,
-            "program": "requiredType_5.ets"
+            "program": "requiredType_5.ats"
           }
         }
       },
@@ -422,12 +422,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "requiredType_5.ets"
+          "program": "requiredType_5.ats"
         },
         "end": {
           "line": 19,
           "column": 2,
-          "program": "requiredType_5.ets"
+          "program": "requiredType_5.ats"
         }
       }
     },
@@ -441,12 +441,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "requiredType_5.ets"
+              "program": "requiredType_5.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "requiredType_5.ets"
+              "program": "requiredType_5.ats"
             }
           }
         },
@@ -462,12 +462,12 @@
                 "start": {
                   "line": 21,
                   "column": 10,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 14,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -487,12 +487,12 @@
                     "start": {
                       "line": 21,
                       "column": 10,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 14,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 },
@@ -506,12 +506,12 @@
                     "start": {
                       "line": 21,
                       "column": 18,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 22,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 },
@@ -537,12 +537,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 16,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 24,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     }
                                   }
                                 },
@@ -560,12 +560,12 @@
                                             "start": {
                                               "line": 22,
                                               "column": 25,
-                                              "program": "requiredType_5.ets"
+                                              "program": "requiredType_5.ats"
                                             },
                                             "end": {
                                               "line": 22,
                                               "column": 26,
-                                              "program": "requiredType_5.ets"
+                                              "program": "requiredType_5.ats"
                                             }
                                           }
                                         },
@@ -573,12 +573,12 @@
                                           "start": {
                                             "line": 22,
                                             "column": 25,
-                                            "program": "requiredType_5.ets"
+                                            "program": "requiredType_5.ats"
                                           },
                                           "end": {
                                             "line": 22,
                                             "column": 26,
-                                            "program": "requiredType_5.ets"
+                                            "program": "requiredType_5.ats"
                                           }
                                         }
                                       },
@@ -586,12 +586,12 @@
                                         "start": {
                                           "line": 22,
                                           "column": 25,
-                                          "program": "requiredType_5.ets"
+                                          "program": "requiredType_5.ats"
                                         },
                                         "end": {
                                           "line": 22,
                                           "column": 26,
-                                          "program": "requiredType_5.ets"
+                                          "program": "requiredType_5.ats"
                                         }
                                       }
                                     }
@@ -600,12 +600,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 24,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 27,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     }
                                   }
                                 },
@@ -613,12 +613,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 16,
-                                    "program": "requiredType_5.ets"
+                                    "program": "requiredType_5.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 27,
-                                    "program": "requiredType_5.ets"
+                                    "program": "requiredType_5.ats"
                                   }
                                 }
                               },
@@ -626,12 +626,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 16,
-                                  "program": "requiredType_5.ets"
+                                  "program": "requiredType_5.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 27,
-                                  "program": "requiredType_5.ets"
+                                  "program": "requiredType_5.ats"
                                 }
                               }
                             },
@@ -639,12 +639,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 9,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 14,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               }
                             }
                           },
@@ -663,12 +663,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 31,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 34,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     }
                                   }
                                 },
@@ -679,12 +679,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 36,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 39,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     }
                                   }
                                 },
@@ -693,12 +693,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 31,
-                                    "program": "requiredType_5.ets"
+                                    "program": "requiredType_5.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 39,
-                                    "program": "requiredType_5.ets"
+                                    "program": "requiredType_5.ats"
                                   }
                                 }
                               },
@@ -714,12 +714,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 41,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 45,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     }
                                   }
                                 },
@@ -730,12 +730,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 47,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 48,
-                                      "program": "requiredType_5.ets"
+                                      "program": "requiredType_5.ats"
                                     }
                                   }
                                 },
@@ -744,12 +744,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 41,
-                                    "program": "requiredType_5.ets"
+                                    "program": "requiredType_5.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 48,
-                                    "program": "requiredType_5.ets"
+                                    "program": "requiredType_5.ats"
                                   }
                                 }
                               }
@@ -758,12 +758,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 30,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 49,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               }
                             }
                           },
@@ -771,12 +771,12 @@
                             "start": {
                               "line": 22,
                               "column": 9,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 49,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             }
                           }
                         }
@@ -786,12 +786,12 @@
                         "start": {
                           "line": 22,
                           "column": 5,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 50,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         }
                       }
                     },
@@ -809,12 +809,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 5,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 10,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               }
                             }
                           },
@@ -825,12 +825,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 11,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 14,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               }
                             }
                           },
@@ -840,12 +840,12 @@
                             "start": {
                               "line": 23,
                               "column": 5,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 14,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             }
                           }
                         },
@@ -856,12 +856,12 @@
                             "start": {
                               "line": 23,
                               "column": 17,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 20,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             }
                           }
                         },
@@ -869,12 +869,12 @@
                           "start": {
                             "line": 23,
                             "column": 5,
-                            "program": "requiredType_5.ets"
+                            "program": "requiredType_5.ats"
                           },
                           "end": {
                             "line": 23,
                             "column": 20,
-                            "program": "requiredType_5.ets"
+                            "program": "requiredType_5.ats"
                           }
                         }
                       },
@@ -882,12 +882,12 @@
                         "start": {
                           "line": 23,
                           "column": 5,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 21,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         }
                       }
                     },
@@ -905,12 +905,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 5,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 10,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               }
                             }
                           },
@@ -921,12 +921,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 11,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 15,
-                                "program": "requiredType_5.ets"
+                                "program": "requiredType_5.ats"
                               }
                             }
                           },
@@ -936,12 +936,12 @@
                             "start": {
                               "line": 24,
                               "column": 5,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 15,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             }
                           }
                         },
@@ -952,12 +952,12 @@
                             "start": {
                               "line": 24,
                               "column": 18,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 19,
-                              "program": "requiredType_5.ets"
+                              "program": "requiredType_5.ats"
                             }
                           }
                         },
@@ -965,12 +965,12 @@
                           "start": {
                             "line": 24,
                             "column": 5,
-                            "program": "requiredType_5.ets"
+                            "program": "requiredType_5.ats"
                           },
                           "end": {
                             "line": 24,
                             "column": 19,
-                            "program": "requiredType_5.ets"
+                            "program": "requiredType_5.ats"
                           }
                         }
                       },
@@ -978,12 +978,12 @@
                         "start": {
                           "line": 24,
                           "column": 5,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 20,
-                          "program": "requiredType_5.ets"
+                          "program": "requiredType_5.ats"
                         }
                       }
                     }
@@ -992,12 +992,12 @@
                     "start": {
                       "line": 21,
                       "column": 23,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 2,
-                      "program": "requiredType_5.ets"
+                      "program": "requiredType_5.ats"
                     }
                   }
                 },
@@ -1005,12 +1005,12 @@
                   "start": {
                     "line": 21,
                     "column": 10,
-                    "program": "requiredType_5.ets"
+                    "program": "requiredType_5.ats"
                   },
                   "end": {
                     "line": 25,
                     "column": 2,
-                    "program": "requiredType_5.ets"
+                    "program": "requiredType_5.ats"
                   }
                 }
               },
@@ -1018,12 +1018,12 @@
                 "start": {
                   "line": 21,
                   "column": 10,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 },
                 "end": {
                   "line": 25,
                   "column": 2,
-                  "program": "requiredType_5.ets"
+                  "program": "requiredType_5.ats"
                 }
               }
             },
@@ -1032,12 +1032,12 @@
               "start": {
                 "line": 21,
                 "column": 1,
-                "program": "requiredType_5.ets"
+                "program": "requiredType_5.ats"
               },
               "end": {
                 "line": 25,
                 "column": 2,
-                "program": "requiredType_5.ets"
+                "program": "requiredType_5.ats"
               }
             }
           }
@@ -1046,12 +1046,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "requiredType_5.ets"
+            "program": "requiredType_5.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "requiredType_5.ets"
+            "program": "requiredType_5.ats"
           }
         }
       },
@@ -1059,12 +1059,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "requiredType_5.ets"
+          "program": "requiredType_5.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "requiredType_5.ets"
+          "program": "requiredType_5.ats"
         }
       }
     }
@@ -1073,12 +1073,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "requiredType_5.ets"
+      "program": "requiredType_5.ats"
     },
     "end": {
       "line": 26,
       "column": 1,
-      "program": "requiredType_5.ets"
+      "program": "requiredType_5.ats"
     }
   }
 }

@@ -236,19 +236,23 @@ public:
     static constexpr std::string_view ABC_SUFFIX = ImportInfo::ABC_SUFFIX;
     static constexpr std::string_view ETS_SUFFIX = ".ets";
     static constexpr std::string_view D_ETS_SUFFIX = ".d.ets";
+    static constexpr std::string_view ATS_SUFFIX = ".ats";
+    static constexpr std::string_view D_ATS_SUFFIX = ".d.ats";
     static constexpr std::string_view CACHE_SUFFIX = ".etscache";
     static constexpr std::string_view ETSSTDLIB_ABC_SUFFIX = "etsstdlib.abc";
 
     // NOLINTNEXTLINE(readability-identifier-naming)
-    static constexpr size_t extensionsSize = 9;
+    static constexpr size_t extensionsSize = 11;
     // declaration file must follow source file according to spec
+    // NOTE: the last element is intentionally left value-initialized (empty) as the fallback
+    // "no known extension" entry; do not fill the array completely.
     // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr std::array<std::string_view, extensionsSize> supportedExtensions = {
-        ETS_SUFFIX, D_ETS_SUFFIX, CACHE_SUFFIX, ".sts", ".d.sts", ".ts", ".d.ts", ".js"};
+        ETS_SUFFIX, D_ETS_SUFFIX, ATS_SUFFIX, D_ATS_SUFFIX, CACHE_SUFFIX, ".sts", ".d.sts", ".ts", ".d.ts", ".js"};
     // source file must follow declaration file so that extension "best match" will succeed
     // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr std::array<std::string_view, extensionsSize> supportedExtensionsInversed = {
-        D_ETS_SUFFIX, ETS_SUFFIX, CACHE_SUFFIX, ".d.sts", ".sts", ".d.ts", ".ts", ".js"};
+        D_ETS_SUFFIX, ETS_SUFFIX, D_ATS_SUFFIX, ATS_SUFFIX, CACHE_SUFFIX, ".d.sts", ".sts", ".d.ts", ".ts", ".js"};
 
     struct ParseInfo {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)

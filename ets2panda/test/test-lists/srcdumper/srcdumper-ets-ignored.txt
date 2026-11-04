@@ -1,130 +1,130 @@
 # The package keyword is not used anylonger
 # Issue: https://gitcode.com/openharmony/arkcompiler_ets_frontend/issues/8924
-compiler/ets/implicit_package_import/package_test_1/package_module_1.ets
-compiler/ets/implicit_package_import/package_test_1/package_module_2.ets
-compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_1.ets
-compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_2.ets
-ast/compiler/ets/implicit_package_import/package_test_9/package_module.ets
-ast/compiler/ets/package_static_block_multi_files/P1/P1_0.ets
-ast/compiler/ets/package_static_block_multi_files/P1/P1_1.ets
-parser/ets/import_tests/import_alias_and_without_alias_2.ets
-parser/ets/import_tests/import_alias_and_without_alias_3.ets
-parser/ets/import_tests/import_all.ets
-parser/ets/import_tests/packages/aliasWithoutAlias/import1/import1.ets
-parser/ets/import_tests/packages/aliasWithoutAlias/import2/import2.ets
-parser/ets/import_tests/packages/subpackage/package_module_1.ets
-parser/ets/import_tests/packages/subpackage_1/package_module_1.ets
-parser/ets/import_tests/packages/subpackage_2/package_module_1.ets
-parser/ets/import_tests/packages/var_duplication/subpackage_module_1.ets
-parser/ets/import_tests/packages/var_duplication/subpackage_module_2.ets
+compiler/ets/implicit_package_import/package_test_1/package_module_1.ats
+compiler/ets/implicit_package_import/package_test_1/package_module_2.ats
+compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_1.ats
+compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_2.ats
+ast/compiler/ets/implicit_package_import/package_test_9/package_module.ats
+ast/compiler/ets/package_static_block_multi_files/P1/P1_0.ats
+ast/compiler/ets/package_static_block_multi_files/P1/P1_1.ats
+parser/ets/import_tests/import_alias_and_without_alias_2.ats
+parser/ets/import_tests/import_alias_and_without_alias_3.ats
+parser/ets/import_tests/import_all.ats
+parser/ets/import_tests/packages/aliasWithoutAlias/import1/import1.ats
+parser/ets/import_tests/packages/aliasWithoutAlias/import2/import2.ats
+parser/ets/import_tests/packages/subpackage/package_module_1.ats
+parser/ets/import_tests/packages/subpackage_1/package_module_1.ats
+parser/ets/import_tests/packages/subpackage_2/package_module_1.ats
+parser/ets/import_tests/packages/var_duplication/subpackage_module_1.ats
+parser/ets/import_tests/packages/var_duplication/subpackage_module_2.ats
 
 # FailKind.INVALID_JSON (Issue #20457)
-runtime/ets/StringTemplate1.ets
-runtime/ets/StringTemplate2.ets
-runtime/ets/StringTemplate3.ets
-parser/ets/string_template_2.ets
-parser/ets/string_template_3.ets
-parser/ets/string_template_4.ets
+runtime/ets/StringTemplate1.ats
+runtime/ets/StringTemplate2.ats
+runtime/ets/StringTemplate3.ats
+parser/ets/string_template_2.ats
+parser/ets/string_template_3.ats
+parser/ets/string_template_4.ats
 
 # FailKind.SRC_DUMPER_FAIL (Issue #20458)
-compiler/ets/abstractNewClassInstanceExpression.ets
-runtime/ets/implicit_package_import_1.ets
-runtime/ets/implicit_package_import_2.ets
-runtime/ets/ClassNewInstance.ets
-runtime/ets/conditionalExpressionGenericLUB.ets
-runtime/ets/dynmicImportUnimplemented.ets
-runtime/ets/funcRefWithRestArguments.ets
-runtime/ets/generics_1.ets
-runtime/ets/type_param_in_union.ets
-parser/ets/ambient_indexer_1.ets
-parser/ets/ambient_indexer_6.ets
-ast/parser/ets/ambient_indexer_11.ets
-runtime/ets/ClassNewInstance.ets
-runtime/ets/Multiline_string.ets
-runtime/ets/Multiline_string_escape_char.ets
-ast/compiler/ets/package_initializer_warning/P3/P3.ets
-ast/compiler/ets/package_initializer_warning/main_test.ets
-runtime/ets/generics_1.ets
-parser/ets/import_tests/import_several_2.ets
-parser/ets/import_tests/import_several_7.ets
+compiler/ets/abstractNewClassInstanceExpression.ats
+runtime/ets/implicit_package_import_1.ats
+runtime/ets/implicit_package_import_2.ats
+runtime/ets/ClassNewInstance.ats
+runtime/ets/conditionalExpressionGenericLUB.ats
+runtime/ets/dynmicImportUnimplemented.ats
+runtime/ets/funcRefWithRestArguments.ats
+runtime/ets/generics_1.ats
+runtime/ets/type_param_in_union.ats
+parser/ets/ambient_indexer_1.ats
+parser/ets/ambient_indexer_6.ats
+ast/parser/ets/ambient_indexer_11.ats
+runtime/ets/ClassNewInstance.ats
+runtime/ets/Multiline_string.ats
+runtime/ets/Multiline_string_escape_char.ats
+ast/compiler/ets/package_initializer_warning/P3/P3.ats
+ast/compiler/ets/package_initializer_warning/main_test.ats
+runtime/ets/generics_1.ats
+parser/ets/import_tests/import_several_2.ats
+parser/ets/import_tests/import_several_7.ats
 
 # FailKind.ES2PANDA_FAIL
-compiler/ets/abstractNewClassInstanceExpression.ets
-runtime/ets/conditionalExpressionGenericLUB.ets
-runtime/ets/funcRefWithRestArguments.ets
-runtime/ets/punctuator_less_than_unterminated_string_negative.ets
-runtime/ets/type_param_in_union.ets
-runtime/ets/StringFasta.ets
-runtime/ets/struct-identifier.ets
-runtime/ets/struct-init2.ets
-runtime/ets/fuzz/invalid_rest_param_await.ets
-runtime/ets/fuzz/empty_variable.ets
-runtime/ets/fuzz/signature_info_param.ets
-runtime/ets/fuzz/too_many_minus.ets
-runtime/ets/fuzz/too_many_plus.ets
-runtime/ets/fuzz/too_many_plus_1.ets
-runtime/ets/fuzz/too_many_tilde.ets
-runtime/ets/fuzz/too_many_exclamation_mark.ets
-runtime/ets/fuzz/too_many_async.ets
-runtime/ets/fuzz/too_many_await.ets
-runtime/ets/fuzz/too_many_call_expr.ets
-runtime/ets/fuzz/too_many_left_brace.ets
-runtime/ets/fuzz/too_many_left_square_brackets.ets
-runtime/ets/fuzz/too_many_new_expr.ets
-runtime/ets/fuzz/too_many_token.ets
-runtime/ets/fuzz/repeated_del.ets
-runtime/ets/fuzz/too_many_expression.ets
-runtime/ets/fuzz/class_body_interface.ets
-runtime/ets/fuzz/create_partial.ets
-runtime/ets/fuzz/incomplete_class_property.ets
-ast/compiler/ets/DeclareIndexerTest.ets
+compiler/ets/abstractNewClassInstanceExpression.ats
+runtime/ets/conditionalExpressionGenericLUB.ats
+runtime/ets/funcRefWithRestArguments.ats
+runtime/ets/punctuator_less_than_unterminated_string_negative.ats
+runtime/ets/type_param_in_union.ats
+runtime/ets/StringFasta.ats
+runtime/ets/struct-identifier.ats
+runtime/ets/struct-init2.ats
+runtime/ets/fuzz/invalid_rest_param_await.ats
+runtime/ets/fuzz/empty_variable.ats
+runtime/ets/fuzz/signature_info_param.ats
+runtime/ets/fuzz/too_many_minus.ats
+runtime/ets/fuzz/too_many_plus.ats
+runtime/ets/fuzz/too_many_plus_1.ats
+runtime/ets/fuzz/too_many_tilde.ats
+runtime/ets/fuzz/too_many_exclamation_mark.ats
+runtime/ets/fuzz/too_many_async.ats
+runtime/ets/fuzz/too_many_await.ats
+runtime/ets/fuzz/too_many_call_expr.ats
+runtime/ets/fuzz/too_many_left_brace.ats
+runtime/ets/fuzz/too_many_left_square_brackets.ats
+runtime/ets/fuzz/too_many_new_expr.ats
+runtime/ets/fuzz/too_many_token.ats
+runtime/ets/fuzz/repeated_del.ats
+runtime/ets/fuzz/too_many_expression.ats
+runtime/ets/fuzz/class_body_interface.ats
+runtime/ets/fuzz/create_partial.ats
+runtime/ets/fuzz/incomplete_class_property.ats
+ast/compiler/ets/DeclareIndexerTest.ats
 
 #New failures at #FailKind.SRC_DUMPER_FAI
-runtime/ets/implicit_stringliteral_init.ets
+runtime/ets/implicit_stringliteral_init.ats
 
-ast/parser/ets/object_literal_withfunc.ets
-runtime/ets/interfaceObjectLiteral_01.ets
-runtime/ets/interfaceObjectLiteral_02.ets
-runtime/ets/interfaceObjectLiteral_03.ets
-runtime/ets/interfaceObjectLiteral_04.ets
-runtime/ets/interfaceObjectLiteral_07.ets
-runtime/ets/interfaceObjectLiteral_08.ets
+ast/parser/ets/object_literal_withfunc.ats
+runtime/ets/interfaceObjectLiteral_01.ats
+runtime/ets/interfaceObjectLiteral_02.ats
+runtime/ets/interfaceObjectLiteral_03.ats
+runtime/ets/interfaceObjectLiteral_04.ats
+runtime/ets/interfaceObjectLiteral_07.ats
+runtime/ets/interfaceObjectLiteral_08.ats
 
-ast/parser/ets/objectLiteralMethodThisInLambda.ets
-runtime/ets/objectLiteralMethodThisInLambda.ets
-runtime/ets/objectLiteralMethodWithArrowField.ets
+ast/parser/ets/objectLiteralMethodThisInLambda.ats
+runtime/ets/objectLiteralMethodThisInLambda.ats
+runtime/ets/objectLiteralMethodWithArrowField.ats
 
 #31721 FailKind.SRC_DUMPER_FAI
-runtime/ets/objliteral_method_returntype_infer.ets
+runtime/ets/objliteral_method_returntype_infer.ats
 
 #32907
-runtime/ets/interface_method_generic_init.ets
-ast/compiler/ets/interfaceObjectLiteral_02.ets
-ast/compiler/ets/interfaceObjectLiteral_04.ets
-ast/compiler/ets/interfaceObjectLiteral_05.ets
+runtime/ets/interface_method_generic_init.ats
+ast/compiler/ets/interfaceObjectLiteral_02.ats
+ast/compiler/ets/interfaceObjectLiteral_04.ats
+ast/compiler/ets/interfaceObjectLiteral_05.ats
 
 #AST comparison Failed
-runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets
+runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ats
 
 #Issue 34454 FailKind.SRC_DUMPER_FAIL
-runtime/ets/objectLiteralMethodNestedLambdaThis.ets
-runtime/ets/interface_object_literal_return_arrow_nested_this.ets
+runtime/ets/objectLiteralMethodNestedLambdaThis.ats
+runtime/ets/interface_object_literal_return_arrow_nested_this.ats
 
 #Issue 32584 FailKind.SRC_DUMPER_FAIL
-runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_1.ets
-runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_2.ets
-runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_3.ets
+runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_1.ats
+runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_2.ats
+runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_3.ats
 
 # 33821 Invalid MemberExpression dump for literals
-runtime/ets/bigint_comp_number.ets
+runtime/ets/bigint_comp_number.ats
 
 # 33890 FailKind.SRC_DUMPER_FAIL
-runtime/ets/call_by_name_tests/call_by_name_generics_basic.ets
+runtime/ets/call_by_name_tests/call_by_name_generics_basic.ats
 
 #34002 FailKind.SRC_DUMPER_FAIL
-runtime/ets/interfaceObjectLiteral_catch_param.ets
-runtime/ets/interfaceObjectLiteral_genericMethod.ets
-runtime/ets/interfaceObjectLiteral_inherited_generic_partial_override.ets
+runtime/ets/interfaceObjectLiteral_catch_param.ats
+runtime/ets/interfaceObjectLiteral_genericMethod.ats
+runtime/ets/interfaceObjectLiteral_inherited_generic_partial_override.ats
 
 #35137
-ast/compiler/ets/import_tests/import_with_error/import_file.ets
+ast/compiler/ets/import_tests/import_with_error/import_file.ats

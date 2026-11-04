@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "trailing_lambda_transform_trailing_block.ets"
+              "program": "trailing_lambda_transform_trailing_block.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "trailing_lambda_transform_trailing_block.ets"
+              "program": "trailing_lambda_transform_trailing_block.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "trailing_lambda_transform_trailing_block.ets"
+                  "program": "trailing_lambda_transform_trailing_block.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 11,
-                  "program": "trailing_lambda_transform_trailing_block.ets"
+                  "program": "trailing_lambda_transform_trailing_block.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 11,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     }
                   }
                 },
@@ -84,12 +84,12 @@
                             "start": {
                               "line": 16,
                               "column": 19,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             },
                             "end": {
                               "line": 16,
                               "column": 23,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             }
                           }
                         },
@@ -97,12 +97,12 @@
                           "start": {
                             "line": 16,
                             "column": 15,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           },
                           "end": {
                             "line": 16,
                             "column": 23,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           }
                         }
                       },
@@ -110,12 +110,12 @@
                         "start": {
                           "line": 16,
                           "column": 12,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 16,
                           "column": 23,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     },
@@ -123,12 +123,12 @@
                       "start": {
                         "line": 16,
                         "column": 12,
-                        "program": "trailing_lambda_transform_trailing_block.ets"
+                        "program": "trailing_lambda_transform_trailing_block.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 23,
-                        "program": "trailing_lambda_transform_trailing_block.ets"
+                        "program": "trailing_lambda_transform_trailing_block.ats"
                       }
                     }
                   }
@@ -139,12 +139,12 @@
                     "start": {
                       "line": 16,
                       "column": 26,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 29,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     }
                   }
                 },
@@ -162,12 +162,12 @@
                             "start": {
                               "line": 17,
                               "column": 5,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 6,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             }
                           }
                         },
@@ -177,12 +177,12 @@
                           "start": {
                             "line": 17,
                             "column": 5,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           },
                           "end": {
                             "line": 17,
                             "column": 8,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           }
                         }
                       },
@@ -190,12 +190,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 9,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     },
@@ -208,12 +208,12 @@
                           "start": {
                             "line": 18,
                             "column": 12,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 13,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           }
                         }
                       },
@@ -221,12 +221,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 14,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     }
@@ -235,12 +235,12 @@
                     "start": {
                       "line": 16,
                       "column": 30,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 2,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     }
                   }
                 },
@@ -248,12 +248,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "trailing_lambda_transform_trailing_block.ets"
+                    "program": "trailing_lambda_transform_trailing_block.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 2,
-                    "program": "trailing_lambda_transform_trailing_block.ets"
+                    "program": "trailing_lambda_transform_trailing_block.ats"
                   }
                 }
               },
@@ -261,12 +261,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "trailing_lambda_transform_trailing_block.ets"
+                  "program": "trailing_lambda_transform_trailing_block.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 2,
-                  "program": "trailing_lambda_transform_trailing_block.ets"
+                  "program": "trailing_lambda_transform_trailing_block.ats"
                 }
               }
             },
@@ -275,12 +275,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "trailing_lambda_transform_trailing_block.ets"
+                "program": "trailing_lambda_transform_trailing_block.ats"
               },
               "end": {
                 "line": 19,
                 "column": 2,
-                "program": "trailing_lambda_transform_trailing_block.ets"
+                "program": "trailing_lambda_transform_trailing_block.ats"
               }
             }
           },
@@ -293,12 +293,12 @@
                 "start": {
                   "line": 21,
                   "column": 10,
-                  "program": "trailing_lambda_transform_trailing_block.ets"
+                  "program": "trailing_lambda_transform_trailing_block.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 14,
-                  "program": "trailing_lambda_transform_trailing_block.ets"
+                  "program": "trailing_lambda_transform_trailing_block.ats"
                 }
               }
             },
@@ -318,12 +318,12 @@
                     "start": {
                       "line": 21,
                       "column": 10,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 14,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     }
                   }
                 },
@@ -345,12 +345,12 @@
                             "start": {
                               "line": 23,
                               "column": 5,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 6,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             }
                           }
                         },
@@ -360,12 +360,12 @@
                           "start": {
                             "line": 23,
                             "column": 5,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           },
                           "end": {
                             "line": 25,
                             "column": 6,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           }
                         }
                       },
@@ -373,12 +373,12 @@
                         "start": {
                           "line": 23,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 6,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     },
@@ -393,12 +393,12 @@
                             "start": {
                               "line": 27,
                               "column": 5,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             },
                             "end": {
                               "line": 27,
                               "column": 6,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             }
                           }
                         },
@@ -408,12 +408,12 @@
                           "start": {
                             "line": 27,
                             "column": 5,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           },
                           "end": {
                             "line": 30,
                             "column": 6,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           }
                         }
                       },
@@ -421,12 +421,12 @@
                         "start": {
                           "line": 27,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 30,
                           "column": 6,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     },
@@ -444,12 +444,12 @@
                                 "start": {
                                   "line": 33,
                                   "column": 12,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 },
                                 "end": {
                                   "line": 33,
                                   "column": 15,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 }
                               }
                             },
@@ -457,12 +457,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 9,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 10,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -475,12 +475,12 @@
                                 "start": {
                                   "line": 33,
                                   "column": 18,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 },
                                 "end": {
                                   "line": 33,
                                   "column": 19,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 }
                               }
                             },
@@ -490,12 +490,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 18,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 24,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -503,12 +503,12 @@
                             "start": {
                               "line": 33,
                               "column": 9,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             },
                             "end": {
                               "line": 33,
                               "column": 24,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             }
                           }
                         }
@@ -518,12 +518,12 @@
                         "start": {
                           "line": 33,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 33,
                           "column": 24,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     },
@@ -541,12 +541,12 @@
                                 "start": {
                                   "line": 35,
                                   "column": 12,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 },
                                 "end": {
                                   "line": 35,
                                   "column": 15,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 }
                               }
                             },
@@ -554,12 +554,12 @@
                               "start": {
                                 "line": 35,
                                 "column": 9,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 35,
                                 "column": 10,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -572,12 +572,12 @@
                                 "start": {
                                   "line": 35,
                                   "column": 18,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 },
                                 "end": {
                                   "line": 35,
                                   "column": 19,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 }
                               }
                             },
@@ -587,12 +587,12 @@
                               "start": {
                                 "line": 35,
                                 "column": 18,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 36,
                                 "column": 7,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -600,12 +600,12 @@
                             "start": {
                               "line": 35,
                               "column": 9,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             },
                             "end": {
                               "line": 36,
                               "column": 7,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             }
                           }
                         }
@@ -615,12 +615,12 @@
                         "start": {
                           "line": 35,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 36,
                           "column": 7,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     },
@@ -637,12 +637,12 @@
                               "start": {
                                 "line": 39,
                                 "column": 5,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 39,
                                 "column": 12,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -653,12 +653,12 @@
                               "start": {
                                 "line": 39,
                                 "column": 13,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 39,
                                 "column": 21,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -668,12 +668,12 @@
                             "start": {
                               "line": 39,
                               "column": 5,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             },
                             "end": {
                               "line": 39,
                               "column": 21,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             }
                           }
                         },
@@ -685,12 +685,12 @@
                               "start": {
                                 "line": 39,
                                 "column": 22,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 39,
                                 "column": 23,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -703,12 +703,12 @@
                                 "start": {
                                   "line": 39,
                                   "column": 25,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 },
                                 "end": {
                                   "line": 39,
                                   "column": 26,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 }
                               }
                             },
@@ -718,12 +718,12 @@
                               "start": {
                                 "line": 39,
                                 "column": 25,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 39,
                                 "column": 30,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           }
@@ -733,12 +733,12 @@
                           "start": {
                             "line": 39,
                             "column": 5,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           },
                           "end": {
                             "line": 39,
                             "column": 31,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           }
                         }
                       },
@@ -746,12 +746,12 @@
                         "start": {
                           "line": 39,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 39,
                           "column": 32,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     },
@@ -768,12 +768,12 @@
                               "start": {
                                 "line": 40,
                                 "column": 5,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 40,
                                 "column": 12,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -784,12 +784,12 @@
                               "start": {
                                 "line": 40,
                                 "column": 13,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 40,
                                 "column": 21,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -799,12 +799,12 @@
                             "start": {
                               "line": 40,
                               "column": 5,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             },
                             "end": {
                               "line": 40,
                               "column": 21,
-                              "program": "trailing_lambda_transform_trailing_block.ets"
+                              "program": "trailing_lambda_transform_trailing_block.ats"
                             }
                           }
                         },
@@ -816,12 +816,12 @@
                               "start": {
                                 "line": 40,
                                 "column": 22,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 40,
                                 "column": 23,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           },
@@ -834,12 +834,12 @@
                                 "start": {
                                   "line": 40,
                                   "column": 25,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 },
                                 "end": {
                                   "line": 40,
                                   "column": 26,
-                                  "program": "trailing_lambda_transform_trailing_block.ets"
+                                  "program": "trailing_lambda_transform_trailing_block.ats"
                                 }
                               }
                             },
@@ -860,12 +860,12 @@
                                       "start": {
                                         "line": 40,
                                         "column": 31,
-                                        "program": "trailing_lambda_transform_trailing_block.ets"
+                                        "program": "trailing_lambda_transform_trailing_block.ats"
                                       },
                                       "end": {
                                         "line": 40,
                                         "column": 33,
-                                        "program": "trailing_lambda_transform_trailing_block.ets"
+                                        "program": "trailing_lambda_transform_trailing_block.ats"
                                       }
                                     }
                                   },
@@ -873,12 +873,12 @@
                                     "start": {
                                       "line": 40,
                                       "column": 27,
-                                      "program": "trailing_lambda_transform_trailing_block.ets"
+                                      "program": "trailing_lambda_transform_trailing_block.ats"
                                     },
                                     "end": {
                                       "line": 40,
                                       "column": 33,
-                                      "program": "trailing_lambda_transform_trailing_block.ets"
+                                      "program": "trailing_lambda_transform_trailing_block.ats"
                                     }
                                   }
                                 },
@@ -886,12 +886,12 @@
                                   "start": {
                                     "line": 40,
                                     "column": 27,
-                                    "program": "trailing_lambda_transform_trailing_block.ets"
+                                    "program": "trailing_lambda_transform_trailing_block.ats"
                                   },
                                   "end": {
                                     "line": 40,
                                     "column": 33,
-                                    "program": "trailing_lambda_transform_trailing_block.ets"
+                                    "program": "trailing_lambda_transform_trailing_block.ats"
                                   }
                                 }
                               }
@@ -901,12 +901,12 @@
                               "start": {
                                 "line": 40,
                                 "column": 25,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               },
                               "end": {
                                 "line": 40,
                                 "column": 34,
-                                "program": "trailing_lambda_transform_trailing_block.ets"
+                                "program": "trailing_lambda_transform_trailing_block.ats"
                               }
                             }
                           }
@@ -916,12 +916,12 @@
                           "start": {
                             "line": 40,
                             "column": 5,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           },
                           "end": {
                             "line": 40,
                             "column": 35,
-                            "program": "trailing_lambda_transform_trailing_block.ets"
+                            "program": "trailing_lambda_transform_trailing_block.ats"
                           }
                         }
                       },
@@ -929,12 +929,12 @@
                         "start": {
                           "line": 40,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 40,
                           "column": 36,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     },
@@ -945,12 +945,12 @@
                         "start": {
                           "line": 41,
                           "column": 5,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         },
                         "end": {
                           "line": 42,
                           "column": 6,
-                          "program": "trailing_lambda_transform_trailing_block.ets"
+                          "program": "trailing_lambda_transform_trailing_block.ats"
                         }
                       }
                     }
@@ -959,12 +959,12 @@
                     "start": {
                       "line": 21,
                       "column": 17,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     },
                     "end": {
                       "line": 43,
                       "column": 2,
-                      "program": "trailing_lambda_transform_trailing_block.ets"
+                      "program": "trailing_lambda_transform_trailing_block.ats"
                     }
                   }
                 },
@@ -972,12 +972,12 @@
                   "start": {
                     "line": 21,
                     "column": 10,
-                    "program": "trailing_lambda_transform_trailing_block.ets"
+                    "program": "trailing_lambda_transform_trailing_block.ats"
                   },
                   "end": {
                     "line": 43,
                     "column": 2,
-                    "program": "trailing_lambda_transform_trailing_block.ets"
+                    "program": "trailing_lambda_transform_trailing_block.ats"
                   }
                 }
               },
@@ -985,12 +985,12 @@
                 "start": {
                   "line": 21,
                   "column": 10,
-                  "program": "trailing_lambda_transform_trailing_block.ets"
+                  "program": "trailing_lambda_transform_trailing_block.ats"
                 },
                 "end": {
                   "line": 43,
                   "column": 2,
-                  "program": "trailing_lambda_transform_trailing_block.ets"
+                  "program": "trailing_lambda_transform_trailing_block.ats"
                 }
               }
             },
@@ -999,12 +999,12 @@
               "start": {
                 "line": 21,
                 "column": 1,
-                "program": "trailing_lambda_transform_trailing_block.ets"
+                "program": "trailing_lambda_transform_trailing_block.ats"
               },
               "end": {
                 "line": 43,
                 "column": 2,
-                "program": "trailing_lambda_transform_trailing_block.ets"
+                "program": "trailing_lambda_transform_trailing_block.ats"
               }
             }
           }
@@ -1013,12 +1013,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "trailing_lambda_transform_trailing_block.ets"
+            "program": "trailing_lambda_transform_trailing_block.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "trailing_lambda_transform_trailing_block.ets"
+            "program": "trailing_lambda_transform_trailing_block.ats"
           }
         }
       },
@@ -1026,12 +1026,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "trailing_lambda_transform_trailing_block.ets"
+          "program": "trailing_lambda_transform_trailing_block.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "trailing_lambda_transform_trailing_block.ets"
+          "program": "trailing_lambda_transform_trailing_block.ats"
         }
       }
     }
@@ -1040,12 +1040,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "trailing_lambda_transform_trailing_block.ets"
+      "program": "trailing_lambda_transform_trailing_block.ats"
     },
     "end": {
       "line": 44,
       "column": 1,
-      "program": "trailing_lambda_transform_trailing_block.ets"
+      "program": "trailing_lambda_transform_trailing_block.ats"
     }
   }
 }

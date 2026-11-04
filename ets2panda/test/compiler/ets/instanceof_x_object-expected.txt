@@ -10,12 +10,12 @@
           "start": {
             "line": 20,
             "column": 24,
-            "program": "instanceof_x_object.ets"
+            "program": "instanceof_x_object.ats"
           },
           "end": {
             "line": 20,
             "column": 46,
-            "program": "instanceof_x_object.ets"
+            "program": "instanceof_x_object.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 20,
                 "column": 16,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 20,
                 "column": 16,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 20,
               "column": 10,
-              "program": "instanceof_x_object.ets"
+              "program": "instanceof_x_object.ats"
             },
             "end": {
               "line": 20,
               "column": 16,
-              "program": "instanceof_x_object.ets"
+              "program": "instanceof_x_object.ats"
             }
           }
         }
@@ -72,12 +72,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "instanceof_x_object.ets"
+          "program": "instanceof_x_object.ats"
         },
         "end": {
           "line": 20,
           "column": 46,
-          "program": "instanceof_x_object.ets"
+          "program": "instanceof_x_object.ats"
         }
       }
     },
@@ -90,12 +90,12 @@
           "start": {
             "line": 21,
             "column": 27,
-            "program": "instanceof_x_object.ets"
+            "program": "instanceof_x_object.ats"
           },
           "end": {
             "line": 21,
             "column": 68,
-            "program": "instanceof_x_object.ets"
+            "program": "instanceof_x_object.ats"
           }
         }
       },
@@ -109,12 +109,12 @@
               "start": {
                 "line": 21,
                 "column": 10,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 21,
                 "column": 19,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -125,12 +125,12 @@
               "start": {
                 "line": 21,
                 "column": 10,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 21,
                 "column": 19,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -138,12 +138,12 @@
             "start": {
               "line": 21,
               "column": 10,
-              "program": "instanceof_x_object.ets"
+              "program": "instanceof_x_object.ats"
             },
             "end": {
               "line": 21,
               "column": 19,
-              "program": "instanceof_x_object.ets"
+              "program": "instanceof_x_object.ats"
             }
           }
         }
@@ -152,12 +152,12 @@
         "start": {
           "line": 21,
           "column": 1,
-          "program": "instanceof_x_object.ets"
+          "program": "instanceof_x_object.ats"
         },
         "end": {
           "line": 21,
           "column": 68,
-          "program": "instanceof_x_object.ets"
+          "program": "instanceof_x_object.ats"
         }
       }
     },
@@ -171,12 +171,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "instanceof_x_object.ets"
+              "program": "instanceof_x_object.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "instanceof_x_object.ets"
+              "program": "instanceof_x_object.ats"
             }
           }
         },
@@ -237,12 +237,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -250,12 +250,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   }
                 }
               },
@@ -263,12 +263,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -277,12 +277,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -295,12 +295,12 @@
                 "start": {
                   "line": 25,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 25,
                   "column": 19,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -320,12 +320,12 @@
                     "start": {
                       "line": 25,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 19,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -349,12 +349,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 23,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 29,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -362,12 +362,12 @@
                             "start": {
                               "line": 25,
                               "column": 23,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 29,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -375,12 +375,12 @@
                           "start": {
                             "line": 25,
                             "column": 23,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 25,
                             "column": 29,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -388,12 +388,12 @@
                         "start": {
                           "line": 25,
                           "column": 20,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 29,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     },
@@ -401,12 +401,12 @@
                       "start": {
                         "line": 25,
                         "column": 20,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       },
                       "end": {
                         "line": 25,
                         "column": 29,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       }
                     }
                   }
@@ -417,12 +417,12 @@
                     "start": {
                       "line": 25,
                       "column": 32,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 39,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -441,12 +441,12 @@
                             "start": {
                               "line": 26,
                               "column": 12,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 26,
                               "column": 13,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -461,12 +461,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 25,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 31,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 }
                               }
                             },
@@ -474,12 +474,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 25,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 31,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -487,12 +487,12 @@
                             "start": {
                               "line": 26,
                               "column": 25,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 26,
                               "column": 31,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -500,12 +500,12 @@
                           "start": {
                             "line": 26,
                             "column": 12,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 26,
                             "column": 31,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -513,12 +513,12 @@
                         "start": {
                           "line": 26,
                           "column": 5,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 26,
                           "column": 32,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     }
@@ -527,12 +527,12 @@
                     "start": {
                       "line": 25,
                       "column": 40,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 2,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -540,12 +540,12 @@
                   "start": {
                     "line": 25,
                     "column": 10,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 2,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   }
                 }
               },
@@ -553,12 +553,12 @@
                 "start": {
                   "line": 25,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 2,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -567,12 +567,12 @@
               "start": {
                 "line": 25,
                 "column": 1,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 27,
                 "column": 2,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -585,12 +585,12 @@
                 "start": {
                   "line": 29,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 29,
                   "column": 23,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -610,12 +610,12 @@
                     "start": {
                       "line": 29,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 29,
                       "column": 23,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -639,12 +639,12 @@
                               "start": {
                                 "line": 29,
                                 "column": 27,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 29,
                                 "column": 28,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -652,12 +652,12 @@
                             "start": {
                               "line": 29,
                               "column": 27,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 29,
                               "column": 28,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -665,12 +665,12 @@
                           "start": {
                             "line": 29,
                             "column": 27,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 29,
                             "column": 28,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -678,12 +678,12 @@
                         "start": {
                           "line": 29,
                           "column": 24,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 29,
                           "column": 28,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     },
@@ -691,12 +691,12 @@
                       "start": {
                         "line": 29,
                         "column": 24,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       },
                       "end": {
                         "line": 29,
                         "column": 28,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       }
                     }
                   }
@@ -707,12 +707,12 @@
                     "start": {
                       "line": 29,
                       "column": 31,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 29,
                       "column": 38,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -731,12 +731,12 @@
                             "start": {
                               "line": 30,
                               "column": 12,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 30,
                               "column": 13,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -751,12 +751,12 @@
                                 "start": {
                                   "line": 30,
                                   "column": 25,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 },
                                 "end": {
                                   "line": 30,
                                   "column": 31,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 }
                               }
                             },
@@ -764,12 +764,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 25,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 31,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -777,12 +777,12 @@
                             "start": {
                               "line": 30,
                               "column": 25,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 30,
                               "column": 31,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -790,12 +790,12 @@
                           "start": {
                             "line": 30,
                             "column": 12,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 30,
                             "column": 31,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -803,12 +803,12 @@
                         "start": {
                           "line": 30,
                           "column": 5,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 30,
                           "column": 32,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     }
@@ -817,12 +817,12 @@
                     "start": {
                       "line": 29,
                       "column": 39,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 31,
                       "column": 2,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -830,12 +830,12 @@
                   "start": {
                     "line": 29,
                     "column": 10,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   },
                   "end": {
                     "line": 31,
                     "column": 2,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   }
                 }
               },
@@ -843,12 +843,12 @@
                 "start": {
                   "line": 29,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 31,
                   "column": 2,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -857,12 +857,12 @@
               "start": {
                 "line": 29,
                 "column": 1,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 31,
                 "column": 2,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -875,12 +875,12 @@
                 "start": {
                   "line": 33,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 33,
                   "column": 20,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -900,12 +900,12 @@
                     "start": {
                       "line": 33,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 33,
                       "column": 20,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -929,12 +929,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 24,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 31,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -942,12 +942,12 @@
                             "start": {
                               "line": 33,
                               "column": 24,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 33,
                               "column": 31,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -955,12 +955,12 @@
                           "start": {
                             "line": 33,
                             "column": 24,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 33,
                             "column": 31,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -968,12 +968,12 @@
                         "start": {
                           "line": 33,
                           "column": 21,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 33,
                           "column": 31,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     },
@@ -981,12 +981,12 @@
                       "start": {
                         "line": 33,
                         "column": 21,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       },
                       "end": {
                         "line": 33,
                         "column": 31,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       }
                     }
                   }
@@ -997,12 +997,12 @@
                     "start": {
                       "line": 33,
                       "column": 34,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 33,
                       "column": 41,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1021,12 +1021,12 @@
                             "start": {
                               "line": 34,
                               "column": 12,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 34,
                               "column": 13,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -1041,12 +1041,12 @@
                                 "start": {
                                   "line": 34,
                                   "column": 25,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 },
                                 "end": {
                                   "line": 34,
                                   "column": 31,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 }
                               }
                             },
@@ -1054,12 +1054,12 @@
                               "start": {
                                 "line": 34,
                                 "column": 25,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 34,
                                 "column": 31,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -1067,12 +1067,12 @@
                             "start": {
                               "line": 34,
                               "column": 25,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 34,
                               "column": 31,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -1080,12 +1080,12 @@
                           "start": {
                             "line": 34,
                             "column": 12,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 34,
                             "column": 31,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -1093,12 +1093,12 @@
                         "start": {
                           "line": 34,
                           "column": 5,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 34,
                           "column": 32,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     }
@@ -1107,12 +1107,12 @@
                     "start": {
                       "line": 33,
                       "column": 42,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 35,
                       "column": 2,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1120,12 +1120,12 @@
                   "start": {
                     "line": 33,
                     "column": 10,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   },
                   "end": {
                     "line": 35,
                     "column": 2,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   }
                 }
               },
@@ -1133,12 +1133,12 @@
                 "start": {
                   "line": 33,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 35,
                   "column": 2,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -1147,12 +1147,12 @@
               "start": {
                 "line": 33,
                 "column": 1,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 35,
                 "column": 2,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -1165,12 +1165,12 @@
                 "start": {
                   "line": 37,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 37,
                   "column": 22,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -1190,12 +1190,12 @@
                     "start": {
                       "line": 37,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 37,
                       "column": 22,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1219,12 +1219,12 @@
                               "start": {
                                 "line": 37,
                                 "column": 26,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 37,
                                 "column": 32,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -1232,12 +1232,12 @@
                             "start": {
                               "line": 37,
                               "column": 26,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 37,
                               "column": 32,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -1245,12 +1245,12 @@
                           "start": {
                             "line": 37,
                             "column": 26,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 37,
                             "column": 32,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -1258,12 +1258,12 @@
                         "start": {
                           "line": 37,
                           "column": 23,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 37,
                           "column": 32,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     },
@@ -1271,12 +1271,12 @@
                       "start": {
                         "line": 37,
                         "column": 23,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       },
                       "end": {
                         "line": 37,
                         "column": 32,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       }
                     }
                   }
@@ -1287,12 +1287,12 @@
                     "start": {
                       "line": 37,
                       "column": 35,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 37,
                       "column": 42,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1311,12 +1311,12 @@
                             "start": {
                               "line": 38,
                               "column": 12,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 38,
                               "column": 13,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -1331,12 +1331,12 @@
                                 "start": {
                                   "line": 38,
                                   "column": 25,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 },
                                 "end": {
                                   "line": 38,
                                   "column": 31,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 }
                               }
                             },
@@ -1344,12 +1344,12 @@
                               "start": {
                                 "line": 38,
                                 "column": 25,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 38,
                                 "column": 31,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -1357,12 +1357,12 @@
                             "start": {
                               "line": 38,
                               "column": 25,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 38,
                               "column": 31,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -1370,12 +1370,12 @@
                           "start": {
                             "line": 38,
                             "column": 12,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 38,
                             "column": 31,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -1383,12 +1383,12 @@
                         "start": {
                           "line": 38,
                           "column": 5,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 38,
                           "column": 32,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     }
@@ -1397,12 +1397,12 @@
                     "start": {
                       "line": 37,
                       "column": 43,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 39,
                       "column": 2,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1410,12 +1410,12 @@
                   "start": {
                     "line": 37,
                     "column": 10,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   },
                   "end": {
                     "line": 39,
                     "column": 2,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   }
                 }
               },
@@ -1423,12 +1423,12 @@
                 "start": {
                   "line": 37,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 39,
                   "column": 2,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -1437,12 +1437,12 @@
               "start": {
                 "line": 37,
                 "column": 1,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 39,
                 "column": 2,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           },
@@ -1455,12 +1455,12 @@
                 "start": {
                   "line": 41,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 41,
                   "column": 21,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -1480,12 +1480,12 @@
                     "start": {
                       "line": 41,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 41,
                       "column": 21,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1509,12 +1509,12 @@
                               "start": {
                                 "line": 41,
                                 "column": 25,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 41,
                                 "column": 34,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -1522,12 +1522,12 @@
                             "start": {
                               "line": 41,
                               "column": 25,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 41,
                               "column": 34,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -1535,12 +1535,12 @@
                           "start": {
                             "line": 41,
                             "column": 25,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 41,
                             "column": 34,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -1548,12 +1548,12 @@
                         "start": {
                           "line": 41,
                           "column": 22,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 41,
                           "column": 34,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     },
@@ -1561,12 +1561,12 @@
                       "start": {
                         "line": 41,
                         "column": 22,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       },
                       "end": {
                         "line": 41,
                         "column": 34,
-                        "program": "instanceof_x_object.ets"
+                        "program": "instanceof_x_object.ats"
                       }
                     }
                   }
@@ -1577,12 +1577,12 @@
                     "start": {
                       "line": 41,
                       "column": 37,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 41,
                       "column": 44,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1601,12 +1601,12 @@
                             "start": {
                               "line": 42,
                               "column": 12,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 42,
                               "column": 13,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -1621,12 +1621,12 @@
                                 "start": {
                                   "line": 42,
                                   "column": 25,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 },
                                 "end": {
                                   "line": 42,
                                   "column": 31,
-                                  "program": "instanceof_x_object.ets"
+                                  "program": "instanceof_x_object.ats"
                                 }
                               }
                             },
@@ -1634,12 +1634,12 @@
                               "start": {
                                 "line": 42,
                                 "column": 25,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               },
                               "end": {
                                 "line": 42,
                                 "column": 31,
-                                "program": "instanceof_x_object.ets"
+                                "program": "instanceof_x_object.ats"
                               }
                             }
                           },
@@ -1647,12 +1647,12 @@
                             "start": {
                               "line": 42,
                               "column": 25,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             },
                             "end": {
                               "line": 42,
                               "column": 31,
-                              "program": "instanceof_x_object.ets"
+                              "program": "instanceof_x_object.ats"
                             }
                           }
                         },
@@ -1660,12 +1660,12 @@
                           "start": {
                             "line": 42,
                             "column": 12,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           },
                           "end": {
                             "line": 42,
                             "column": 31,
-                            "program": "instanceof_x_object.ets"
+                            "program": "instanceof_x_object.ats"
                           }
                         }
                       },
@@ -1673,12 +1673,12 @@
                         "start": {
                           "line": 42,
                           "column": 5,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         },
                         "end": {
                           "line": 42,
                           "column": 32,
-                          "program": "instanceof_x_object.ets"
+                          "program": "instanceof_x_object.ats"
                         }
                       }
                     }
@@ -1687,12 +1687,12 @@
                     "start": {
                       "line": 41,
                       "column": 45,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 43,
                       "column": 2,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1700,12 +1700,12 @@
                   "start": {
                     "line": 41,
                     "column": 10,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   },
                   "end": {
                     "line": 43,
                     "column": 2,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   }
                 }
               },
@@ -1713,12 +1713,12 @@
                 "start": {
                   "line": 41,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 43,
                   "column": 2,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -1727,12 +1727,12 @@
               "start": {
                 "line": 41,
                 "column": 1,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               },
               "end": {
                 "line": 43,
                 "column": 2,
-                "program": "instanceof_x_object.ets"
+                "program": "instanceof_x_object.ats"
               }
             }
           }
@@ -1741,12 +1741,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "instanceof_x_object.ets"
+            "program": "instanceof_x_object.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "instanceof_x_object.ets"
+            "program": "instanceof_x_object.ats"
           }
         }
       },
@@ -1754,12 +1754,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "instanceof_x_object.ets"
+          "program": "instanceof_x_object.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "instanceof_x_object.ets"
+          "program": "instanceof_x_object.ats"
         }
       }
     },
@@ -1773,12 +1773,12 @@
             "start": {
               "line": 23,
               "column": 7,
-              "program": "instanceof_x_object.ets"
+              "program": "instanceof_x_object.ats"
             },
             "end": {
               "line": 23,
               "column": 8,
-              "program": "instanceof_x_object.ets"
+              "program": "instanceof_x_object.ats"
             }
           }
         },
@@ -1794,12 +1794,12 @@
                 "start": {
                   "line": 23,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -1818,12 +1818,12 @@
                     "start": {
                       "line": 23,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1838,12 +1838,12 @@
                     "start": {
                       "line": 23,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 10,
-                      "program": "instanceof_x_object.ets"
+                      "program": "instanceof_x_object.ats"
                     }
                   }
                 },
@@ -1851,12 +1851,12 @@
                   "start": {
                     "line": 23,
                     "column": 10,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   },
                   "end": {
                     "line": 23,
                     "column": 10,
-                    "program": "instanceof_x_object.ets"
+                    "program": "instanceof_x_object.ats"
                   }
                 }
               },
@@ -1864,12 +1864,12 @@
                 "start": {
                   "line": 23,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 10,
-                  "program": "instanceof_x_object.ets"
+                  "program": "instanceof_x_object.ats"
                 }
               }
             },
@@ -1892,12 +1892,12 @@
           "start": {
             "line": 23,
             "column": 9,
-            "program": "instanceof_x_object.ets"
+            "program": "instanceof_x_object.ats"
           },
           "end": {
             "line": 23,
             "column": 11,
-            "program": "instanceof_x_object.ets"
+            "program": "instanceof_x_object.ats"
           }
         }
       },
@@ -1905,12 +1905,12 @@
         "start": {
           "line": 23,
           "column": 1,
-          "program": "instanceof_x_object.ets"
+          "program": "instanceof_x_object.ats"
         },
         "end": {
           "line": 23,
           "column": 11,
-          "program": "instanceof_x_object.ets"
+          "program": "instanceof_x_object.ats"
         }
       }
     }
@@ -1919,16 +1919,16 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "instanceof_x_object.ets"
+      "program": "instanceof_x_object.ats"
     },
     "end": {
       "line": 44,
       "column": 1,
-      "program": "instanceof_x_object.ets"
+      "program": "instanceof_x_object.ats"
     }
   }
 }
-[instanceof_x_object.ets:26:12] Warning W1001506: the value of the instanceof expression is known at compile-time as true
-[instanceof_x_object.ets:30:12] Warning W1001506: the value of the instanceof expression is known at compile-time as true
-[instanceof_x_object.ets:34:12] Warning W1001506: the value of the instanceof expression is known at compile-time as true
-[instanceof_x_object.ets:37:26] Semantic error ESE0371: Cannot find type 'AValue'.
+[instanceof_x_object.ats:26:12] Warning W1001506: the value of the instanceof expression is known at compile-time as true
+[instanceof_x_object.ats:30:12] Warning W1001506: the value of the instanceof expression is known at compile-time as true
+[instanceof_x_object.ats:34:12] Warning W1001506: the value of the instanceof expression is known at compile-time as true
+[instanceof_x_object.ats:37:26] Semantic error ESE0371: Cannot find type 'AValue'.

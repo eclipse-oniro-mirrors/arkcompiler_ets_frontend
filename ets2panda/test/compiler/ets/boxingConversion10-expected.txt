@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "boxingConversion10.ets"
+              "program": "boxingConversion10.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "boxingConversion10.ets"
+              "program": "boxingConversion10.ats"
             }
           }
         },
@@ -77,12 +77,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "boxingConversion10.ets"
+                      "program": "boxingConversion10.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "boxingConversion10.ets"
+                      "program": "boxingConversion10.ats"
                     }
                   }
                 },
@@ -90,12 +90,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "boxingConversion10.ets"
+                    "program": "boxingConversion10.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "boxingConversion10.ets"
+                    "program": "boxingConversion10.ats"
                   }
                 }
               },
@@ -103,12 +103,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 }
               }
             },
@@ -117,12 +117,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "boxingConversion10.ets"
+                "program": "boxingConversion10.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "boxingConversion10.ets"
+                "program": "boxingConversion10.ats"
               }
             }
           },
@@ -135,12 +135,12 @@
                 "start": {
                   "line": 16,
                   "column": 5,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 6,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 }
               }
             },
@@ -156,12 +156,12 @@
                 "start": {
                   "line": 16,
                   "column": 8,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 }
               }
             },
@@ -170,12 +170,12 @@
               "start": {
                 "line": 16,
                 "column": 5,
-                "program": "boxingConversion10.ets"
+                "program": "boxingConversion10.ats"
               },
               "end": {
                 "line": 16,
                 "column": 16,
-                "program": "boxingConversion10.ets"
+                "program": "boxingConversion10.ats"
               }
             }
           },
@@ -188,12 +188,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 6,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 }
               }
             },
@@ -214,12 +214,12 @@
                     "start": {
                       "line": 17,
                       "column": 8,
-                      "program": "boxingConversion10.ets"
+                      "program": "boxingConversion10.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 14,
-                      "program": "boxingConversion10.ets"
+                      "program": "boxingConversion10.ats"
                     }
                   }
                 },
@@ -227,12 +227,12 @@
                   "start": {
                     "line": 17,
                     "column": 8,
-                    "program": "boxingConversion10.ets"
+                    "program": "boxingConversion10.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 14,
-                    "program": "boxingConversion10.ets"
+                    "program": "boxingConversion10.ats"
                   }
                 }
               },
@@ -240,12 +240,12 @@
                 "start": {
                   "line": 17,
                   "column": 8,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 14,
-                  "program": "boxingConversion10.ets"
+                  "program": "boxingConversion10.ats"
                 }
               }
             },
@@ -254,12 +254,12 @@
               "start": {
                 "line": 17,
                 "column": 5,
-                "program": "boxingConversion10.ets"
+                "program": "boxingConversion10.ats"
               },
               "end": {
                 "line": 17,
                 "column": 17,
-                "program": "boxingConversion10.ets"
+                "program": "boxingConversion10.ats"
               }
             }
           }
@@ -268,12 +268,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "boxingConversion10.ets"
+            "program": "boxingConversion10.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "boxingConversion10.ets"
+            "program": "boxingConversion10.ats"
           }
         }
       },
@@ -281,12 +281,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "boxingConversion10.ets"
+          "program": "boxingConversion10.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "boxingConversion10.ets"
+          "program": "boxingConversion10.ats"
         }
       }
     }
@@ -295,12 +295,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "boxingConversion10.ets"
+      "program": "boxingConversion10.ats"
     },
     "end": {
       "line": 18,
       "column": 1,
-      "program": "boxingConversion10.ets"
+      "program": "boxingConversion10.ats"
     }
   }
 }

@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "lambda_infer_type_param2.ets"
+              "program": "lambda_infer_type_param2.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "lambda_infer_type_param2.ets"
+              "program": "lambda_infer_type_param2.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "lambda_infer_type_param2.ets"
+                  "program": "lambda_infer_type_param2.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "lambda_infer_type_param2.ets"
+                  "program": "lambda_infer_type_param2.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "lambda_infer_type_param2.ets"
+                      "program": "lambda_infer_type_param2.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "lambda_infer_type_param2.ets"
+                      "program": "lambda_infer_type_param2.ats"
                     }
                   }
                 },
@@ -95,12 +95,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 20,
-                                          "program": "lambda_infer_type_param2.ets"
+                                          "program": "lambda_infer_type_param2.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 25,
-                                          "program": "lambda_infer_type_param2.ets"
+                                          "program": "lambda_infer_type_param2.ats"
                                         }
                                       }
                                     },
@@ -108,12 +108,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 13,
-                                        "program": "lambda_infer_type_param2.ets"
+                                        "program": "lambda_infer_type_param2.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 25,
-                                        "program": "lambda_infer_type_param2.ets"
+                                        "program": "lambda_infer_type_param2.ats"
                                       }
                                     }
                                   },
@@ -121,12 +121,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 13,
-                                      "program": "lambda_infer_type_param2.ets"
+                                      "program": "lambda_infer_type_param2.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 25,
-                                      "program": "lambda_infer_type_param2.ets"
+                                      "program": "lambda_infer_type_param2.ats"
                                     }
                                   }
                                 }
@@ -137,12 +137,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 30,
-                                    "program": "lambda_infer_type_param2.ets"
+                                    "program": "lambda_infer_type_param2.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 35,
-                                    "program": "lambda_infer_type_param2.ets"
+                                    "program": "lambda_infer_type_param2.ats"
                                   }
                                 }
                               },
@@ -150,12 +150,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 12,
-                                  "program": "lambda_infer_type_param2.ets"
+                                  "program": "lambda_infer_type_param2.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 35,
-                                  "program": "lambda_infer_type_param2.ets"
+                                  "program": "lambda_infer_type_param2.ats"
                                 }
                               }
                             },
@@ -163,12 +163,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 9,
-                                "program": "lambda_infer_type_param2.ets"
+                                "program": "lambda_infer_type_param2.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 10,
-                                "program": "lambda_infer_type_param2.ets"
+                                "program": "lambda_infer_type_param2.ats"
                               }
                             }
                           },
@@ -190,12 +190,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 39,
-                                        "program": "lambda_infer_type_param2.ets"
+                                        "program": "lambda_infer_type_param2.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 44,
-                                        "program": "lambda_infer_type_param2.ets"
+                                        "program": "lambda_infer_type_param2.ats"
                                       }
                                     }
                                   },
@@ -203,12 +203,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 39,
-                                      "program": "lambda_infer_type_param2.ets"
+                                      "program": "lambda_infer_type_param2.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 44,
-                                      "program": "lambda_infer_type_param2.ets"
+                                      "program": "lambda_infer_type_param2.ats"
                                     }
                                   }
                                 }
@@ -225,12 +225,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 49,
-                                          "program": "lambda_infer_type_param2.ets"
+                                          "program": "lambda_infer_type_param2.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 59,
-                                          "program": "lambda_infer_type_param2.ets"
+                                          "program": "lambda_infer_type_param2.ats"
                                         }
                                       }
                                     },
@@ -252,12 +252,12 @@
                                   "start": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": "lambda_infer_type_param2.ets"
+                                    "program": "lambda_infer_type_param2.ats"
                                   },
                                   "end": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": "lambda_infer_type_param2.ets"
+                                    "program": "lambda_infer_type_param2.ats"
                                   }
                                 }
                               },
@@ -265,12 +265,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 38,
-                                  "program": "lambda_infer_type_param2.ets"
+                                  "program": "lambda_infer_type_param2.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 59,
-                                  "program": "lambda_infer_type_param2.ets"
+                                  "program": "lambda_infer_type_param2.ats"
                                 }
                               }
                             },
@@ -278,12 +278,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 38,
-                                "program": "lambda_infer_type_param2.ets"
+                                "program": "lambda_infer_type_param2.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 59,
-                                "program": "lambda_infer_type_param2.ets"
+                                "program": "lambda_infer_type_param2.ats"
                               }
                             }
                           },
@@ -291,12 +291,12 @@
                             "start": {
                               "line": 17,
                               "column": 9,
-                              "program": "lambda_infer_type_param2.ets"
+                              "program": "lambda_infer_type_param2.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 59,
-                              "program": "lambda_infer_type_param2.ets"
+                              "program": "lambda_infer_type_param2.ats"
                             }
                           }
                         }
@@ -306,12 +306,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "lambda_infer_type_param2.ets"
+                          "program": "lambda_infer_type_param2.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 59,
-                          "program": "lambda_infer_type_param2.ets"
+                          "program": "lambda_infer_type_param2.ats"
                         }
                       }
                     }
@@ -320,12 +320,12 @@
                     "start": {
                       "line": 16,
                       "column": 17,
-                      "program": "lambda_infer_type_param2.ets"
+                      "program": "lambda_infer_type_param2.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 2,
-                      "program": "lambda_infer_type_param2.ets"
+                      "program": "lambda_infer_type_param2.ats"
                     }
                   }
                 },
@@ -333,12 +333,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "lambda_infer_type_param2.ets"
+                    "program": "lambda_infer_type_param2.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 2,
-                    "program": "lambda_infer_type_param2.ets"
+                    "program": "lambda_infer_type_param2.ats"
                   }
                 }
               },
@@ -346,12 +346,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "lambda_infer_type_param2.ets"
+                  "program": "lambda_infer_type_param2.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 2,
-                  "program": "lambda_infer_type_param2.ets"
+                  "program": "lambda_infer_type_param2.ats"
                 }
               }
             },
@@ -360,12 +360,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "lambda_infer_type_param2.ets"
+                "program": "lambda_infer_type_param2.ats"
               },
               "end": {
                 "line": 18,
                 "column": 2,
-                "program": "lambda_infer_type_param2.ets"
+                "program": "lambda_infer_type_param2.ats"
               }
             }
           }
@@ -374,12 +374,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "lambda_infer_type_param2.ets"
+            "program": "lambda_infer_type_param2.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "lambda_infer_type_param2.ets"
+            "program": "lambda_infer_type_param2.ats"
           }
         }
       },
@@ -387,12 +387,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "lambda_infer_type_param2.ets"
+          "program": "lambda_infer_type_param2.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "lambda_infer_type_param2.ets"
+          "program": "lambda_infer_type_param2.ats"
         }
       }
     }
@@ -401,12 +401,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "lambda_infer_type_param2.ets"
+      "program": "lambda_infer_type_param2.ats"
     },
     "end": {
       "line": 19,
       "column": 1,
-      "program": "lambda_infer_type_param2.ets"
+      "program": "lambda_infer_type_param2.ats"
     }
   }
 }

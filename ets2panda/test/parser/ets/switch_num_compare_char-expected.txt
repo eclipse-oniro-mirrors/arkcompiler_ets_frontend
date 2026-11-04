@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "switch_num_compare_char.ets"
+              "program": "switch_num_compare_char.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "switch_num_compare_char.ets"
+              "program": "switch_num_compare_char.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "switch_num_compare_char.ets"
+                  "program": "switch_num_compare_char.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "switch_num_compare_char.ets"
+                  "program": "switch_num_compare_char.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "switch_num_compare_char.ets"
+                      "program": "switch_num_compare_char.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "switch_num_compare_char.ets"
+                      "program": "switch_num_compare_char.ats"
                     }
                   }
                 },
@@ -85,12 +85,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 9,
-                                "program": "switch_num_compare_char.ets"
+                                "program": "switch_num_compare_char.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 10,
-                                "program": "switch_num_compare_char.ets"
+                                "program": "switch_num_compare_char.ats"
                               }
                             }
                           },
@@ -101,12 +101,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 13,
-                                "program": "switch_num_compare_char.ets"
+                                "program": "switch_num_compare_char.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 15,
-                                "program": "switch_num_compare_char.ets"
+                                "program": "switch_num_compare_char.ats"
                               }
                             }
                           },
@@ -114,12 +114,12 @@
                             "start": {
                               "line": 17,
                               "column": 9,
-                              "program": "switch_num_compare_char.ets"
+                              "program": "switch_num_compare_char.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 15,
-                              "program": "switch_num_compare_char.ets"
+                              "program": "switch_num_compare_char.ats"
                             }
                           }
                         }
@@ -129,12 +129,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "switch_num_compare_char.ets"
+                          "program": "switch_num_compare_char.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 15,
-                          "program": "switch_num_compare_char.ets"
+                          "program": "switch_num_compare_char.ats"
                         }
                       }
                     },
@@ -147,12 +147,12 @@
                           "start": {
                             "line": 18,
                             "column": 13,
-                            "program": "switch_num_compare_char.ets"
+                            "program": "switch_num_compare_char.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 14,
-                            "program": "switch_num_compare_char.ets"
+                            "program": "switch_num_compare_char.ats"
                           }
                         }
                       },
@@ -166,12 +166,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 14,
-                                "program": "switch_num_compare_char.ets"
+                                "program": "switch_num_compare_char.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 18,
-                                "program": "switch_num_compare_char.ets"
+                                "program": "switch_num_compare_char.ats"
                               }
                             }
                           },
@@ -183,12 +183,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 13,
-                                  "program": "switch_num_compare_char.ets"
+                                  "program": "switch_num_compare_char.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 19,
-                                  "program": "switch_num_compare_char.ets"
+                                  "program": "switch_num_compare_char.ats"
                                 }
                               }
                             }
@@ -197,12 +197,12 @@
                             "start": {
                               "line": 19,
                               "column": 9,
-                              "program": "switch_num_compare_char.ets"
+                              "program": "switch_num_compare_char.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 19,
-                              "program": "switch_num_compare_char.ets"
+                              "program": "switch_num_compare_char.ats"
                             }
                           }
                         },
@@ -215,12 +215,12 @@
                               "start": {
                                 "line": 21,
                                 "column": 14,
-                                "program": "switch_num_compare_char.ets"
+                                "program": "switch_num_compare_char.ats"
                               },
                               "end": {
                                 "line": 21,
                                 "column": 16,
-                                "program": "switch_num_compare_char.ets"
+                                "program": "switch_num_compare_char.ats"
                               }
                             }
                           },
@@ -232,12 +232,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 13,
-                                  "program": "switch_num_compare_char.ets"
+                                  "program": "switch_num_compare_char.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 19,
-                                  "program": "switch_num_compare_char.ets"
+                                  "program": "switch_num_compare_char.ats"
                                 }
                               }
                             }
@@ -246,12 +246,12 @@
                             "start": {
                               "line": 21,
                               "column": 9,
-                              "program": "switch_num_compare_char.ets"
+                              "program": "switch_num_compare_char.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 19,
-                              "program": "switch_num_compare_char.ets"
+                              "program": "switch_num_compare_char.ats"
                             }
                           }
                         }
@@ -260,12 +260,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "switch_num_compare_char.ets"
+                          "program": "switch_num_compare_char.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 6,
-                          "program": "switch_num_compare_char.ets"
+                          "program": "switch_num_compare_char.ats"
                         }
                       }
                     }
@@ -274,12 +274,12 @@
                     "start": {
                       "line": 16,
                       "column": 17,
-                      "program": "switch_num_compare_char.ets"
+                      "program": "switch_num_compare_char.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 2,
-                      "program": "switch_num_compare_char.ets"
+                      "program": "switch_num_compare_char.ats"
                     }
                   }
                 },
@@ -287,12 +287,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "switch_num_compare_char.ets"
+                    "program": "switch_num_compare_char.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 2,
-                    "program": "switch_num_compare_char.ets"
+                    "program": "switch_num_compare_char.ats"
                   }
                 }
               },
@@ -300,12 +300,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "switch_num_compare_char.ets"
+                  "program": "switch_num_compare_char.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 2,
-                  "program": "switch_num_compare_char.ets"
+                  "program": "switch_num_compare_char.ats"
                 }
               }
             },
@@ -314,12 +314,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "switch_num_compare_char.ets"
+                "program": "switch_num_compare_char.ats"
               },
               "end": {
                 "line": 24,
                 "column": 2,
-                "program": "switch_num_compare_char.ets"
+                "program": "switch_num_compare_char.ats"
               }
             }
           }
@@ -328,12 +328,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "switch_num_compare_char.ets"
+            "program": "switch_num_compare_char.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "switch_num_compare_char.ets"
+            "program": "switch_num_compare_char.ats"
           }
         }
       },
@@ -341,12 +341,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "switch_num_compare_char.ets"
+          "program": "switch_num_compare_char.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "switch_num_compare_char.ets"
+          "program": "switch_num_compare_char.ats"
         }
       }
     }
@@ -355,12 +355,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "switch_num_compare_char.ets"
+      "program": "switch_num_compare_char.ats"
     },
     "end": {
       "line": 25,
       "column": 1,
-      "program": "switch_num_compare_char.ets"
+      "program": "switch_num_compare_char.ats"
     }
   }
 }

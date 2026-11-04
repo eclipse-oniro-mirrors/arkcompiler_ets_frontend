@@ -32,7 +32,7 @@ def es2panda_command(es2panda_path, stdlib_path, config_path):
         '--stdlib', stdlib_path,
         '--arktsconfig', config_path,
         '--ets-unnamed',
-        './src/ets.ets'
+        './src/ets.ats'
     ]
 
 

@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 15,
-              "program": "ambient_call_signature.ets"
+              "program": "ambient_call_signature.ats"
             },
             "end": {
               "line": 16,
               "column": 16,
-              "program": "ambient_call_signature.ets"
+              "program": "ambient_call_signature.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 6,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 17,
                       "column": 5,
-                      "program": "ambient_call_signature.ets"
+                      "program": "ambient_call_signature.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 6,
-                      "program": "ambient_call_signature.ets"
+                      "program": "ambient_call_signature.ats"
                     }
                   }
                 },
@@ -86,12 +86,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 8,
-                                "program": "ambient_call_signature.ets"
+                                "program": "ambient_call_signature.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 14,
-                                "program": "ambient_call_signature.ets"
+                                "program": "ambient_call_signature.ats"
                               }
                             }
                           },
@@ -99,12 +99,12 @@
                             "start": {
                               "line": 17,
                               "column": 8,
-                              "program": "ambient_call_signature.ets"
+                              "program": "ambient_call_signature.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 14,
-                              "program": "ambient_call_signature.ets"
+                              "program": "ambient_call_signature.ats"
                             }
                           }
                         },
@@ -112,12 +112,12 @@
                           "start": {
                             "line": 17,
                             "column": 8,
-                            "program": "ambient_call_signature.ets"
+                            "program": "ambient_call_signature.ats"
                           },
                           "end": {
                             "line": 17,
                             "column": 14,
-                            "program": "ambient_call_signature.ets"
+                            "program": "ambient_call_signature.ats"
                           }
                         }
                       },
@@ -125,12 +125,12 @@
                         "start": {
                           "line": 17,
                           "column": 6,
-                          "program": "ambient_call_signature.ets"
+                          "program": "ambient_call_signature.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 14,
-                          "program": "ambient_call_signature.ets"
+                          "program": "ambient_call_signature.ats"
                         }
                       }
                     },
@@ -138,12 +138,12 @@
                       "start": {
                         "line": 17,
                         "column": 6,
-                        "program": "ambient_call_signature.ets"
+                        "program": "ambient_call_signature.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 14,
-                        "program": "ambient_call_signature.ets"
+                        "program": "ambient_call_signature.ats"
                       }
                     }
                   }
@@ -159,12 +159,12 @@
                         "start": {
                           "line": 17,
                           "column": 16,
-                          "program": "ambient_call_signature.ets"
+                          "program": "ambient_call_signature.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 22,
-                          "program": "ambient_call_signature.ets"
+                          "program": "ambient_call_signature.ats"
                         }
                       }
                     },
@@ -172,12 +172,12 @@
                       "start": {
                         "line": 17,
                         "column": 16,
-                        "program": "ambient_call_signature.ets"
+                        "program": "ambient_call_signature.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 22,
-                        "program": "ambient_call_signature.ets"
+                        "program": "ambient_call_signature.ats"
                       }
                     }
                   },
@@ -185,12 +185,12 @@
                     "start": {
                       "line": 17,
                       "column": 16,
-                      "program": "ambient_call_signature.ets"
+                      "program": "ambient_call_signature.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 22,
-                      "program": "ambient_call_signature.ets"
+                      "program": "ambient_call_signature.ats"
                     }
                   }
                 },
@@ -199,12 +199,12 @@
                   "start": {
                     "line": 17,
                     "column": 5,
-                    "program": "ambient_call_signature.ets"
+                    "program": "ambient_call_signature.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 22,
-                    "program": "ambient_call_signature.ets"
+                    "program": "ambient_call_signature.ats"
                   }
                 }
               },
@@ -212,12 +212,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 22,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 }
               }
             },
@@ -226,12 +226,12 @@
               "start": {
                 "line": 17,
                 "column": 5,
-                "program": "ambient_call_signature.ets"
+                "program": "ambient_call_signature.ats"
               },
               "end": {
                 "line": 17,
                 "column": 22,
-                "program": "ambient_call_signature.ets"
+                "program": "ambient_call_signature.ats"
               }
             }
           },
@@ -244,12 +244,12 @@
                 "start": {
                   "line": 16,
                   "column": 17,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 17,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 }
               }
             },
@@ -268,12 +268,12 @@
                     "start": {
                       "line": 16,
                       "column": 17,
-                      "program": "ambient_call_signature.ets"
+                      "program": "ambient_call_signature.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 17,
-                      "program": "ambient_call_signature.ets"
+                      "program": "ambient_call_signature.ats"
                     }
                   }
                 },
@@ -286,12 +286,12 @@
                   "start": {
                     "line": 16,
                     "column": 17,
-                    "program": "ambient_call_signature.ets"
+                    "program": "ambient_call_signature.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 17,
-                    "program": "ambient_call_signature.ets"
+                    "program": "ambient_call_signature.ats"
                   }
                 }
               },
@@ -299,12 +299,12 @@
                 "start": {
                   "line": 16,
                   "column": 17,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 17,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 }
               }
             },
@@ -327,12 +327,12 @@
           "start": {
             "line": 16,
             "column": 16,
-            "program": "ambient_call_signature.ets"
+            "program": "ambient_call_signature.ats"
           },
           "end": {
             "line": 18,
             "column": 2,
-            "program": "ambient_call_signature.ets"
+            "program": "ambient_call_signature.ats"
           }
         }
       },
@@ -340,12 +340,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "ambient_call_signature.ets"
+          "program": "ambient_call_signature.ats"
         },
         "end": {
           "line": 18,
           "column": 2,
-          "program": "ambient_call_signature.ets"
+          "program": "ambient_call_signature.ats"
         }
       }
     },
@@ -359,12 +359,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "ambient_call_signature.ets"
+              "program": "ambient_call_signature.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "ambient_call_signature.ets"
+              "program": "ambient_call_signature.ats"
             }
           }
         },
@@ -425,12 +425,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "ambient_call_signature.ets"
+                      "program": "ambient_call_signature.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "ambient_call_signature.ets"
+                      "program": "ambient_call_signature.ats"
                     }
                   }
                 },
@@ -438,12 +438,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "ambient_call_signature.ets"
+                    "program": "ambient_call_signature.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "ambient_call_signature.ets"
+                    "program": "ambient_call_signature.ats"
                   }
                 }
               },
@@ -451,12 +451,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "ambient_call_signature.ets"
+                  "program": "ambient_call_signature.ats"
                 }
               }
             },
@@ -465,12 +465,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "ambient_call_signature.ets"
+                "program": "ambient_call_signature.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "ambient_call_signature.ets"
+                "program": "ambient_call_signature.ats"
               }
             }
           }
@@ -479,12 +479,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "ambient_call_signature.ets"
+            "program": "ambient_call_signature.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "ambient_call_signature.ets"
+            "program": "ambient_call_signature.ats"
           }
         }
       },
@@ -492,12 +492,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "ambient_call_signature.ets"
+          "program": "ambient_call_signature.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "ambient_call_signature.ets"
+          "program": "ambient_call_signature.ats"
         }
       }
     }
@@ -506,12 +506,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "ambient_call_signature.ets"
+      "program": "ambient_call_signature.ats"
     },
     "end": {
       "line": 19,
       "column": 1,
-      "program": "ambient_call_signature.ets"
+      "program": "ambient_call_signature.ats"
     }
   }
 }

@@ -1,4 +1,4 @@
 # Tests should be redesigned to be used for JIT testing with repeats panda#11983
 # Failures at #FailKind.RUNTIME_TIMEOUT - with repeats:
-StringBase64.ets  # failed with timeout 600 sec
-AccessBinaryTrees.ets
+StringBase64.ats  # failed with timeout 600 sec
+AccessBinaryTrees.ats

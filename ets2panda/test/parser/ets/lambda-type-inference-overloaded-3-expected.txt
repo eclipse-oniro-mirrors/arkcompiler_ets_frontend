@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             },
             "end": {
               "line": 16,
               "column": 13,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 15,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 15,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -56,12 +56,12 @@
                     "start": {
                       "line": 16,
                       "column": 15,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 15,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 16,
                       "column": 15,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 15,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -89,12 +89,12 @@
                   "start": {
                     "line": 16,
                     "column": 15,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 15,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   }
                 }
               },
@@ -102,12 +102,12 @@
                 "start": {
                   "line": 16,
                   "column": 15,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 15,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -130,12 +130,12 @@
           "start": {
             "line": 16,
             "column": 14,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           },
           "end": {
             "line": 17,
             "column": 2,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           }
         }
       },
@@ -143,12 +143,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         },
         "end": {
           "line": 17,
           "column": 2,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         }
       }
     },
@@ -162,12 +162,12 @@
             "start": {
               "line": 19,
               "column": 7,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             },
             "end": {
               "line": 19,
               "column": 10,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             }
           }
         },
@@ -182,12 +182,12 @@
                 "start": {
                   "line": 19,
                   "column": 19,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 25,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -195,12 +195,12 @@
               "start": {
                 "line": 19,
                 "column": 19,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               },
               "end": {
                 "line": 19,
                 "column": 25,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               }
             }
           },
@@ -208,12 +208,12 @@
             "start": {
               "line": 19,
               "column": 19,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             },
             "end": {
               "line": 19,
               "column": 25,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             }
           }
         },
@@ -228,12 +228,12 @@
                 "start": {
                   "line": 19,
                   "column": 27,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 27,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -252,12 +252,12 @@
                     "start": {
                       "line": 19,
                       "column": 27,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 27,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -272,12 +272,12 @@
                     "start": {
                       "line": 19,
                       "column": 27,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 27,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -285,12 +285,12 @@
                   "start": {
                     "line": 19,
                     "column": 27,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 27,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   }
                 }
               },
@@ -298,12 +298,12 @@
                 "start": {
                   "line": 19,
                   "column": 27,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 27,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -326,12 +326,12 @@
           "start": {
             "line": 19,
             "column": 26,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           },
           "end": {
             "line": 20,
             "column": 2,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           }
         }
       },
@@ -339,12 +339,12 @@
         "start": {
           "line": 19,
           "column": 1,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         },
         "end": {
           "line": 20,
           "column": 2,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         }
       }
     },
@@ -358,12 +358,12 @@
             "start": {
               "line": 22,
               "column": 7,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             },
             "end": {
               "line": 22,
               "column": 11,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             }
           }
         },
@@ -379,12 +379,12 @@
                 "start": {
                   "line": 23,
                   "column": 5,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 8,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -404,12 +404,12 @@
                     "start": {
                       "line": 23,
                       "column": 5,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 8,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -441,12 +441,12 @@
                                       "start": {
                                         "line": 23,
                                         "column": 23,
-                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                        "program": "lambda-type-inference-overloaded-3.ats"
                                       },
                                       "end": {
                                         "line": 23,
                                         "column": 29,
-                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                        "program": "lambda-type-inference-overloaded-3.ats"
                                       }
                                     }
                                   },
@@ -454,12 +454,12 @@
                                     "start": {
                                       "line": 23,
                                       "column": 23,
-                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                      "program": "lambda-type-inference-overloaded-3.ats"
                                     },
                                     "end": {
                                       "line": 23,
                                       "column": 29,
-                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                      "program": "lambda-type-inference-overloaded-3.ats"
                                     }
                                   }
                                 },
@@ -467,12 +467,12 @@
                                   "start": {
                                     "line": 23,
                                     "column": 23,
-                                    "program": "lambda-type-inference-overloaded-3.ets"
+                                    "program": "lambda-type-inference-overloaded-3.ats"
                                   },
                                   "end": {
                                     "line": 23,
                                     "column": 29,
-                                    "program": "lambda-type-inference-overloaded-3.ets"
+                                    "program": "lambda-type-inference-overloaded-3.ats"
                                   }
                                 }
                               },
@@ -480,12 +480,12 @@
                                 "start": {
                                   "line": 23,
                                   "column": 20,
-                                  "program": "lambda-type-inference-overloaded-3.ets"
+                                  "program": "lambda-type-inference-overloaded-3.ats"
                                 },
                                 "end": {
                                   "line": 23,
                                   "column": 29,
-                                  "program": "lambda-type-inference-overloaded-3.ets"
+                                  "program": "lambda-type-inference-overloaded-3.ats"
                                 }
                               }
                             },
@@ -493,12 +493,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 20,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 29,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               }
                             }
                           }
@@ -509,12 +509,12 @@
                             "start": {
                               "line": 23,
                               "column": 34,
-                              "program": "lambda-type-inference-overloaded-3.ets"
+                              "program": "lambda-type-inference-overloaded-3.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 38,
-                              "program": "lambda-type-inference-overloaded-3.ets"
+                              "program": "lambda-type-inference-overloaded-3.ats"
                             }
                           }
                         },
@@ -522,12 +522,12 @@
                           "start": {
                             "line": 23,
                             "column": 19,
-                            "program": "lambda-type-inference-overloaded-3.ets"
+                            "program": "lambda-type-inference-overloaded-3.ats"
                           },
                           "end": {
                             "line": 23,
                             "column": 38,
-                            "program": "lambda-type-inference-overloaded-3.ets"
+                            "program": "lambda-type-inference-overloaded-3.ats"
                           }
                         }
                       },
@@ -535,12 +535,12 @@
                         "start": {
                           "line": 23,
                           "column": 9,
-                          "program": "lambda-type-inference-overloaded-3.ets"
+                          "program": "lambda-type-inference-overloaded-3.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 38,
-                          "program": "lambda-type-inference-overloaded-3.ets"
+                          "program": "lambda-type-inference-overloaded-3.ats"
                         }
                       }
                     },
@@ -548,12 +548,12 @@
                       "start": {
                         "line": 23,
                         "column": 9,
-                        "program": "lambda-type-inference-overloaded-3.ets"
+                        "program": "lambda-type-inference-overloaded-3.ats"
                       },
                       "end": {
                         "line": 23,
                         "column": 38,
-                        "program": "lambda-type-inference-overloaded-3.ets"
+                        "program": "lambda-type-inference-overloaded-3.ats"
                       }
                     }
                   }
@@ -564,12 +564,12 @@
                     "start": {
                       "line": 23,
                       "column": 41,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 45,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -580,12 +580,12 @@
                     "start": {
                       "line": 23,
                       "column": 46,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 6,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -593,12 +593,12 @@
                   "start": {
                     "line": 23,
                     "column": 8,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 6,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   }
                 }
               },
@@ -606,12 +606,12 @@
                 "start": {
                   "line": 23,
                   "column": 8,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 6,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -620,12 +620,12 @@
               "start": {
                 "line": 23,
                 "column": 5,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               },
               "end": {
                 "line": 24,
                 "column": 6,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               }
             }
           },
@@ -638,12 +638,12 @@
                 "start": {
                   "line": 22,
                   "column": 13,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 13,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -662,12 +662,12 @@
                     "start": {
                       "line": 22,
                       "column": 13,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 13,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -682,12 +682,12 @@
                     "start": {
                       "line": 22,
                       "column": 13,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 13,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -695,12 +695,12 @@
                   "start": {
                     "line": 22,
                     "column": 13,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 13,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   }
                 }
               },
@@ -708,12 +708,12 @@
                 "start": {
                   "line": 22,
                   "column": 13,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 13,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -736,12 +736,12 @@
           "start": {
             "line": 22,
             "column": 12,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           },
           "end": {
             "line": 25,
             "column": 2,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           }
         }
       },
@@ -749,12 +749,12 @@
         "start": {
           "line": 22,
           "column": 1,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         },
         "end": {
           "line": 25,
           "column": 2,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         }
       }
     },
@@ -768,12 +768,12 @@
             "start": {
               "line": 27,
               "column": 7,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             },
             "end": {
               "line": 27,
               "column": 14,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             }
           }
         },
@@ -788,12 +788,12 @@
                 "start": {
                   "line": 27,
                   "column": 23,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 27,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -801,12 +801,12 @@
               "start": {
                 "line": 27,
                 "column": 23,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               },
               "end": {
                 "line": 27,
                 "column": 27,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               }
             }
           },
@@ -814,12 +814,12 @@
             "start": {
               "line": 27,
               "column": 23,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             },
             "end": {
               "line": 27,
               "column": 27,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             }
           }
         },
@@ -834,12 +834,12 @@
                 "start": {
                   "line": 28,
                   "column": 5,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 28,
                   "column": 8,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -859,12 +859,12 @@
                     "start": {
                       "line": 28,
                       "column": 5,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 28,
                       "column": 8,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -896,12 +896,12 @@
                                       "start": {
                                         "line": 28,
                                         "column": 23,
-                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                        "program": "lambda-type-inference-overloaded-3.ats"
                                       },
                                       "end": {
                                         "line": 28,
                                         "column": 26,
-                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                        "program": "lambda-type-inference-overloaded-3.ats"
                                       }
                                     }
                                   },
@@ -909,12 +909,12 @@
                                     "start": {
                                       "line": 28,
                                       "column": 23,
-                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                      "program": "lambda-type-inference-overloaded-3.ats"
                                     },
                                     "end": {
                                       "line": 28,
                                       "column": 26,
-                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                      "program": "lambda-type-inference-overloaded-3.ats"
                                     }
                                   }
                                 },
@@ -922,12 +922,12 @@
                                   "start": {
                                     "line": 28,
                                     "column": 23,
-                                    "program": "lambda-type-inference-overloaded-3.ets"
+                                    "program": "lambda-type-inference-overloaded-3.ats"
                                   },
                                   "end": {
                                     "line": 28,
                                     "column": 26,
-                                    "program": "lambda-type-inference-overloaded-3.ets"
+                                    "program": "lambda-type-inference-overloaded-3.ats"
                                   }
                                 }
                               },
@@ -935,12 +935,12 @@
                                 "start": {
                                   "line": 28,
                                   "column": 20,
-                                  "program": "lambda-type-inference-overloaded-3.ets"
+                                  "program": "lambda-type-inference-overloaded-3.ats"
                                 },
                                 "end": {
                                   "line": 28,
                                   "column": 26,
-                                  "program": "lambda-type-inference-overloaded-3.ets"
+                                  "program": "lambda-type-inference-overloaded-3.ats"
                                 }
                               }
                             },
@@ -948,12 +948,12 @@
                               "start": {
                                 "line": 28,
                                 "column": 20,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               },
                               "end": {
                                 "line": 28,
                                 "column": 26,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               }
                             }
                           }
@@ -964,12 +964,12 @@
                             "start": {
                               "line": 28,
                               "column": 31,
-                              "program": "lambda-type-inference-overloaded-3.ets"
+                              "program": "lambda-type-inference-overloaded-3.ats"
                             },
                             "end": {
                               "line": 28,
                               "column": 35,
-                              "program": "lambda-type-inference-overloaded-3.ets"
+                              "program": "lambda-type-inference-overloaded-3.ats"
                             }
                           }
                         },
@@ -977,12 +977,12 @@
                           "start": {
                             "line": 28,
                             "column": 19,
-                            "program": "lambda-type-inference-overloaded-3.ets"
+                            "program": "lambda-type-inference-overloaded-3.ats"
                           },
                           "end": {
                             "line": 28,
                             "column": 35,
-                            "program": "lambda-type-inference-overloaded-3.ets"
+                            "program": "lambda-type-inference-overloaded-3.ats"
                           }
                         }
                       },
@@ -990,12 +990,12 @@
                         "start": {
                           "line": 28,
                           "column": 9,
-                          "program": "lambda-type-inference-overloaded-3.ets"
+                          "program": "lambda-type-inference-overloaded-3.ats"
                         },
                         "end": {
                           "line": 28,
                           "column": 35,
-                          "program": "lambda-type-inference-overloaded-3.ets"
+                          "program": "lambda-type-inference-overloaded-3.ats"
                         }
                       }
                     },
@@ -1003,12 +1003,12 @@
                       "start": {
                         "line": 28,
                         "column": 9,
-                        "program": "lambda-type-inference-overloaded-3.ets"
+                        "program": "lambda-type-inference-overloaded-3.ats"
                       },
                       "end": {
                         "line": 28,
                         "column": 35,
-                        "program": "lambda-type-inference-overloaded-3.ets"
+                        "program": "lambda-type-inference-overloaded-3.ats"
                       }
                     }
                   }
@@ -1019,12 +1019,12 @@
                     "start": {
                       "line": 28,
                       "column": 38,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 28,
                       "column": 42,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -1035,12 +1035,12 @@
                     "start": {
                       "line": 28,
                       "column": 43,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 29,
                       "column": 6,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -1048,12 +1048,12 @@
                   "start": {
                     "line": 28,
                     "column": 8,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   },
                   "end": {
                     "line": 29,
                     "column": 6,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   }
                 }
               },
@@ -1061,12 +1061,12 @@
                 "start": {
                   "line": 28,
                   "column": 8,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 29,
                   "column": 6,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -1075,12 +1075,12 @@
               "start": {
                 "line": 28,
                 "column": 5,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               },
               "end": {
                 "line": 29,
                 "column": 6,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               }
             }
           },
@@ -1093,12 +1093,12 @@
                 "start": {
                   "line": 31,
                   "column": 5,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 31,
                   "column": 9,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -1118,12 +1118,12 @@
                     "start": {
                       "line": 31,
                       "column": 5,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 31,
                       "column": 9,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -1137,12 +1137,12 @@
                     "start": {
                       "line": 31,
                       "column": 13,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 31,
                       "column": 17,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -1161,12 +1161,12 @@
                               "start": {
                                 "line": 32,
                                 "column": 9,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               },
                               "end": {
                                 "line": 32,
                                 "column": 13,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               }
                             }
                           },
@@ -1177,12 +1177,12 @@
                               "start": {
                                 "line": 32,
                                 "column": 14,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               },
                               "end": {
                                 "line": 32,
                                 "column": 17,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               }
                             }
                           },
@@ -1192,12 +1192,12 @@
                             "start": {
                               "line": 32,
                               "column": 9,
-                              "program": "lambda-type-inference-overloaded-3.ets"
+                              "program": "lambda-type-inference-overloaded-3.ats"
                             },
                             "end": {
                               "line": 32,
                               "column": 17,
-                              "program": "lambda-type-inference-overloaded-3.ets"
+                              "program": "lambda-type-inference-overloaded-3.ats"
                             }
                           }
                         },
@@ -1220,12 +1220,12 @@
                                       "start": {
                                         "line": 32,
                                         "column": 19,
-                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                        "program": "lambda-type-inference-overloaded-3.ats"
                                       },
                                       "end": {
                                         "line": 32,
                                         "column": 20,
-                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                        "program": "lambda-type-inference-overloaded-3.ats"
                                       }
                                     }
                                   },
@@ -1233,12 +1233,12 @@
                                     "start": {
                                       "line": 32,
                                       "column": 19,
-                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                      "program": "lambda-type-inference-overloaded-3.ats"
                                     },
                                     "end": {
                                       "line": 32,
                                       "column": 20,
-                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                      "program": "lambda-type-inference-overloaded-3.ats"
                                     }
                                   }
                                 }
@@ -1249,12 +1249,12 @@
                                   "start": {
                                     "line": 32,
                                     "column": 23,
-                                    "program": "lambda-type-inference-overloaded-3.ets"
+                                    "program": "lambda-type-inference-overloaded-3.ats"
                                   },
                                   "end": {
                                     "line": 32,
                                     "column": 27,
-                                    "program": "lambda-type-inference-overloaded-3.ets"
+                                    "program": "lambda-type-inference-overloaded-3.ats"
                                   }
                                 }
                               },
@@ -1265,12 +1265,12 @@
                                   "start": {
                                     "line": 32,
                                     "column": 31,
-                                    "program": "lambda-type-inference-overloaded-3.ets"
+                                    "program": "lambda-type-inference-overloaded-3.ats"
                                   },
                                   "end": {
                                     "line": 33,
                                     "column": 10,
-                                    "program": "lambda-type-inference-overloaded-3.ets"
+                                    "program": "lambda-type-inference-overloaded-3.ats"
                                   }
                                 }
                               },
@@ -1278,12 +1278,12 @@
                                 "start": {
                                   "line": 32,
                                   "column": 18,
-                                  "program": "lambda-type-inference-overloaded-3.ets"
+                                  "program": "lambda-type-inference-overloaded-3.ats"
                                 },
                                 "end": {
                                   "line": 33,
                                   "column": 10,
-                                  "program": "lambda-type-inference-overloaded-3.ets"
+                                  "program": "lambda-type-inference-overloaded-3.ats"
                                 }
                               }
                             },
@@ -1291,12 +1291,12 @@
                               "start": {
                                 "line": 32,
                                 "column": 18,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 10,
-                                "program": "lambda-type-inference-overloaded-3.ets"
+                                "program": "lambda-type-inference-overloaded-3.ats"
                               }
                             }
                           }
@@ -1306,12 +1306,12 @@
                           "start": {
                             "line": 32,
                             "column": 9,
-                            "program": "lambda-type-inference-overloaded-3.ets"
+                            "program": "lambda-type-inference-overloaded-3.ats"
                           },
                           "end": {
                             "line": 33,
                             "column": 11,
-                            "program": "lambda-type-inference-overloaded-3.ets"
+                            "program": "lambda-type-inference-overloaded-3.ats"
                           }
                         }
                       },
@@ -1319,12 +1319,12 @@
                         "start": {
                           "line": 32,
                           "column": 9,
-                          "program": "lambda-type-inference-overloaded-3.ets"
+                          "program": "lambda-type-inference-overloaded-3.ats"
                         },
                         "end": {
                           "line": 33,
                           "column": 12,
-                          "program": "lambda-type-inference-overloaded-3.ets"
+                          "program": "lambda-type-inference-overloaded-3.ats"
                         }
                       }
                     }
@@ -1333,12 +1333,12 @@
                     "start": {
                       "line": 31,
                       "column": 18,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 34,
                       "column": 6,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -1346,12 +1346,12 @@
                   "start": {
                     "line": 31,
                     "column": 9,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   },
                   "end": {
                     "line": 34,
                     "column": 6,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   }
                 }
               },
@@ -1359,12 +1359,12 @@
                 "start": {
                   "line": 31,
                   "column": 9,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 34,
                   "column": 6,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -1373,12 +1373,12 @@
               "start": {
                 "line": 31,
                 "column": 5,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               },
               "end": {
                 "line": 34,
                 "column": 6,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               }
             }
           },
@@ -1391,12 +1391,12 @@
                 "start": {
                   "line": 27,
                   "column": 29,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 29,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -1415,12 +1415,12 @@
                     "start": {
                       "line": 27,
                       "column": 29,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 29,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -1435,12 +1435,12 @@
                     "start": {
                       "line": 27,
                       "column": 29,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 29,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -1448,12 +1448,12 @@
                   "start": {
                     "line": 27,
                     "column": 29,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 29,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   }
                 }
               },
@@ -1461,12 +1461,12 @@
                 "start": {
                   "line": 27,
                   "column": 29,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 29,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -1489,12 +1489,12 @@
           "start": {
             "line": 27,
             "column": 28,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           },
           "end": {
             "line": 35,
             "column": 2,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           }
         }
       },
@@ -1502,12 +1502,12 @@
         "start": {
           "line": 27,
           "column": 1,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         },
         "end": {
           "line": 35,
           "column": 2,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         }
       }
     },
@@ -1521,12 +1521,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "lambda-type-inference-overloaded-3.ets"
+              "program": "lambda-type-inference-overloaded-3.ats"
             }
           }
         },
@@ -1587,12 +1587,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "lambda-type-inference-overloaded-3.ets"
+                      "program": "lambda-type-inference-overloaded-3.ats"
                     }
                   }
                 },
@@ -1600,12 +1600,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "lambda-type-inference-overloaded-3.ets"
+                    "program": "lambda-type-inference-overloaded-3.ats"
                   }
                 }
               },
@@ -1613,12 +1613,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "lambda-type-inference-overloaded-3.ets"
+                  "program": "lambda-type-inference-overloaded-3.ats"
                 }
               }
             },
@@ -1627,12 +1627,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "lambda-type-inference-overloaded-3.ets"
+                "program": "lambda-type-inference-overloaded-3.ats"
               }
             }
           }
@@ -1641,12 +1641,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "lambda-type-inference-overloaded-3.ets"
+            "program": "lambda-type-inference-overloaded-3.ats"
           }
         }
       },
@@ -1654,12 +1654,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "lambda-type-inference-overloaded-3.ets"
+          "program": "lambda-type-inference-overloaded-3.ats"
         }
       }
     }
@@ -1668,12 +1668,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "lambda-type-inference-overloaded-3.ets"
+      "program": "lambda-type-inference-overloaded-3.ats"
     },
     "end": {
       "line": 36,
       "column": 1,
-      "program": "lambda-type-inference-overloaded-3.ets"
+      "program": "lambda-type-inference-overloaded-3.ats"
     }
   }
 }

@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "typeVarReferenceFromStaticContext2.ets"
+              "program": "typeVarReferenceFromStaticContext2.ats"
             },
             "end": {
               "line": 16,
               "column": 10,
-              "program": "typeVarReferenceFromStaticContext2.ets"
+              "program": "typeVarReferenceFromStaticContext2.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                   "start": {
                     "line": 16,
                     "column": 11,
-                    "program": "typeVarReferenceFromStaticContext2.ets"
+                    "program": "typeVarReferenceFromStaticContext2.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 12,
-                    "program": "typeVarReferenceFromStaticContext2.ets"
+                    "program": "typeVarReferenceFromStaticContext2.ats"
                   }
                 }
               },
@@ -45,12 +45,12 @@
                 "start": {
                   "line": 16,
                   "column": 11,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 }
               }
             }
@@ -59,12 +59,12 @@
             "start": {
               "line": 16,
               "column": 10,
-              "program": "typeVarReferenceFromStaticContext2.ets"
+              "program": "typeVarReferenceFromStaticContext2.ats"
             },
             "end": {
               "line": 16,
               "column": 13,
-              "program": "typeVarReferenceFromStaticContext2.ets"
+              "program": "typeVarReferenceFromStaticContext2.ats"
             }
           }
         },
@@ -80,12 +80,12 @@
                 "start": {
                   "line": 17,
                   "column": 12,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 19,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 }
               }
             },
@@ -105,12 +105,12 @@
                     "start": {
                       "line": 17,
                       "column": 12,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 19,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     }
                   }
                 },
@@ -129,12 +129,12 @@
                         "start": {
                           "line": 17,
                           "column": 26,
-                          "program": "typeVarReferenceFromStaticContext2.ets"
+                          "program": "typeVarReferenceFromStaticContext2.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 29,
-                          "program": "typeVarReferenceFromStaticContext2.ets"
+                          "program": "typeVarReferenceFromStaticContext2.ats"
                         }
                       }
                     },
@@ -152,12 +152,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 30,
-                                  "program": "typeVarReferenceFromStaticContext2.ets"
+                                  "program": "typeVarReferenceFromStaticContext2.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 31,
-                                  "program": "typeVarReferenceFromStaticContext2.ets"
+                                  "program": "typeVarReferenceFromStaticContext2.ats"
                                 }
                               }
                             },
@@ -165,12 +165,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 30,
-                                "program": "typeVarReferenceFromStaticContext2.ets"
+                                "program": "typeVarReferenceFromStaticContext2.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 31,
-                                "program": "typeVarReferenceFromStaticContext2.ets"
+                                "program": "typeVarReferenceFromStaticContext2.ats"
                               }
                             }
                           },
@@ -178,12 +178,12 @@
                             "start": {
                               "line": 17,
                               "column": 30,
-                              "program": "typeVarReferenceFromStaticContext2.ets"
+                              "program": "typeVarReferenceFromStaticContext2.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 31,
-                              "program": "typeVarReferenceFromStaticContext2.ets"
+                              "program": "typeVarReferenceFromStaticContext2.ats"
                             }
                           }
                         }
@@ -192,12 +192,12 @@
                         "start": {
                           "line": 17,
                           "column": 29,
-                          "program": "typeVarReferenceFromStaticContext2.ets"
+                          "program": "typeVarReferenceFromStaticContext2.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 32,
-                          "program": "typeVarReferenceFromStaticContext2.ets"
+                          "program": "typeVarReferenceFromStaticContext2.ats"
                         }
                       }
                     },
@@ -205,12 +205,12 @@
                       "start": {
                         "line": 17,
                         "column": 26,
-                        "program": "typeVarReferenceFromStaticContext2.ets"
+                        "program": "typeVarReferenceFromStaticContext2.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 32,
-                        "program": "typeVarReferenceFromStaticContext2.ets"
+                        "program": "typeVarReferenceFromStaticContext2.ats"
                       }
                     }
                   },
@@ -218,12 +218,12 @@
                     "start": {
                       "line": 17,
                       "column": 26,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 32,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     }
                   }
                 },
@@ -239,12 +239,12 @@
                           "start": {
                             "line": 17,
                             "column": 20,
-                            "program": "typeVarReferenceFromStaticContext2.ets"
+                            "program": "typeVarReferenceFromStaticContext2.ats"
                           },
                           "end": {
                             "line": 17,
                             "column": 21,
-                            "program": "typeVarReferenceFromStaticContext2.ets"
+                            "program": "typeVarReferenceFromStaticContext2.ats"
                           }
                         }
                       },
@@ -252,12 +252,12 @@
                         "start": {
                           "line": 17,
                           "column": 20,
-                          "program": "typeVarReferenceFromStaticContext2.ets"
+                          "program": "typeVarReferenceFromStaticContext2.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 22,
-                          "program": "typeVarReferenceFromStaticContext2.ets"
+                          "program": "typeVarReferenceFromStaticContext2.ats"
                         }
                       }
                     }
@@ -266,12 +266,12 @@
                     "start": {
                       "line": 17,
                       "column": 19,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 22,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     }
                   }
                 },
@@ -293,12 +293,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 20,
-                                  "program": "typeVarReferenceFromStaticContext2.ets"
+                                  "program": "typeVarReferenceFromStaticContext2.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 23,
-                                  "program": "typeVarReferenceFromStaticContext2.ets"
+                                  "program": "typeVarReferenceFromStaticContext2.ats"
                                 }
                               }
                             },
@@ -316,12 +316,12 @@
                                         "start": {
                                           "line": 18,
                                           "column": 24,
-                                          "program": "typeVarReferenceFromStaticContext2.ets"
+                                          "program": "typeVarReferenceFromStaticContext2.ats"
                                         },
                                         "end": {
                                           "line": 18,
                                           "column": 25,
-                                          "program": "typeVarReferenceFromStaticContext2.ets"
+                                          "program": "typeVarReferenceFromStaticContext2.ats"
                                         }
                                       }
                                     },
@@ -329,12 +329,12 @@
                                       "start": {
                                         "line": 18,
                                         "column": 24,
-                                        "program": "typeVarReferenceFromStaticContext2.ets"
+                                        "program": "typeVarReferenceFromStaticContext2.ats"
                                       },
                                       "end": {
                                         "line": 18,
                                         "column": 25,
-                                        "program": "typeVarReferenceFromStaticContext2.ets"
+                                        "program": "typeVarReferenceFromStaticContext2.ats"
                                       }
                                     }
                                   },
@@ -342,12 +342,12 @@
                                     "start": {
                                       "line": 18,
                                       "column": 24,
-                                      "program": "typeVarReferenceFromStaticContext2.ets"
+                                      "program": "typeVarReferenceFromStaticContext2.ats"
                                     },
                                     "end": {
                                       "line": 18,
                                       "column": 25,
-                                      "program": "typeVarReferenceFromStaticContext2.ets"
+                                      "program": "typeVarReferenceFromStaticContext2.ats"
                                     }
                                   }
                                 }
@@ -356,12 +356,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 23,
-                                  "program": "typeVarReferenceFromStaticContext2.ets"
+                                  "program": "typeVarReferenceFromStaticContext2.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 26,
-                                  "program": "typeVarReferenceFromStaticContext2.ets"
+                                  "program": "typeVarReferenceFromStaticContext2.ats"
                                 }
                               }
                             },
@@ -369,12 +369,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 20,
-                                "program": "typeVarReferenceFromStaticContext2.ets"
+                                "program": "typeVarReferenceFromStaticContext2.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 26,
-                                "program": "typeVarReferenceFromStaticContext2.ets"
+                                "program": "typeVarReferenceFromStaticContext2.ats"
                               }
                             }
                           },
@@ -382,12 +382,12 @@
                             "start": {
                               "line": 18,
                               "column": 20,
-                              "program": "typeVarReferenceFromStaticContext2.ets"
+                              "program": "typeVarReferenceFromStaticContext2.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 26,
-                              "program": "typeVarReferenceFromStaticContext2.ets"
+                              "program": "typeVarReferenceFromStaticContext2.ats"
                             }
                           }
                         },
@@ -396,12 +396,12 @@
                           "start": {
                             "line": 18,
                             "column": 16,
-                            "program": "typeVarReferenceFromStaticContext2.ets"
+                            "program": "typeVarReferenceFromStaticContext2.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 29,
-                            "program": "typeVarReferenceFromStaticContext2.ets"
+                            "program": "typeVarReferenceFromStaticContext2.ats"
                           }
                         }
                       },
@@ -409,12 +409,12 @@
                         "start": {
                           "line": 18,
                           "column": 9,
-                          "program": "typeVarReferenceFromStaticContext2.ets"
+                          "program": "typeVarReferenceFromStaticContext2.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 29,
-                          "program": "typeVarReferenceFromStaticContext2.ets"
+                          "program": "typeVarReferenceFromStaticContext2.ats"
                         }
                       }
                     }
@@ -423,12 +423,12 @@
                     "start": {
                       "line": 17,
                       "column": 33,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 6,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     }
                   }
                 },
@@ -436,12 +436,12 @@
                   "start": {
                     "line": 17,
                     "column": 19,
-                    "program": "typeVarReferenceFromStaticContext2.ets"
+                    "program": "typeVarReferenceFromStaticContext2.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 6,
-                    "program": "typeVarReferenceFromStaticContext2.ets"
+                    "program": "typeVarReferenceFromStaticContext2.ats"
                   }
                 }
               },
@@ -449,12 +449,12 @@
                 "start": {
                   "line": 17,
                   "column": 19,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 6,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 }
               }
             },
@@ -463,12 +463,12 @@
               "start": {
                 "line": 17,
                 "column": 12,
-                "program": "typeVarReferenceFromStaticContext2.ets"
+                "program": "typeVarReferenceFromStaticContext2.ats"
               },
               "end": {
                 "line": 19,
                 "column": 6,
-                "program": "typeVarReferenceFromStaticContext2.ets"
+                "program": "typeVarReferenceFromStaticContext2.ats"
               }
             }
           },
@@ -481,12 +481,12 @@
                 "start": {
                   "line": 16,
                   "column": 15,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 15,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 }
               }
             },
@@ -505,12 +505,12 @@
                     "start": {
                       "line": 16,
                       "column": 15,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 15,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     }
                   }
                 },
@@ -525,12 +525,12 @@
                     "start": {
                       "line": 16,
                       "column": 15,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 15,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     }
                   }
                 },
@@ -538,12 +538,12 @@
                   "start": {
                     "line": 16,
                     "column": 15,
-                    "program": "typeVarReferenceFromStaticContext2.ets"
+                    "program": "typeVarReferenceFromStaticContext2.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 15,
-                    "program": "typeVarReferenceFromStaticContext2.ets"
+                    "program": "typeVarReferenceFromStaticContext2.ats"
                   }
                 }
               },
@@ -551,12 +551,12 @@
                 "start": {
                   "line": 16,
                   "column": 15,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 15,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 }
               }
             },
@@ -579,12 +579,12 @@
           "start": {
             "line": 16,
             "column": 14,
-            "program": "typeVarReferenceFromStaticContext2.ets"
+            "program": "typeVarReferenceFromStaticContext2.ats"
           },
           "end": {
             "line": 20,
             "column": 2,
-            "program": "typeVarReferenceFromStaticContext2.ets"
+            "program": "typeVarReferenceFromStaticContext2.ats"
           }
         }
       },
@@ -592,12 +592,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "typeVarReferenceFromStaticContext2.ets"
+          "program": "typeVarReferenceFromStaticContext2.ats"
         },
         "end": {
           "line": 20,
           "column": 2,
-          "program": "typeVarReferenceFromStaticContext2.ets"
+          "program": "typeVarReferenceFromStaticContext2.ats"
         }
       }
     },
@@ -611,12 +611,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "typeVarReferenceFromStaticContext2.ets"
+              "program": "typeVarReferenceFromStaticContext2.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "typeVarReferenceFromStaticContext2.ets"
+              "program": "typeVarReferenceFromStaticContext2.ats"
             }
           }
         },
@@ -677,12 +677,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "typeVarReferenceFromStaticContext2.ets"
+                      "program": "typeVarReferenceFromStaticContext2.ats"
                     }
                   }
                 },
@@ -690,12 +690,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "typeVarReferenceFromStaticContext2.ets"
+                    "program": "typeVarReferenceFromStaticContext2.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "typeVarReferenceFromStaticContext2.ets"
+                    "program": "typeVarReferenceFromStaticContext2.ats"
                   }
                 }
               },
@@ -703,12 +703,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "typeVarReferenceFromStaticContext2.ets"
+                  "program": "typeVarReferenceFromStaticContext2.ats"
                 }
               }
             },
@@ -717,12 +717,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "typeVarReferenceFromStaticContext2.ets"
+                "program": "typeVarReferenceFromStaticContext2.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "typeVarReferenceFromStaticContext2.ets"
+                "program": "typeVarReferenceFromStaticContext2.ats"
               }
             }
           }
@@ -731,12 +731,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "typeVarReferenceFromStaticContext2.ets"
+            "program": "typeVarReferenceFromStaticContext2.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "typeVarReferenceFromStaticContext2.ets"
+            "program": "typeVarReferenceFromStaticContext2.ats"
           }
         }
       },
@@ -744,12 +744,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "typeVarReferenceFromStaticContext2.ets"
+          "program": "typeVarReferenceFromStaticContext2.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "typeVarReferenceFromStaticContext2.ets"
+          "program": "typeVarReferenceFromStaticContext2.ats"
         }
       }
     }
@@ -758,12 +758,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "typeVarReferenceFromStaticContext2.ets"
+      "program": "typeVarReferenceFromStaticContext2.ats"
     },
     "end": {
       "line": 21,
       "column": 1,
-      "program": "typeVarReferenceFromStaticContext2.ets"
+      "program": "typeVarReferenceFromStaticContext2.ats"
     }
   }
 }

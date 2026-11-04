@@ -1,14 +1,14 @@
 # Tests that fails after recheck: Issue #24651
-runtime/ets/extension_function_tests/extensionFunctionReturnThis2.ets
-runtime/ets/lambda_with_receiver/lambda_with_receiver_return_this2.ets
-runtime/ets/multisource_inheritance-2.ets
-runtime/ets/lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
-ast/parser/ets/de_while_with_empty_body.ets
-runtime/ets/generic_lambda_6.ets
-runtime/ets/implement_interface.ets
-runtime/ets/typealias_function_name_conflict.ets
+runtime/ets/extension_function_tests/extensionFunctionReturnThis2.ats
+runtime/ets/lambda_with_receiver/lambda_with_receiver_return_this2.ats
+runtime/ets/multisource_inheritance-2.ats
+runtime/ets/lambda_with_receiver/lambda_with_receiver_generics_return_this.ats
+ast/parser/ets/de_while_with_empty_body.ats
+runtime/ets/generic_lambda_6.ats
+runtime/ets/implement_interface.ats
+runtime/ets/typealias_function_name_conflict.ats
 #Test that failed before CheckerPhase (on ConstantExpressionLowering)
 #Test that failed with abort before plugins-after-check phase
 
 #32155
-ast/compiler/ets/annotation_new.ets
+ast/compiler/ets/annotation_new.ats

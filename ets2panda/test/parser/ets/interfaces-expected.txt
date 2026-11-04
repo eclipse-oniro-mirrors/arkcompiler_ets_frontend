@@ -15,12 +15,12 @@
                 "start": {
                   "line": 17,
                   "column": 3,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 6,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -40,12 +40,12 @@
                     "start": {
                       "line": 17,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 6,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -59,12 +59,12 @@
                     "start": {
                       "line": 17,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 11,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -72,12 +72,12 @@
                   "start": {
                     "line": 17,
                     "column": 3,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 11,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               },
@@ -85,12 +85,12 @@
                 "start": {
                   "line": 17,
                   "column": 3,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 11,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -104,12 +104,12 @@
                     "start": {
                       "line": 17,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 6,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -129,12 +129,12 @@
                         "start": {
                           "line": 17,
                           "column": 3,
-                          "program": "interfaces.ets"
+                          "program": "interfaces.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 6,
-                          "program": "interfaces.ets"
+                          "program": "interfaces.ats"
                         }
                       }
                     },
@@ -153,12 +153,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 3,
-                                "program": "interfaces.ets"
+                                "program": "interfaces.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 11,
-                                "program": "interfaces.ets"
+                                "program": "interfaces.ats"
                               }
                             }
                           },
@@ -166,12 +166,12 @@
                             "start": {
                               "line": 17,
                               "column": 3,
-                              "program": "interfaces.ets"
+                              "program": "interfaces.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 11,
-                              "program": "interfaces.ets"
+                              "program": "interfaces.ats"
                             }
                           }
                         },
@@ -179,12 +179,12 @@
                           "start": {
                             "line": 17,
                             "column": 3,
-                            "program": "interfaces.ets"
+                            "program": "interfaces.ats"
                           },
                           "end": {
                             "line": 17,
                             "column": 11,
-                            "program": "interfaces.ets"
+                            "program": "interfaces.ats"
                           }
                         }
                       }
@@ -193,12 +193,12 @@
                       "start": {
                         "line": 17,
                         "column": 3,
-                        "program": "interfaces.ets"
+                        "program": "interfaces.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 11,
-                        "program": "interfaces.ets"
+                        "program": "interfaces.ats"
                       }
                     }
                   },
@@ -206,12 +206,12 @@
                     "start": {
                       "line": 17,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 11,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -220,12 +220,12 @@
                   "start": {
                     "line": 17,
                     "column": 3,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 11,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               }
@@ -234,12 +234,12 @@
               "start": {
                 "line": 17,
                 "column": 3,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               },
               "end": {
                 "line": 17,
                 "column": 11,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               }
             }
           },
@@ -252,12 +252,12 @@
                 "start": {
                   "line": 18,
                   "column": 3,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 7,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -277,12 +277,12 @@
                     "start": {
                       "line": 18,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 7,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -296,12 +296,12 @@
                     "start": {
                       "line": 18,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 11,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -309,12 +309,12 @@
                   "start": {
                     "line": 18,
                     "column": 3,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 11,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               },
@@ -322,12 +322,12 @@
                 "start": {
                   "line": 18,
                   "column": 3,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 11,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -341,12 +341,12 @@
                     "start": {
                       "line": 18,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 7,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -366,12 +366,12 @@
                         "start": {
                           "line": 18,
                           "column": 3,
-                          "program": "interfaces.ets"
+                          "program": "interfaces.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 7,
-                          "program": "interfaces.ets"
+                          "program": "interfaces.ats"
                         }
                       }
                     },
@@ -390,12 +390,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 3,
-                                "program": "interfaces.ets"
+                                "program": "interfaces.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 11,
-                                "program": "interfaces.ets"
+                                "program": "interfaces.ats"
                               }
                             }
                           },
@@ -403,12 +403,12 @@
                             "start": {
                               "line": 18,
                               "column": 3,
-                              "program": "interfaces.ets"
+                              "program": "interfaces.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 11,
-                              "program": "interfaces.ets"
+                              "program": "interfaces.ats"
                             }
                           }
                         },
@@ -416,12 +416,12 @@
                           "start": {
                             "line": 18,
                             "column": 3,
-                            "program": "interfaces.ets"
+                            "program": "interfaces.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 11,
-                            "program": "interfaces.ets"
+                            "program": "interfaces.ats"
                           }
                         }
                       }
@@ -430,12 +430,12 @@
                       "start": {
                         "line": 18,
                         "column": 3,
-                        "program": "interfaces.ets"
+                        "program": "interfaces.ats"
                       },
                       "end": {
                         "line": 18,
                         "column": 11,
-                        "program": "interfaces.ets"
+                        "program": "interfaces.ats"
                       }
                     }
                   },
@@ -443,12 +443,12 @@
                     "start": {
                       "line": 18,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 11,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -457,12 +457,12 @@
                   "start": {
                     "line": 18,
                     "column": 3,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 11,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               }
@@ -471,12 +471,12 @@
               "start": {
                 "line": 18,
                 "column": 3,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               },
               "end": {
                 "line": 18,
                 "column": 11,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               }
             }
           }
@@ -485,12 +485,12 @@
           "start": {
             "line": 16,
             "column": 13,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           },
           "end": {
             "line": 19,
             "column": 2,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           }
         }
       },
@@ -501,12 +501,12 @@
           "start": {
             "line": 16,
             "column": 11,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           },
           "end": {
             "line": 16,
             "column": 12,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           }
         }
       },
@@ -515,12 +515,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "interfaces.ets"
+          "program": "interfaces.ats"
         },
         "end": {
           "line": 19,
           "column": 2,
-          "program": "interfaces.ets"
+          "program": "interfaces.ats"
         }
       }
     },
@@ -538,12 +538,12 @@
                 "start": {
                   "line": 22,
                   "column": 11,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 14,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -563,12 +563,12 @@
                     "start": {
                       "line": 22,
                       "column": 11,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 14,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -582,12 +582,12 @@
                     "start": {
                       "line": 22,
                       "column": 18,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 22,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -607,12 +607,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 25,
-                                "program": "interfaces.ets"
+                                "program": "interfaces.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 27,
-                                "program": "interfaces.ets"
+                                "program": "interfaces.ats"
                               }
                             }
                           },
@@ -623,12 +623,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 28,
-                                "program": "interfaces.ets"
+                                "program": "interfaces.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 34,
-                                "program": "interfaces.ets"
+                                "program": "interfaces.ats"
                               }
                             }
                           },
@@ -638,12 +638,12 @@
                             "start": {
                               "line": 22,
                               "column": 25,
-                              "program": "interfaces.ets"
+                              "program": "interfaces.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 34,
-                              "program": "interfaces.ets"
+                              "program": "interfaces.ats"
                             }
                           }
                         },
@@ -653,12 +653,12 @@
                           "start": {
                             "line": 22,
                             "column": 25,
-                            "program": "interfaces.ets"
+                            "program": "interfaces.ats"
                           },
                           "end": {
                             "line": 22,
                             "column": 36,
-                            "program": "interfaces.ets"
+                            "program": "interfaces.ats"
                           }
                         }
                       },
@@ -666,12 +666,12 @@
                         "start": {
                           "line": 22,
                           "column": 25,
-                          "program": "interfaces.ets"
+                          "program": "interfaces.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 37,
-                          "program": "interfaces.ets"
+                          "program": "interfaces.ats"
                         }
                       }
                     }
@@ -680,12 +680,12 @@
                     "start": {
                       "line": 22,
                       "column": 23,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 39,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -693,12 +693,12 @@
                   "start": {
                     "line": 22,
                     "column": 11,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 39,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               },
@@ -706,12 +706,12 @@
                 "start": {
                   "line": 22,
                   "column": 11,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 39,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -720,12 +720,12 @@
               "start": {
                 "line": 22,
                 "column": 11,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               },
               "end": {
                 "line": 22,
                 "column": 39,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               }
             }
           },
@@ -738,12 +738,12 @@
                 "start": {
                   "line": 23,
                   "column": 3,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 9,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -763,12 +763,12 @@
                     "start": {
                       "line": 23,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 9,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -782,12 +782,12 @@
                     "start": {
                       "line": 23,
                       "column": 13,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 17,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -798,12 +798,12 @@
                     "start": {
                       "line": 23,
                       "column": 18,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 20,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -811,12 +811,12 @@
                   "start": {
                     "line": 23,
                     "column": 3,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 23,
                     "column": 20,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               },
@@ -824,12 +824,12 @@
                 "start": {
                   "line": 23,
                   "column": 3,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 20,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -838,12 +838,12 @@
               "start": {
                 "line": 23,
                 "column": 3,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               },
               "end": {
                 "line": 23,
                 "column": 20,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               }
             }
           },
@@ -856,12 +856,12 @@
                 "start": {
                   "line": 24,
                   "column": 3,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 12,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -881,12 +881,12 @@
                     "start": {
                       "line": 24,
                       "column": 3,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 12,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -900,12 +900,12 @@
                     "start": {
                       "line": 24,
                       "column": 16,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 20,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -916,12 +916,12 @@
                     "start": {
                       "line": 24,
                       "column": 21,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 23,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -929,12 +929,12 @@
                   "start": {
                     "line": 24,
                     "column": 3,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 23,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               },
@@ -942,12 +942,12 @@
                 "start": {
                   "line": 24,
                   "column": 3,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 23,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -956,12 +956,12 @@
               "start": {
                 "line": 24,
                 "column": 3,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               },
               "end": {
                 "line": 24,
                 "column": 23,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               }
             }
           }
@@ -970,12 +970,12 @@
           "start": {
             "line": 21,
             "column": 14,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           },
           "end": {
             "line": 25,
             "column": 2,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           }
         }
       },
@@ -986,12 +986,12 @@
           "start": {
             "line": 21,
             "column": 11,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           },
           "end": {
             "line": 21,
             "column": 13,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           }
         }
       },
@@ -1000,12 +1000,12 @@
         "start": {
           "line": 21,
           "column": 1,
-          "program": "interfaces.ets"
+          "program": "interfaces.ats"
         },
         "end": {
           "line": 25,
           "column": 2,
-          "program": "interfaces.ets"
+          "program": "interfaces.ats"
         }
       }
     },
@@ -1018,12 +1018,12 @@
           "start": {
             "line": 27,
             "column": 28,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           },
           "end": {
             "line": 28,
             "column": 2,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           }
         }
       },
@@ -1034,12 +1034,12 @@
           "start": {
             "line": 27,
             "column": 11,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           },
           "end": {
             "line": 27,
             "column": 13,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           }
         }
       },
@@ -1057,12 +1057,12 @@
                   "start": {
                     "line": 27,
                     "column": 22,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 23,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               },
@@ -1070,12 +1070,12 @@
                 "start": {
                   "line": 27,
                   "column": 22,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 23,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -1083,12 +1083,12 @@
               "start": {
                 "line": 27,
                 "column": 22,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               },
               "end": {
                 "line": 27,
                 "column": 23,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               }
             }
           },
@@ -1096,12 +1096,12 @@
             "start": {
               "line": 27,
               "column": 22,
-              "program": "interfaces.ets"
+              "program": "interfaces.ats"
             },
             "end": {
               "line": 27,
               "column": 23,
-              "program": "interfaces.ets"
+              "program": "interfaces.ats"
             }
           }
         },
@@ -1118,12 +1118,12 @@
                   "start": {
                     "line": 27,
                     "column": 25,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 27,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               },
@@ -1131,12 +1131,12 @@
                 "start": {
                   "line": 27,
                   "column": 25,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 27,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -1144,12 +1144,12 @@
               "start": {
                 "line": 27,
                 "column": 25,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               },
               "end": {
                 "line": 27,
                 "column": 27,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               }
             }
           },
@@ -1157,12 +1157,12 @@
             "start": {
               "line": 27,
               "column": 25,
-              "program": "interfaces.ets"
+              "program": "interfaces.ats"
             },
             "end": {
               "line": 27,
               "column": 27,
-              "program": "interfaces.ets"
+              "program": "interfaces.ats"
             }
           }
         }
@@ -1171,12 +1171,12 @@
         "start": {
           "line": 27,
           "column": 1,
-          "program": "interfaces.ets"
+          "program": "interfaces.ats"
         },
         "end": {
           "line": 28,
           "column": 2,
-          "program": "interfaces.ets"
+          "program": "interfaces.ats"
         }
       }
     },
@@ -1190,12 +1190,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "interfaces.ets"
+              "program": "interfaces.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "interfaces.ets"
+              "program": "interfaces.ats"
             }
           }
         },
@@ -1256,12 +1256,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "interfaces.ets"
+                      "program": "interfaces.ats"
                     }
                   }
                 },
@@ -1269,12 +1269,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "interfaces.ets"
+                    "program": "interfaces.ats"
                   }
                 }
               },
@@ -1282,12 +1282,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "interfaces.ets"
+                  "program": "interfaces.ats"
                 }
               }
             },
@@ -1296,12 +1296,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "interfaces.ets"
+                "program": "interfaces.ats"
               }
             }
           }
@@ -1310,12 +1310,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "interfaces.ets"
+            "program": "interfaces.ats"
           }
         }
       },
@@ -1323,12 +1323,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "interfaces.ets"
+          "program": "interfaces.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "interfaces.ets"
+          "program": "interfaces.ats"
         }
       }
     }
@@ -1337,13 +1337,13 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "interfaces.ets"
+      "program": "interfaces.ats"
     },
     "end": {
       "line": 31,
       "column": 1,
-      "program": "interfaces.ets"
+      "program": "interfaces.ats"
     }
   }
 }
-[interfaces.ets:22:28] Semantic error ESE0208: 'nopnop' is an instance property of 'I0'
+[interfaces.ats:22:28] Semantic error ESE0208: 'nopnop' is an instance property of 'I0'

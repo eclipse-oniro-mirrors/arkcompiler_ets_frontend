@@ -10,12 +10,12 @@
           "start": {
             "line": 16,
             "column": 20,
-            "program": "import_11.ets"
+            "program": "import_11.ats"
           },
           "end": {
             "line": 16,
             "column": 35,
-            "program": "import_11.ets"
+            "program": "import_11.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 16,
                 "column": 9,
-                "program": "import_11.ets"
+                "program": "import_11.ats"
               },
               "end": {
                 "line": 16,
                 "column": 13,
-                "program": "import_11.ets"
+                "program": "import_11.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 16,
                 "column": 9,
-                "program": "import_11.ets"
+                "program": "import_11.ats"
               },
               "end": {
                 "line": 16,
                 "column": 13,
-                "program": "import_11.ets"
+                "program": "import_11.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 16,
               "column": 9,
-              "program": "import_11.ets"
+              "program": "import_11.ats"
             },
             "end": {
               "line": 16,
               "column": 13,
-              "program": "import_11.ets"
+              "program": "import_11.ats"
             }
           }
         }
@@ -72,12 +72,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "import_11.ets"
+          "program": "import_11.ats"
         },
         "end": {
           "line": 16,
           "column": 35,
-          "program": "import_11.ets"
+          "program": "import_11.ats"
         }
       }
     },
@@ -91,12 +91,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "import_11.ets"
+              "program": "import_11.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "import_11.ets"
+              "program": "import_11.ats"
             }
           }
         },
@@ -112,12 +112,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "import_11.ets"
+                  "program": "import_11.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 14,
-                  "program": "import_11.ets"
+                  "program": "import_11.ats"
                 }
               }
             },
@@ -137,12 +137,12 @@
                     "start": {
                       "line": 18,
                       "column": 10,
-                      "program": "import_11.ets"
+                      "program": "import_11.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 14,
-                      "program": "import_11.ets"
+                      "program": "import_11.ats"
                     }
                   }
                 },
@@ -156,12 +156,12 @@
                     "start": {
                       "line": 18,
                       "column": 19,
-                      "program": "import_11.ets"
+                      "program": "import_11.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 23,
-                      "program": "import_11.ets"
+                      "program": "import_11.ats"
                     }
                   }
                 },
@@ -172,12 +172,12 @@
                     "start": {
                       "line": 19,
                       "column": 1,
-                      "program": "import_11.ets"
+                      "program": "import_11.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 2,
-                      "program": "import_11.ets"
+                      "program": "import_11.ats"
                     }
                   }
                 },
@@ -185,12 +185,12 @@
                   "start": {
                     "line": 18,
                     "column": 10,
-                    "program": "import_11.ets"
+                    "program": "import_11.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 2,
-                    "program": "import_11.ets"
+                    "program": "import_11.ats"
                   }
                 }
               },
@@ -198,12 +198,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "import_11.ets"
+                  "program": "import_11.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 2,
-                  "program": "import_11.ets"
+                  "program": "import_11.ats"
                 }
               }
             },
@@ -212,12 +212,12 @@
               "start": {
                 "line": 18,
                 "column": 1,
-                "program": "import_11.ets"
+                "program": "import_11.ats"
               },
               "end": {
                 "line": 20,
                 "column": 2,
-                "program": "import_11.ets"
+                "program": "import_11.ats"
               }
             }
           }
@@ -226,12 +226,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "import_11.ets"
+            "program": "import_11.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "import_11.ets"
+            "program": "import_11.ats"
           }
         }
       },
@@ -239,12 +239,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "import_11.ets"
+          "program": "import_11.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "import_11.ets"
+          "program": "import_11.ats"
         }
       }
     }
@@ -253,13 +253,13 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "import_11.ets"
+      "program": "import_11.ats"
     },
     "end": {
       "line": 23,
       "column": 1,
-      "program": "import_11.ets"
+      "program": "import_11.ats"
     }
   }
 }
-[re_export_5.ets:17:8] Semantic error ESE130586: The entity named 'foo' is already exported.
+[re_export_5.ats:17:8] Semantic error ESE130586: The entity named 'foo' is already exported.

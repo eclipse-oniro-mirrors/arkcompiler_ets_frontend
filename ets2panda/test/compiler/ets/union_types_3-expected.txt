@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "union_types_3.ets"
+              "program": "union_types_3.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "union_types_3.ets"
+              "program": "union_types_3.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "union_types_3.ets"
+                  "program": "union_types_3.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "union_types_3.ets"
+                  "program": "union_types_3.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "union_types_3.ets"
+                      "program": "union_types_3.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "union_types_3.ets"
+                      "program": "union_types_3.ats"
                     }
                   }
                 },
@@ -90,12 +90,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 14,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 17,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -110,12 +110,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 20,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 26,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         }
                                       }
                                     },
@@ -123,12 +123,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 20,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 26,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       }
                                     }
                                   },
@@ -136,12 +136,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 20,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 26,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -151,12 +151,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 29,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 36,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 }
@@ -165,12 +165,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 14,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 36,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -178,12 +178,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 9,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 11,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -194,12 +194,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 39,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 40,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -207,12 +207,12 @@
                             "start": {
                               "line": 17,
                               "column": 9,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 40,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         }
@@ -222,12 +222,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 41,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -244,12 +244,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 5,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 12,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -260,12 +260,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 13,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 21,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -275,12 +275,12 @@
                             "start": {
                               "line": 18,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 21,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -297,12 +297,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 23,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 25,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               },
@@ -312,12 +312,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 29,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 32,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               },
@@ -325,12 +325,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 22,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 33,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -341,12 +341,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 36,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 37,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -354,12 +354,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 22,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 37,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -370,12 +370,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 39,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 40,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -386,12 +386,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 42,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 60,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           }
@@ -401,12 +401,12 @@
                           "start": {
                             "line": 18,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 61,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -414,12 +414,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 62,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -435,12 +435,12 @@
                             "start": {
                               "line": 19,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 7,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -451,12 +451,12 @@
                             "start": {
                               "line": 19,
                               "column": 10,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 12,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -464,12 +464,12 @@
                           "start": {
                             "line": 19,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 19,
                             "column": 12,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -477,12 +477,12 @@
                         "start": {
                           "line": 19,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 13,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -499,12 +499,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 5,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 12,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -515,12 +515,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 13,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 21,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -530,12 +530,12 @@
                             "start": {
                               "line": 20,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 21,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -552,12 +552,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 23,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 20,
                                     "column": 25,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               },
@@ -567,12 +567,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 29,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 20,
                                     "column": 32,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               },
@@ -580,12 +580,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 22,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 33,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -596,12 +596,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 36,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 37,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -609,12 +609,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 22,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 37,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -625,12 +625,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 39,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 41,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -641,12 +641,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 43,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 62,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           }
@@ -656,12 +656,12 @@
                           "start": {
                             "line": 20,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 63,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -669,12 +669,12 @@
                         "start": {
                           "line": 20,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 64,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -690,12 +690,12 @@
                             "start": {
                               "line": 21,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 21,
                               "column": 7,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -706,12 +706,12 @@
                             "start": {
                               "line": 21,
                               "column": 10,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 21,
                               "column": 14,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -719,12 +719,12 @@
                           "start": {
                             "line": 21,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 21,
                             "column": 14,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -732,12 +732,12 @@
                         "start": {
                           "line": 21,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 14,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -754,12 +754,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 5,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 12,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -770,12 +770,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 13,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 21,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -785,12 +785,12 @@
                             "start": {
                               "line": 22,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 21,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -804,12 +804,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 23,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 25,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -819,12 +819,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 29,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 36,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -832,12 +832,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 22,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 37,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -848,12 +848,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 39,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 43,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -864,12 +864,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 45,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 66,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           }
@@ -879,12 +879,12 @@
                           "start": {
                             "line": 22,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 22,
                             "column": 67,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -892,12 +892,12 @@
                         "start": {
                           "line": 22,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 68,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -913,12 +913,12 @@
                             "start": {
                               "line": 23,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 7,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -929,12 +929,12 @@
                             "start": {
                               "line": 23,
                               "column": 10,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 16,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -942,12 +942,12 @@
                           "start": {
                             "line": 23,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 23,
                             "column": 16,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -955,12 +955,12 @@
                         "start": {
                           "line": 23,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 16,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -977,12 +977,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 5,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 12,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -993,12 +993,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 13,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 23,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1008,12 +1008,12 @@
                             "start": {
                               "line": 24,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 23,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -1034,12 +1034,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 26,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 28,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       }
                                     }
                                   },
@@ -1054,12 +1054,12 @@
                                           "start": {
                                             "line": 24,
                                             "column": 32,
-                                            "program": "union_types_3.ets"
+                                            "program": "union_types_3.ats"
                                           },
                                           "end": {
                                             "line": 24,
                                             "column": 38,
-                                            "program": "union_types_3.ets"
+                                            "program": "union_types_3.ats"
                                           }
                                         }
                                       },
@@ -1067,12 +1067,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 32,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 38,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         }
                                       }
                                     },
@@ -1080,12 +1080,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 32,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 38,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       }
                                     }
                                   },
@@ -1093,12 +1093,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 25,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 39,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1109,12 +1109,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 42,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 48,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1122,12 +1122,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 24,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 49,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               },
@@ -1138,12 +1138,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 50,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 56,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               },
@@ -1153,12 +1153,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 24,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 56,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -1170,12 +1170,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 57,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 67,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               }
@@ -1185,12 +1185,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 24,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 68,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1201,12 +1201,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 70,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 97,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           }
@@ -1216,12 +1216,12 @@
                           "start": {
                             "line": 24,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 24,
                             "column": 98,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -1229,12 +1229,12 @@
                         "start": {
                           "line": 24,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 99,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -1260,12 +1260,12 @@
                                         "start": {
                                           "line": 25,
                                           "column": 14,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         },
                                         "end": {
                                           "line": 25,
                                           "column": 20,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         }
                                       }
                                     },
@@ -1273,12 +1273,12 @@
                                       "start": {
                                         "line": 25,
                                         "column": 14,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       },
                                       "end": {
                                         "line": 25,
                                         "column": 20,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       }
                                     }
                                   },
@@ -1286,12 +1286,12 @@
                                     "start": {
                                       "line": 25,
                                       "column": 14,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 25,
                                       "column": 20,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1301,12 +1301,12 @@
                                     "start": {
                                       "line": 25,
                                       "column": 23,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 25,
                                       "column": 30,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 }
@@ -1315,12 +1315,12 @@
                                 "start": {
                                   "line": 25,
                                   "column": 14,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 25,
                                   "column": 30,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -1328,12 +1328,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 9,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 11,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1344,12 +1344,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 33,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 38,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1357,12 +1357,12 @@
                             "start": {
                               "line": 25,
                               "column": 9,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 38,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         }
@@ -1372,12 +1372,12 @@
                         "start": {
                           "line": 25,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 39,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -1393,12 +1393,12 @@
                             "start": {
                               "line": 26,
                               "column": 9,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 26,
                               "column": 11,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -1413,12 +1413,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 23,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 29,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -1426,12 +1426,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 23,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 29,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1439,12 +1439,12 @@
                             "start": {
                               "line": 26,
                               "column": 23,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 26,
                               "column": 29,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -1452,12 +1452,12 @@
                           "start": {
                             "line": 26,
                             "column": 9,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 26,
                             "column": 29,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -1477,12 +1477,12 @@
                                     "start": {
                                       "line": 27,
                                       "column": 9,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 27,
                                       "column": 16,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1493,12 +1493,12 @@
                                     "start": {
                                       "line": 27,
                                       "column": 17,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 27,
                                       "column": 27,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1508,12 +1508,12 @@
                                   "start": {
                                     "line": 27,
                                     "column": 9,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 27,
                                     "column": 27,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               },
@@ -1531,12 +1531,12 @@
                                           "start": {
                                             "line": 27,
                                             "column": 29,
-                                            "program": "union_types_3.ets"
+                                            "program": "union_types_3.ats"
                                           },
                                           "end": {
                                             "line": 27,
                                             "column": 31,
-                                            "program": "union_types_3.ets"
+                                            "program": "union_types_3.ats"
                                           }
                                         }
                                       },
@@ -1551,12 +1551,12 @@
                                               "start": {
                                                 "line": 27,
                                                 "column": 35,
-                                                "program": "union_types_3.ets"
+                                                "program": "union_types_3.ats"
                                               },
                                               "end": {
                                                 "line": 27,
                                                 "column": 41,
-                                                "program": "union_types_3.ets"
+                                                "program": "union_types_3.ats"
                                               }
                                             }
                                           },
@@ -1564,12 +1564,12 @@
                                             "start": {
                                               "line": 27,
                                               "column": 35,
-                                              "program": "union_types_3.ets"
+                                              "program": "union_types_3.ats"
                                             },
                                             "end": {
                                               "line": 27,
                                               "column": 41,
-                                              "program": "union_types_3.ets"
+                                              "program": "union_types_3.ats"
                                             }
                                           }
                                         },
@@ -1577,12 +1577,12 @@
                                           "start": {
                                             "line": 27,
                                             "column": 35,
-                                            "program": "union_types_3.ets"
+                                            "program": "union_types_3.ats"
                                           },
                                           "end": {
                                             "line": 27,
                                             "column": 41,
-                                            "program": "union_types_3.ets"
+                                            "program": "union_types_3.ats"
                                           }
                                         }
                                       },
@@ -1590,12 +1590,12 @@
                                         "start": {
                                           "line": 27,
                                           "column": 28,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         },
                                         "end": {
                                           "line": 27,
                                           "column": 42,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         }
                                       }
                                     },
@@ -1606,12 +1606,12 @@
                                         "start": {
                                           "line": 27,
                                           "column": 43,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         },
                                         "end": {
                                           "line": 27,
                                           "column": 49,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         }
                                       }
                                     },
@@ -1621,12 +1621,12 @@
                                       "start": {
                                         "line": 27,
                                         "column": 28,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       },
                                       "end": {
                                         "line": 27,
                                         "column": 49,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       }
                                     }
                                   },
@@ -1638,12 +1638,12 @@
                                         "start": {
                                           "line": 27,
                                           "column": 50,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         },
                                         "end": {
                                           "line": 27,
                                           "column": 55,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         }
                                       }
                                     }
@@ -1653,12 +1653,12 @@
                                     "start": {
                                       "line": 27,
                                       "column": 28,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 27,
                                       "column": 56,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1669,12 +1669,12 @@
                                     "start": {
                                       "line": 27,
                                       "column": 58,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 27,
                                       "column": 80,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 }
@@ -1684,12 +1684,12 @@
                                 "start": {
                                   "line": 27,
                                   "column": 9,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 27,
                                   "column": 81,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -1697,12 +1697,12 @@
                               "start": {
                                 "line": 27,
                                 "column": 9,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 27,
                                 "column": 82,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           }
@@ -1711,12 +1711,12 @@
                           "start": {
                             "line": 26,
                             "column": 31,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 28,
                             "column": 6,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -1725,12 +1725,12 @@
                         "start": {
                           "line": 26,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 28,
                           "column": 6,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -1756,12 +1756,12 @@
                                         "start": {
                                           "line": 29,
                                           "column": 14,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         },
                                         "end": {
                                           "line": 29,
                                           "column": 20,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         }
                                       }
                                     },
@@ -1769,12 +1769,12 @@
                                       "start": {
                                         "line": 29,
                                         "column": 14,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       },
                                       "end": {
                                         "line": 29,
                                         "column": 20,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       }
                                     }
                                   },
@@ -1782,12 +1782,12 @@
                                     "start": {
                                       "line": 29,
                                       "column": 14,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 29,
                                       "column": 20,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1797,12 +1797,12 @@
                                     "start": {
                                       "line": 29,
                                       "column": 23,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 29,
                                       "column": 30,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1812,12 +1812,12 @@
                                     "start": {
                                       "line": 29,
                                       "column": 33,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 29,
                                       "column": 36,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -1827,12 +1827,12 @@
                                     "start": {
                                       "line": 29,
                                       "column": 39,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 29,
                                       "column": 45,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 }
@@ -1841,12 +1841,12 @@
                                 "start": {
                                   "line": 29,
                                   "column": 14,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 29,
                                   "column": 45,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -1854,12 +1854,12 @@
                               "start": {
                                 "line": 29,
                                 "column": 9,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 29,
                                 "column": 11,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1870,12 +1870,12 @@
                               "start": {
                                 "line": 29,
                                 "column": 48,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 29,
                                 "column": 52,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1883,12 +1883,12 @@
                             "start": {
                               "line": 29,
                               "column": 9,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 29,
                               "column": 52,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         }
@@ -1898,12 +1898,12 @@
                         "start": {
                           "line": 29,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 29,
                           "column": 53,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -1920,12 +1920,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 5,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 12,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1936,12 +1936,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 13,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 21,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -1951,12 +1951,12 @@
                             "start": {
                               "line": 30,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 30,
                               "column": 21,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -1970,12 +1970,12 @@
                                 "start": {
                                   "line": 30,
                                   "column": 23,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 30,
                                   "column": 25,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -1985,12 +1985,12 @@
                                 "start": {
                                   "line": 30,
                                   "column": 29,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 30,
                                   "column": 36,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -1998,12 +1998,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 22,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 37,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -2014,12 +2014,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 39,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 43,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -2030,12 +2030,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 45,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 68,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           }
@@ -2045,12 +2045,12 @@
                           "start": {
                             "line": 30,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 30,
                             "column": 69,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -2058,12 +2058,12 @@
                         "start": {
                           "line": 30,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 30,
                           "column": 70,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -2089,12 +2089,12 @@
                                         "start": {
                                           "line": 31,
                                           "column": 14,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         },
                                         "end": {
                                           "line": 31,
                                           "column": 20,
-                                          "program": "union_types_3.ets"
+                                          "program": "union_types_3.ats"
                                         }
                                       }
                                     },
@@ -2102,12 +2102,12 @@
                                       "start": {
                                         "line": 31,
                                         "column": 14,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       },
                                       "end": {
                                         "line": 31,
                                         "column": 20,
-                                        "program": "union_types_3.ets"
+                                        "program": "union_types_3.ats"
                                       }
                                     }
                                   },
@@ -2115,12 +2115,12 @@
                                     "start": {
                                       "line": 31,
                                       "column": 14,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 31,
                                       "column": 20,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -2130,12 +2130,12 @@
                                     "start": {
                                       "line": 31,
                                       "column": 23,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 31,
                                       "column": 30,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -2145,12 +2145,12 @@
                                     "start": {
                                       "line": 31,
                                       "column": 33,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 31,
                                       "column": 36,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -2160,12 +2160,12 @@
                                     "start": {
                                       "line": 31,
                                       "column": 39,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 31,
                                       "column": 45,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 }
@@ -2174,12 +2174,12 @@
                                 "start": {
                                   "line": 31,
                                   "column": 14,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 31,
                                   "column": 45,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -2187,12 +2187,12 @@
                               "start": {
                                 "line": 31,
                                 "column": 9,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 31,
                                 "column": 11,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -2203,12 +2203,12 @@
                               "start": {
                                 "line": 31,
                                 "column": 48,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 31,
                                 "column": 52,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -2216,12 +2216,12 @@
                             "start": {
                               "line": 31,
                               "column": 9,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 31,
                               "column": 52,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         }
@@ -2231,12 +2231,12 @@
                         "start": {
                           "line": 31,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 31,
                           "column": 53,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     },
@@ -2253,12 +2253,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 5,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 12,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -2269,12 +2269,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 13,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 21,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -2284,12 +2284,12 @@
                             "start": {
                               "line": 33,
                               "column": 5,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             },
                             "end": {
                               "line": 33,
                               "column": 21,
-                              "program": "union_types_3.ets"
+                              "program": "union_types_3.ats"
                             }
                           }
                         },
@@ -2303,12 +2303,12 @@
                                 "start": {
                                   "line": 33,
                                   "column": 23,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 33,
                                   "column": 25,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -2323,12 +2323,12 @@
                                     "start": {
                                       "line": 33,
                                       "column": 29,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     },
                                     "end": {
                                       "line": 33,
                                       "column": 35,
-                                      "program": "union_types_3.ets"
+                                      "program": "union_types_3.ats"
                                     }
                                   }
                                 },
@@ -2336,12 +2336,12 @@
                                   "start": {
                                     "line": 33,
                                     "column": 29,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   },
                                   "end": {
                                     "line": 33,
                                     "column": 35,
-                                    "program": "union_types_3.ets"
+                                    "program": "union_types_3.ats"
                                   }
                                 }
                               },
@@ -2349,12 +2349,12 @@
                                 "start": {
                                   "line": 33,
                                   "column": 29,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 },
                                 "end": {
                                   "line": 33,
                                   "column": 35,
-                                  "program": "union_types_3.ets"
+                                  "program": "union_types_3.ats"
                                 }
                               }
                             },
@@ -2362,12 +2362,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 22,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 36,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -2378,12 +2378,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 38,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 42,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           },
@@ -2394,12 +2394,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 44,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 67,
-                                "program": "union_types_3.ets"
+                                "program": "union_types_3.ats"
                               }
                             }
                           }
@@ -2409,12 +2409,12 @@
                           "start": {
                             "line": 33,
                             "column": 5,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           },
                           "end": {
                             "line": 33,
                             "column": 68,
-                            "program": "union_types_3.ets"
+                            "program": "union_types_3.ats"
                           }
                         }
                       },
@@ -2422,12 +2422,12 @@
                         "start": {
                           "line": 33,
                           "column": 5,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         },
                         "end": {
                           "line": 33,
                           "column": 69,
-                          "program": "union_types_3.ets"
+                          "program": "union_types_3.ats"
                         }
                       }
                     }
@@ -2436,12 +2436,12 @@
                     "start": {
                       "line": 16,
                       "column": 17,
-                      "program": "union_types_3.ets"
+                      "program": "union_types_3.ats"
                     },
                     "end": {
                       "line": 34,
                       "column": 2,
-                      "program": "union_types_3.ets"
+                      "program": "union_types_3.ats"
                     }
                   }
                 },
@@ -2449,12 +2449,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "union_types_3.ets"
+                    "program": "union_types_3.ats"
                   },
                   "end": {
                     "line": 34,
                     "column": 2,
-                    "program": "union_types_3.ets"
+                    "program": "union_types_3.ats"
                   }
                 }
               },
@@ -2462,12 +2462,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "union_types_3.ets"
+                  "program": "union_types_3.ats"
                 },
                 "end": {
                   "line": 34,
                   "column": 2,
-                  "program": "union_types_3.ets"
+                  "program": "union_types_3.ats"
                 }
               }
             },
@@ -2476,12 +2476,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "union_types_3.ets"
+                "program": "union_types_3.ats"
               },
               "end": {
                 "line": 34,
                 "column": 2,
-                "program": "union_types_3.ets"
+                "program": "union_types_3.ats"
               }
             }
           }
@@ -2490,12 +2490,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "union_types_3.ets"
+            "program": "union_types_3.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "union_types_3.ets"
+            "program": "union_types_3.ats"
           }
         }
       },
@@ -2503,12 +2503,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "union_types_3.ets"
+          "program": "union_types_3.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "union_types_3.ets"
+          "program": "union_types_3.ats"
         }
       }
     }
@@ -2517,20 +2517,20 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "union_types_3.ets"
+      "program": "union_types_3.ats"
     },
     "end": {
       "line": 36,
       "column": 1,
-      "program": "union_types_3.ets"
+      "program": "union_types_3.ats"
     }
   }
 }
-[union_types_3.ets:18:23] Warning W670214: This cast can be excessive because it always succeeds
-[union_types_3.ets:20:23] Warning W670214: This cast can be excessive because it always succeeds
-[union_types_3.ets:22:23] Warning W670214: This cast can be excessive because it always succeeds
-[union_types_3.ets:24:26] Warning W670214: This cast can be excessive because it always succeeds
-[union_types_3.ets:26:9] Warning W1001506: the value of the instanceof expression is known at compile-time as true
-[union_types_3.ets:27:29] Warning W670214: This cast can be excessive because it always succeeds
-[union_types_3.ets:30:23] Warning W670214: This cast can be excessive because it always succeeds
-[union_types_3.ets:33:23] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_3.ats:18:23] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_3.ats:20:23] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_3.ats:22:23] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_3.ats:24:26] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_3.ats:26:9] Warning W1001506: the value of the instanceof expression is known at compile-time as true
+[union_types_3.ats:27:29] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_3.ats:30:23] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_3.ats:33:23] Warning W670214: This cast can be excessive because it always succeeds

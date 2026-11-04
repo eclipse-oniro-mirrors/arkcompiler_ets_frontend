@@ -10,12 +10,12 @@
           "start": {
             "line": 16,
             "column": 6,
-            "program": "type_alias_1.ets"
+            "program": "type_alias_1.ats"
           },
           "end": {
             "line": 16,
             "column": 12,
-            "program": "type_alias_1.ets"
+            "program": "type_alias_1.ats"
           }
         }
       },
@@ -30,12 +30,12 @@
               "start": {
                 "line": 16,
                 "column": 15,
-                "program": "type_alias_1.ets"
+                "program": "type_alias_1.ats"
               },
               "end": {
                 "line": 16,
                 "column": 22,
-                "program": "type_alias_1.ets"
+                "program": "type_alias_1.ats"
               }
             }
           },
@@ -53,12 +53,12 @@
                       "start": {
                         "line": 16,
                         "column": 15,
-                        "program": "type_alias_1.ets"
+                        "program": "type_alias_1.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 22,
-                        "program": "type_alias_1.ets"
+                        "program": "type_alias_1.ats"
                       }
                     }
                   },
@@ -71,12 +71,12 @@
                           "start": {
                             "line": 16,
                             "column": 15,
-                            "program": "type_alias_1.ets"
+                            "program": "type_alias_1.ats"
                           },
                           "end": {
                             "line": 16,
                             "column": 22,
-                            "program": "type_alias_1.ets"
+                            "program": "type_alias_1.ats"
                           }
                         }
                       }
@@ -85,12 +85,12 @@
                       "start": {
                         "line": 16,
                         "column": 15,
-                        "program": "type_alias_1.ets"
+                        "program": "type_alias_1.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 22,
-                        "program": "type_alias_1.ets"
+                        "program": "type_alias_1.ats"
                       }
                     }
                   },
@@ -98,12 +98,12 @@
                     "start": {
                       "line": 16,
                       "column": 15,
-                      "program": "type_alias_1.ets"
+                      "program": "type_alias_1.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 22,
-                      "program": "type_alias_1.ets"
+                      "program": "type_alias_1.ats"
                     }
                   }
                 },
@@ -111,12 +111,12 @@
                   "start": {
                     "line": 16,
                     "column": 15,
-                    "program": "type_alias_1.ets"
+                    "program": "type_alias_1.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 22,
-                    "program": "type_alias_1.ets"
+                    "program": "type_alias_1.ats"
                   }
                 }
               }
@@ -125,12 +125,12 @@
               "start": {
                 "line": 16,
                 "column": 15,
-                "program": "type_alias_1.ets"
+                "program": "type_alias_1.ats"
               },
               "end": {
                 "line": 16,
                 "column": 22,
-                "program": "type_alias_1.ets"
+                "program": "type_alias_1.ats"
               }
             }
           },
@@ -138,12 +138,12 @@
             "start": {
               "line": 16,
               "column": 15,
-              "program": "type_alias_1.ets"
+              "program": "type_alias_1.ats"
             },
             "end": {
               "line": 16,
               "column": 22,
-              "program": "type_alias_1.ets"
+              "program": "type_alias_1.ats"
             }
           }
         },
@@ -151,12 +151,12 @@
           "start": {
             "line": 16,
             "column": 15,
-            "program": "type_alias_1.ets"
+            "program": "type_alias_1.ats"
           },
           "end": {
             "line": 16,
             "column": 22,
-            "program": "type_alias_1.ets"
+            "program": "type_alias_1.ats"
           }
         }
       },
@@ -164,12 +164,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "type_alias_1.ets"
+          "program": "type_alias_1.ats"
         },
         "end": {
           "line": 16,
           "column": 22,
-          "program": "type_alias_1.ets"
+          "program": "type_alias_1.ats"
         }
       }
     },
@@ -183,12 +183,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "type_alias_1.ets"
+              "program": "type_alias_1.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "type_alias_1.ets"
+              "program": "type_alias_1.ats"
             }
           }
         },
@@ -249,12 +249,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "type_alias_1.ets"
+                      "program": "type_alias_1.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "type_alias_1.ets"
+                      "program": "type_alias_1.ats"
                     }
                   }
                 },
@@ -262,12 +262,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "type_alias_1.ets"
+                    "program": "type_alias_1.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "type_alias_1.ets"
+                    "program": "type_alias_1.ats"
                   }
                 }
               },
@@ -275,12 +275,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "type_alias_1.ets"
+                  "program": "type_alias_1.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "type_alias_1.ets"
+                  "program": "type_alias_1.ats"
                 }
               }
             },
@@ -289,12 +289,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "type_alias_1.ets"
+                "program": "type_alias_1.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "type_alias_1.ets"
+                "program": "type_alias_1.ats"
               }
             }
           },
@@ -307,12 +307,12 @@
                 "start": {
                   "line": 18,
                   "column": 5,
-                  "program": "type_alias_1.ets"
+                  "program": "type_alias_1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 11,
-                  "program": "type_alias_1.ets"
+                  "program": "type_alias_1.ats"
                 }
               }
             },
@@ -333,12 +333,12 @@
                     "start": {
                       "line": 18,
                       "column": 13,
-                      "program": "type_alias_1.ets"
+                      "program": "type_alias_1.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 19,
-                      "program": "type_alias_1.ets"
+                      "program": "type_alias_1.ats"
                     }
                   }
                 },
@@ -346,12 +346,12 @@
                   "start": {
                     "line": 18,
                     "column": 13,
-                    "program": "type_alias_1.ets"
+                    "program": "type_alias_1.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 19,
-                    "program": "type_alias_1.ets"
+                    "program": "type_alias_1.ats"
                   }
                 }
               },
@@ -359,12 +359,12 @@
                 "start": {
                   "line": 18,
                   "column": 13,
-                  "program": "type_alias_1.ets"
+                  "program": "type_alias_1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 19,
-                  "program": "type_alias_1.ets"
+                  "program": "type_alias_1.ats"
                 }
               }
             },
@@ -373,12 +373,12 @@
               "start": {
                 "line": 18,
                 "column": 5,
-                "program": "type_alias_1.ets"
+                "program": "type_alias_1.ats"
               },
               "end": {
                 "line": 18,
                 "column": 11,
-                "program": "type_alias_1.ets"
+                "program": "type_alias_1.ats"
               }
             }
           }
@@ -387,12 +387,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "type_alias_1.ets"
+            "program": "type_alias_1.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "type_alias_1.ets"
+            "program": "type_alias_1.ats"
           }
         }
       },
@@ -400,12 +400,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "type_alias_1.ets"
+          "program": "type_alias_1.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "type_alias_1.ets"
+          "program": "type_alias_1.ats"
         }
       }
     }
@@ -414,13 +414,13 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "type_alias_1.ets"
+      "program": "type_alias_1.ats"
     },
     "end": {
       "line": 19,
       "column": 1,
-      "program": "type_alias_1.ets"
+      "program": "type_alias_1.ats"
     }
   }
 }
-[type_alias_1.ets:18:5] Semantic error ESE0351: Variable 'Matrix' has already been declared.
+[type_alias_1.ats:18:5] Semantic error ESE0351: Variable 'Matrix' has already been declared.

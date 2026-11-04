@@ -814,7 +814,7 @@ let value = dbl;)"};
     initializer.DestroyContext(context);
 
     // fileName should be the resolved absolute path ending with the expected suffix
-    const std::string expectedSuffix = "/ets2panda/test/parser/ets/import_tests/packages/package_module_1.ets";
+    const std::string expectedSuffix = "/ets2panda/test/parser/ets/import_tests/packages/package_module_1.ats";
     ASSERT_GE(result.fileName.size(), expectedSuffix.size());
     EXPECT_EQ(
         result.fileName.compare(result.fileName.size() - expectedSuffix.size(), expectedSuffix.size(), expectedSuffix),

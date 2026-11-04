@@ -10,12 +10,12 @@
           "start": {
             "line": 16,
             "column": 36,
-            "program": "enum_import.ets"
+            "program": "enum_import.ats"
           },
           "end": {
             "line": 16,
             "column": 51,
-            "program": "enum_import.ets"
+            "program": "enum_import.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 16,
                 "column": 10,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               },
               "end": {
                 "line": 16,
                 "column": 15,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 16,
                 "column": 10,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               },
               "end": {
                 "line": 16,
                 "column": 15,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 16,
               "column": 10,
-              "program": "enum_import.ets"
+              "program": "enum_import.ats"
             },
             "end": {
               "line": 16,
               "column": 15,
-              "program": "enum_import.ets"
+              "program": "enum_import.ats"
             }
           }
         },
@@ -76,12 +76,12 @@
               "start": {
                 "line": 16,
                 "column": 17,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               },
               "end": {
                 "line": 16,
                 "column": 25,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               }
             }
           },
@@ -92,12 +92,12 @@
               "start": {
                 "line": 16,
                 "column": 17,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               },
               "end": {
                 "line": 16,
                 "column": 25,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               }
             }
           },
@@ -105,12 +105,12 @@
             "start": {
               "line": 16,
               "column": 17,
-              "program": "enum_import.ets"
+              "program": "enum_import.ats"
             },
             "end": {
               "line": 16,
               "column": 25,
-              "program": "enum_import.ets"
+              "program": "enum_import.ats"
             }
           }
         },
@@ -123,12 +123,12 @@
               "start": {
                 "line": 16,
                 "column": 27,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               },
               "end": {
                 "line": 16,
                 "column": 28,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               }
             }
           },
@@ -139,12 +139,12 @@
               "start": {
                 "line": 16,
                 "column": 27,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               },
               "end": {
                 "line": 16,
                 "column": 28,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               }
             }
           },
@@ -152,12 +152,12 @@
             "start": {
               "line": 16,
               "column": 27,
-              "program": "enum_import.ets"
+              "program": "enum_import.ats"
             },
             "end": {
               "line": 16,
               "column": 28,
-              "program": "enum_import.ets"
+              "program": "enum_import.ats"
             }
           }
         }
@@ -166,12 +166,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "enum_import.ets"
+          "program": "enum_import.ats"
         },
         "end": {
           "line": 16,
           "column": 52,
-          "program": "enum_import.ets"
+          "program": "enum_import.ats"
         }
       }
     },
@@ -185,12 +185,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "enum_import.ets"
+              "program": "enum_import.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "enum_import.ets"
+              "program": "enum_import.ats"
             }
           }
         },
@@ -206,12 +206,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "enum_import.ets"
+                  "program": "enum_import.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 14,
-                  "program": "enum_import.ets"
+                  "program": "enum_import.ats"
                 }
               }
             },
@@ -231,12 +231,12 @@
                     "start": {
                       "line": 18,
                       "column": 10,
-                      "program": "enum_import.ets"
+                      "program": "enum_import.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 14,
-                      "program": "enum_import.ets"
+                      "program": "enum_import.ats"
                     }
                   }
                 },
@@ -260,12 +260,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 5,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 12,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               }
                             }
                           },
@@ -276,12 +276,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 13,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 16,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               }
                             }
                           },
@@ -291,12 +291,12 @@
                             "start": {
                               "line": 19,
                               "column": 5,
-                              "program": "enum_import.ets"
+                              "program": "enum_import.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 16,
-                              "program": "enum_import.ets"
+                              "program": "enum_import.ats"
                             }
                           }
                         },
@@ -314,12 +314,12 @@
                                     "start": {
                                       "line": 19,
                                       "column": 17,
-                                      "program": "enum_import.ets"
+                                      "program": "enum_import.ats"
                                     },
                                     "end": {
                                       "line": 19,
                                       "column": 22,
-                                      "program": "enum_import.ets"
+                                      "program": "enum_import.ats"
                                     }
                                   }
                                 },
@@ -330,12 +330,12 @@
                                     "start": {
                                       "line": 19,
                                       "column": 23,
-                                      "program": "enum_import.ets"
+                                      "program": "enum_import.ats"
                                     },
                                     "end": {
                                       "line": 19,
                                       "column": 27,
-                                      "program": "enum_import.ets"
+                                      "program": "enum_import.ats"
                                     }
                                   }
                                 },
@@ -345,12 +345,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 17,
-                                    "program": "enum_import.ets"
+                                    "program": "enum_import.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 27,
-                                    "program": "enum_import.ets"
+                                    "program": "enum_import.ats"
                                   }
                                 }
                               },
@@ -361,12 +361,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 28,
-                                    "program": "enum_import.ets"
+                                    "program": "enum_import.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 35,
-                                    "program": "enum_import.ets"
+                                    "program": "enum_import.ats"
                                   }
                                 }
                               },
@@ -376,12 +376,12 @@
                                 "start": {
                                   "line": 19,
                                   "column": 17,
-                                  "program": "enum_import.ets"
+                                  "program": "enum_import.ats"
                                 },
                                 "end": {
                                   "line": 19,
                                   "column": 35,
-                                  "program": "enum_import.ets"
+                                  "program": "enum_import.ats"
                                 }
                               }
                             },
@@ -391,12 +391,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 17,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 37,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               }
                             }
                           }
@@ -406,12 +406,12 @@
                           "start": {
                             "line": 19,
                             "column": 5,
-                            "program": "enum_import.ets"
+                            "program": "enum_import.ats"
                           },
                           "end": {
                             "line": 19,
                             "column": 38,
-                            "program": "enum_import.ets"
+                            "program": "enum_import.ats"
                           }
                         }
                       },
@@ -419,12 +419,12 @@
                         "start": {
                           "line": 19,
                           "column": 5,
-                          "program": "enum_import.ets"
+                          "program": "enum_import.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 39,
-                          "program": "enum_import.ets"
+                          "program": "enum_import.ats"
                         }
                       }
                     },
@@ -441,12 +441,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 5,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 12,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               }
                             }
                           },
@@ -457,12 +457,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 13,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 16,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               }
                             }
                           },
@@ -472,12 +472,12 @@
                             "start": {
                               "line": 20,
                               "column": 5,
-                              "program": "enum_import.ets"
+                              "program": "enum_import.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 16,
-                              "program": "enum_import.ets"
+                              "program": "enum_import.ats"
                             }
                           }
                         },
@@ -495,12 +495,12 @@
                                     "start": {
                                       "line": 20,
                                       "column": 17,
-                                      "program": "enum_import.ets"
+                                      "program": "enum_import.ats"
                                     },
                                     "end": {
                                       "line": 20,
                                       "column": 25,
-                                      "program": "enum_import.ets"
+                                      "program": "enum_import.ats"
                                     }
                                   }
                                 },
@@ -511,12 +511,12 @@
                                     "start": {
                                       "line": 20,
                                       "column": 26,
-                                      "program": "enum_import.ets"
+                                      "program": "enum_import.ats"
                                     },
                                     "end": {
                                       "line": 20,
                                       "column": 30,
-                                      "program": "enum_import.ets"
+                                      "program": "enum_import.ats"
                                     }
                                   }
                                 },
@@ -526,12 +526,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 17,
-                                    "program": "enum_import.ets"
+                                    "program": "enum_import.ats"
                                   },
                                   "end": {
                                     "line": 20,
                                     "column": 30,
-                                    "program": "enum_import.ets"
+                                    "program": "enum_import.ats"
                                   }
                                 }
                               },
@@ -542,12 +542,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 31,
-                                    "program": "enum_import.ets"
+                                    "program": "enum_import.ats"
                                   },
                                   "end": {
                                     "line": 20,
                                     "column": 38,
-                                    "program": "enum_import.ets"
+                                    "program": "enum_import.ats"
                                   }
                                 }
                               },
@@ -557,12 +557,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 17,
-                                  "program": "enum_import.ets"
+                                  "program": "enum_import.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 38,
-                                  "program": "enum_import.ets"
+                                  "program": "enum_import.ats"
                                 }
                               }
                             },
@@ -572,12 +572,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 17,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 40,
-                                "program": "enum_import.ets"
+                                "program": "enum_import.ats"
                               }
                             }
                           }
@@ -587,12 +587,12 @@
                           "start": {
                             "line": 20,
                             "column": 5,
-                            "program": "enum_import.ets"
+                            "program": "enum_import.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 41,
-                            "program": "enum_import.ets"
+                            "program": "enum_import.ats"
                           }
                         }
                       },
@@ -600,12 +600,12 @@
                         "start": {
                           "line": 20,
                           "column": 5,
-                          "program": "enum_import.ets"
+                          "program": "enum_import.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 42,
-                          "program": "enum_import.ets"
+                          "program": "enum_import.ats"
                         }
                       }
                     }
@@ -614,12 +614,12 @@
                     "start": {
                       "line": 18,
                       "column": 17,
-                      "program": "enum_import.ets"
+                      "program": "enum_import.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 2,
-                      "program": "enum_import.ets"
+                      "program": "enum_import.ats"
                     }
                   }
                 },
@@ -627,12 +627,12 @@
                   "start": {
                     "line": 18,
                     "column": 10,
-                    "program": "enum_import.ets"
+                    "program": "enum_import.ats"
                   },
                   "end": {
                     "line": 21,
                     "column": 2,
-                    "program": "enum_import.ets"
+                    "program": "enum_import.ats"
                   }
                 }
               },
@@ -640,12 +640,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "enum_import.ets"
+                  "program": "enum_import.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 2,
-                  "program": "enum_import.ets"
+                  "program": "enum_import.ats"
                 }
               }
             },
@@ -654,12 +654,12 @@
               "start": {
                 "line": 18,
                 "column": 1,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               },
               "end": {
                 "line": 21,
                 "column": 2,
-                "program": "enum_import.ets"
+                "program": "enum_import.ats"
               }
             }
           }
@@ -668,12 +668,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "enum_import.ets"
+            "program": "enum_import.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "enum_import.ets"
+            "program": "enum_import.ats"
           }
         }
       },
@@ -681,12 +681,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "enum_import.ets"
+          "program": "enum_import.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "enum_import.ets"
+          "program": "enum_import.ats"
         }
       }
     }
@@ -695,12 +695,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "enum_import.ets"
+      "program": "enum_import.ats"
     },
     "end": {
       "line": 22,
       "column": 1,
-      "program": "enum_import.ets"
+      "program": "enum_import.ats"
     }
   }
 }

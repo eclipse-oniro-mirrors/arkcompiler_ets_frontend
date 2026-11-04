@@ -1,5 +1,5 @@
 # panda#11502
-nullCoalesc.ets
+nullCoalesc.ats
 
 # test only for x64
-unboxing2_x64.ets
+unboxing2_x64.ats

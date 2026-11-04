@@ -772,7 +772,7 @@ void ImportPathManager::RemoveDependenciesToFiles(const std::unordered_set<std::
 
 static bool IsExtensionForPackageFraction(const std::string &extension)
 {
-    return extension == ImportPathManager::ETS_SUFFIX;
+    return extension == ImportPathManager::ETS_SUFFIX || extension == ImportPathManager::ATS_SUFFIX;
 }
 
 parser::PackageProgram *ImportPathManager::RegisterSourcesForPackageFromGlobbedDirectory(const ImportInfo &importInfo)
@@ -1713,7 +1713,7 @@ void ImportPathManager::SetEtsTextFileByExtension(ImportInfo *importInfo, const 
     ES2PANDA_ASSERT(importInfo != nullptr);
     ES2PANDA_ASSERT(!sourcePath.empty());
 
-    if (Helpers::EndsWith(sourcePath, D_ETS_SUFFIX)) {
+    if (Helpers::EndsWith(sourcePath, D_ETS_SUFFIX) || Helpers::EndsWith(sourcePath, D_ATS_SUFFIX)) {
         importInfo->SetTextFile<ModuleKind::SOURCE_DECL>(sourcePath, DE());
         return;
     }
@@ -1760,8 +1760,8 @@ ImportPathManager::ResolvedPathRes ImportPathManager::TryResolvePath(std::string
 // NOTE(dkofanov): Shouldn't directory resolved by 'index'-file be globbed and added to parse list?
 std::string ImportPathManager::DirOrDirWithIndexFile(std::string resolvedPathPrototype) const
 {
-    const auto indexFiles = {"index.ets", "index.sts", "index.ts", "index.d.ets",
-                             "Index.ets", "Index.sts", "Index.ts", "Index.d.ets"};
+    const auto indexFiles = {"index.ets", "index.sts", "index.ts", "index.d.ets", "index.ats", "index.d.ats",
+                             "Index.ets", "Index.sts", "Index.ts", "Index.d.ets", "Index.ats", "Index.d.ats"};
     // Supported index files: keep this checking order
     for (auto indexFile : indexFiles) {
         std::string indexFilePath = resolvedPathPrototype + pathDelimiter_.at(0) + indexFile;

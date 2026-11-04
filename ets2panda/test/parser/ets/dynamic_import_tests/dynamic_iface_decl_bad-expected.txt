@@ -10,12 +10,12 @@
           "start": {
             "line": 20,
             "column": 19,
-            "program": "dynamic_iface_decl_bad.ets"
+            "program": "dynamic_iface_decl_bad.ats"
           },
           "end": {
             "line": 20,
             "column": 56,
-            "program": "dynamic_iface_decl_bad.ets"
+            "program": "dynamic_iface_decl_bad.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamic_iface_decl_bad.ets"
+                "program": "dynamic_iface_decl_bad.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamic_iface_decl_bad.ets"
+                "program": "dynamic_iface_decl_bad.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamic_iface_decl_bad.ets"
+                "program": "dynamic_iface_decl_bad.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamic_iface_decl_bad.ets"
+                "program": "dynamic_iface_decl_bad.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 20,
               "column": 10,
-              "program": "dynamic_iface_decl_bad.ets"
+              "program": "dynamic_iface_decl_bad.ats"
             },
             "end": {
               "line": 20,
               "column": 11,
-              "program": "dynamic_iface_decl_bad.ets"
+              "program": "dynamic_iface_decl_bad.ats"
             }
           }
         }
@@ -72,12 +72,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "dynamic_iface_decl_bad.ets"
+          "program": "dynamic_iface_decl_bad.ats"
         },
         "end": {
           "line": 20,
           "column": 56,
-          "program": "dynamic_iface_decl_bad.ets"
+          "program": "dynamic_iface_decl_bad.ats"
         }
       }
     },
@@ -91,12 +91,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "dynamic_iface_decl_bad.ets"
+              "program": "dynamic_iface_decl_bad.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "dynamic_iface_decl_bad.ets"
+              "program": "dynamic_iface_decl_bad.ats"
             }
           }
         },
@@ -157,12 +157,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "dynamic_iface_decl_bad.ets"
+                      "program": "dynamic_iface_decl_bad.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "dynamic_iface_decl_bad.ets"
+                      "program": "dynamic_iface_decl_bad.ats"
                     }
                   }
                 },
@@ -170,12 +170,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "dynamic_iface_decl_bad.ets"
+                    "program": "dynamic_iface_decl_bad.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "dynamic_iface_decl_bad.ets"
+                    "program": "dynamic_iface_decl_bad.ats"
                   }
                 }
               },
@@ -183,12 +183,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "dynamic_iface_decl_bad.ets"
+                  "program": "dynamic_iface_decl_bad.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "dynamic_iface_decl_bad.ets"
+                  "program": "dynamic_iface_decl_bad.ats"
                 }
               }
             },
@@ -197,12 +197,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "dynamic_iface_decl_bad.ets"
+                "program": "dynamic_iface_decl_bad.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "dynamic_iface_decl_bad.ets"
+                "program": "dynamic_iface_decl_bad.ats"
               }
             }
           }
@@ -211,12 +211,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "dynamic_iface_decl_bad.ets"
+            "program": "dynamic_iface_decl_bad.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "dynamic_iface_decl_bad.ets"
+            "program": "dynamic_iface_decl_bad.ats"
           }
         }
       },
@@ -224,12 +224,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "dynamic_iface_decl_bad.ets"
+          "program": "dynamic_iface_decl_bad.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "dynamic_iface_decl_bad.ets"
+          "program": "dynamic_iface_decl_bad.ats"
         }
       }
     },
@@ -243,12 +243,12 @@
             "start": {
               "line": 22,
               "column": 7,
-              "program": "dynamic_iface_decl_bad.ets"
+              "program": "dynamic_iface_decl_bad.ats"
             },
             "end": {
               "line": 22,
               "column": 8,
-              "program": "dynamic_iface_decl_bad.ets"
+              "program": "dynamic_iface_decl_bad.ats"
             }
           }
         },
@@ -267,12 +267,12 @@
                     "start": {
                       "line": 22,
                       "column": 20,
-                      "program": "dynamic_iface_decl_bad.ets"
+                      "program": "dynamic_iface_decl_bad.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 21,
-                      "program": "dynamic_iface_decl_bad.ets"
+                      "program": "dynamic_iface_decl_bad.ats"
                     }
                   }
                 },
@@ -280,12 +280,12 @@
                   "start": {
                     "line": 22,
                     "column": 20,
-                    "program": "dynamic_iface_decl_bad.ets"
+                    "program": "dynamic_iface_decl_bad.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 21,
-                    "program": "dynamic_iface_decl_bad.ets"
+                    "program": "dynamic_iface_decl_bad.ats"
                   }
                 }
               },
@@ -293,12 +293,12 @@
                 "start": {
                   "line": 22,
                   "column": 20,
-                  "program": "dynamic_iface_decl_bad.ets"
+                  "program": "dynamic_iface_decl_bad.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 21,
-                  "program": "dynamic_iface_decl_bad.ets"
+                  "program": "dynamic_iface_decl_bad.ats"
                 }
               }
             },
@@ -306,12 +306,12 @@
               "start": {
                 "line": 22,
                 "column": 20,
-                "program": "dynamic_iface_decl_bad.ets"
+                "program": "dynamic_iface_decl_bad.ats"
               },
               "end": {
                 "line": 22,
                 "column": 23,
-                "program": "dynamic_iface_decl_bad.ets"
+                "program": "dynamic_iface_decl_bad.ats"
               }
             }
           }
@@ -326,12 +326,12 @@
                 "start": {
                   "line": 22,
                   "column": 23,
-                  "program": "dynamic_iface_decl_bad.ets"
+                  "program": "dynamic_iface_decl_bad.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 23,
-                  "program": "dynamic_iface_decl_bad.ets"
+                  "program": "dynamic_iface_decl_bad.ats"
                 }
               }
             },
@@ -350,12 +350,12 @@
                     "start": {
                       "line": 22,
                       "column": 23,
-                      "program": "dynamic_iface_decl_bad.ets"
+                      "program": "dynamic_iface_decl_bad.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 23,
-                      "program": "dynamic_iface_decl_bad.ets"
+                      "program": "dynamic_iface_decl_bad.ats"
                     }
                   }
                 },
@@ -370,12 +370,12 @@
                     "start": {
                       "line": 22,
                       "column": 23,
-                      "program": "dynamic_iface_decl_bad.ets"
+                      "program": "dynamic_iface_decl_bad.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 23,
-                      "program": "dynamic_iface_decl_bad.ets"
+                      "program": "dynamic_iface_decl_bad.ats"
                     }
                   }
                 },
@@ -383,12 +383,12 @@
                   "start": {
                     "line": 22,
                     "column": 23,
-                    "program": "dynamic_iface_decl_bad.ets"
+                    "program": "dynamic_iface_decl_bad.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 23,
-                    "program": "dynamic_iface_decl_bad.ets"
+                    "program": "dynamic_iface_decl_bad.ats"
                   }
                 }
               },
@@ -396,12 +396,12 @@
                 "start": {
                   "line": 22,
                   "column": 23,
-                  "program": "dynamic_iface_decl_bad.ets"
+                  "program": "dynamic_iface_decl_bad.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 23,
-                  "program": "dynamic_iface_decl_bad.ets"
+                  "program": "dynamic_iface_decl_bad.ats"
                 }
               }
             },
@@ -424,12 +424,12 @@
           "start": {
             "line": 22,
             "column": 22,
-            "program": "dynamic_iface_decl_bad.ets"
+            "program": "dynamic_iface_decl_bad.ats"
           },
           "end": {
             "line": 24,
             "column": 2,
-            "program": "dynamic_iface_decl_bad.ets"
+            "program": "dynamic_iface_decl_bad.ats"
           }
         }
       },
@@ -437,12 +437,12 @@
         "start": {
           "line": 22,
           "column": 1,
-          "program": "dynamic_iface_decl_bad.ets"
+          "program": "dynamic_iface_decl_bad.ats"
         },
         "end": {
           "line": 24,
           "column": 2,
-          "program": "dynamic_iface_decl_bad.ets"
+          "program": "dynamic_iface_decl_bad.ats"
         }
       }
     }
@@ -451,14 +451,14 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "dynamic_iface_decl_bad.ets"
+      "program": "dynamic_iface_decl_bad.ats"
     },
     "end": {
       "line": 24,
       "column": 2,
-      "program": "dynamic_iface_decl_bad.ets"
+      "program": "dynamic_iface_decl_bad.ats"
     }
   }
 }
-[dynamic_iface_decl_bad.ets:22:22] Semantic error ESE0190: A is not abstract and does not override abstract method f1(p: String): Double in I
-[dynamic_iface_decl_bad.ets:22:22] Semantic error ESE24143: class A can not implements interface I which is from dynamic declaration file.
+[dynamic_iface_decl_bad.ats:22:22] Semantic error ESE0190: A is not abstract and does not override abstract method f1(p: String): Double in I
+[dynamic_iface_decl_bad.ats:22:22] Semantic error ESE24143: class A can not implements interface I which is from dynamic declaration file.

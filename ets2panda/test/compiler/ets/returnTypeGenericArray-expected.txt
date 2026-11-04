@@ -15,12 +15,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 23,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -40,12 +40,12 @@
                     "start": {
                       "line": 17,
                       "column": 5,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 23,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -64,12 +64,12 @@
                         "start": {
                           "line": 17,
                           "column": 27,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 44,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         }
                       }
                     },
@@ -90,12 +90,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 27,
-                                      "program": "returnTypeGenericArray.ets"
+                                      "program": "returnTypeGenericArray.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 44,
-                                      "program": "returnTypeGenericArray.ets"
+                                      "program": "returnTypeGenericArray.ats"
                                     }
                                   }
                                 },
@@ -103,12 +103,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 27,
-                                    "program": "returnTypeGenericArray.ets"
+                                    "program": "returnTypeGenericArray.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 44,
-                                    "program": "returnTypeGenericArray.ets"
+                                    "program": "returnTypeGenericArray.ats"
                                   }
                                 }
                               },
@@ -116,12 +116,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 27,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 44,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 }
                               }
                             },
@@ -131,12 +131,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 27,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 44,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 }
                               }
                             }
@@ -145,12 +145,12 @@
                             "start": {
                               "line": 17,
                               "column": 27,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 44,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             }
                           }
                         }
@@ -159,12 +159,12 @@
                         "start": {
                           "line": 17,
                           "column": 27,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 44,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         }
                       }
                     },
@@ -172,12 +172,12 @@
                       "start": {
                         "line": 17,
                         "column": 27,
-                        "program": "returnTypeGenericArray.ets"
+                        "program": "returnTypeGenericArray.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 44,
-                        "program": "returnTypeGenericArray.ets"
+                        "program": "returnTypeGenericArray.ats"
                       }
                     }
                   },
@@ -185,12 +185,12 @@
                     "start": {
                       "line": 17,
                       "column": 27,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 44,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -198,12 +198,12 @@
                   "start": {
                     "line": 17,
                     "column": 5,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 44,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   }
                 }
               },
@@ -211,12 +211,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 44,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -225,12 +225,12 @@
               "start": {
                 "line": 17,
                 "column": 5,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               },
               "end": {
                 "line": 17,
                 "column": 45,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               }
             }
           }
@@ -239,12 +239,12 @@
           "start": {
             "line": 16,
             "column": 20,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           },
           "end": {
             "line": 18,
             "column": 2,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           }
         }
       },
@@ -255,12 +255,12 @@
           "start": {
             "line": 16,
             "column": 11,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           },
           "end": {
             "line": 16,
             "column": 16,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           }
         }
       },
@@ -277,12 +277,12 @@
                 "start": {
                   "line": 16,
                   "column": 17,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 18,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -290,12 +290,12 @@
               "start": {
                 "line": 16,
                 "column": 17,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               },
               "end": {
                 "line": 16,
                 "column": 19,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               }
             }
           }
@@ -304,12 +304,12 @@
           "start": {
             "line": 16,
             "column": 16,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           },
           "end": {
             "line": 16,
             "column": 19,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           }
         }
       },
@@ -317,12 +317,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "returnTypeGenericArray.ets"
+          "program": "returnTypeGenericArray.ats"
         },
         "end": {
           "line": 18,
           "column": 2,
-          "program": "returnTypeGenericArray.ets"
+          "program": "returnTypeGenericArray.ats"
         }
       }
     },
@@ -336,12 +336,12 @@
             "start": {
               "line": 20,
               "column": 7,
-              "program": "returnTypeGenericArray.ets"
+              "program": "returnTypeGenericArray.ats"
             },
             "end": {
               "line": 20,
               "column": 10,
-              "program": "returnTypeGenericArray.ets"
+              "program": "returnTypeGenericArray.ats"
             }
           }
         },
@@ -357,12 +357,12 @@
                   "start": {
                     "line": 20,
                     "column": 11,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 12,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   }
                 }
               },
@@ -370,12 +370,12 @@
                 "start": {
                   "line": 20,
                   "column": 11,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 13,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             }
@@ -384,12 +384,12 @@
             "start": {
               "line": 20,
               "column": 10,
-              "program": "returnTypeGenericArray.ets"
+              "program": "returnTypeGenericArray.ats"
             },
             "end": {
               "line": 20,
               "column": 13,
-              "program": "returnTypeGenericArray.ets"
+              "program": "returnTypeGenericArray.ats"
             }
           }
         },
@@ -408,12 +408,12 @@
                     "start": {
                       "line": 20,
                       "column": 25,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 30,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -431,12 +431,12 @@
                             "start": {
                               "line": 20,
                               "column": 31,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 32,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             }
                           }
                         },
@@ -444,12 +444,12 @@
                           "start": {
                             "line": 20,
                             "column": 31,
-                            "program": "returnTypeGenericArray.ets"
+                            "program": "returnTypeGenericArray.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 32,
-                            "program": "returnTypeGenericArray.ets"
+                            "program": "returnTypeGenericArray.ats"
                           }
                         }
                       },
@@ -457,12 +457,12 @@
                         "start": {
                           "line": 20,
                           "column": 31,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 32,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         }
                       }
                     }
@@ -471,12 +471,12 @@
                     "start": {
                       "line": 20,
                       "column": 30,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 33,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -484,12 +484,12 @@
                   "start": {
                     "line": 20,
                     "column": 25,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 33,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   }
                 }
               },
@@ -497,12 +497,12 @@
                 "start": {
                   "line": 20,
                   "column": 25,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 33,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -510,12 +510,12 @@
               "start": {
                 "line": 20,
                 "column": 25,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               },
               "end": {
                 "line": 20,
                 "column": 35,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               }
             }
           }
@@ -530,12 +530,12 @@
                 "start": {
                   "line": 21,
                   "column": 14,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 32,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -555,12 +555,12 @@
                     "start": {
                       "line": 21,
                       "column": 14,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 32,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -579,12 +579,12 @@
                         "start": {
                           "line": 21,
                           "column": 36,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 53,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         }
                       }
                     },
@@ -605,12 +605,12 @@
                                     "start": {
                                       "line": 21,
                                       "column": 36,
-                                      "program": "returnTypeGenericArray.ets"
+                                      "program": "returnTypeGenericArray.ats"
                                     },
                                     "end": {
                                       "line": 21,
                                       "column": 53,
-                                      "program": "returnTypeGenericArray.ets"
+                                      "program": "returnTypeGenericArray.ats"
                                     }
                                   }
                                 },
@@ -618,12 +618,12 @@
                                   "start": {
                                     "line": 21,
                                     "column": 36,
-                                    "program": "returnTypeGenericArray.ets"
+                                    "program": "returnTypeGenericArray.ats"
                                   },
                                   "end": {
                                     "line": 21,
                                     "column": 53,
-                                    "program": "returnTypeGenericArray.ets"
+                                    "program": "returnTypeGenericArray.ats"
                                   }
                                 }
                               },
@@ -631,12 +631,12 @@
                                 "start": {
                                   "line": 21,
                                   "column": 36,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 },
                                 "end": {
                                   "line": 21,
                                   "column": 53,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 }
                               }
                             },
@@ -646,12 +646,12 @@
                                 "start": {
                                   "line": 21,
                                   "column": 36,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 },
                                 "end": {
                                   "line": 21,
                                   "column": 53,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 }
                               }
                             }
@@ -660,12 +660,12 @@
                             "start": {
                               "line": 21,
                               "column": 36,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             },
                             "end": {
                               "line": 21,
                               "column": 53,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             }
                           }
                         }
@@ -674,12 +674,12 @@
                         "start": {
                           "line": 21,
                           "column": 36,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 53,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         }
                       }
                     },
@@ -687,12 +687,12 @@
                       "start": {
                         "line": 21,
                         "column": 36,
-                        "program": "returnTypeGenericArray.ets"
+                        "program": "returnTypeGenericArray.ats"
                       },
                       "end": {
                         "line": 21,
                         "column": 53,
-                        "program": "returnTypeGenericArray.ets"
+                        "program": "returnTypeGenericArray.ats"
                       }
                     }
                   },
@@ -700,12 +700,12 @@
                     "start": {
                       "line": 21,
                       "column": 36,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 53,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -725,12 +725,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 16,
-                                "program": "returnTypeGenericArray.ets"
+                                "program": "returnTypeGenericArray.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 49,
-                                "program": "returnTypeGenericArray.ets"
+                                "program": "returnTypeGenericArray.ats"
                               }
                             }
                           },
@@ -741,12 +741,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 16,
-                                "program": "returnTypeGenericArray.ets"
+                                "program": "returnTypeGenericArray.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 49,
-                                "program": "returnTypeGenericArray.ets"
+                                "program": "returnTypeGenericArray.ats"
                               }
                             }
                           },
@@ -756,12 +756,12 @@
                             "start": {
                               "line": 22,
                               "column": 16,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 49,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             }
                           }
                         },
@@ -773,12 +773,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 16,
-                                "program": "returnTypeGenericArray.ets"
+                                "program": "returnTypeGenericArray.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 49,
-                                "program": "returnTypeGenericArray.ets"
+                                "program": "returnTypeGenericArray.ats"
                               }
                             }
                           },
@@ -789,12 +789,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 16,
-                                "program": "returnTypeGenericArray.ets"
+                                "program": "returnTypeGenericArray.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 49,
-                                "program": "returnTypeGenericArray.ets"
+                                "program": "returnTypeGenericArray.ats"
                               }
                             }
                           }
@@ -817,12 +817,12 @@
                                         "start": {
                                           "line": 22,
                                           "column": 16,
-                                          "program": "returnTypeGenericArray.ets"
+                                          "program": "returnTypeGenericArray.ats"
                                         },
                                         "end": {
                                           "line": 22,
                                           "column": 49,
-                                          "program": "returnTypeGenericArray.ets"
+                                          "program": "returnTypeGenericArray.ats"
                                         }
                                       }
                                     },
@@ -830,12 +830,12 @@
                                       "start": {
                                         "line": 22,
                                         "column": 16,
-                                        "program": "returnTypeGenericArray.ets"
+                                        "program": "returnTypeGenericArray.ats"
                                       },
                                       "end": {
                                         "line": 22,
                                         "column": 49,
-                                        "program": "returnTypeGenericArray.ets"
+                                        "program": "returnTypeGenericArray.ats"
                                       }
                                     }
                                   },
@@ -843,12 +843,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 16,
-                                      "program": "returnTypeGenericArray.ets"
+                                      "program": "returnTypeGenericArray.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 49,
-                                      "program": "returnTypeGenericArray.ets"
+                                      "program": "returnTypeGenericArray.ats"
                                     }
                                   }
                                 },
@@ -858,12 +858,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 16,
-                                      "program": "returnTypeGenericArray.ets"
+                                      "program": "returnTypeGenericArray.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 49,
-                                      "program": "returnTypeGenericArray.ets"
+                                      "program": "returnTypeGenericArray.ats"
                                     }
                                   }
                                 }
@@ -872,12 +872,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 16,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 49,
-                                  "program": "returnTypeGenericArray.ets"
+                                  "program": "returnTypeGenericArray.ats"
                                 }
                               }
                             }
@@ -886,12 +886,12 @@
                             "start": {
                               "line": 22,
                               "column": 16,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 49,
-                              "program": "returnTypeGenericArray.ets"
+                              "program": "returnTypeGenericArray.ats"
                             }
                           }
                         },
@@ -899,12 +899,12 @@
                           "start": {
                             "line": 22,
                             "column": 16,
-                            "program": "returnTypeGenericArray.ets"
+                            "program": "returnTypeGenericArray.ats"
                           },
                           "end": {
                             "line": 22,
                             "column": 49,
-                            "program": "returnTypeGenericArray.ets"
+                            "program": "returnTypeGenericArray.ats"
                           }
                         }
                       },
@@ -912,12 +912,12 @@
                         "start": {
                           "line": 22,
                           "column": 9,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 50,
-                          "program": "returnTypeGenericArray.ets"
+                          "program": "returnTypeGenericArray.ats"
                         }
                       }
                     }
@@ -926,12 +926,12 @@
                     "start": {
                       "line": 21,
                       "column": 54,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 6,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -939,12 +939,12 @@
                   "start": {
                     "line": 21,
                     "column": 32,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   },
                   "end": {
                     "line": 23,
                     "column": 6,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   }
                 }
               },
@@ -952,12 +952,12 @@
                 "start": {
                   "line": 21,
                   "column": 32,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 6,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -966,12 +966,12 @@
               "start": {
                 "line": 21,
                 "column": 14,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               },
               "end": {
                 "line": 23,
                 "column": 6,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               }
             }
           },
@@ -984,12 +984,12 @@
                 "start": {
                   "line": 20,
                   "column": 35,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 35,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -1008,12 +1008,12 @@
                     "start": {
                       "line": 20,
                       "column": 35,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 35,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -1028,12 +1028,12 @@
                     "start": {
                       "line": 20,
                       "column": 35,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 35,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -1041,12 +1041,12 @@
                   "start": {
                     "line": 20,
                     "column": 35,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 35,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   }
                 }
               },
@@ -1054,12 +1054,12 @@
                 "start": {
                   "line": 20,
                   "column": 35,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 35,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -1082,12 +1082,12 @@
           "start": {
             "line": 20,
             "column": 34,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           },
           "end": {
             "line": 24,
             "column": 2,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           }
         }
       },
@@ -1095,12 +1095,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "returnTypeGenericArray.ets"
+          "program": "returnTypeGenericArray.ats"
         },
         "end": {
           "line": 24,
           "column": 2,
-          "program": "returnTypeGenericArray.ets"
+          "program": "returnTypeGenericArray.ats"
         }
       }
     },
@@ -1114,12 +1114,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "returnTypeGenericArray.ets"
+              "program": "returnTypeGenericArray.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "returnTypeGenericArray.ets"
+              "program": "returnTypeGenericArray.ats"
             }
           }
         },
@@ -1180,12 +1180,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "returnTypeGenericArray.ets"
+                      "program": "returnTypeGenericArray.ats"
                     }
                   }
                 },
@@ -1193,12 +1193,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "returnTypeGenericArray.ets"
+                    "program": "returnTypeGenericArray.ats"
                   }
                 }
               },
@@ -1206,12 +1206,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "returnTypeGenericArray.ets"
+                  "program": "returnTypeGenericArray.ats"
                 }
               }
             },
@@ -1220,12 +1220,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "returnTypeGenericArray.ets"
+                "program": "returnTypeGenericArray.ats"
               }
             }
           }
@@ -1234,12 +1234,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "returnTypeGenericArray.ets"
+            "program": "returnTypeGenericArray.ats"
           }
         }
       },
@@ -1247,12 +1247,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "returnTypeGenericArray.ets"
+          "program": "returnTypeGenericArray.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "returnTypeGenericArray.ets"
+          "program": "returnTypeGenericArray.ats"
         }
       }
     }
@@ -1261,12 +1261,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "returnTypeGenericArray.ets"
+      "program": "returnTypeGenericArray.ats"
     },
     "end": {
       "line": 25,
       "column": 1,
-      "program": "returnTypeGenericArray.ets"
+      "program": "returnTypeGenericArray.ats"
     }
   }
 }

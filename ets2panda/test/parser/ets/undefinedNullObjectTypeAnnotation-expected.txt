@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "undefinedNullObjectTypeAnnotation.ets"
+              "program": "undefinedNullObjectTypeAnnotation.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "undefinedNullObjectTypeAnnotation.ets"
+              "program": "undefinedNullObjectTypeAnnotation.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "undefinedNullObjectTypeAnnotation.ets"
+                  "program": "undefinedNullObjectTypeAnnotation.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "undefinedNullObjectTypeAnnotation.ets"
+                  "program": "undefinedNullObjectTypeAnnotation.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                      "program": "undefinedNullObjectTypeAnnotation.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                      "program": "undefinedNullObjectTypeAnnotation.ats"
                     }
                   }
                 },
@@ -90,12 +90,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 15,
-                                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                                      "program": "undefinedNullObjectTypeAnnotation.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 24,
-                                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                                      "program": "undefinedNullObjectTypeAnnotation.ats"
                                     }
                                   }
                                 },
@@ -105,12 +105,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 27,
-                                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                                      "program": "undefinedNullObjectTypeAnnotation.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 31,
-                                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                                      "program": "undefinedNullObjectTypeAnnotation.ats"
                                     }
                                   }
                                 },
@@ -125,12 +125,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 34,
-                                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                                          "program": "undefinedNullObjectTypeAnnotation.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 40,
-                                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                                          "program": "undefinedNullObjectTypeAnnotation.ats"
                                         }
                                       }
                                     },
@@ -138,12 +138,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 34,
-                                        "program": "undefinedNullObjectTypeAnnotation.ets"
+                                        "program": "undefinedNullObjectTypeAnnotation.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 40,
-                                        "program": "undefinedNullObjectTypeAnnotation.ets"
+                                        "program": "undefinedNullObjectTypeAnnotation.ats"
                                       }
                                     }
                                   },
@@ -151,12 +151,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 34,
-                                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                                      "program": "undefinedNullObjectTypeAnnotation.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 40,
-                                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                                      "program": "undefinedNullObjectTypeAnnotation.ats"
                                     }
                                   }
                                 }
@@ -165,12 +165,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 15,
-                                  "program": "undefinedNullObjectTypeAnnotation.ets"
+                                  "program": "undefinedNullObjectTypeAnnotation.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 40,
-                                  "program": "undefinedNullObjectTypeAnnotation.ets"
+                                  "program": "undefinedNullObjectTypeAnnotation.ats"
                                 }
                               }
                             },
@@ -178,12 +178,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 9,
-                                "program": "undefinedNullObjectTypeAnnotation.ets"
+                                "program": "undefinedNullObjectTypeAnnotation.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 12,
-                                "program": "undefinedNullObjectTypeAnnotation.ets"
+                                "program": "undefinedNullObjectTypeAnnotation.ats"
                               }
                             }
                           },
@@ -192,12 +192,12 @@
                             "start": {
                               "line": 17,
                               "column": 9,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 12,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             }
                           }
                         }
@@ -207,12 +207,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                          "program": "undefinedNullObjectTypeAnnotation.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 41,
-                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                          "program": "undefinedNullObjectTypeAnnotation.ats"
                         }
                       }
                     },
@@ -228,12 +228,12 @@
                             "start": {
                               "line": 18,
                               "column": 5,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 8,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             }
                           }
                         },
@@ -244,12 +244,12 @@
                             "start": {
                               "line": 18,
                               "column": 11,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 20,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             }
                           }
                         },
@@ -257,12 +257,12 @@
                           "start": {
                             "line": 18,
                             "column": 5,
-                            "program": "undefinedNullObjectTypeAnnotation.ets"
+                            "program": "undefinedNullObjectTypeAnnotation.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 20,
-                            "program": "undefinedNullObjectTypeAnnotation.ets"
+                            "program": "undefinedNullObjectTypeAnnotation.ats"
                           }
                         }
                       },
@@ -270,12 +270,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                          "program": "undefinedNullObjectTypeAnnotation.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 21,
-                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                          "program": "undefinedNullObjectTypeAnnotation.ats"
                         }
                       }
                     },
@@ -291,12 +291,12 @@
                             "start": {
                               "line": 19,
                               "column": 5,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 8,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             }
                           }
                         },
@@ -307,12 +307,12 @@
                             "start": {
                               "line": 19,
                               "column": 11,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 15,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             }
                           }
                         },
@@ -320,12 +320,12 @@
                           "start": {
                             "line": 19,
                             "column": 5,
-                            "program": "undefinedNullObjectTypeAnnotation.ets"
+                            "program": "undefinedNullObjectTypeAnnotation.ats"
                           },
                           "end": {
                             "line": 19,
                             "column": 15,
-                            "program": "undefinedNullObjectTypeAnnotation.ets"
+                            "program": "undefinedNullObjectTypeAnnotation.ats"
                           }
                         }
                       },
@@ -333,12 +333,12 @@
                         "start": {
                           "line": 19,
                           "column": 5,
-                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                          "program": "undefinedNullObjectTypeAnnotation.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 16,
-                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                          "program": "undefinedNullObjectTypeAnnotation.ats"
                         }
                       }
                     },
@@ -354,12 +354,12 @@
                             "start": {
                               "line": 20,
                               "column": 5,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 8,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             }
                           }
                         },
@@ -376,12 +376,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 15,
-                                    "program": "undefinedNullObjectTypeAnnotation.ets"
+                                    "program": "undefinedNullObjectTypeAnnotation.ats"
                                   },
                                   "end": {
                                     "line": 20,
                                     "column": 21,
-                                    "program": "undefinedNullObjectTypeAnnotation.ets"
+                                    "program": "undefinedNullObjectTypeAnnotation.ats"
                                   }
                                 }
                               },
@@ -389,12 +389,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 15,
-                                  "program": "undefinedNullObjectTypeAnnotation.ets"
+                                  "program": "undefinedNullObjectTypeAnnotation.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 21,
-                                  "program": "undefinedNullObjectTypeAnnotation.ets"
+                                  "program": "undefinedNullObjectTypeAnnotation.ats"
                                 }
                               }
                             },
@@ -402,12 +402,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 15,
-                                "program": "undefinedNullObjectTypeAnnotation.ets"
+                                "program": "undefinedNullObjectTypeAnnotation.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 21,
-                                "program": "undefinedNullObjectTypeAnnotation.ets"
+                                "program": "undefinedNullObjectTypeAnnotation.ats"
                               }
                             }
                           },
@@ -416,12 +416,12 @@
                             "start": {
                               "line": 20,
                               "column": 11,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 24,
-                              "program": "undefinedNullObjectTypeAnnotation.ets"
+                              "program": "undefinedNullObjectTypeAnnotation.ats"
                             }
                           }
                         },
@@ -429,12 +429,12 @@
                           "start": {
                             "line": 20,
                             "column": 5,
-                            "program": "undefinedNullObjectTypeAnnotation.ets"
+                            "program": "undefinedNullObjectTypeAnnotation.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 24,
-                            "program": "undefinedNullObjectTypeAnnotation.ets"
+                            "program": "undefinedNullObjectTypeAnnotation.ats"
                           }
                         }
                       },
@@ -442,12 +442,12 @@
                         "start": {
                           "line": 20,
                           "column": 5,
-                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                          "program": "undefinedNullObjectTypeAnnotation.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 24,
-                          "program": "undefinedNullObjectTypeAnnotation.ets"
+                          "program": "undefinedNullObjectTypeAnnotation.ats"
                         }
                       }
                     }
@@ -456,12 +456,12 @@
                     "start": {
                       "line": 16,
                       "column": 16,
-                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                      "program": "undefinedNullObjectTypeAnnotation.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 2,
-                      "program": "undefinedNullObjectTypeAnnotation.ets"
+                      "program": "undefinedNullObjectTypeAnnotation.ats"
                     }
                   }
                 },
@@ -469,12 +469,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "undefinedNullObjectTypeAnnotation.ets"
+                    "program": "undefinedNullObjectTypeAnnotation.ats"
                   },
                   "end": {
                     "line": 21,
                     "column": 2,
-                    "program": "undefinedNullObjectTypeAnnotation.ets"
+                    "program": "undefinedNullObjectTypeAnnotation.ats"
                   }
                 }
               },
@@ -482,12 +482,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "undefinedNullObjectTypeAnnotation.ets"
+                  "program": "undefinedNullObjectTypeAnnotation.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 2,
-                  "program": "undefinedNullObjectTypeAnnotation.ets"
+                  "program": "undefinedNullObjectTypeAnnotation.ats"
                 }
               }
             },
@@ -496,12 +496,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "undefinedNullObjectTypeAnnotation.ets"
+                "program": "undefinedNullObjectTypeAnnotation.ats"
               },
               "end": {
                 "line": 21,
                 "column": 2,
-                "program": "undefinedNullObjectTypeAnnotation.ets"
+                "program": "undefinedNullObjectTypeAnnotation.ats"
               }
             }
           }
@@ -510,12 +510,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "undefinedNullObjectTypeAnnotation.ets"
+            "program": "undefinedNullObjectTypeAnnotation.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "undefinedNullObjectTypeAnnotation.ets"
+            "program": "undefinedNullObjectTypeAnnotation.ats"
           }
         }
       },
@@ -523,12 +523,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "undefinedNullObjectTypeAnnotation.ets"
+          "program": "undefinedNullObjectTypeAnnotation.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "undefinedNullObjectTypeAnnotation.ets"
+          "program": "undefinedNullObjectTypeAnnotation.ats"
         }
       }
     }
@@ -537,12 +537,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "undefinedNullObjectTypeAnnotation.ets"
+      "program": "undefinedNullObjectTypeAnnotation.ats"
     },
     "end": {
       "line": 22,
       "column": 1,
-      "program": "undefinedNullObjectTypeAnnotation.ets"
+      "program": "undefinedNullObjectTypeAnnotation.ats"
     }
   }
 }

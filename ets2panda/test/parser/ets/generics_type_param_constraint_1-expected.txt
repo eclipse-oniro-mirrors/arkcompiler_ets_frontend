@@ -11,12 +11,12 @@
             "start": {
               "line": 17,
               "column": 7,
-              "program": "generics_type_param_constraint_1.ets"
+              "program": "generics_type_param_constraint_1.ats"
             },
             "end": {
               "line": 17,
               "column": 8,
-              "program": "generics_type_param_constraint_1.ets"
+              "program": "generics_type_param_constraint_1.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                   "start": {
                     "line": 17,
                     "column": 10,
-                    "program": "generics_type_param_constraint_1.ets"
+                    "program": "generics_type_param_constraint_1.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 11,
-                    "program": "generics_type_param_constraint_1.ets"
+                    "program": "generics_type_param_constraint_1.ats"
                   }
                 }
               },
@@ -52,12 +52,12 @@
                       "start": {
                         "line": 17,
                         "column": 20,
-                        "program": "generics_type_param_constraint_1.ets"
+                        "program": "generics_type_param_constraint_1.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 30,
-                        "program": "generics_type_param_constraint_1.ets"
+                        "program": "generics_type_param_constraint_1.ats"
                       }
                     }
                   },
@@ -75,12 +75,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 31,
-                                "program": "generics_type_param_constraint_1.ets"
+                                "program": "generics_type_param_constraint_1.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 32,
-                                "program": "generics_type_param_constraint_1.ets"
+                                "program": "generics_type_param_constraint_1.ats"
                               }
                             }
                           },
@@ -88,12 +88,12 @@
                             "start": {
                               "line": 17,
                               "column": 31,
-                              "program": "generics_type_param_constraint_1.ets"
+                              "program": "generics_type_param_constraint_1.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 32,
-                              "program": "generics_type_param_constraint_1.ets"
+                              "program": "generics_type_param_constraint_1.ats"
                             }
                           }
                         },
@@ -101,12 +101,12 @@
                           "start": {
                             "line": 17,
                             "column": 31,
-                            "program": "generics_type_param_constraint_1.ets"
+                            "program": "generics_type_param_constraint_1.ats"
                           },
                           "end": {
                             "line": 17,
                             "column": 32,
-                            "program": "generics_type_param_constraint_1.ets"
+                            "program": "generics_type_param_constraint_1.ats"
                           }
                         }
                       }
@@ -115,12 +115,12 @@
                       "start": {
                         "line": 17,
                         "column": 30,
-                        "program": "generics_type_param_constraint_1.ets"
+                        "program": "generics_type_param_constraint_1.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 34,
-                        "program": "generics_type_param_constraint_1.ets"
+                        "program": "generics_type_param_constraint_1.ats"
                       }
                     }
                   },
@@ -128,12 +128,12 @@
                     "start": {
                       "line": 17,
                       "column": 20,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 34,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     }
                   }
                 },
@@ -141,12 +141,12 @@
                   "start": {
                     "line": 17,
                     "column": 20,
-                    "program": "generics_type_param_constraint_1.ets"
+                    "program": "generics_type_param_constraint_1.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 34,
-                    "program": "generics_type_param_constraint_1.ets"
+                    "program": "generics_type_param_constraint_1.ats"
                   }
                 }
               },
@@ -154,12 +154,12 @@
                 "start": {
                   "line": 17,
                   "column": 10,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 34,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 }
               }
             }
@@ -168,12 +168,12 @@
             "start": {
               "line": 17,
               "column": 9,
-              "program": "generics_type_param_constraint_1.ets"
+              "program": "generics_type_param_constraint_1.ats"
             },
             "end": {
               "line": 17,
               "column": 34,
-              "program": "generics_type_param_constraint_1.ets"
+              "program": "generics_type_param_constraint_1.ats"
             }
           }
         },
@@ -189,12 +189,12 @@
                 "start": {
                   "line": 17,
                   "column": 36,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 36,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 }
               }
             },
@@ -213,12 +213,12 @@
                     "start": {
                       "line": 17,
                       "column": 36,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 36,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     }
                   }
                 },
@@ -233,12 +233,12 @@
                     "start": {
                       "line": 17,
                       "column": 36,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 36,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     }
                   }
                 },
@@ -246,12 +246,12 @@
                   "start": {
                     "line": 17,
                     "column": 36,
-                    "program": "generics_type_param_constraint_1.ets"
+                    "program": "generics_type_param_constraint_1.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 36,
-                    "program": "generics_type_param_constraint_1.ets"
+                    "program": "generics_type_param_constraint_1.ats"
                   }
                 }
               },
@@ -259,12 +259,12 @@
                 "start": {
                   "line": 17,
                   "column": 36,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 36,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 }
               }
             },
@@ -287,12 +287,12 @@
           "start": {
             "line": 17,
             "column": 35,
-            "program": "generics_type_param_constraint_1.ets"
+            "program": "generics_type_param_constraint_1.ats"
           },
           "end": {
             "line": 17,
             "column": 37,
-            "program": "generics_type_param_constraint_1.ets"
+            "program": "generics_type_param_constraint_1.ats"
           }
         }
       },
@@ -300,12 +300,12 @@
         "start": {
           "line": 17,
           "column": 1,
-          "program": "generics_type_param_constraint_1.ets"
+          "program": "generics_type_param_constraint_1.ats"
         },
         "end": {
           "line": 17,
           "column": 37,
-          "program": "generics_type_param_constraint_1.ets"
+          "program": "generics_type_param_constraint_1.ats"
         }
       }
     },
@@ -319,12 +319,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "generics_type_param_constraint_1.ets"
+              "program": "generics_type_param_constraint_1.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "generics_type_param_constraint_1.ets"
+              "program": "generics_type_param_constraint_1.ats"
             }
           }
         },
@@ -340,12 +340,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 14,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 }
               }
             },
@@ -365,12 +365,12 @@
                     "start": {
                       "line": 18,
                       "column": 10,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 14,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     }
                   }
                 },
@@ -385,12 +385,12 @@
                     "start": {
                       "line": 18,
                       "column": 17,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 19,
-                      "program": "generics_type_param_constraint_1.ets"
+                      "program": "generics_type_param_constraint_1.ats"
                     }
                   }
                 },
@@ -398,12 +398,12 @@
                   "start": {
                     "line": 18,
                     "column": 10,
-                    "program": "generics_type_param_constraint_1.ets"
+                    "program": "generics_type_param_constraint_1.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 19,
-                    "program": "generics_type_param_constraint_1.ets"
+                    "program": "generics_type_param_constraint_1.ats"
                   }
                 }
               },
@@ -411,12 +411,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 19,
-                  "program": "generics_type_param_constraint_1.ets"
+                  "program": "generics_type_param_constraint_1.ats"
                 }
               }
             },
@@ -425,12 +425,12 @@
               "start": {
                 "line": 18,
                 "column": 1,
-                "program": "generics_type_param_constraint_1.ets"
+                "program": "generics_type_param_constraint_1.ats"
               },
               "end": {
                 "line": 18,
                 "column": 19,
-                "program": "generics_type_param_constraint_1.ets"
+                "program": "generics_type_param_constraint_1.ats"
               }
             }
           }
@@ -439,12 +439,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "generics_type_param_constraint_1.ets"
+            "program": "generics_type_param_constraint_1.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "generics_type_param_constraint_1.ets"
+            "program": "generics_type_param_constraint_1.ats"
           }
         }
       },
@@ -452,12 +452,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "generics_type_param_constraint_1.ets"
+          "program": "generics_type_param_constraint_1.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "generics_type_param_constraint_1.ets"
+          "program": "generics_type_param_constraint_1.ats"
         }
       }
     }
@@ -466,12 +466,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "generics_type_param_constraint_1.ets"
+      "program": "generics_type_param_constraint_1.ats"
     },
     "end": {
       "line": 19,
       "column": 1,
-      "program": "generics_type_param_constraint_1.ets"
+      "program": "generics_type_param_constraint_1.ats"
     }
   }
 }

@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             },
             "end": {
               "line": 16,
               "column": 8,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -56,12 +56,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -89,12 +89,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 10,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   }
                 }
               },
@@ -102,12 +102,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -130,12 +130,12 @@
           "start": {
             "line": 16,
             "column": 9,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           },
           "end": {
             "line": 16,
             "column": 11,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           }
         }
       },
@@ -143,12 +143,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         },
         "end": {
           "line": 16,
           "column": 11,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         }
       }
     },
@@ -162,12 +162,12 @@
             "start": {
               "line": 17,
               "column": 7,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             },
             "end": {
               "line": 17,
               "column": 8,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             }
           }
         },
@@ -182,12 +182,12 @@
                 "start": {
                   "line": 17,
                   "column": 17,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 18,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -195,12 +195,12 @@
               "start": {
                 "line": 17,
                 "column": 17,
-                "program": "inheritance2.ets"
+                "program": "inheritance2.ats"
               },
               "end": {
                 "line": 17,
                 "column": 18,
-                "program": "inheritance2.ets"
+                "program": "inheritance2.ats"
               }
             }
           },
@@ -208,12 +208,12 @@
             "start": {
               "line": 17,
               "column": 17,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             },
             "end": {
               "line": 17,
               "column": 18,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             }
           }
         },
@@ -228,12 +228,12 @@
                 "start": {
                   "line": 17,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -252,12 +252,12 @@
                     "start": {
                       "line": 17,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -272,12 +272,12 @@
                     "start": {
                       "line": 17,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -285,12 +285,12 @@
                   "start": {
                     "line": 17,
                     "column": 20,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 20,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   }
                 }
               },
@@ -298,12 +298,12 @@
                 "start": {
                   "line": 17,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -326,12 +326,12 @@
           "start": {
             "line": 17,
             "column": 19,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           },
           "end": {
             "line": 17,
             "column": 21,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           }
         }
       },
@@ -339,12 +339,12 @@
         "start": {
           "line": 17,
           "column": 1,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         },
         "end": {
           "line": 17,
           "column": 21,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         }
       }
     },
@@ -358,12 +358,12 @@
             "start": {
               "line": 18,
               "column": 7,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             },
             "end": {
               "line": 18,
               "column": 8,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             }
           }
         },
@@ -378,12 +378,12 @@
                 "start": {
                   "line": 18,
                   "column": 17,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 18,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -391,12 +391,12 @@
               "start": {
                 "line": 18,
                 "column": 17,
-                "program": "inheritance2.ets"
+                "program": "inheritance2.ats"
               },
               "end": {
                 "line": 18,
                 "column": 18,
-                "program": "inheritance2.ets"
+                "program": "inheritance2.ats"
               }
             }
           },
@@ -404,12 +404,12 @@
             "start": {
               "line": 18,
               "column": 17,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             },
             "end": {
               "line": 18,
               "column": 18,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             }
           }
         },
@@ -424,12 +424,12 @@
                 "start": {
                   "line": 18,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -448,12 +448,12 @@
                     "start": {
                       "line": 18,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -468,12 +468,12 @@
                     "start": {
                       "line": 18,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -481,12 +481,12 @@
                   "start": {
                     "line": 18,
                     "column": 20,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 20,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   }
                 }
               },
@@ -494,12 +494,12 @@
                 "start": {
                   "line": 18,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -522,12 +522,12 @@
           "start": {
             "line": 18,
             "column": 19,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           },
           "end": {
             "line": 18,
             "column": 21,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           }
         }
       },
@@ -535,12 +535,12 @@
         "start": {
           "line": 18,
           "column": 1,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         },
         "end": {
           "line": 18,
           "column": 21,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         }
       }
     },
@@ -554,12 +554,12 @@
             "start": {
               "line": 19,
               "column": 7,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             },
             "end": {
               "line": 19,
               "column": 8,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             }
           }
         },
@@ -574,12 +574,12 @@
                 "start": {
                   "line": 19,
                   "column": 17,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 18,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -587,12 +587,12 @@
               "start": {
                 "line": 19,
                 "column": 17,
-                "program": "inheritance2.ets"
+                "program": "inheritance2.ats"
               },
               "end": {
                 "line": 19,
                 "column": 18,
-                "program": "inheritance2.ets"
+                "program": "inheritance2.ats"
               }
             }
           },
@@ -600,12 +600,12 @@
             "start": {
               "line": 19,
               "column": 17,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             },
             "end": {
               "line": 19,
               "column": 18,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             }
           }
         },
@@ -620,12 +620,12 @@
                 "start": {
                   "line": 19,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -644,12 +644,12 @@
                     "start": {
                       "line": 19,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -664,12 +664,12 @@
                     "start": {
                       "line": 19,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 20,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -677,12 +677,12 @@
                   "start": {
                     "line": 19,
                     "column": 20,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 20,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   }
                 }
               },
@@ -690,12 +690,12 @@
                 "start": {
                   "line": 19,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 20,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -718,12 +718,12 @@
           "start": {
             "line": 19,
             "column": 19,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           },
           "end": {
             "line": 19,
             "column": 21,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           }
         }
       },
@@ -731,12 +731,12 @@
         "start": {
           "line": 19,
           "column": 1,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         },
         "end": {
           "line": 19,
           "column": 21,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         }
       }
     },
@@ -750,12 +750,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "inheritance2.ets"
+              "program": "inheritance2.ats"
             }
           }
         },
@@ -771,12 +771,12 @@
                 "start": {
                   "line": 21,
                   "column": 10,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 14,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -796,12 +796,12 @@
                     "start": {
                       "line": 21,
                       "column": 10,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 14,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -815,12 +815,12 @@
                     "start": {
                       "line": 21,
                       "column": 18,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 22,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -846,12 +846,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 13,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 14,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     }
                                   }
                                 },
@@ -859,12 +859,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 13,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 14,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   }
                                 }
                               },
@@ -872,12 +872,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 13,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 14,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 }
                               }
                             },
@@ -885,12 +885,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 9,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 10,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -907,12 +907,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 21,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 22,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     }
                                   }
                                 },
@@ -920,12 +920,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 21,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 22,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   }
                                 }
                               },
@@ -933,12 +933,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 21,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 22,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 }
                               }
                             },
@@ -947,12 +947,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 17,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 25,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -960,12 +960,12 @@
                             "start": {
                               "line": 22,
                               "column": 9,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 25,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             }
                           }
                         }
@@ -975,12 +975,12 @@
                         "start": {
                           "line": 22,
                           "column": 5,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 25,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         }
                       }
                     },
@@ -1003,12 +1003,12 @@
                                     "start": {
                                       "line": 23,
                                       "column": 13,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     },
                                     "end": {
                                       "line": 23,
                                       "column": 14,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     }
                                   }
                                 },
@@ -1016,12 +1016,12 @@
                                   "start": {
                                     "line": 23,
                                     "column": 13,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   },
                                   "end": {
                                     "line": 23,
                                     "column": 14,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   }
                                 }
                               },
@@ -1029,12 +1029,12 @@
                                 "start": {
                                   "line": 23,
                                   "column": 13,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 },
                                 "end": {
                                   "line": 23,
                                   "column": 14,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 }
                               }
                             },
@@ -1042,12 +1042,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 9,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 10,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -1058,12 +1058,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 17,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 18,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -1071,12 +1071,12 @@
                             "start": {
                               "line": 23,
                               "column": 9,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 18,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             }
                           }
                         }
@@ -1086,12 +1086,12 @@
                         "start": {
                           "line": 23,
                           "column": 5,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 19,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         }
                       }
                     },
@@ -1114,12 +1114,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 13,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 14,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     }
                                   }
                                 },
@@ -1127,12 +1127,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 13,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 14,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   }
                                 }
                               },
@@ -1140,12 +1140,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 13,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 14,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 }
                               }
                             },
@@ -1153,12 +1153,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 9,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 10,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -1169,12 +1169,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 17,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 18,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -1182,12 +1182,12 @@
                             "start": {
                               "line": 24,
                               "column": 9,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 18,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             }
                           }
                         }
@@ -1197,12 +1197,12 @@
                         "start": {
                           "line": 24,
                           "column": 5,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 19,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         }
                       }
                     },
@@ -1225,12 +1225,12 @@
                                     "start": {
                                       "line": 25,
                                       "column": 13,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     },
                                     "end": {
                                       "line": 25,
                                       "column": 14,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     }
                                   }
                                 },
@@ -1238,12 +1238,12 @@
                                   "start": {
                                     "line": 25,
                                     "column": 13,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   },
                                   "end": {
                                     "line": 25,
                                     "column": 14,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   }
                                 }
                               },
@@ -1251,12 +1251,12 @@
                                 "start": {
                                   "line": 25,
                                   "column": 13,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 },
                                 "end": {
                                   "line": 25,
                                   "column": 14,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 }
                               }
                             },
@@ -1264,12 +1264,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 9,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 10,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -1280,12 +1280,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 17,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 18,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -1293,12 +1293,12 @@
                             "start": {
                               "line": 25,
                               "column": 9,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 18,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             }
                           }
                         }
@@ -1308,12 +1308,12 @@
                         "start": {
                           "line": 25,
                           "column": 5,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 19,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         }
                       }
                     },
@@ -1336,12 +1336,12 @@
                                     "start": {
                                       "line": 26,
                                       "column": 13,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     },
                                     "end": {
                                       "line": 26,
                                       "column": 19,
-                                      "program": "inheritance2.ets"
+                                      "program": "inheritance2.ats"
                                     }
                                   }
                                 },
@@ -1349,12 +1349,12 @@
                                   "start": {
                                     "line": 26,
                                     "column": 13,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   },
                                   "end": {
                                     "line": 26,
                                     "column": 19,
-                                    "program": "inheritance2.ets"
+                                    "program": "inheritance2.ats"
                                   }
                                 }
                               },
@@ -1362,12 +1362,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 13,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 19,
-                                  "program": "inheritance2.ets"
+                                  "program": "inheritance2.ats"
                                 }
                               }
                             },
@@ -1375,12 +1375,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 9,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 10,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -1391,12 +1391,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 22,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 23,
-                                "program": "inheritance2.ets"
+                                "program": "inheritance2.ats"
                               }
                             }
                           },
@@ -1404,12 +1404,12 @@
                             "start": {
                               "line": 26,
                               "column": 9,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             },
                             "end": {
                               "line": 26,
                               "column": 23,
-                              "program": "inheritance2.ets"
+                              "program": "inheritance2.ats"
                             }
                           }
                         }
@@ -1419,12 +1419,12 @@
                         "start": {
                           "line": 26,
                           "column": 5,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         },
                         "end": {
                           "line": 26,
                           "column": 24,
-                          "program": "inheritance2.ets"
+                          "program": "inheritance2.ats"
                         }
                       }
                     }
@@ -1433,12 +1433,12 @@
                     "start": {
                       "line": 21,
                       "column": 23,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 2,
-                      "program": "inheritance2.ets"
+                      "program": "inheritance2.ats"
                     }
                   }
                 },
@@ -1446,12 +1446,12 @@
                   "start": {
                     "line": 21,
                     "column": 10,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 2,
-                    "program": "inheritance2.ets"
+                    "program": "inheritance2.ats"
                   }
                 }
               },
@@ -1459,12 +1459,12 @@
                 "start": {
                   "line": 21,
                   "column": 10,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 2,
-                  "program": "inheritance2.ets"
+                  "program": "inheritance2.ats"
                 }
               }
             },
@@ -1473,12 +1473,12 @@
               "start": {
                 "line": 21,
                 "column": 1,
-                "program": "inheritance2.ets"
+                "program": "inheritance2.ats"
               },
               "end": {
                 "line": 27,
                 "column": 2,
-                "program": "inheritance2.ets"
+                "program": "inheritance2.ats"
               }
             }
           }
@@ -1487,12 +1487,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "inheritance2.ets"
+            "program": "inheritance2.ats"
           }
         }
       },
@@ -1500,12 +1500,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "inheritance2.ets"
+          "program": "inheritance2.ats"
         }
       }
     }
@@ -1514,12 +1514,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "inheritance2.ets"
+      "program": "inheritance2.ats"
     },
     "end": {
       "line": 28,
       "column": 1,
-      "program": "inheritance2.ets"
+      "program": "inheritance2.ats"
     }
   }
 }

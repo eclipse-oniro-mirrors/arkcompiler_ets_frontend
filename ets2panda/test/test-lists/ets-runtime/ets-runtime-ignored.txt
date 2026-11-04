@@ -1,106 +1,106 @@
 # SyntaxError: Cannot find type 'Class'.
 #10421
-ClassNewInstance.ets
+ClassNewInstance.ats
 
 # SyntaxError: Cannot find type 'HashMap'.
 #10422
-StringFasta.ets
+StringFasta.ats
 
 # SyntaxError: Cannot find type 'Class'.
 #10423
-generics_1.ets
+generics_1.ats
 
 #11502
-nullCoalesc.ets
+nullCoalesc.ats
 
 #11104
-unboxing.ets
+unboxing.ats
 
 #11326
-GenericsTest.ets
+GenericsTest.ats
 
 #11327
-objectEquality.ets
+objectEquality.ats
 
 #33654
-conditionalExpressionGenericLUB.ets
+conditionalExpressionGenericLUB.ats
 
 # Failed due to lambda captures
-trailing-lambda-with-capture.ets
+trailing-lambda-with-capture.ats
 
 # Disabled temporarily #I8EM2T implementation struct directly expanded to class
-struct-identifier.ets
-struct-init.ets
-struct-init2.ets
-struct_implements.ets
-top_level_03.ets
+struct-identifier.ats
+struct-init.ats
+struct-init2.ats
+struct_implements.ats
+top_level_03.ats
 
 # Functional type with rest parameter
-lambdaExpressionWithRestParameter.ets
-funcRefWithRestArguments.ets
+lambdaExpressionWithRestParameter.ats
+funcRefWithRestArguments.ats
 
 # Wrong type inferred for lambda
-type_param_in_union.ets
+type_param_in_union.ats
 
 #33655
-n_overrideWithNullable.ets
-nullableType.ets
+n_overrideWithNullable.ats
+nullableType.ats
 
 #21065
-implementsClassPropertyUnionType1.ets
-implementsClassPropertyUnionType2.ets
+implementsClassPropertyUnionType1.ats
+implementsClassPropertyUnionType2.ats
 
 #21834
-override_for_partial_02.ets
-optional_field.ets
+override_for_partial_02.ats
+optional_field.ats
 
 #24214
-Object-type-in-binary-logical-expression.ets
-trailing-lambda.ets
-conversionFloatIntLong.ets
-inallyCatchExecutedNormally.ets
+Object-type-in-binary-logical-expression.ats
+trailing-lambda.ats
+conversionFloatIntLong.ats
+inallyCatchExecutedNormally.ats
 
 #48215
-lambda_with_receiver/lambda_with_receiver_generics_return_this_rotate.ets
-lambda_with_receiver/lambda_with_receiver_trailing_in_class_method_return_this_rotate.ets
-lambda_with_receiver/lambda_with_receiver_trailing_in_function_return_this_rotate.ets
+lambda_with_receiver/lambda_with_receiver_generics_return_this_rotate.ats
+lambda_with_receiver/lambda_with_receiver_trailing_in_class_method_return_this_rotate.ats
+lambda_with_receiver/lambda_with_receiver_trailing_in_function_return_this_rotate.ats
 
 #23074
 # generic bridges
-GenericBridges_01.ets
-GenericBridges_02.ets
-override_for_partial_01.ets
+GenericBridges_01.ats
+GenericBridges_02.ats
+override_for_partial_01.ats
 
 #HEAD FILE NO NEED TO RUN
-import_self_head_tests/B/test.d.ets
+import_self_head_tests/B/test.d.ats
 
 #24986
-RecordKeyTypeCheck.ets
+RecordKeyTypeCheck.ats
 
 # Rebase no-primitives pathch onto master with merger Array refactoring
-union_generic_class.ets
+union_generic_class.ats
 
-enum_const_variable.ets
-local_enum03.ets
-overload-primitive-and-object.ets
+enum_const_variable.ats
+local_enum03.ats
+overload-primitive-and-object.ats
 
 # No-primitives #24986 [end]
 
-first_match/namespace.ets
-first_match/namespace2.ets
-first_match/namespace3.ets
+first_match/namespace.ats
+first_match/namespace2.ats
+first_match/namespace3.ats
 
 # Issue #28914
-non_null_number_as_index.ets
+non_null_number_as_index.ats
 
 #31475
-as_string.ets
+as_string.ats
 
 #31475
-readonly_array/readonly_array_arg.ets
-readonly_array/readonly_array_field.ets
-readonly_array/readonly_array_var.ets
-finallyClauseThrow.ets
+readonly_array/readonly_array_arg.ats
+readonly_array/readonly_array_field.ats
+readonly_array/readonly_array_var.ats
+finallyClauseThrow.ats
 
 #35027
-for_of_union_array_string.ets
+for_of_union_array_string.ats

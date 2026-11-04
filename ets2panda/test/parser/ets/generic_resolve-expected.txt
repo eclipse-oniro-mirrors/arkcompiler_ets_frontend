@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "generic_resolve.ets"
+              "program": "generic_resolve.ats"
             },
             "end": {
               "line": 16,
               "column": 10,
-              "program": "generic_resolve.ets"
+              "program": "generic_resolve.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                   "start": {
                     "line": 16,
                     "column": 11,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 12,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   }
                 }
               },
@@ -45,12 +45,12 @@
                 "start": {
                   "line": 16,
                   "column": 11,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 }
               }
             }
@@ -59,12 +59,12 @@
             "start": {
               "line": 16,
               "column": 10,
-              "program": "generic_resolve.ets"
+              "program": "generic_resolve.ats"
             },
             "end": {
               "line": 16,
               "column": 13,
-              "program": "generic_resolve.ets"
+              "program": "generic_resolve.ats"
             }
           }
         },
@@ -80,12 +80,12 @@
                 "start": {
                   "line": 17,
                   "column": 13,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 24,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 }
               }
             },
@@ -105,12 +105,12 @@
                     "start": {
                       "line": 17,
                       "column": 13,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 24,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -125,12 +125,12 @@
                     "start": {
                       "line": 17,
                       "column": 27,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 6,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -138,12 +138,12 @@
                   "start": {
                     "line": 17,
                     "column": 24,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 6,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   }
                 }
               },
@@ -151,12 +151,12 @@
                 "start": {
                   "line": 17,
                   "column": 24,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 6,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 }
               }
             },
@@ -165,12 +165,12 @@
               "start": {
                 "line": 17,
                 "column": 5,
-                "program": "generic_resolve.ets"
+                "program": "generic_resolve.ats"
               },
               "end": {
                 "line": 18,
                 "column": 6,
-                "program": "generic_resolve.ets"
+                "program": "generic_resolve.ats"
               }
             }
           },
@@ -183,12 +183,12 @@
                 "start": {
                   "line": 20,
                   "column": 5,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 9,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 }
               }
             },
@@ -208,12 +208,12 @@
                     "start": {
                       "line": 20,
                       "column": 5,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 9,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -240,12 +240,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 32,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 33,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 }
                               }
                             },
@@ -253,12 +253,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 32,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 33,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               }
                             }
                           },
@@ -266,12 +266,12 @@
                             "start": {
                               "line": 20,
                               "column": 32,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 33,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             }
                           }
                         },
@@ -279,12 +279,12 @@
                           "start": {
                             "line": 20,
                             "column": 26,
-                            "program": "generic_resolve.ets"
+                            "program": "generic_resolve.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 33,
-                            "program": "generic_resolve.ets"
+                            "program": "generic_resolve.ats"
                           }
                         }
                       },
@@ -292,12 +292,12 @@
                         "start": {
                           "line": 20,
                           "column": 13,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 33,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         }
                       }
                     },
@@ -305,12 +305,12 @@
                       "start": {
                         "line": 20,
                         "column": 13,
-                        "program": "generic_resolve.ets"
+                        "program": "generic_resolve.ats"
                       },
                       "end": {
                         "line": 20,
                         "column": 33,
-                        "program": "generic_resolve.ets"
+                        "program": "generic_resolve.ats"
                       }
                     }
                   }
@@ -326,12 +326,12 @@
                         "start": {
                           "line": 20,
                           "column": 36,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 39,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         }
                       }
                     },
@@ -349,12 +349,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 40,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 41,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 }
                               }
                             },
@@ -362,12 +362,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 40,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 41,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               }
                             }
                           },
@@ -375,12 +375,12 @@
                             "start": {
                               "line": 20,
                               "column": 40,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 41,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             }
                           }
                         }
@@ -389,12 +389,12 @@
                         "start": {
                           "line": 20,
                           "column": 39,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 42,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         }
                       }
                     },
@@ -402,12 +402,12 @@
                       "start": {
                         "line": 20,
                         "column": 36,
-                        "program": "generic_resolve.ets"
+                        "program": "generic_resolve.ats"
                       },
                       "end": {
                         "line": 20,
                         "column": 42,
-                        "program": "generic_resolve.ets"
+                        "program": "generic_resolve.ats"
                       }
                     }
                   },
@@ -415,12 +415,12 @@
                     "start": {
                       "line": 20,
                       "column": 36,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 42,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -436,12 +436,12 @@
                           "start": {
                             "line": 20,
                             "column": 10,
-                            "program": "generic_resolve.ets"
+                            "program": "generic_resolve.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 11,
-                            "program": "generic_resolve.ets"
+                            "program": "generic_resolve.ats"
                           }
                         }
                       },
@@ -449,12 +449,12 @@
                         "start": {
                           "line": 20,
                           "column": 10,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 12,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         }
                       }
                     }
@@ -463,12 +463,12 @@
                     "start": {
                       "line": 20,
                       "column": 9,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 12,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -487,12 +487,12 @@
                               "start": {
                                 "line": 21,
                                 "column": 13,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               },
                               "end": {
                                 "line": 21,
                                 "column": 20,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               }
                             }
                           },
@@ -509,12 +509,12 @@
                                     "start": {
                                       "line": 21,
                                       "column": 27,
-                                      "program": "generic_resolve.ets"
+                                      "program": "generic_resolve.ats"
                                     },
                                     "end": {
                                       "line": 21,
                                       "column": 30,
-                                      "program": "generic_resolve.ets"
+                                      "program": "generic_resolve.ats"
                                     }
                                   }
                                 },
@@ -532,12 +532,12 @@
                                             "start": {
                                               "line": 21,
                                               "column": 31,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             },
                                             "end": {
                                               "line": 21,
                                               "column": 32,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             }
                                           }
                                         },
@@ -545,12 +545,12 @@
                                           "start": {
                                             "line": 21,
                                             "column": 31,
-                                            "program": "generic_resolve.ets"
+                                            "program": "generic_resolve.ats"
                                           },
                                           "end": {
                                             "line": 21,
                                             "column": 32,
-                                            "program": "generic_resolve.ets"
+                                            "program": "generic_resolve.ats"
                                           }
                                         }
                                       },
@@ -558,12 +558,12 @@
                                         "start": {
                                           "line": 21,
                                           "column": 31,
-                                          "program": "generic_resolve.ets"
+                                          "program": "generic_resolve.ats"
                                         },
                                         "end": {
                                           "line": 21,
                                           "column": 32,
-                                          "program": "generic_resolve.ets"
+                                          "program": "generic_resolve.ats"
                                         }
                                       }
                                     }
@@ -572,12 +572,12 @@
                                     "start": {
                                       "line": 21,
                                       "column": 30,
-                                      "program": "generic_resolve.ets"
+                                      "program": "generic_resolve.ats"
                                     },
                                     "end": {
                                       "line": 21,
                                       "column": 33,
-                                      "program": "generic_resolve.ets"
+                                      "program": "generic_resolve.ats"
                                     }
                                   }
                                 },
@@ -585,12 +585,12 @@
                                   "start": {
                                     "line": 21,
                                     "column": 27,
-                                    "program": "generic_resolve.ets"
+                                    "program": "generic_resolve.ats"
                                   },
                                   "end": {
                                     "line": 21,
                                     "column": 33,
-                                    "program": "generic_resolve.ets"
+                                    "program": "generic_resolve.ats"
                                   }
                                 }
                               },
@@ -598,12 +598,12 @@
                                 "start": {
                                   "line": 21,
                                   "column": 27,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 },
                                 "end": {
                                   "line": 21,
                                   "column": 33,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 }
                               }
                             },
@@ -612,12 +612,12 @@
                               "start": {
                                 "line": 21,
                                 "column": 23,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               },
                               "end": {
                                 "line": 21,
                                 "column": 36,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               }
                             }
                           },
@@ -625,12 +625,12 @@
                             "start": {
                               "line": 21,
                               "column": 13,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             },
                             "end": {
                               "line": 21,
                               "column": 36,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             }
                           }
                         }
@@ -640,12 +640,12 @@
                         "start": {
                           "line": 21,
                           "column": 9,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 36,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         }
                       }
                     },
@@ -666,12 +666,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 23,
-                                    "program": "generic_resolve.ets"
+                                    "program": "generic_resolve.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 27,
-                                    "program": "generic_resolve.ets"
+                                    "program": "generic_resolve.ats"
                                   }
                                 }
                               },
@@ -679,12 +679,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 17,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 27,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 }
                               }
                             },
@@ -692,12 +692,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 13,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 15,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               }
                             }
                           },
@@ -716,12 +716,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 34,
-                                    "program": "generic_resolve.ets"
+                                    "program": "generic_resolve.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 38,
-                                    "program": "generic_resolve.ets"
+                                    "program": "generic_resolve.ats"
                                   }
                                 }
                               },
@@ -747,12 +747,12 @@
                                                   "start": {
                                                     "line": 23,
                                                     "column": 22,
-                                                    "program": "generic_resolve.ets"
+                                                    "program": "generic_resolve.ats"
                                                   },
                                                   "end": {
                                                     "line": 23,
                                                     "column": 23,
-                                                    "program": "generic_resolve.ets"
+                                                    "program": "generic_resolve.ats"
                                                   }
                                                 }
                                               },
@@ -760,12 +760,12 @@
                                                 "start": {
                                                   "line": 23,
                                                   "column": 22,
-                                                  "program": "generic_resolve.ets"
+                                                  "program": "generic_resolve.ats"
                                                 },
                                                 "end": {
                                                   "line": 23,
                                                   "column": 23,
-                                                  "program": "generic_resolve.ets"
+                                                  "program": "generic_resolve.ats"
                                                 }
                                               }
                                             },
@@ -773,12 +773,12 @@
                                               "start": {
                                                 "line": 23,
                                                 "column": 22,
-                                                "program": "generic_resolve.ets"
+                                                "program": "generic_resolve.ats"
                                               },
                                               "end": {
                                                 "line": 23,
                                                 "column": 23,
-                                                "program": "generic_resolve.ets"
+                                                "program": "generic_resolve.ats"
                                               }
                                             }
                                           },
@@ -786,12 +786,12 @@
                                             "start": {
                                               "line": 23,
                                               "column": 17,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             },
                                             "end": {
                                               "line": 23,
                                               "column": 20,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             }
                                           }
                                         },
@@ -804,12 +804,12 @@
                                               "start": {
                                                 "line": 23,
                                                 "column": 26,
-                                                "program": "generic_resolve.ets"
+                                                "program": "generic_resolve.ats"
                                               },
                                               "end": {
                                                 "line": 23,
                                                 "column": 37,
-                                                "program": "generic_resolve.ets"
+                                                "program": "generic_resolve.ats"
                                               }
                                             }
                                           },
@@ -819,12 +819,12 @@
                                             "start": {
                                               "line": 23,
                                               "column": 26,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             },
                                             "end": {
                                               "line": 23,
                                               "column": 39,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             }
                                           }
                                         },
@@ -832,12 +832,12 @@
                                           "start": {
                                             "line": 23,
                                             "column": 17,
-                                            "program": "generic_resolve.ets"
+                                            "program": "generic_resolve.ats"
                                           },
                                           "end": {
                                             "line": 23,
                                             "column": 39,
-                                            "program": "generic_resolve.ets"
+                                            "program": "generic_resolve.ats"
                                           }
                                         }
                                       }
@@ -847,12 +847,12 @@
                                       "start": {
                                         "line": 23,
                                         "column": 13,
-                                        "program": "generic_resolve.ets"
+                                        "program": "generic_resolve.ats"
                                       },
                                       "end": {
                                         "line": 23,
                                         "column": 40,
-                                        "program": "generic_resolve.ets"
+                                        "program": "generic_resolve.ats"
                                       }
                                     }
                                   },
@@ -869,12 +869,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 13,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 20,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             }
                                           }
                                         },
@@ -885,12 +885,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 21,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 28,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             }
                                           }
                                         },
@@ -900,12 +900,12 @@
                                           "start": {
                                             "line": 24,
                                             "column": 13,
-                                            "program": "generic_resolve.ets"
+                                            "program": "generic_resolve.ats"
                                           },
                                           "end": {
                                             "line": 24,
                                             "column": 28,
-                                            "program": "generic_resolve.ets"
+                                            "program": "generic_resolve.ats"
                                           }
                                         }
                                       },
@@ -917,12 +917,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 29,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 32,
-                                              "program": "generic_resolve.ets"
+                                              "program": "generic_resolve.ats"
                                             }
                                           }
                                         }
@@ -932,12 +932,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 13,
-                                          "program": "generic_resolve.ets"
+                                          "program": "generic_resolve.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 33,
-                                          "program": "generic_resolve.ets"
+                                          "program": "generic_resolve.ats"
                                         }
                                       }
                                     },
@@ -945,12 +945,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 13,
-                                        "program": "generic_resolve.ets"
+                                        "program": "generic_resolve.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 34,
-                                        "program": "generic_resolve.ets"
+                                        "program": "generic_resolve.ats"
                                       }
                                     }
                                   }
@@ -959,12 +959,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 42,
-                                    "program": "generic_resolve.ets"
+                                    "program": "generic_resolve.ats"
                                   },
                                   "end": {
                                     "line": 25,
                                     "column": 10,
-                                    "program": "generic_resolve.ets"
+                                    "program": "generic_resolve.ats"
                                   }
                                 }
                               },
@@ -972,12 +972,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 30,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 },
                                 "end": {
                                   "line": 25,
                                   "column": 10,
-                                  "program": "generic_resolve.ets"
+                                  "program": "generic_resolve.ats"
                                 }
                               }
                             },
@@ -985,12 +985,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 30,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 10,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               }
                             }
                           },
@@ -998,12 +998,12 @@
                             "start": {
                               "line": 22,
                               "column": 13,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 10,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             }
                           }
                         }
@@ -1013,12 +1013,12 @@
                         "start": {
                           "line": 22,
                           "column": 9,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 10,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         }
                       }
                     },
@@ -1031,12 +1031,12 @@
                           "start": {
                             "line": 26,
                             "column": 16,
-                            "program": "generic_resolve.ets"
+                            "program": "generic_resolve.ats"
                           },
                           "end": {
                             "line": 26,
                             "column": 23,
-                            "program": "generic_resolve.ets"
+                            "program": "generic_resolve.ats"
                           }
                         }
                       },
@@ -1044,12 +1044,12 @@
                         "start": {
                           "line": 26,
                           "column": 9,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         },
                         "end": {
                           "line": 26,
                           "column": 24,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         }
                       }
                     }
@@ -1058,12 +1058,12 @@
                     "start": {
                       "line": 20,
                       "column": 43,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 6,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -1071,12 +1071,12 @@
                   "start": {
                     "line": 20,
                     "column": 9,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 6,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   }
                 }
               },
@@ -1084,12 +1084,12 @@
                 "start": {
                   "line": 20,
                   "column": 9,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 6,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 }
               }
             },
@@ -1098,12 +1098,12 @@
               "start": {
                 "line": 20,
                 "column": 5,
-                "program": "generic_resolve.ets"
+                "program": "generic_resolve.ats"
               },
               "end": {
                 "line": 27,
                 "column": 6,
-                "program": "generic_resolve.ets"
+                "program": "generic_resolve.ats"
               }
             }
           },
@@ -1116,12 +1116,12 @@
                 "start": {
                   "line": 29,
                   "column": 20,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 },
                 "end": {
                   "line": 29,
                   "column": 27,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 }
               }
             },
@@ -1141,12 +1141,12 @@
                     "start": {
                       "line": 29,
                       "column": 20,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 29,
                       "column": 27,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -1170,12 +1170,12 @@
                               "start": {
                                 "line": 29,
                                 "column": 35,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               },
                               "end": {
                                 "line": 29,
                                 "column": 36,
-                                "program": "generic_resolve.ets"
+                                "program": "generic_resolve.ats"
                               }
                             }
                           },
@@ -1183,12 +1183,12 @@
                             "start": {
                               "line": 29,
                               "column": 35,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             },
                             "end": {
                               "line": 29,
                               "column": 36,
-                              "program": "generic_resolve.ets"
+                              "program": "generic_resolve.ats"
                             }
                           }
                         },
@@ -1196,12 +1196,12 @@
                           "start": {
                             "line": 29,
                             "column": 35,
-                            "program": "generic_resolve.ets"
+                            "program": "generic_resolve.ats"
                           },
                           "end": {
                             "line": 29,
                             "column": 36,
-                            "program": "generic_resolve.ets"
+                            "program": "generic_resolve.ats"
                           }
                         }
                       },
@@ -1209,12 +1209,12 @@
                         "start": {
                           "line": 29,
                           "column": 28,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         },
                         "end": {
                           "line": 29,
                           "column": 36,
-                          "program": "generic_resolve.ets"
+                          "program": "generic_resolve.ats"
                         }
                       }
                     },
@@ -1222,12 +1222,12 @@
                       "start": {
                         "line": 29,
                         "column": 28,
-                        "program": "generic_resolve.ets"
+                        "program": "generic_resolve.ats"
                       },
                       "end": {
                         "line": 29,
                         "column": 36,
-                        "program": "generic_resolve.ets"
+                        "program": "generic_resolve.ats"
                       }
                     }
                   }
@@ -1238,12 +1238,12 @@
                     "start": {
                       "line": 29,
                       "column": 39,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 29,
                       "column": 43,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -1251,12 +1251,12 @@
                   "start": {
                     "line": 29,
                     "column": 27,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   },
                   "end": {
                     "line": 29,
                     "column": 43,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   }
                 }
               },
@@ -1264,12 +1264,12 @@
                 "start": {
                   "line": 29,
                   "column": 27,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 },
                 "end": {
                   "line": 29,
                   "column": 43,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 }
               }
             },
@@ -1278,12 +1278,12 @@
               "start": {
                 "line": 29,
                 "column": 20,
-                "program": "generic_resolve.ets"
+                "program": "generic_resolve.ats"
               },
               "end": {
                 "line": 29,
                 "column": 43,
-                "program": "generic_resolve.ets"
+                "program": "generic_resolve.ats"
               }
             }
           }
@@ -1292,12 +1292,12 @@
           "start": {
             "line": 16,
             "column": 14,
-            "program": "generic_resolve.ets"
+            "program": "generic_resolve.ats"
           },
           "end": {
             "line": 30,
             "column": 2,
-            "program": "generic_resolve.ets"
+            "program": "generic_resolve.ats"
           }
         }
       },
@@ -1305,12 +1305,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "generic_resolve.ets"
+          "program": "generic_resolve.ats"
         },
         "end": {
           "line": 30,
           "column": 2,
-          "program": "generic_resolve.ets"
+          "program": "generic_resolve.ats"
         }
       }
     },
@@ -1324,12 +1324,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "generic_resolve.ets"
+              "program": "generic_resolve.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "generic_resolve.ets"
+              "program": "generic_resolve.ats"
             }
           }
         },
@@ -1390,12 +1390,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "generic_resolve.ets"
+                      "program": "generic_resolve.ats"
                     }
                   }
                 },
@@ -1403,12 +1403,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "generic_resolve.ets"
+                    "program": "generic_resolve.ats"
                   }
                 }
               },
@@ -1416,12 +1416,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "generic_resolve.ets"
+                  "program": "generic_resolve.ats"
                 }
               }
             },
@@ -1430,12 +1430,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "generic_resolve.ets"
+                "program": "generic_resolve.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "generic_resolve.ets"
+                "program": "generic_resolve.ats"
               }
             }
           }
@@ -1444,12 +1444,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "generic_resolve.ets"
+            "program": "generic_resolve.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "generic_resolve.ets"
+            "program": "generic_resolve.ats"
           }
         }
       },
@@ -1457,12 +1457,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "generic_resolve.ets"
+          "program": "generic_resolve.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "generic_resolve.ets"
+          "program": "generic_resolve.ats"
         }
       }
     }
@@ -1471,12 +1471,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "generic_resolve.ets"
+      "program": "generic_resolve.ats"
     },
     "end": {
       "line": 31,
       "column": 1,
-      "program": "generic_resolve.ets"
+      "program": "generic_resolve.ats"
     }
   }
 }

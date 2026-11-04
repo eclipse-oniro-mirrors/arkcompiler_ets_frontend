@@ -1,80 +1,80 @@
 # The package keyword is not used anylonger
 # Issue: https://gitcode.com/openharmony/arkcompiler_ets_frontend/issues/8924
-ast/compiler/ets/implicit_package_import/package_test_3/package_module_1_neg.ets
-ast/compiler/ets/implicit_package_import/package_test_3/package_module_2_neg.ets
-ast/compiler/ets/implicit_package_import/package_test_4/package_module_2.ets
-ast/compiler/ets/implicit_package_import/package_test_7/package_module_1_neg.ets
-ast/compiler/ets/implicit_package_import/package_test_7/package_module_2_neg.ets
-ast/compiler/ets/implicit_package_import/package_test_9/package_module_with_semantic_error.ets
-ast/compiler/ets/implicit_package_import/package_test_9/package_module_with_syntax_error.ets
-ast/compiler/ets/implicit_package_import/package_test_9/package_module.ets
-ast/compiler/ets/implicit_package_import/package_test_9/package_with_both_errors.ets
-ast/compiler/ets/import_tests/import_distant_package/master_file.ets
-ast/compiler/ets/namespace_tests/src01.ets
-ast/compiler/ets/package_namespace_static_block_multi/package/P2_01.ets
-ast/compiler/ets/package_namespace_static_block_multi/package/P2_02.ets
-ast/compiler/ets/package_namespace_static_block_multi/main_test.ets
-ast/compiler/ets/package_static_block_multi_files/P1/P1_0.ets
-ast/compiler/ets/package_static_block_multi_files/P1/P1_1.ets
-ast/compiler/ets/package_static_block_multi_files/main_test.ets
-ast/compiler/ets/use_static_flag/package/flag_before_package.ets
-ast/compiler/ets/use_static_flag/package/flag_before_package2.ets
-ast/compiler/ets/use_static_flag/package_neg/flag_package.ets
-ast/compiler/ets/use_static_flag/package_neg/flag_package2.ets
+ast/compiler/ets/implicit_package_import/package_test_3/package_module_1_neg.ats
+ast/compiler/ets/implicit_package_import/package_test_3/package_module_2_neg.ats
+ast/compiler/ets/implicit_package_import/package_test_4/package_module_2.ats
+ast/compiler/ets/implicit_package_import/package_test_7/package_module_1_neg.ats
+ast/compiler/ets/implicit_package_import/package_test_7/package_module_2_neg.ats
+ast/compiler/ets/implicit_package_import/package_test_9/package_module_with_semantic_error.ats
+ast/compiler/ets/implicit_package_import/package_test_9/package_module_with_syntax_error.ats
+ast/compiler/ets/implicit_package_import/package_test_9/package_module.ats
+ast/compiler/ets/implicit_package_import/package_test_9/package_with_both_errors.ats
+ast/compiler/ets/import_tests/import_distant_package/master_file.ats
+ast/compiler/ets/namespace_tests/src01.ats
+ast/compiler/ets/package_namespace_static_block_multi/package/P2_01.ats
+ast/compiler/ets/package_namespace_static_block_multi/package/P2_02.ats
+ast/compiler/ets/package_namespace_static_block_multi/main_test.ats
+ast/compiler/ets/package_static_block_multi_files/P1/P1_0.ats
+ast/compiler/ets/package_static_block_multi_files/P1/P1_1.ats
+ast/compiler/ets/package_static_block_multi_files/main_test.ats
+ast/compiler/ets/use_static_flag/package/flag_before_package.ats
+ast/compiler/ets/use_static_flag/package/flag_before_package2.ats
+ast/compiler/ets/use_static_flag/package_neg/flag_package.ats
+ast/compiler/ets/use_static_flag/package_neg/flag_package2.ats
 
 # Fails with Assertion. Description in Issue #19645
-ast/parser/ets/extension_function_tests/extension_function_not_for_class_type.ets
+ast/parser/ets/extension_function_tests/extension_function_not_for_class_type.ats
 
 # Issue: #20639
-ast/parser/ets/extension_function_tests/extension_function_array1.ets
-ast/parser/ets/extension_function_tests/extension_function_array1_primitive.ets
-ast/parser/ets/extension_function_tests/extension_function_array2.ets
-ast/parser/ets/extension_function_tests/extension_function_array2_primitive.ets
-ast/parser/ets/extension_function_tests/extension_function_array3.ets
-ast/parser/ets/extension_function_tests/extension_function_array3_primitive.ets
-ast/parser/ets/extension_function_tests/extension_function_array_primitive.ets
-ast/parser/ets/extension_function_tests/extension_function_array_typealias.ets
-ast/parser/ets/extension_function_tests/extension_function_class.ets
-ast/parser/ets/extension_function_tests/extension_function_class_typealias.ets
+ast/parser/ets/extension_function_tests/extension_function_array1.ats
+ast/parser/ets/extension_function_tests/extension_function_array1_primitive.ats
+ast/parser/ets/extension_function_tests/extension_function_array2.ats
+ast/parser/ets/extension_function_tests/extension_function_array2_primitive.ats
+ast/parser/ets/extension_function_tests/extension_function_array3.ats
+ast/parser/ets/extension_function_tests/extension_function_array3_primitive.ats
+ast/parser/ets/extension_function_tests/extension_function_array_primitive.ats
+ast/parser/ets/extension_function_tests/extension_function_array_typealias.ats
+ast/parser/ets/extension_function_tests/extension_function_class.ats
+ast/parser/ets/extension_function_tests/extension_function_class_typealias.ats
 
 # Issue #22140
-ast/parser/ets/InvalidLexer.ets
+ast/parser/ets/InvalidLexer.ats
 
 # Issue #33652
-ast/compiler/ets/expression/this_expression/undefined_class_for_this_1.ets
-ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ets
+ast/compiler/ets/expression/this_expression/undefined_class_for_this_1.ats
+ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ats
 
 # Issue: #23074
 # after the fix the test fails to detect another type error
-ast/parser/ets/unexpected_token_51.ets
+ast/parser/ets/unexpected_token_51.ats
 
 # Issue: #24253
-ast/compiler/ets/lambda_infer_type/lambda_param_type_cannot_be_determined.ets
+ast/compiler/ets/lambda_infer_type/lambda_param_type_cannot_be_determined.ats
 
 # No-primitives #24986 [start]
-ast/compiler/ets/func_as_param.ets
+ast/compiler/ets/func_as_param.ats
 
 # New error: annotations: expected a constant literal
-ast/compiler/ets/annotation_tests/annotation_as_negative_case.ets
+ast/compiler/ets/annotation_tests/annotation_as_negative_case.ats
 
 # Expected CTE Variable used before being assigned
-ast/parser/ets/never_assigned6.ets
+ast/parser/ets/never_assigned6.ats
 
 # Invalid position (0:0) not printed
-ast/compiler/ets/MultiPropertyWithSameName.ets
-ast/compiler/ets/objectLiteralInterface3.ets
+ast/compiler/ets/MultiPropertyWithSameName.ats
+ast/compiler/ets/objectLiteralInterface3.ats
 
 # Call to `log` is ambiguous as `2` versions of `log` are available
-ast/compiler/ets/import_tests/import_distant_package/master_file.ets
+ast/compiler/ets/import_tests/import_distant_package/master_file.ats
 
 # Call to ... is ambiguous
-ast/compiler/ets/FixedArray/most_specific_method_with_empty_rest_param.ets
+ast/compiler/ets/FixedArray/most_specific_method_with_empty_rest_param.ats
 
  # ABORT_FAIL
- ast/parser/ets/for_of_02.ets
+ ast/parser/ets/for_of_02.ats
 
-ast/compiler/ets/dynamic-field-declaration.ets
-ast/compiler/ets/readonly_array02.ets
+ast/compiler/ets/dynamic-field-declaration.ats
+ast/compiler/ets/readonly_array02.ats
 
 # No-primitives #24986 [end]
 
@@ -83,16 +83,16 @@ ast/parser/ts/test_decorator5.ts
 ast/parser/ts/InvalidStatements.ts
 
 #30971
-ast/compiler/ets/nagative_trailingLambda_abort.ets
+ast/compiler/ets/nagative_trailingLambda_abort.ats
 
 #32155
-ast/compiler/ets/annotation_new.ets
+ast/compiler/ets/annotation_new.ats
 
 # NOTE: package tests - should be removed or modified
-ast/compiler/ets/namespace_tests/src01.ets
-ast/compiler/ets/implicit_package_import/package_test_3/package_module_1_neg.ets
-ast/compiler/ets/implicit_package_import/package_test_3/package_module_2_neg.ets
-ast/compiler/ets/package_namespace_static_block_multi/main_test.ets
-ast/compiler/ets/package_static_block_multi_files/main_test.ets
-ast/parser/ets/typenode_clone_comprehensive.ets
-ast/parser/ets/import_tests/import_name_conflict_2.ets
+ast/compiler/ets/namespace_tests/src01.ats
+ast/compiler/ets/implicit_package_import/package_test_3/package_module_1_neg.ats
+ast/compiler/ets/implicit_package_import/package_test_3/package_module_2_neg.ats
+ast/compiler/ets/package_namespace_static_block_multi/main_test.ats
+ast/compiler/ets/package_static_block_multi_files/main_test.ats
+ast/parser/ets/typenode_clone_comprehensive.ats
+ast/parser/ets/import_tests/import_name_conflict_2.ats

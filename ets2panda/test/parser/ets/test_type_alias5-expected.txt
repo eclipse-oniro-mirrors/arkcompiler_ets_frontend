@@ -10,12 +10,12 @@
           "start": {
             "line": 16,
             "column": 6,
-            "program": "test_type_alias5.ets"
+            "program": "test_type_alias5.ats"
           },
           "end": {
             "line": 16,
             "column": 7,
-            "program": "test_type_alias5.ets"
+            "program": "test_type_alias5.ats"
           }
         }
       },
@@ -25,12 +25,12 @@
           "start": {
             "line": 16,
             "column": 10,
-            "program": "test_type_alias5.ets"
+            "program": "test_type_alias5.ats"
           },
           "end": {
             "line": 16,
             "column": 14,
-            "program": "test_type_alias5.ets"
+            "program": "test_type_alias5.ats"
           }
         }
       },
@@ -38,12 +38,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "test_type_alias5.ets"
+          "program": "test_type_alias5.ats"
         },
         "end": {
           "line": 16,
           "column": 14,
-          "program": "test_type_alias5.ets"
+          "program": "test_type_alias5.ats"
         }
       }
     },
@@ -57,12 +57,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "test_type_alias5.ets"
+              "program": "test_type_alias5.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "test_type_alias5.ets"
+              "program": "test_type_alias5.ats"
             }
           }
         },
@@ -123,12 +123,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "test_type_alias5.ets"
+                      "program": "test_type_alias5.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "test_type_alias5.ets"
+                      "program": "test_type_alias5.ats"
                     }
                   }
                 },
@@ -136,12 +136,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "test_type_alias5.ets"
+                    "program": "test_type_alias5.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "test_type_alias5.ets"
+                    "program": "test_type_alias5.ats"
                   }
                 }
               },
@@ -149,12 +149,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "test_type_alias5.ets"
+                  "program": "test_type_alias5.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "test_type_alias5.ets"
+                  "program": "test_type_alias5.ats"
                 }
               }
             },
@@ -163,12 +163,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "test_type_alias5.ets"
+                "program": "test_type_alias5.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "test_type_alias5.ets"
+                "program": "test_type_alias5.ats"
               }
             }
           }
@@ -177,12 +177,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "test_type_alias5.ets"
+            "program": "test_type_alias5.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "test_type_alias5.ets"
+            "program": "test_type_alias5.ats"
           }
         }
       },
@@ -190,12 +190,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "test_type_alias5.ets"
+          "program": "test_type_alias5.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "test_type_alias5.ets"
+          "program": "test_type_alias5.ats"
         }
       }
     }
@@ -204,12 +204,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "test_type_alias5.ets"
+      "program": "test_type_alias5.ats"
     },
     "end": {
       "line": 17,
       "column": 1,
-      "program": "test_type_alias5.ets"
+      "program": "test_type_alias5.ats"
     }
   }
 }

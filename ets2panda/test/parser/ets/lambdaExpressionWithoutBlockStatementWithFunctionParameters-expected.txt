@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 16,
                       "column": 18,
-                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 22,
-                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                     }
                   }
                 },
@@ -110,12 +110,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 15,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 18,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         }
                                       }
                                     },
@@ -123,12 +123,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 13,
-                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 18,
-                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                       }
                                     }
                                   },
@@ -136,12 +136,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 13,
-                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 18,
-                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                     }
                                   }
                                 },
@@ -156,12 +156,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 23,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 26,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         }
                                       }
                                     },
@@ -169,12 +169,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 20,
-                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 26,
-                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                       }
                                     }
                                   },
@@ -182,12 +182,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 20,
-                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 26,
-                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                     }
                                   }
                                 }
@@ -198,12 +198,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 31,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 34,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   }
                                 }
                               },
@@ -211,12 +211,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 12,
-                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 34,
-                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                 }
                               }
                             },
@@ -224,12 +224,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 9,
-                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 10,
-                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                               }
                             }
                           },
@@ -253,12 +253,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 40,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 43,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         }
                                       }
                                     },
@@ -266,12 +266,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 38,
-                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 43,
-                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                       }
                                     }
                                   },
@@ -279,12 +279,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 38,
-                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 43,
-                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                     }
                                   }
                                 },
@@ -299,12 +299,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 48,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 51,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         }
                                       }
                                     },
@@ -312,12 +312,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 45,
-                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 51,
-                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                        "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                       }
                                     }
                                   },
@@ -325,12 +325,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 45,
-                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 51,
-                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                     }
                                   }
                                 }
@@ -341,12 +341,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 54,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 57,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   }
                                 }
                               },
@@ -365,12 +365,12 @@
                                           "start": {
                                             "line": 17,
                                             "column": 61,
-                                            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                           },
                                           "end": {
                                             "line": 17,
                                             "column": 62,
-                                            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                           }
                                         }
                                       },
@@ -381,12 +381,12 @@
                                           "start": {
                                             "line": 17,
                                             "column": 63,
-                                            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                           },
                                           "end": {
                                             "line": 17,
                                             "column": 64,
-                                            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                           }
                                         }
                                       },
@@ -394,12 +394,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 61,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 64,
-                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                         }
                                       }
                                     },
@@ -421,12 +421,12 @@
                                   "start": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   },
                                   "end": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   }
                                 }
                               },
@@ -434,12 +434,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 37,
-                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 64,
-                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                 }
                               }
                             },
@@ -447,12 +447,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 37,
-                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 64,
-                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                               }
                             }
                           },
@@ -460,12 +460,12 @@
                             "start": {
                               "line": 17,
                               "column": 9,
-                              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 64,
-                              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                             }
                           }
                         }
@@ -475,12 +475,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 65,
-                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                         }
                       }
                     },
@@ -498,12 +498,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 24,
-                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 27,
-                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                 }
                               }
                             },
@@ -511,12 +511,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 9,
-                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 22,
-                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                               }
                             }
                           },
@@ -529,12 +529,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 30,
-                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 31,
-                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                 }
                               }
                             },
@@ -546,12 +546,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 32,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 33,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   }
                                 }
                               },
@@ -562,12 +562,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 34,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 35,
-                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                                   }
                                 }
                               }
@@ -577,12 +577,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 30,
-                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 36,
-                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                               }
                             }
                           },
@@ -590,12 +590,12 @@
                             "start": {
                               "line": 18,
                               "column": 9,
-                              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 36,
-                              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                              "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                             }
                           }
                         }
@@ -605,12 +605,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 37,
-                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                         }
                       }
                     }
@@ -619,12 +619,12 @@
                     "start": {
                       "line": 16,
                       "column": 23,
-                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 2,
-                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                     }
                   }
                 },
@@ -632,12 +632,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 2,
-                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                    "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                   }
                 }
               },
@@ -645,12 +645,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 2,
-                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                  "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
                 }
               }
             },
@@ -659,12 +659,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
               },
               "end": {
                 "line": 19,
                 "column": 2,
-                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+                "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
               }
             }
           }
@@ -673,12 +673,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+            "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
           }
         }
       },
@@ -686,12 +686,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+          "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
         }
       }
     }
@@ -700,12 +700,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
     },
     "end": {
       "line": 20,
       "column": 1,
-      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ets"
+      "program": "lambdaExpressionWithoutBlockStatementWithFunctionParameters.ats"
     }
   }
 }

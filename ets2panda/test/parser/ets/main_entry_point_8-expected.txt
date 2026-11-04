@@ -10,12 +10,12 @@
           "start": {
             "line": 16,
             "column": 6,
-            "program": "main_entry_point_8.ets"
+            "program": "main_entry_point_8.ats"
           },
           "end": {
             "line": 16,
             "column": 9,
-            "program": "main_entry_point_8.ets"
+            "program": "main_entry_point_8.ats"
           }
         }
       },
@@ -30,12 +30,12 @@
               "start": {
                 "line": 16,
                 "column": 12,
-                "program": "main_entry_point_8.ets"
+                "program": "main_entry_point_8.ats"
               },
               "end": {
                 "line": 16,
                 "column": 18,
-                "program": "main_entry_point_8.ets"
+                "program": "main_entry_point_8.ats"
               }
             }
           },
@@ -43,12 +43,12 @@
             "start": {
               "line": 16,
               "column": 12,
-              "program": "main_entry_point_8.ets"
+              "program": "main_entry_point_8.ats"
             },
             "end": {
               "line": 16,
               "column": 18,
-              "program": "main_entry_point_8.ets"
+              "program": "main_entry_point_8.ats"
             }
           }
         },
@@ -56,12 +56,12 @@
           "start": {
             "line": 16,
             "column": 12,
-            "program": "main_entry_point_8.ets"
+            "program": "main_entry_point_8.ats"
           },
           "end": {
             "line": 16,
             "column": 18,
-            "program": "main_entry_point_8.ets"
+            "program": "main_entry_point_8.ats"
           }
         }
       },
@@ -69,12 +69,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "main_entry_point_8.ets"
+          "program": "main_entry_point_8.ats"
         },
         "end": {
           "line": 16,
           "column": 18,
-          "program": "main_entry_point_8.ets"
+          "program": "main_entry_point_8.ats"
         }
       }
     },
@@ -88,12 +88,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "main_entry_point_8.ets"
+              "program": "main_entry_point_8.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "main_entry_point_8.ets"
+              "program": "main_entry_point_8.ats"
             }
           }
         },
@@ -109,12 +109,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "main_entry_point_8.ets"
+                  "program": "main_entry_point_8.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 14,
-                  "program": "main_entry_point_8.ets"
+                  "program": "main_entry_point_8.ats"
                 }
               }
             },
@@ -134,12 +134,12 @@
                     "start": {
                       "line": 18,
                       "column": 10,
-                      "program": "main_entry_point_8.ets"
+                      "program": "main_entry_point_8.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 14,
-                      "program": "main_entry_point_8.ets"
+                      "program": "main_entry_point_8.ats"
                     }
                   }
                 },
@@ -163,12 +163,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 19,
-                                "program": "main_entry_point_8.ets"
+                                "program": "main_entry_point_8.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 29,
-                                "program": "main_entry_point_8.ets"
+                                "program": "main_entry_point_8.ats"
                               }
                             }
                           },
@@ -186,12 +186,12 @@
                                       "start": {
                                         "line": 18,
                                         "column": 30,
-                                        "program": "main_entry_point_8.ets"
+                                        "program": "main_entry_point_8.ats"
                                       },
                                       "end": {
                                         "line": 18,
                                         "column": 33,
-                                        "program": "main_entry_point_8.ets"
+                                        "program": "main_entry_point_8.ats"
                                       }
                                     }
                                   },
@@ -199,12 +199,12 @@
                                     "start": {
                                       "line": 18,
                                       "column": 30,
-                                      "program": "main_entry_point_8.ets"
+                                      "program": "main_entry_point_8.ats"
                                     },
                                     "end": {
                                       "line": 18,
                                       "column": 33,
-                                      "program": "main_entry_point_8.ets"
+                                      "program": "main_entry_point_8.ats"
                                     }
                                   }
                                 },
@@ -212,12 +212,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 30,
-                                    "program": "main_entry_point_8.ets"
+                                    "program": "main_entry_point_8.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 33,
-                                    "program": "main_entry_point_8.ets"
+                                    "program": "main_entry_point_8.ats"
                                   }
                                 }
                               }
@@ -226,12 +226,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 29,
-                                "program": "main_entry_point_8.ets"
+                                "program": "main_entry_point_8.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 34,
-                                "program": "main_entry_point_8.ets"
+                                "program": "main_entry_point_8.ats"
                               }
                             }
                           },
@@ -239,12 +239,12 @@
                             "start": {
                               "line": 18,
                               "column": 19,
-                              "program": "main_entry_point_8.ets"
+                              "program": "main_entry_point_8.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 34,
-                              "program": "main_entry_point_8.ets"
+                              "program": "main_entry_point_8.ats"
                             }
                           }
                         },
@@ -252,12 +252,12 @@
                           "start": {
                             "line": 18,
                             "column": 19,
-                            "program": "main_entry_point_8.ets"
+                            "program": "main_entry_point_8.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 34,
-                            "program": "main_entry_point_8.ets"
+                            "program": "main_entry_point_8.ats"
                           }
                         }
                       },
@@ -265,12 +265,12 @@
                         "start": {
                           "line": 18,
                           "column": 15,
-                          "program": "main_entry_point_8.ets"
+                          "program": "main_entry_point_8.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 34,
-                          "program": "main_entry_point_8.ets"
+                          "program": "main_entry_point_8.ats"
                         }
                       }
                     },
@@ -278,12 +278,12 @@
                       "start": {
                         "line": 18,
                         "column": 15,
-                        "program": "main_entry_point_8.ets"
+                        "program": "main_entry_point_8.ats"
                       },
                       "end": {
                         "line": 18,
                         "column": 34,
-                        "program": "main_entry_point_8.ets"
+                        "program": "main_entry_point_8.ats"
                       }
                     }
                   }
@@ -294,12 +294,12 @@
                     "start": {
                       "line": 18,
                       "column": 37,
-                      "program": "main_entry_point_8.ets"
+                      "program": "main_entry_point_8.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 41,
-                      "program": "main_entry_point_8.ets"
+                      "program": "main_entry_point_8.ats"
                     }
                   }
                 },
@@ -313,12 +313,12 @@
                         "start": {
                           "line": 19,
                           "column": 5,
-                          "program": "main_entry_point_8.ets"
+                          "program": "main_entry_point_8.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 12,
-                          "program": "main_entry_point_8.ets"
+                          "program": "main_entry_point_8.ats"
                         }
                       }
                     }
@@ -327,12 +327,12 @@
                     "start": {
                       "line": 18,
                       "column": 42,
-                      "program": "main_entry_point_8.ets"
+                      "program": "main_entry_point_8.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 2,
-                      "program": "main_entry_point_8.ets"
+                      "program": "main_entry_point_8.ats"
                     }
                   }
                 },
@@ -340,12 +340,12 @@
                   "start": {
                     "line": 18,
                     "column": 10,
-                    "program": "main_entry_point_8.ets"
+                    "program": "main_entry_point_8.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 2,
-                    "program": "main_entry_point_8.ets"
+                    "program": "main_entry_point_8.ats"
                   }
                 }
               },
@@ -353,12 +353,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "main_entry_point_8.ets"
+                  "program": "main_entry_point_8.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 2,
-                  "program": "main_entry_point_8.ets"
+                  "program": "main_entry_point_8.ats"
                 }
               }
             },
@@ -367,12 +367,12 @@
               "start": {
                 "line": 18,
                 "column": 1,
-                "program": "main_entry_point_8.ets"
+                "program": "main_entry_point_8.ats"
               },
               "end": {
                 "line": 20,
                 "column": 2,
-                "program": "main_entry_point_8.ets"
+                "program": "main_entry_point_8.ats"
               }
             }
           }
@@ -381,12 +381,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "main_entry_point_8.ets"
+            "program": "main_entry_point_8.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "main_entry_point_8.ets"
+            "program": "main_entry_point_8.ats"
           }
         }
       },
@@ -394,12 +394,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "main_entry_point_8.ets"
+          "program": "main_entry_point_8.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "main_entry_point_8.ets"
+          "program": "main_entry_point_8.ats"
         }
       }
     }
@@ -408,12 +408,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "main_entry_point_8.ets"
+      "program": "main_entry_point_8.ats"
     },
     "end": {
       "line": 21,
       "column": 1,
-      "program": "main_entry_point_8.ets"
+      "program": "main_entry_point_8.ats"
     }
   }
 }

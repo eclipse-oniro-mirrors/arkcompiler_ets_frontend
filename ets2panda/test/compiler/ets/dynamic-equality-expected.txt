@@ -10,12 +10,12 @@
           "start": {
             "line": 20,
             "column": 19,
-            "program": "dynamic-equality.ets"
+            "program": "dynamic-equality.ats"
           },
           "end": {
             "line": 20,
             "column": 41,
-            "program": "dynamic-equality.ets"
+            "program": "dynamic-equality.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamic-equality.ets"
+                "program": "dynamic-equality.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamic-equality.ets"
+                "program": "dynamic-equality.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamic-equality.ets"
+                "program": "dynamic-equality.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamic-equality.ets"
+                "program": "dynamic-equality.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 20,
               "column": 10,
-              "program": "dynamic-equality.ets"
+              "program": "dynamic-equality.ats"
             },
             "end": {
               "line": 20,
               "column": 11,
-              "program": "dynamic-equality.ets"
+              "program": "dynamic-equality.ats"
             }
           }
         }
@@ -72,12 +72,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "dynamic-equality.ets"
+          "program": "dynamic-equality.ats"
         },
         "end": {
           "line": 20,
           "column": 41,
-          "program": "dynamic-equality.ets"
+          "program": "dynamic-equality.ats"
         }
       }
     },
@@ -91,12 +91,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "dynamic-equality.ets"
+              "program": "dynamic-equality.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "dynamic-equality.ets"
+              "program": "dynamic-equality.ats"
             }
           }
         },
@@ -112,12 +112,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "dynamic-equality.ets"
+                  "program": "dynamic-equality.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 14,
-                  "program": "dynamic-equality.ets"
+                  "program": "dynamic-equality.ats"
                 }
               }
             },
@@ -137,12 +137,12 @@
                     "start": {
                       "line": 22,
                       "column": 10,
-                      "program": "dynamic-equality.ets"
+                      "program": "dynamic-equality.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 14,
-                      "program": "dynamic-equality.ets"
+                      "program": "dynamic-equality.ats"
                     }
                   }
                 },
@@ -156,12 +156,12 @@
                     "start": {
                       "line": 22,
                       "column": 18,
-                      "program": "dynamic-equality.ets"
+                      "program": "dynamic-equality.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 21,
-                      "program": "dynamic-equality.ets"
+                      "program": "dynamic-equality.ats"
                     }
                   }
                 },
@@ -180,12 +180,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 9,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 10,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               }
                             }
                           },
@@ -198,12 +198,12 @@
                                 "start": {
                                   "line": 23,
                                   "column": 13,
-                                  "program": "dynamic-equality.ets"
+                                  "program": "dynamic-equality.ats"
                                 },
                                 "end": {
                                   "line": 23,
                                   "column": 14,
-                                  "program": "dynamic-equality.ets"
+                                  "program": "dynamic-equality.ats"
                                 }
                               }
                             },
@@ -213,12 +213,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 13,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 16,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               }
                             }
                           },
@@ -226,12 +226,12 @@
                             "start": {
                               "line": 23,
                               "column": 9,
-                              "program": "dynamic-equality.ets"
+                              "program": "dynamic-equality.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 16,
-                              "program": "dynamic-equality.ets"
+                              "program": "dynamic-equality.ats"
                             }
                           }
                         }
@@ -241,12 +241,12 @@
                         "start": {
                           "line": 23,
                           "column": 5,
-                          "program": "dynamic-equality.ets"
+                          "program": "dynamic-equality.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 17,
-                          "program": "dynamic-equality.ets"
+                          "program": "dynamic-equality.ats"
                         }
                       }
                     },
@@ -262,12 +262,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 9,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 10,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               }
                             }
                           },
@@ -280,12 +280,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 13,
-                                  "program": "dynamic-equality.ets"
+                                  "program": "dynamic-equality.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 14,
-                                  "program": "dynamic-equality.ets"
+                                  "program": "dynamic-equality.ats"
                                 }
                               }
                             },
@@ -295,12 +295,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 13,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 16,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               }
                             }
                           },
@@ -308,12 +308,12 @@
                             "start": {
                               "line": 24,
                               "column": 9,
-                              "program": "dynamic-equality.ets"
+                              "program": "dynamic-equality.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 16,
-                              "program": "dynamic-equality.ets"
+                              "program": "dynamic-equality.ats"
                             }
                           }
                         }
@@ -323,12 +323,12 @@
                         "start": {
                           "line": 24,
                           "column": 5,
-                          "program": "dynamic-equality.ets"
+                          "program": "dynamic-equality.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 17,
-                          "program": "dynamic-equality.ets"
+                          "program": "dynamic-equality.ats"
                         }
                       }
                     },
@@ -344,12 +344,12 @@
                             "start": {
                               "line": 25,
                               "column": 9,
-                              "program": "dynamic-equality.ets"
+                              "program": "dynamic-equality.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 10,
-                              "program": "dynamic-equality.ets"
+                              "program": "dynamic-equality.ats"
                             }
                           }
                         },
@@ -360,12 +360,12 @@
                             "start": {
                               "line": 25,
                               "column": 15,
-                              "program": "dynamic-equality.ets"
+                              "program": "dynamic-equality.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 16,
-                              "program": "dynamic-equality.ets"
+                              "program": "dynamic-equality.ats"
                             }
                           }
                         },
@@ -373,12 +373,12 @@
                           "start": {
                             "line": 25,
                             "column": 9,
-                            "program": "dynamic-equality.ets"
+                            "program": "dynamic-equality.ats"
                           },
                           "end": {
                             "line": 25,
                             "column": 16,
-                            "program": "dynamic-equality.ets"
+                            "program": "dynamic-equality.ats"
                           }
                         }
                       },
@@ -394,12 +394,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 16,
-                                  "program": "dynamic-equality.ets"
+                                  "program": "dynamic-equality.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 17,
-                                  "program": "dynamic-equality.ets"
+                                  "program": "dynamic-equality.ats"
                                 }
                               }
                             },
@@ -407,12 +407,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 9,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 18,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               }
                             }
                           }
@@ -421,12 +421,12 @@
                           "start": {
                             "line": 25,
                             "column": 18,
-                            "program": "dynamic-equality.ets"
+                            "program": "dynamic-equality.ats"
                           },
                           "end": {
                             "line": 27,
                             "column": 6,
-                            "program": "dynamic-equality.ets"
+                            "program": "dynamic-equality.ats"
                           }
                         }
                       },
@@ -442,12 +442,12 @@
                                 "start": {
                                   "line": 28,
                                   "column": 16,
-                                  "program": "dynamic-equality.ets"
+                                  "program": "dynamic-equality.ats"
                                 },
                                 "end": {
                                   "line": 28,
                                   "column": 17,
-                                  "program": "dynamic-equality.ets"
+                                  "program": "dynamic-equality.ats"
                                 }
                               }
                             },
@@ -455,12 +455,12 @@
                               "start": {
                                 "line": 28,
                                 "column": 9,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               },
                               "end": {
                                 "line": 28,
                                 "column": 18,
-                                "program": "dynamic-equality.ets"
+                                "program": "dynamic-equality.ats"
                               }
                             }
                           }
@@ -469,12 +469,12 @@
                           "start": {
                             "line": 27,
                             "column": 12,
-                            "program": "dynamic-equality.ets"
+                            "program": "dynamic-equality.ats"
                           },
                           "end": {
                             "line": 29,
                             "column": 6,
-                            "program": "dynamic-equality.ets"
+                            "program": "dynamic-equality.ats"
                           }
                         }
                       },
@@ -482,12 +482,12 @@
                         "start": {
                           "line": 25,
                           "column": 5,
-                          "program": "dynamic-equality.ets"
+                          "program": "dynamic-equality.ats"
                         },
                         "end": {
                           "line": 29,
                           "column": 6,
-                          "program": "dynamic-equality.ets"
+                          "program": "dynamic-equality.ats"
                         }
                       }
                     }
@@ -496,12 +496,12 @@
                     "start": {
                       "line": 22,
                       "column": 22,
-                      "program": "dynamic-equality.ets"
+                      "program": "dynamic-equality.ats"
                     },
                     "end": {
                       "line": 30,
                       "column": 2,
-                      "program": "dynamic-equality.ets"
+                      "program": "dynamic-equality.ats"
                     }
                   }
                 },
@@ -509,12 +509,12 @@
                   "start": {
                     "line": 22,
                     "column": 10,
-                    "program": "dynamic-equality.ets"
+                    "program": "dynamic-equality.ats"
                   },
                   "end": {
                     "line": 30,
                     "column": 2,
-                    "program": "dynamic-equality.ets"
+                    "program": "dynamic-equality.ats"
                   }
                 }
               },
@@ -522,12 +522,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "dynamic-equality.ets"
+                  "program": "dynamic-equality.ats"
                 },
                 "end": {
                   "line": 30,
                   "column": 2,
-                  "program": "dynamic-equality.ets"
+                  "program": "dynamic-equality.ats"
                 }
               }
             },
@@ -536,12 +536,12 @@
               "start": {
                 "line": 22,
                 "column": 1,
-                "program": "dynamic-equality.ets"
+                "program": "dynamic-equality.ats"
               },
               "end": {
                 "line": 30,
                 "column": 2,
-                "program": "dynamic-equality.ets"
+                "program": "dynamic-equality.ats"
               }
             }
           }
@@ -550,12 +550,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "dynamic-equality.ets"
+            "program": "dynamic-equality.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "dynamic-equality.ets"
+            "program": "dynamic-equality.ats"
           }
         }
       },
@@ -563,12 +563,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "dynamic-equality.ets"
+          "program": "dynamic-equality.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "dynamic-equality.ets"
+          "program": "dynamic-equality.ats"
         }
       }
     }
@@ -577,14 +577,14 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "dynamic-equality.ets"
+      "program": "dynamic-equality.ats"
     },
     "end": {
       "line": 31,
       "column": 1,
-      "program": "dynamic-equality.ets"
+      "program": "dynamic-equality.ats"
     }
   }
 }
-[dynamic-equality.ets:23:13] Semantic error ESE0143: Unresolved reference A
-[dynamic-equality.ets:24:13] Semantic error ESE0143: Unresolved reference A
+[dynamic-equality.ats:23:13] Semantic error ESE0143: Unresolved reference A
+[dynamic-equality.ats:24:13] Semantic error ESE0143: Unresolved reference A

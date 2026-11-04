@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "inferingEntryPointReturn.ets"
+              "program": "inferingEntryPointReturn.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "inferingEntryPointReturn.ets"
+              "program": "inferingEntryPointReturn.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "inferingEntryPointReturn.ets"
+                  "program": "inferingEntryPointReturn.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "inferingEntryPointReturn.ets"
+                  "program": "inferingEntryPointReturn.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "inferingEntryPointReturn.ets"
+                      "program": "inferingEntryPointReturn.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "inferingEntryPointReturn.ets"
+                      "program": "inferingEntryPointReturn.ats"
                     }
                   }
                 },
@@ -92,12 +92,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 9,
-                                      "program": "inferingEntryPointReturn.ets"
+                                      "program": "inferingEntryPointReturn.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 10,
-                                      "program": "inferingEntryPointReturn.ets"
+                                      "program": "inferingEntryPointReturn.ats"
                                     }
                                   }
                                 },
@@ -110,12 +110,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 9,
-                                          "program": "inferingEntryPointReturn.ets"
+                                          "program": "inferingEntryPointReturn.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 10,
-                                          "program": "inferingEntryPointReturn.ets"
+                                          "program": "inferingEntryPointReturn.ats"
                                         }
                                       }
                                     }
@@ -124,12 +124,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 9,
-                                      "program": "inferingEntryPointReturn.ets"
+                                      "program": "inferingEntryPointReturn.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 10,
-                                      "program": "inferingEntryPointReturn.ets"
+                                      "program": "inferingEntryPointReturn.ats"
                                     }
                                   }
                                 },
@@ -137,12 +137,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 9,
-                                    "program": "inferingEntryPointReturn.ets"
+                                    "program": "inferingEntryPointReturn.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 10,
-                                    "program": "inferingEntryPointReturn.ets"
+                                    "program": "inferingEntryPointReturn.ats"
                                   }
                                 }
                               },
@@ -150,12 +150,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 12,
-                                  "program": "inferingEntryPointReturn.ets"
+                                  "program": "inferingEntryPointReturn.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 21,
-                                  "program": "inferingEntryPointReturn.ets"
+                                  "program": "inferingEntryPointReturn.ats"
                                 }
                               }
                             },
@@ -163,12 +163,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 9,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 10,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               }
                             }
                           },
@@ -179,12 +179,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 24,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 26,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               }
                             }
                           },
@@ -192,12 +192,12 @@
                             "start": {
                               "line": 17,
                               "column": 9,
-                              "program": "inferingEntryPointReturn.ets"
+                              "program": "inferingEntryPointReturn.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 26,
-                              "program": "inferingEntryPointReturn.ets"
+                              "program": "inferingEntryPointReturn.ats"
                             }
                           }
                         }
@@ -207,12 +207,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "inferingEntryPointReturn.ets"
+                          "program": "inferingEntryPointReturn.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 26,
-                          "program": "inferingEntryPointReturn.ets"
+                          "program": "inferingEntryPointReturn.ats"
                         }
                       }
                     },
@@ -233,12 +233,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 9,
-                                    "program": "inferingEntryPointReturn.ets"
+                                    "program": "inferingEntryPointReturn.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 10,
-                                    "program": "inferingEntryPointReturn.ets"
+                                    "program": "inferingEntryPointReturn.ats"
                                   }
                                 }
                               },
@@ -252,12 +252,12 @@
                                       "start": {
                                         "line": 19,
                                         "column": 14,
-                                        "program": "inferingEntryPointReturn.ets"
+                                        "program": "inferingEntryPointReturn.ats"
                                       },
                                       "end": {
                                         "line": 19,
                                         "column": 19,
-                                        "program": "inferingEntryPointReturn.ets"
+                                        "program": "inferingEntryPointReturn.ats"
                                       }
                                     }
                                   }
@@ -266,12 +266,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 13,
-                                    "program": "inferingEntryPointReturn.ets"
+                                    "program": "inferingEntryPointReturn.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 20,
-                                    "program": "inferingEntryPointReturn.ets"
+                                    "program": "inferingEntryPointReturn.ats"
                                   }
                                 }
                               },
@@ -279,12 +279,12 @@
                                 "start": {
                                   "line": 19,
                                   "column": 9,
-                                  "program": "inferingEntryPointReturn.ets"
+                                  "program": "inferingEntryPointReturn.ats"
                                 },
                                 "end": {
                                   "line": 19,
                                   "column": 20,
-                                  "program": "inferingEntryPointReturn.ets"
+                                  "program": "inferingEntryPointReturn.ats"
                                 }
                               }
                             },
@@ -292,12 +292,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 9,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 20,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               }
                             }
                           }
@@ -306,12 +306,12 @@
                           "start": {
                             "line": 18,
                             "column": 8,
-                            "program": "inferingEntryPointReturn.ets"
+                            "program": "inferingEntryPointReturn.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 6,
-                            "program": "inferingEntryPointReturn.ets"
+                            "program": "inferingEntryPointReturn.ats"
                           }
                         }
                       },
@@ -328,12 +328,12 @@
                                   "start": {
                                     "line": 21,
                                     "column": 9,
-                                    "program": "inferingEntryPointReturn.ets"
+                                    "program": "inferingEntryPointReturn.ats"
                                   },
                                   "end": {
                                     "line": 21,
                                     "column": 15,
-                                    "program": "inferingEntryPointReturn.ets"
+                                    "program": "inferingEntryPointReturn.ats"
                                   }
                                 }
                               }
@@ -342,12 +342,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 17,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 6,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               }
                             }
                           },
@@ -358,12 +358,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 14,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 15,
-                                "program": "inferingEntryPointReturn.ets"
+                                "program": "inferingEntryPointReturn.ats"
                               }
                             }
                           },
@@ -371,12 +371,12 @@
                             "start": {
                               "line": 20,
                               "column": 7,
-                              "program": "inferingEntryPointReturn.ets"
+                              "program": "inferingEntryPointReturn.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 6,
-                              "program": "inferingEntryPointReturn.ets"
+                              "program": "inferingEntryPointReturn.ats"
                             }
                           }
                         }
@@ -386,12 +386,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "inferingEntryPointReturn.ets"
+                          "program": "inferingEntryPointReturn.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 6,
-                          "program": "inferingEntryPointReturn.ets"
+                          "program": "inferingEntryPointReturn.ats"
                         }
                       }
                     }
@@ -400,12 +400,12 @@
                     "start": {
                       "line": 16,
                       "column": 16,
-                      "program": "inferingEntryPointReturn.ets"
+                      "program": "inferingEntryPointReturn.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 2,
-                      "program": "inferingEntryPointReturn.ets"
+                      "program": "inferingEntryPointReturn.ats"
                     }
                   }
                 },
@@ -413,12 +413,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "inferingEntryPointReturn.ets"
+                    "program": "inferingEntryPointReturn.ats"
                   },
                   "end": {
                     "line": 23,
                     "column": 2,
-                    "program": "inferingEntryPointReturn.ets"
+                    "program": "inferingEntryPointReturn.ats"
                   }
                 }
               },
@@ -426,12 +426,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "inferingEntryPointReturn.ets"
+                  "program": "inferingEntryPointReturn.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 2,
-                  "program": "inferingEntryPointReturn.ets"
+                  "program": "inferingEntryPointReturn.ats"
                 }
               }
             },
@@ -440,12 +440,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "inferingEntryPointReturn.ets"
+                "program": "inferingEntryPointReturn.ats"
               },
               "end": {
                 "line": 23,
                 "column": 2,
-                "program": "inferingEntryPointReturn.ets"
+                "program": "inferingEntryPointReturn.ats"
               }
             }
           }
@@ -454,12 +454,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "inferingEntryPointReturn.ets"
+            "program": "inferingEntryPointReturn.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "inferingEntryPointReturn.ets"
+            "program": "inferingEntryPointReturn.ats"
           }
         }
       },
@@ -467,12 +467,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "inferingEntryPointReturn.ets"
+          "program": "inferingEntryPointReturn.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "inferingEntryPointReturn.ets"
+          "program": "inferingEntryPointReturn.ats"
         }
       }
     }
@@ -481,12 +481,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "inferingEntryPointReturn.ets"
+      "program": "inferingEntryPointReturn.ats"
     },
     "end": {
       "line": 24,
       "column": 1,
-      "program": "inferingEntryPointReturn.ets"
+      "program": "inferingEntryPointReturn.ats"
     }
   }
 }

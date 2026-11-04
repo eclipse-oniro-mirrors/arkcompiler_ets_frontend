@@ -157,6 +157,11 @@ ir::ExpressionStatement *ETSParser::ParseFileHeaderFlag()
         return nullptr;
     }
 
+    if (util::Helpers::EndsWith(GetProgram()->SourceFilePath().Utf8(), util::ImportPathManager::ATS_SUFFIX)) {
+        LogError(diagnostic::ATS_USE_STATIC_PROHIBITED, {}, Lexer()->GetToken().Start());
+        return nullptr;
+    }
+
     auto startLoc = Lexer()->GetToken().Start();
     ir::Expression *fileHeaderFlag = ParseStringLiteral();
     auto *exprStatementNode = AllocNode<ir::ExpressionStatement>(fileHeaderFlag);
