@@ -11,12 +11,12 @@
             "start": {
               "line": 18,
               "column": 7,
-              "program": "calling_superclass_methods.ets"
+              "program": "calling_superclass_methods.ats"
             },
             "end": {
               "line": 18,
               "column": 11,
-              "program": "calling_superclass_methods.ets"
+              "program": "calling_superclass_methods.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 19,
                   "column": 13,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 16,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 19,
                       "column": 13,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 16,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 19,
                       "column": 20,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 24,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -92,12 +92,12 @@
                     "start": {
                       "line": 19,
                       "column": 25,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 27,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -105,12 +105,12 @@
                   "start": {
                     "line": 19,
                     "column": 16,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 27,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   }
                 }
               },
@@ -118,12 +118,12 @@
                 "start": {
                   "line": 19,
                   "column": 16,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 27,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -132,12 +132,12 @@
               "start": {
                 "line": 19,
                 "column": 13,
-                "program": "calling_superclass_methods.ets"
+                "program": "calling_superclass_methods.ats"
               },
               "end": {
                 "line": 19,
                 "column": 27,
-                "program": "calling_superclass_methods.ets"
+                "program": "calling_superclass_methods.ats"
               }
             }
           },
@@ -150,12 +150,12 @@
                 "start": {
                   "line": 18,
                   "column": 13,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 13,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -174,12 +174,12 @@
                     "start": {
                       "line": 18,
                       "column": 13,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 13,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -194,12 +194,12 @@
                     "start": {
                       "line": 18,
                       "column": 13,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 13,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -207,12 +207,12 @@
                   "start": {
                     "line": 18,
                     "column": 13,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 13,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   }
                 }
               },
@@ -220,12 +220,12 @@
                 "start": {
                   "line": 18,
                   "column": 13,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 13,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -248,12 +248,12 @@
           "start": {
             "line": 18,
             "column": 12,
-            "program": "calling_superclass_methods.ets"
+            "program": "calling_superclass_methods.ats"
           },
           "end": {
             "line": 20,
             "column": 2,
-            "program": "calling_superclass_methods.ets"
+            "program": "calling_superclass_methods.ats"
           }
         }
       },
@@ -261,12 +261,12 @@
         "start": {
           "line": 18,
           "column": 1,
-          "program": "calling_superclass_methods.ets"
+          "program": "calling_superclass_methods.ats"
         },
         "end": {
           "line": 20,
           "column": 2,
-          "program": "calling_superclass_methods.ets"
+          "program": "calling_superclass_methods.ats"
         }
       }
     },
@@ -280,12 +280,12 @@
             "start": {
               "line": 22,
               "column": 7,
-              "program": "calling_superclass_methods.ets"
+              "program": "calling_superclass_methods.ats"
             },
             "end": {
               "line": 22,
               "column": 14,
-              "program": "calling_superclass_methods.ets"
+              "program": "calling_superclass_methods.ats"
             }
           }
         },
@@ -300,12 +300,12 @@
                 "start": {
                   "line": 22,
                   "column": 23,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 27,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -313,12 +313,12 @@
               "start": {
                 "line": 22,
                 "column": 23,
-                "program": "calling_superclass_methods.ets"
+                "program": "calling_superclass_methods.ats"
               },
               "end": {
                 "line": 22,
                 "column": 27,
-                "program": "calling_superclass_methods.ets"
+                "program": "calling_superclass_methods.ats"
               }
             }
           },
@@ -326,12 +326,12 @@
             "start": {
               "line": 22,
               "column": 23,
-              "program": "calling_superclass_methods.ets"
+              "program": "calling_superclass_methods.ats"
             },
             "end": {
               "line": 22,
               "column": 27,
-              "program": "calling_superclass_methods.ets"
+              "program": "calling_superclass_methods.ats"
             }
           }
         },
@@ -346,12 +346,12 @@
                 "start": {
                   "line": 23,
                   "column": 21,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 24,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -371,12 +371,12 @@
                     "start": {
                       "line": 23,
                       "column": 21,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 24,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -399,12 +399,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 9,
-                                "program": "calling_superclass_methods.ets"
+                                "program": "calling_superclass_methods.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 14,
-                                "program": "calling_superclass_methods.ets"
+                                "program": "calling_superclass_methods.ats"
                               }
                             }
                           },
@@ -415,12 +415,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 15,
-                                "program": "calling_superclass_methods.ets"
+                                "program": "calling_superclass_methods.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 18,
-                                "program": "calling_superclass_methods.ets"
+                                "program": "calling_superclass_methods.ats"
                               }
                             }
                           },
@@ -430,12 +430,12 @@
                             "start": {
                               "line": 24,
                               "column": 9,
-                              "program": "calling_superclass_methods.ets"
+                              "program": "calling_superclass_methods.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 18,
-                              "program": "calling_superclass_methods.ets"
+                              "program": "calling_superclass_methods.ats"
                             }
                           }
                         },
@@ -445,12 +445,12 @@
                           "start": {
                             "line": 24,
                             "column": 9,
-                            "program": "calling_superclass_methods.ets"
+                            "program": "calling_superclass_methods.ats"
                           },
                           "end": {
                             "line": 24,
                             "column": 20,
-                            "program": "calling_superclass_methods.ets"
+                            "program": "calling_superclass_methods.ats"
                           }
                         }
                       },
@@ -458,12 +458,12 @@
                         "start": {
                           "line": 24,
                           "column": 9,
-                          "program": "calling_superclass_methods.ets"
+                          "program": "calling_superclass_methods.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 21,
-                          "program": "calling_superclass_methods.ets"
+                          "program": "calling_superclass_methods.ats"
                         }
                       }
                     }
@@ -472,12 +472,12 @@
                     "start": {
                       "line": 23,
                       "column": 27,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 6,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -485,12 +485,12 @@
                   "start": {
                     "line": 23,
                     "column": 24,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   },
                   "end": {
                     "line": 25,
                     "column": 6,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   }
                 }
               },
@@ -498,12 +498,12 @@
                 "start": {
                   "line": 23,
                   "column": 24,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 25,
                   "column": 6,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -512,12 +512,12 @@
               "start": {
                 "line": 23,
                 "column": 21,
-                "program": "calling_superclass_methods.ets"
+                "program": "calling_superclass_methods.ats"
               },
               "end": {
                 "line": 25,
                 "column": 6,
-                "program": "calling_superclass_methods.ets"
+                "program": "calling_superclass_methods.ats"
               }
             }
           },
@@ -530,12 +530,12 @@
                 "start": {
                   "line": 22,
                   "column": 29,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 29,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -554,12 +554,12 @@
                     "start": {
                       "line": 22,
                       "column": 29,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 29,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -574,12 +574,12 @@
                     "start": {
                       "line": 22,
                       "column": 29,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 29,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -587,12 +587,12 @@
                   "start": {
                     "line": 22,
                     "column": 29,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 29,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   }
                 }
               },
@@ -600,12 +600,12 @@
                 "start": {
                   "line": 22,
                   "column": 29,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 29,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -628,12 +628,12 @@
           "start": {
             "line": 22,
             "column": 28,
-            "program": "calling_superclass_methods.ets"
+            "program": "calling_superclass_methods.ats"
           },
           "end": {
             "line": 26,
             "column": 2,
-            "program": "calling_superclass_methods.ets"
+            "program": "calling_superclass_methods.ats"
           }
         }
       },
@@ -641,12 +641,12 @@
         "start": {
           "line": 22,
           "column": 1,
-          "program": "calling_superclass_methods.ets"
+          "program": "calling_superclass_methods.ats"
         },
         "end": {
           "line": 26,
           "column": 2,
-          "program": "calling_superclass_methods.ets"
+          "program": "calling_superclass_methods.ats"
         }
       }
     },
@@ -660,12 +660,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "calling_superclass_methods.ets"
+              "program": "calling_superclass_methods.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "calling_superclass_methods.ets"
+              "program": "calling_superclass_methods.ats"
             }
           }
         },
@@ -726,12 +726,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "calling_superclass_methods.ets"
+                      "program": "calling_superclass_methods.ats"
                     }
                   }
                 },
@@ -739,12 +739,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "calling_superclass_methods.ets"
+                    "program": "calling_superclass_methods.ats"
                   }
                 }
               },
@@ -752,12 +752,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "calling_superclass_methods.ets"
+                  "program": "calling_superclass_methods.ats"
                 }
               }
             },
@@ -766,12 +766,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "calling_superclass_methods.ets"
+                "program": "calling_superclass_methods.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "calling_superclass_methods.ets"
+                "program": "calling_superclass_methods.ats"
               }
             }
           }
@@ -780,12 +780,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "calling_superclass_methods.ets"
+            "program": "calling_superclass_methods.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "calling_superclass_methods.ets"
+            "program": "calling_superclass_methods.ats"
           }
         }
       },
@@ -793,12 +793,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "calling_superclass_methods.ets"
+          "program": "calling_superclass_methods.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "calling_superclass_methods.ets"
+          "program": "calling_superclass_methods.ats"
         }
       }
     }
@@ -807,12 +807,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "calling_superclass_methods.ets"
+      "program": "calling_superclass_methods.ats"
     },
     "end": {
       "line": 27,
       "column": 1,
-      "program": "calling_superclass_methods.ets"
+      "program": "calling_superclass_methods.ats"
     }
   }
 }

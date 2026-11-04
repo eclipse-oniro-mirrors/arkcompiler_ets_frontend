@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "union_lowering_common_property.ets"
+              "program": "union_lowering_common_property.ats"
             },
             "end": {
               "line": 16,
               "column": 8,
-              "program": "union_lowering_common_property.ets"
+              "program": "union_lowering_common_property.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 11,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -48,12 +48,12 @@
                 "start": {
                   "line": 17,
                   "column": 22,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 24,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -74,12 +74,12 @@
                     "start": {
                       "line": 17,
                       "column": 13,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 19,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -87,12 +87,12 @@
                   "start": {
                     "line": 17,
                     "column": 13,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 19,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   }
                 }
               },
@@ -100,12 +100,12 @@
                 "start": {
                   "line": 17,
                   "column": 13,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 19,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -114,12 +114,12 @@
               "start": {
                 "line": 17,
                 "column": 5,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               },
               "end": {
                 "line": 17,
                 "column": 24,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               }
             }
           },
@@ -132,12 +132,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -156,12 +156,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -176,12 +176,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -189,12 +189,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 10,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   }
                 }
               },
@@ -202,12 +202,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -230,12 +230,12 @@
           "start": {
             "line": 16,
             "column": 9,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           },
           "end": {
             "line": 18,
             "column": 2,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           }
         }
       },
@@ -243,12 +243,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "union_lowering_common_property.ets"
+          "program": "union_lowering_common_property.ats"
         },
         "end": {
           "line": 18,
           "column": 2,
-          "program": "union_lowering_common_property.ets"
+          "program": "union_lowering_common_property.ats"
         }
       }
     },
@@ -262,12 +262,12 @@
             "start": {
               "line": 20,
               "column": 7,
-              "program": "union_lowering_common_property.ets"
+              "program": "union_lowering_common_property.ats"
             },
             "end": {
               "line": 20,
               "column": 8,
-              "program": "union_lowering_common_property.ets"
+              "program": "union_lowering_common_property.ats"
             }
           }
         },
@@ -283,12 +283,12 @@
                 "start": {
                   "line": 21,
                   "column": 5,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 11,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -299,12 +299,12 @@
                 "start": {
                   "line": 21,
                   "column": 22,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 24,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -325,12 +325,12 @@
                     "start": {
                       "line": 21,
                       "column": 13,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 19,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -338,12 +338,12 @@
                   "start": {
                     "line": 21,
                     "column": 13,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   },
                   "end": {
                     "line": 21,
                     "column": 19,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   }
                 }
               },
@@ -351,12 +351,12 @@
                 "start": {
                   "line": 21,
                   "column": 13,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 19,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -365,12 +365,12 @@
               "start": {
                 "line": 21,
                 "column": 5,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               },
               "end": {
                 "line": 21,
                 "column": 24,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               }
             }
           },
@@ -383,12 +383,12 @@
                 "start": {
                   "line": 20,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -407,12 +407,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -427,12 +427,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -440,12 +440,12 @@
                   "start": {
                     "line": 20,
                     "column": 10,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 10,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   }
                 }
               },
@@ -453,12 +453,12 @@
                 "start": {
                   "line": 20,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -481,12 +481,12 @@
           "start": {
             "line": 20,
             "column": 9,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           },
           "end": {
             "line": 22,
             "column": 2,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           }
         }
       },
@@ -494,12 +494,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "union_lowering_common_property.ets"
+          "program": "union_lowering_common_property.ats"
         },
         "end": {
           "line": 22,
           "column": 2,
-          "program": "union_lowering_common_property.ets"
+          "program": "union_lowering_common_property.ats"
         }
       }
     },
@@ -512,12 +512,12 @@
           "start": {
             "line": 24,
             "column": 6,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           },
           "end": {
             "line": 24,
             "column": 11,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           }
         }
       },
@@ -535,12 +535,12 @@
                   "start": {
                     "line": 24,
                     "column": 14,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 15,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   }
                 }
               },
@@ -548,12 +548,12 @@
                 "start": {
                   "line": 24,
                   "column": 14,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 15,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -561,12 +561,12 @@
               "start": {
                 "line": 24,
                 "column": 14,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               },
               "end": {
                 "line": 24,
                 "column": 15,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               }
             }
           },
@@ -581,12 +581,12 @@
                   "start": {
                     "line": 24,
                     "column": 18,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 19,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   }
                 }
               },
@@ -594,12 +594,12 @@
                 "start": {
                   "line": 24,
                   "column": 18,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 19,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -607,12 +607,12 @@
               "start": {
                 "line": 24,
                 "column": 18,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               },
               "end": {
                 "line": 24,
                 "column": 19,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               }
             }
           }
@@ -621,12 +621,12 @@
           "start": {
             "line": 24,
             "column": 14,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           },
           "end": {
             "line": 24,
             "column": 19,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           }
         }
       },
@@ -634,12 +634,12 @@
         "start": {
           "line": 24,
           "column": 1,
-          "program": "union_lowering_common_property.ets"
+          "program": "union_lowering_common_property.ats"
         },
         "end": {
           "line": 24,
           "column": 19,
-          "program": "union_lowering_common_property.ets"
+          "program": "union_lowering_common_property.ats"
         }
       }
     },
@@ -653,12 +653,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "union_lowering_common_property.ets"
+              "program": "union_lowering_common_property.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "union_lowering_common_property.ets"
+              "program": "union_lowering_common_property.ats"
             }
           }
         },
@@ -719,12 +719,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -732,12 +732,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   }
                 }
               },
@@ -745,12 +745,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -759,12 +759,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               }
             }
           },
@@ -777,12 +777,12 @@
                 "start": {
                   "line": 26,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 31,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -802,12 +802,12 @@
                     "start": {
                       "line": 26,
                       "column": 10,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 31,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -821,12 +821,12 @@
                     "start": {
                       "line": 26,
                       "column": 36,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 40,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -845,12 +845,12 @@
                               "start": {
                                 "line": 27,
                                 "column": 9,
-                                "program": "union_lowering_common_property.ets"
+                                "program": "union_lowering_common_property.ats"
                               },
                               "end": {
                                 "line": 27,
                                 "column": 11,
-                                "program": "union_lowering_common_property.ets"
+                                "program": "union_lowering_common_property.ats"
                               }
                             }
                           },
@@ -879,12 +879,12 @@
                                             "start": {
                                               "line": 27,
                                               "column": 23,
-                                              "program": "union_lowering_common_property.ets"
+                                              "program": "union_lowering_common_property.ats"
                                             },
                                             "end": {
                                               "line": 27,
                                               "column": 28,
-                                              "program": "union_lowering_common_property.ets"
+                                              "program": "union_lowering_common_property.ats"
                                             }
                                           }
                                         },
@@ -892,12 +892,12 @@
                                           "start": {
                                             "line": 27,
                                             "column": 23,
-                                            "program": "union_lowering_common_property.ets"
+                                            "program": "union_lowering_common_property.ats"
                                           },
                                           "end": {
                                             "line": 27,
                                             "column": 28,
-                                            "program": "union_lowering_common_property.ets"
+                                            "program": "union_lowering_common_property.ats"
                                           }
                                         }
                                       },
@@ -905,12 +905,12 @@
                                         "start": {
                                           "line": 27,
                                           "column": 23,
-                                          "program": "union_lowering_common_property.ets"
+                                          "program": "union_lowering_common_property.ats"
                                         },
                                         "end": {
                                           "line": 27,
                                           "column": 28,
-                                          "program": "union_lowering_common_property.ets"
+                                          "program": "union_lowering_common_property.ats"
                                         }
                                       }
                                     },
@@ -918,12 +918,12 @@
                                       "start": {
                                         "line": 27,
                                         "column": 15,
-                                        "program": "union_lowering_common_property.ets"
+                                        "program": "union_lowering_common_property.ats"
                                       },
                                       "end": {
                                         "line": 27,
                                         "column": 28,
-                                        "program": "union_lowering_common_property.ets"
+                                        "program": "union_lowering_common_property.ats"
                                       }
                                     }
                                   },
@@ -931,12 +931,12 @@
                                     "start": {
                                       "line": 27,
                                       "column": 15,
-                                      "program": "union_lowering_common_property.ets"
+                                      "program": "union_lowering_common_property.ats"
                                     },
                                     "end": {
                                       "line": 27,
                                       "column": 28,
-                                      "program": "union_lowering_common_property.ets"
+                                      "program": "union_lowering_common_property.ats"
                                     }
                                   }
                                 }
@@ -952,12 +952,12 @@
                                       "start": {
                                         "line": 27,
                                         "column": 32,
-                                        "program": "union_lowering_common_property.ets"
+                                        "program": "union_lowering_common_property.ats"
                                       },
                                       "end": {
                                         "line": 27,
                                         "column": 38,
-                                        "program": "union_lowering_common_property.ets"
+                                        "program": "union_lowering_common_property.ats"
                                       }
                                     }
                                   },
@@ -965,12 +965,12 @@
                                     "start": {
                                       "line": 27,
                                       "column": 32,
-                                      "program": "union_lowering_common_property.ets"
+                                      "program": "union_lowering_common_property.ats"
                                     },
                                     "end": {
                                       "line": 27,
                                       "column": 38,
-                                      "program": "union_lowering_common_property.ets"
+                                      "program": "union_lowering_common_property.ats"
                                     }
                                   }
                                 },
@@ -978,12 +978,12 @@
                                   "start": {
                                     "line": 27,
                                     "column": 32,
-                                    "program": "union_lowering_common_property.ets"
+                                    "program": "union_lowering_common_property.ats"
                                   },
                                   "end": {
                                     "line": 27,
                                     "column": 38,
-                                    "program": "union_lowering_common_property.ets"
+                                    "program": "union_lowering_common_property.ats"
                                   }
                                 }
                               },
@@ -1001,12 +1001,12 @@
                                           "start": {
                                             "line": 28,
                                             "column": 16,
-                                            "program": "union_lowering_common_property.ets"
+                                            "program": "union_lowering_common_property.ats"
                                           },
                                           "end": {
                                             "line": 28,
                                             "column": 21,
-                                            "program": "union_lowering_common_property.ets"
+                                            "program": "union_lowering_common_property.ats"
                                           }
                                         }
                                       },
@@ -1017,12 +1017,12 @@
                                           "start": {
                                             "line": 28,
                                             "column": 22,
-                                            "program": "union_lowering_common_property.ets"
+                                            "program": "union_lowering_common_property.ats"
                                           },
                                           "end": {
                                             "line": 28,
                                             "column": 28,
-                                            "program": "union_lowering_common_property.ets"
+                                            "program": "union_lowering_common_property.ats"
                                           }
                                         }
                                       },
@@ -1032,12 +1032,12 @@
                                         "start": {
                                           "line": 28,
                                           "column": 16,
-                                          "program": "union_lowering_common_property.ets"
+                                          "program": "union_lowering_common_property.ats"
                                         },
                                         "end": {
                                           "line": 28,
                                           "column": 28,
-                                          "program": "union_lowering_common_property.ets"
+                                          "program": "union_lowering_common_property.ats"
                                         }
                                       }
                                     },
@@ -1045,12 +1045,12 @@
                                       "start": {
                                         "line": 28,
                                         "column": 9,
-                                        "program": "union_lowering_common_property.ets"
+                                        "program": "union_lowering_common_property.ats"
                                       },
                                       "end": {
                                         "line": 28,
                                         "column": 29,
-                                        "program": "union_lowering_common_property.ets"
+                                        "program": "union_lowering_common_property.ats"
                                       }
                                     }
                                   }
@@ -1059,12 +1059,12 @@
                                   "start": {
                                     "line": 27,
                                     "column": 42,
-                                    "program": "union_lowering_common_property.ets"
+                                    "program": "union_lowering_common_property.ats"
                                   },
                                   "end": {
                                     "line": 29,
                                     "column": 6,
-                                    "program": "union_lowering_common_property.ets"
+                                    "program": "union_lowering_common_property.ats"
                                   }
                                 }
                               },
@@ -1072,12 +1072,12 @@
                                 "start": {
                                   "line": 27,
                                   "column": 14,
-                                  "program": "union_lowering_common_property.ets"
+                                  "program": "union_lowering_common_property.ats"
                                 },
                                 "end": {
                                   "line": 29,
                                   "column": 6,
-                                  "program": "union_lowering_common_property.ets"
+                                  "program": "union_lowering_common_property.ats"
                                 }
                               }
                             },
@@ -1085,12 +1085,12 @@
                               "start": {
                                 "line": 27,
                                 "column": 14,
-                                "program": "union_lowering_common_property.ets"
+                                "program": "union_lowering_common_property.ats"
                               },
                               "end": {
                                 "line": 29,
                                 "column": 6,
-                                "program": "union_lowering_common_property.ets"
+                                "program": "union_lowering_common_property.ats"
                               }
                             }
                           },
@@ -1098,12 +1098,12 @@
                             "start": {
                               "line": 27,
                               "column": 9,
-                              "program": "union_lowering_common_property.ets"
+                              "program": "union_lowering_common_property.ats"
                             },
                             "end": {
                               "line": 29,
                               "column": 6,
-                              "program": "union_lowering_common_property.ets"
+                              "program": "union_lowering_common_property.ats"
                             }
                           }
                         }
@@ -1113,12 +1113,12 @@
                         "start": {
                           "line": 27,
                           "column": 5,
-                          "program": "union_lowering_common_property.ets"
+                          "program": "union_lowering_common_property.ats"
                         },
                         "end": {
                           "line": 29,
                           "column": 7,
-                          "program": "union_lowering_common_property.ets"
+                          "program": "union_lowering_common_property.ats"
                         }
                       }
                     }
@@ -1127,12 +1127,12 @@
                     "start": {
                       "line": 26,
                       "column": 41,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     },
                     "end": {
                       "line": 30,
                       "column": 2,
-                      "program": "union_lowering_common_property.ets"
+                      "program": "union_lowering_common_property.ats"
                     }
                   }
                 },
@@ -1140,12 +1140,12 @@
                   "start": {
                     "line": 26,
                     "column": 10,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   },
                   "end": {
                     "line": 30,
                     "column": 2,
-                    "program": "union_lowering_common_property.ets"
+                    "program": "union_lowering_common_property.ats"
                   }
                 }
               },
@@ -1153,12 +1153,12 @@
                 "start": {
                   "line": 26,
                   "column": 10,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 },
                 "end": {
                   "line": 30,
                   "column": 2,
-                  "program": "union_lowering_common_property.ets"
+                  "program": "union_lowering_common_property.ats"
                 }
               }
             },
@@ -1167,12 +1167,12 @@
               "start": {
                 "line": 26,
                 "column": 1,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               },
               "end": {
                 "line": 30,
                 "column": 2,
-                "program": "union_lowering_common_property.ets"
+                "program": "union_lowering_common_property.ats"
               }
             }
           }
@@ -1181,12 +1181,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "union_lowering_common_property.ets"
+            "program": "union_lowering_common_property.ats"
           }
         }
       },
@@ -1194,12 +1194,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "union_lowering_common_property.ets"
+          "program": "union_lowering_common_property.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "union_lowering_common_property.ets"
+          "program": "union_lowering_common_property.ats"
         }
       }
     }
@@ -1208,12 +1208,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "union_lowering_common_property.ets"
+      "program": "union_lowering_common_property.ats"
     },
     "end": {
       "line": 31,
       "column": 1,
-      "program": "union_lowering_common_property.ets"
+      "program": "union_lowering_common_property.ats"
     }
   }
 }

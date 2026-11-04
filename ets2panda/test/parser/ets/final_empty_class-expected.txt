@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 14,
-              "program": "final_empty_class.ets"
+              "program": "final_empty_class.ats"
             },
             "end": {
               "line": 16,
               "column": 31,
-              "program": "final_empty_class.ets"
+              "program": "final_empty_class.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 34,
-                  "program": "final_empty_class.ets"
+                  "program": "final_empty_class.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 34,
-                  "program": "final_empty_class.ets"
+                  "program": "final_empty_class.ats"
                 }
               }
             },
@@ -56,12 +56,12 @@
                     "start": {
                       "line": 16,
                       "column": 34,
-                      "program": "final_empty_class.ets"
+                      "program": "final_empty_class.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 34,
-                      "program": "final_empty_class.ets"
+                      "program": "final_empty_class.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 16,
                       "column": 34,
-                      "program": "final_empty_class.ets"
+                      "program": "final_empty_class.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 34,
-                      "program": "final_empty_class.ets"
+                      "program": "final_empty_class.ats"
                     }
                   }
                 },
@@ -89,12 +89,12 @@
                   "start": {
                     "line": 16,
                     "column": 34,
-                    "program": "final_empty_class.ets"
+                    "program": "final_empty_class.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 34,
-                    "program": "final_empty_class.ets"
+                    "program": "final_empty_class.ats"
                   }
                 }
               },
@@ -102,12 +102,12 @@
                 "start": {
                   "line": 16,
                   "column": 34,
-                  "program": "final_empty_class.ets"
+                  "program": "final_empty_class.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 34,
-                  "program": "final_empty_class.ets"
+                  "program": "final_empty_class.ats"
                 }
               }
             },
@@ -130,12 +130,12 @@
           "start": {
             "line": 16,
             "column": 33,
-            "program": "final_empty_class.ets"
+            "program": "final_empty_class.ats"
           },
           "end": {
             "line": 17,
             "column": 2,
-            "program": "final_empty_class.ets"
+            "program": "final_empty_class.ats"
           }
         }
       },
@@ -143,12 +143,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "final_empty_class.ets"
+          "program": "final_empty_class.ats"
         },
         "end": {
           "line": 17,
           "column": 2,
-          "program": "final_empty_class.ets"
+          "program": "final_empty_class.ats"
         }
       }
     },
@@ -162,12 +162,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "final_empty_class.ets"
+              "program": "final_empty_class.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "final_empty_class.ets"
+              "program": "final_empty_class.ats"
             }
           }
         },
@@ -228,12 +228,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "final_empty_class.ets"
+                      "program": "final_empty_class.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "final_empty_class.ets"
+                      "program": "final_empty_class.ats"
                     }
                   }
                 },
@@ -241,12 +241,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "final_empty_class.ets"
+                    "program": "final_empty_class.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "final_empty_class.ets"
+                    "program": "final_empty_class.ats"
                   }
                 }
               },
@@ -254,12 +254,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "final_empty_class.ets"
+                  "program": "final_empty_class.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "final_empty_class.ets"
+                  "program": "final_empty_class.ats"
                 }
               }
             },
@@ -268,12 +268,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "final_empty_class.ets"
+                "program": "final_empty_class.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "final_empty_class.ets"
+                "program": "final_empty_class.ats"
               }
             }
           }
@@ -282,12 +282,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "final_empty_class.ets"
+            "program": "final_empty_class.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "final_empty_class.ets"
+            "program": "final_empty_class.ats"
           }
         }
       },
@@ -295,12 +295,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "final_empty_class.ets"
+          "program": "final_empty_class.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "final_empty_class.ets"
+          "program": "final_empty_class.ats"
         }
       }
     }
@@ -309,12 +309,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "final_empty_class.ets"
+      "program": "final_empty_class.ats"
     },
     "end": {
       "line": 18,
       "column": 1,
-      "program": "final_empty_class.ets"
+      "program": "final_empty_class.ats"
     }
   }
 }

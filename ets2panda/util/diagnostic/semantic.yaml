@@ -1031,7 +1031,7 @@ semantic:
 
 - name: MODULE_INDEX_MISSING
   id: 359
-  message: "Cannot find index.[ets|ts] or package module in folder: {}"
+  message: "Cannot find index.[ets|ats|ts] or package module in folder: {}"
 
 - name: MULTIPLE_DEFAULT_EXPORTS
   id: 374

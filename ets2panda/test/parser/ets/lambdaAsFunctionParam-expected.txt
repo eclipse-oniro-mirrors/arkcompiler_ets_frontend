@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "lambdaAsFunctionParam.ets"
+              "program": "lambdaAsFunctionParam.ats"
             },
             "end": {
               "line": 16,
               "column": 8,
-              "program": "lambdaAsFunctionParam.ets"
+              "program": "lambdaAsFunctionParam.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                   "start": {
                     "line": 16,
                     "column": 9,
-                    "program": "lambdaAsFunctionParam.ets"
+                    "program": "lambdaAsFunctionParam.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 10,
-                    "program": "lambdaAsFunctionParam.ets"
+                    "program": "lambdaAsFunctionParam.ats"
                   }
                 }
               },
@@ -45,12 +45,12 @@
                 "start": {
                   "line": 16,
                   "column": 9,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 11,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 }
               }
             }
@@ -59,12 +59,12 @@
             "start": {
               "line": 16,
               "column": 8,
-              "program": "lambdaAsFunctionParam.ets"
+              "program": "lambdaAsFunctionParam.ats"
             },
             "end": {
               "line": 16,
               "column": 11,
-              "program": "lambdaAsFunctionParam.ets"
+              "program": "lambdaAsFunctionParam.ats"
             }
           }
         },
@@ -80,12 +80,12 @@
                 "start": {
                   "line": 17,
                   "column": 3,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 6,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 }
               }
             },
@@ -105,12 +105,12 @@
                     "start": {
                       "line": 17,
                       "column": 3,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 6,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     }
                   }
                 },
@@ -142,12 +142,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 15,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 16,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       }
                                     }
                                   },
@@ -155,12 +155,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 15,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 16,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     }
                                   }
                                 },
@@ -168,12 +168,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 15,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 16,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   }
                                 }
                               },
@@ -181,12 +181,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 12,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 16,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 }
                               }
                             },
@@ -194,12 +194,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 12,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 16,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           },
@@ -219,12 +219,12 @@
                                       "start": {
                                         "line": 17,
                                         "column": 21,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       },
                                       "end": {
                                         "line": 17,
                                         "column": 22,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       }
                                     }
                                   },
@@ -232,12 +232,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 21,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 22,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     }
                                   }
                                 },
@@ -245,12 +245,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 21,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 22,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   }
                                 }
                               },
@@ -258,12 +258,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 18,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 22,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 }
                               }
                             },
@@ -271,12 +271,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 18,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 22,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           }
@@ -292,12 +292,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 27,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 33,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 }
                               }
                             },
@@ -305,12 +305,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 27,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 33,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           },
@@ -318,12 +318,12 @@
                             "start": {
                               "line": 17,
                               "column": 27,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 33,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             }
                           }
                         },
@@ -331,12 +331,12 @@
                           "start": {
                             "line": 17,
                             "column": 11,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           },
                           "end": {
                             "line": 17,
                             "column": 33,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           }
                         }
                       },
@@ -344,12 +344,12 @@
                         "start": {
                           "line": 17,
                           "column": 7,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 33,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         }
                       }
                     },
@@ -357,12 +357,12 @@
                       "start": {
                         "line": 17,
                         "column": 7,
-                        "program": "lambdaAsFunctionParam.ets"
+                        "program": "lambdaAsFunctionParam.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 33,
-                        "program": "lambdaAsFunctionParam.ets"
+                        "program": "lambdaAsFunctionParam.ats"
                       }
                     }
                   }
@@ -373,12 +373,12 @@
                     "start": {
                       "line": 17,
                       "column": 36,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 40,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     }
                   }
                 },
@@ -393,12 +393,12 @@
                           "start": {
                             "line": 18,
                             "column": 12,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 16,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           }
                         }
                       },
@@ -406,12 +406,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 16,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         }
                       }
                     }
@@ -420,12 +420,12 @@
                     "start": {
                       "line": 17,
                       "column": 41,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 4,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     }
                   }
                 },
@@ -444,12 +444,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 6,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 4,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           },
@@ -460,12 +460,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 6,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 4,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           },
@@ -473,12 +473,12 @@
                             "start": {
                               "line": 17,
                               "column": 6,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 4,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             }
                           }
                         },
@@ -486,12 +486,12 @@
                           "start": {
                             "line": 17,
                             "column": 6,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           },
                           "end": {
                             "line": 19,
                             "column": 4,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           }
                         }
                       },
@@ -499,12 +499,12 @@
                         "start": {
                           "line": 17,
                           "column": 6,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 4,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         }
                       }
                     },
@@ -518,12 +518,12 @@
                             "start": {
                               "line": 17,
                               "column": 6,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 4,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             }
                           }
                         },
@@ -534,12 +534,12 @@
                             "start": {
                               "line": 17,
                               "column": 6,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 4,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             }
                           }
                         },
@@ -553,12 +553,12 @@
                           "start": {
                             "line": 17,
                             "column": 6,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           },
                           "end": {
                             "line": 19,
                             "column": 4,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           }
                         }
                       }
@@ -567,12 +567,12 @@
                       "start": {
                         "line": 17,
                         "column": 6,
-                        "program": "lambdaAsFunctionParam.ets"
+                        "program": "lambdaAsFunctionParam.ats"
                       },
                       "end": {
                         "line": 19,
                         "column": 4,
-                        "program": "lambdaAsFunctionParam.ets"
+                        "program": "lambdaAsFunctionParam.ats"
                       }
                     }
                   }
@@ -581,12 +581,12 @@
                   "start": {
                     "line": 17,
                     "column": 6,
-                    "program": "lambdaAsFunctionParam.ets"
+                    "program": "lambdaAsFunctionParam.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 4,
-                    "program": "lambdaAsFunctionParam.ets"
+                    "program": "lambdaAsFunctionParam.ats"
                   }
                 }
               },
@@ -594,12 +594,12 @@
                 "start": {
                   "line": 17,
                   "column": 6,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 4,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 }
               }
             },
@@ -608,12 +608,12 @@
               "start": {
                 "line": 17,
                 "column": 3,
-                "program": "lambdaAsFunctionParam.ets"
+                "program": "lambdaAsFunctionParam.ats"
               },
               "end": {
                 "line": 19,
                 "column": 4,
-                "program": "lambdaAsFunctionParam.ets"
+                "program": "lambdaAsFunctionParam.ats"
               }
             }
           },
@@ -626,12 +626,12 @@
                 "start": {
                   "line": 16,
                   "column": 13,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 }
               }
             },
@@ -650,12 +650,12 @@
                     "start": {
                       "line": 16,
                       "column": 13,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 13,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     }
                   }
                 },
@@ -670,12 +670,12 @@
                     "start": {
                       "line": 16,
                       "column": 13,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 13,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     }
                   }
                 },
@@ -683,12 +683,12 @@
                   "start": {
                     "line": 16,
                     "column": 13,
-                    "program": "lambdaAsFunctionParam.ets"
+                    "program": "lambdaAsFunctionParam.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 13,
-                    "program": "lambdaAsFunctionParam.ets"
+                    "program": "lambdaAsFunctionParam.ats"
                   }
                 }
               },
@@ -696,12 +696,12 @@
                 "start": {
                   "line": 16,
                   "column": 13,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 }
               }
             },
@@ -724,12 +724,12 @@
           "start": {
             "line": 16,
             "column": 12,
-            "program": "lambdaAsFunctionParam.ets"
+            "program": "lambdaAsFunctionParam.ats"
           },
           "end": {
             "line": 20,
             "column": 2,
-            "program": "lambdaAsFunctionParam.ets"
+            "program": "lambdaAsFunctionParam.ats"
           }
         }
       },
@@ -737,12 +737,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "lambdaAsFunctionParam.ets"
+          "program": "lambdaAsFunctionParam.ats"
         },
         "end": {
           "line": 20,
           "column": 2,
-          "program": "lambdaAsFunctionParam.ets"
+          "program": "lambdaAsFunctionParam.ats"
         }
       }
     },
@@ -756,12 +756,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "lambdaAsFunctionParam.ets"
+              "program": "lambdaAsFunctionParam.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "lambdaAsFunctionParam.ets"
+              "program": "lambdaAsFunctionParam.ats"
             }
           }
         },
@@ -777,12 +777,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 14,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 }
               }
             },
@@ -802,12 +802,12 @@
                     "start": {
                       "line": 22,
                       "column": 10,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 14,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     }
                   }
                 },
@@ -821,12 +821,12 @@
                     "start": {
                       "line": 22,
                       "column": 18,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 22,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     }
                   }
                 },
@@ -845,12 +845,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 9,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 10,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           },
@@ -867,12 +867,12 @@
                                     "start": {
                                       "line": 23,
                                       "column": 17,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     },
                                     "end": {
                                       "line": 23,
                                       "column": 18,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     }
                                   }
                                 },
@@ -890,12 +890,12 @@
                                             "start": {
                                               "line": 23,
                                               "column": 19,
-                                              "program": "lambdaAsFunctionParam.ets"
+                                              "program": "lambdaAsFunctionParam.ats"
                                             },
                                             "end": {
                                               "line": 23,
                                               "column": 25,
-                                              "program": "lambdaAsFunctionParam.ets"
+                                              "program": "lambdaAsFunctionParam.ats"
                                             }
                                           }
                                         },
@@ -903,12 +903,12 @@
                                           "start": {
                                             "line": 23,
                                             "column": 19,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           },
                                           "end": {
                                             "line": 23,
                                             "column": 25,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           }
                                         }
                                       },
@@ -916,12 +916,12 @@
                                         "start": {
                                           "line": 23,
                                           "column": 19,
-                                          "program": "lambdaAsFunctionParam.ets"
+                                          "program": "lambdaAsFunctionParam.ats"
                                         },
                                         "end": {
                                           "line": 23,
                                           "column": 25,
-                                          "program": "lambdaAsFunctionParam.ets"
+                                          "program": "lambdaAsFunctionParam.ats"
                                         }
                                       }
                                     }
@@ -930,12 +930,12 @@
                                     "start": {
                                       "line": 23,
                                       "column": 18,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     },
                                     "end": {
                                       "line": 23,
                                       "column": 26,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     }
                                   }
                                 },
@@ -943,12 +943,12 @@
                                   "start": {
                                     "line": 23,
                                     "column": 17,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   },
                                   "end": {
                                     "line": 23,
                                     "column": 26,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   }
                                 }
                               },
@@ -956,12 +956,12 @@
                                 "start": {
                                   "line": 23,
                                   "column": 17,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 },
                                 "end": {
                                   "line": 23,
                                   "column": 26,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 }
                               }
                             },
@@ -970,12 +970,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 13,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 4,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           },
@@ -983,12 +983,12 @@
                             "start": {
                               "line": 23,
                               "column": 9,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 4,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             }
                           }
                         }
@@ -998,12 +998,12 @@
                         "start": {
                           "line": 23,
                           "column": 3,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 4,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         }
                       }
                     },
@@ -1020,12 +1020,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 3,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 4,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           },
@@ -1036,12 +1036,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 5,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 8,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           },
@@ -1051,12 +1051,12 @@
                             "start": {
                               "line": 24,
                               "column": 3,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 8,
-                              "program": "lambdaAsFunctionParam.ets"
+                              "program": "lambdaAsFunctionParam.ats"
                             }
                           }
                         },
@@ -1086,12 +1086,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 13,
-                                              "program": "lambdaAsFunctionParam.ets"
+                                              "program": "lambdaAsFunctionParam.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 19,
-                                              "program": "lambdaAsFunctionParam.ets"
+                                              "program": "lambdaAsFunctionParam.ats"
                                             }
                                           }
                                         },
@@ -1099,12 +1099,12 @@
                                           "start": {
                                             "line": 24,
                                             "column": 13,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           },
                                           "end": {
                                             "line": 24,
                                             "column": 19,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           }
                                         }
                                       },
@@ -1112,12 +1112,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 13,
-                                          "program": "lambdaAsFunctionParam.ets"
+                                          "program": "lambdaAsFunctionParam.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 19,
-                                          "program": "lambdaAsFunctionParam.ets"
+                                          "program": "lambdaAsFunctionParam.ats"
                                         }
                                       }
                                     },
@@ -1125,12 +1125,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 10,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 19,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       }
                                     }
                                   },
@@ -1138,12 +1138,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 10,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 19,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     }
                                   }
                                 },
@@ -1163,12 +1163,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 24,
-                                              "program": "lambdaAsFunctionParam.ets"
+                                              "program": "lambdaAsFunctionParam.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 30,
-                                              "program": "lambdaAsFunctionParam.ets"
+                                              "program": "lambdaAsFunctionParam.ats"
                                             }
                                           }
                                         },
@@ -1176,12 +1176,12 @@
                                           "start": {
                                             "line": 24,
                                             "column": 24,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           },
                                           "end": {
                                             "line": 24,
                                             "column": 30,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           }
                                         }
                                       },
@@ -1189,12 +1189,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 24,
-                                          "program": "lambdaAsFunctionParam.ets"
+                                          "program": "lambdaAsFunctionParam.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 30,
-                                          "program": "lambdaAsFunctionParam.ets"
+                                          "program": "lambdaAsFunctionParam.ats"
                                         }
                                       }
                                     },
@@ -1202,12 +1202,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 21,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 30,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       }
                                     }
                                   },
@@ -1215,12 +1215,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 21,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 30,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     }
                                   }
                                 }
@@ -1236,12 +1236,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 33,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 39,
-                                        "program": "lambdaAsFunctionParam.ets"
+                                        "program": "lambdaAsFunctionParam.ats"
                                       }
                                     }
                                   },
@@ -1249,12 +1249,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 33,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 39,
-                                      "program": "lambdaAsFunctionParam.ets"
+                                      "program": "lambdaAsFunctionParam.ats"
                                     }
                                   }
                                 },
@@ -1262,12 +1262,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 33,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 39,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   }
                                 }
                               },
@@ -1286,12 +1286,12 @@
                                           "start": {
                                             "line": 24,
                                             "column": 43,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           },
                                           "end": {
                                             "line": 24,
                                             "column": 44,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           }
                                         }
                                       },
@@ -1302,12 +1302,12 @@
                                           "start": {
                                             "line": 24,
                                             "column": 47,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           },
                                           "end": {
                                             "line": 24,
                                             "column": 48,
-                                            "program": "lambdaAsFunctionParam.ets"
+                                            "program": "lambdaAsFunctionParam.ats"
                                           }
                                         }
                                       },
@@ -1315,12 +1315,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 43,
-                                          "program": "lambdaAsFunctionParam.ets"
+                                          "program": "lambdaAsFunctionParam.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 48,
-                                          "program": "lambdaAsFunctionParam.ets"
+                                          "program": "lambdaAsFunctionParam.ats"
                                         }
                                       }
                                     },
@@ -1342,12 +1342,12 @@
                                   "start": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   },
                                   "end": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": "lambdaAsFunctionParam.ets"
+                                    "program": "lambdaAsFunctionParam.ats"
                                   }
                                 }
                               },
@@ -1355,12 +1355,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 9,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 48,
-                                  "program": "lambdaAsFunctionParam.ets"
+                                  "program": "lambdaAsFunctionParam.ats"
                                 }
                               }
                             },
@@ -1368,12 +1368,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 9,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 48,
-                                "program": "lambdaAsFunctionParam.ets"
+                                "program": "lambdaAsFunctionParam.ats"
                               }
                             }
                           }
@@ -1383,12 +1383,12 @@
                           "start": {
                             "line": 24,
                             "column": 3,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           },
                           "end": {
                             "line": 24,
                             "column": 49,
-                            "program": "lambdaAsFunctionParam.ets"
+                            "program": "lambdaAsFunctionParam.ats"
                           }
                         }
                       },
@@ -1396,12 +1396,12 @@
                         "start": {
                           "line": 24,
                           "column": 3,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 49,
-                          "program": "lambdaAsFunctionParam.ets"
+                          "program": "lambdaAsFunctionParam.ats"
                         }
                       }
                     }
@@ -1410,12 +1410,12 @@
                     "start": {
                       "line": 22,
                       "column": 23,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 2,
-                      "program": "lambdaAsFunctionParam.ets"
+                      "program": "lambdaAsFunctionParam.ats"
                     }
                   }
                 },
@@ -1423,12 +1423,12 @@
                   "start": {
                     "line": 22,
                     "column": 10,
-                    "program": "lambdaAsFunctionParam.ets"
+                    "program": "lambdaAsFunctionParam.ats"
                   },
                   "end": {
                     "line": 25,
                     "column": 2,
-                    "program": "lambdaAsFunctionParam.ets"
+                    "program": "lambdaAsFunctionParam.ats"
                   }
                 }
               },
@@ -1436,12 +1436,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 },
                 "end": {
                   "line": 25,
                   "column": 2,
-                  "program": "lambdaAsFunctionParam.ets"
+                  "program": "lambdaAsFunctionParam.ats"
                 }
               }
             },
@@ -1450,12 +1450,12 @@
               "start": {
                 "line": 22,
                 "column": 1,
-                "program": "lambdaAsFunctionParam.ets"
+                "program": "lambdaAsFunctionParam.ats"
               },
               "end": {
                 "line": 25,
                 "column": 2,
-                "program": "lambdaAsFunctionParam.ets"
+                "program": "lambdaAsFunctionParam.ats"
               }
             }
           }
@@ -1464,12 +1464,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "lambdaAsFunctionParam.ets"
+            "program": "lambdaAsFunctionParam.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "lambdaAsFunctionParam.ets"
+            "program": "lambdaAsFunctionParam.ats"
           }
         }
       },
@@ -1477,12 +1477,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "lambdaAsFunctionParam.ets"
+          "program": "lambdaAsFunctionParam.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "lambdaAsFunctionParam.ets"
+          "program": "lambdaAsFunctionParam.ats"
         }
       }
     }
@@ -1491,12 +1491,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "lambdaAsFunctionParam.ets"
+      "program": "lambdaAsFunctionParam.ats"
     },
     "end": {
       "line": 26,
       "column": 1,
-      "program": "lambdaAsFunctionParam.ets"
+      "program": "lambdaAsFunctionParam.ats"
     }
   }
 }

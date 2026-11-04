@@ -10,12 +10,12 @@
           "start": {
             "line": 20,
             "column": 25,
-            "program": "dynamicJsImport.ets"
+            "program": "dynamicJsImport.ats"
           },
           "end": {
             "line": 20,
             "column": 47,
-            "program": "dynamicJsImport.ets"
+            "program": "dynamicJsImport.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 20,
                 "column": 15,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               },
               "end": {
                 "line": 20,
                 "column": 17,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 20,
               "column": 10,
-              "program": "dynamicJsImport.ets"
+              "program": "dynamicJsImport.ats"
             },
             "end": {
               "line": 20,
               "column": 17,
-              "program": "dynamicJsImport.ets"
+              "program": "dynamicJsImport.ats"
             }
           }
         }
@@ -72,12 +72,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "dynamicJsImport.ets"
+          "program": "dynamicJsImport.ats"
         },
         "end": {
           "line": 20,
           "column": 47,
-          "program": "dynamicJsImport.ets"
+          "program": "dynamicJsImport.ats"
         }
       }
     },
@@ -90,12 +90,12 @@
           "start": {
             "line": 21,
             "column": 19,
-            "program": "dynamicJsImport.ets"
+            "program": "dynamicJsImport.ats"
           },
           "end": {
             "line": 21,
             "column": 41,
-            "program": "dynamicJsImport.ets"
+            "program": "dynamicJsImport.ats"
           }
         }
       },
@@ -109,12 +109,12 @@
               "start": {
                 "line": 21,
                 "column": 10,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               },
               "end": {
                 "line": 21,
                 "column": 11,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               }
             }
           },
@@ -125,12 +125,12 @@
               "start": {
                 "line": 21,
                 "column": 10,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               },
               "end": {
                 "line": 21,
                 "column": 11,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               }
             }
           },
@@ -138,12 +138,12 @@
             "start": {
               "line": 21,
               "column": 10,
-              "program": "dynamicJsImport.ets"
+              "program": "dynamicJsImport.ats"
             },
             "end": {
               "line": 21,
               "column": 11,
-              "program": "dynamicJsImport.ets"
+              "program": "dynamicJsImport.ats"
             }
           }
         }
@@ -152,12 +152,12 @@
         "start": {
           "line": 21,
           "column": 1,
-          "program": "dynamicJsImport.ets"
+          "program": "dynamicJsImport.ats"
         },
         "end": {
           "line": 21,
           "column": 41,
-          "program": "dynamicJsImport.ets"
+          "program": "dynamicJsImport.ats"
         }
       }
     },
@@ -171,12 +171,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "dynamicJsImport.ets"
+              "program": "dynamicJsImport.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "dynamicJsImport.ets"
+              "program": "dynamicJsImport.ats"
             }
           }
         },
@@ -192,12 +192,12 @@
                 "start": {
                   "line": 23,
                   "column": 10,
-                  "program": "dynamicJsImport.ets"
+                  "program": "dynamicJsImport.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 14,
-                  "program": "dynamicJsImport.ets"
+                  "program": "dynamicJsImport.ats"
                 }
               }
             },
@@ -217,12 +217,12 @@
                     "start": {
                       "line": 23,
                       "column": 10,
-                      "program": "dynamicJsImport.ets"
+                      "program": "dynamicJsImport.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 14,
-                      "program": "dynamicJsImport.ets"
+                      "program": "dynamicJsImport.ats"
                     }
                   }
                 },
@@ -236,12 +236,12 @@
                     "start": {
                       "line": 23,
                       "column": 18,
-                      "program": "dynamicJsImport.ets"
+                      "program": "dynamicJsImport.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 22,
-                      "program": "dynamicJsImport.ets"
+                      "program": "dynamicJsImport.ats"
                     }
                   }
                 },
@@ -267,12 +267,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 12,
-                                      "program": "dynamicJsImport.ets"
+                                      "program": "dynamicJsImport.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 13,
-                                      "program": "dynamicJsImport.ets"
+                                      "program": "dynamicJsImport.ats"
                                     }
                                   }
                                 },
@@ -280,12 +280,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 12,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 13,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               },
@@ -293,12 +293,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 12,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 13,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 }
                               }
                             },
@@ -306,12 +306,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 9,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 10,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               }
                             }
                           },
@@ -328,12 +328,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 20,
-                                      "program": "dynamicJsImport.ets"
+                                      "program": "dynamicJsImport.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 21,
-                                      "program": "dynamicJsImport.ets"
+                                      "program": "dynamicJsImport.ats"
                                     }
                                   }
                                 },
@@ -341,12 +341,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 20,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 21,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               },
@@ -354,12 +354,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 20,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 21,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 }
                               }
                             },
@@ -373,12 +373,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 22,
-                                      "program": "dynamicJsImport.ets"
+                                      "program": "dynamicJsImport.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 24,
-                                      "program": "dynamicJsImport.ets"
+                                      "program": "dynamicJsImport.ats"
                                     }
                                   }
                                 },
@@ -389,12 +389,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 25,
-                                      "program": "dynamicJsImport.ets"
+                                      "program": "dynamicJsImport.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 26,
-                                      "program": "dynamicJsImport.ets"
+                                      "program": "dynamicJsImport.ats"
                                     }
                                   }
                                 },
@@ -404,12 +404,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 22,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 26,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               },
@@ -420,12 +420,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 28,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 29,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               },
@@ -436,12 +436,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 31,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 34,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               }
@@ -450,12 +450,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 16,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 8,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               }
                             }
                           },
@@ -463,12 +463,12 @@
                             "start": {
                               "line": 24,
                               "column": 9,
-                              "program": "dynamicJsImport.ets"
+                              "program": "dynamicJsImport.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 8,
-                              "program": "dynamicJsImport.ets"
+                              "program": "dynamicJsImport.ats"
                             }
                           }
                         }
@@ -478,12 +478,12 @@
                         "start": {
                           "line": 24,
                           "column": 5,
-                          "program": "dynamicJsImport.ets"
+                          "program": "dynamicJsImport.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 8,
-                          "program": "dynamicJsImport.ets"
+                          "program": "dynamicJsImport.ats"
                         }
                       }
                     },
@@ -499,12 +499,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 9,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 10,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               }
                             }
                           },
@@ -519,12 +519,12 @@
                                   "start": {
                                     "line": 25,
                                     "column": 13,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 25,
                                     "column": 14,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               },
@@ -535,12 +535,12 @@
                                   "start": {
                                     "line": 25,
                                     "column": 15,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 25,
                                     "column": 18,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               },
@@ -550,12 +550,12 @@
                                 "start": {
                                   "line": 25,
                                   "column": 13,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 },
                                 "end": {
                                   "line": 25,
                                   "column": 18,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 }
                               }
                             },
@@ -567,12 +567,12 @@
                                   "start": {
                                     "line": 25,
                                     "column": 19,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 25,
                                     "column": 22,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               },
@@ -583,12 +583,12 @@
                                   "start": {
                                     "line": 25,
                                     "column": 24,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   },
                                   "end": {
                                     "line": 25,
                                     "column": 25,
-                                    "program": "dynamicJsImport.ets"
+                                    "program": "dynamicJsImport.ats"
                                   }
                                 }
                               }
@@ -598,12 +598,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 13,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 26,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               }
                             }
                           },
@@ -611,12 +611,12 @@
                             "start": {
                               "line": 25,
                               "column": 9,
-                              "program": "dynamicJsImport.ets"
+                              "program": "dynamicJsImport.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 26,
-                              "program": "dynamicJsImport.ets"
+                              "program": "dynamicJsImport.ats"
                             }
                           }
                         }
@@ -626,12 +626,12 @@
                         "start": {
                           "line": 25,
                           "column": 5,
-                          "program": "dynamicJsImport.ets"
+                          "program": "dynamicJsImport.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 26,
-                          "program": "dynamicJsImport.ets"
+                          "program": "dynamicJsImport.ats"
                         }
                       }
                     },
@@ -647,12 +647,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 9,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 10,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               }
                             }
                           },
@@ -665,12 +665,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 13,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 14,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 }
                               }
                             },
@@ -681,12 +681,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 15,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 17,
-                                  "program": "dynamicJsImport.ets"
+                                  "program": "dynamicJsImport.ats"
                                 }
                               }
                             },
@@ -696,12 +696,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 13,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 18,
-                                "program": "dynamicJsImport.ets"
+                                "program": "dynamicJsImport.ats"
                               }
                             }
                           },
@@ -709,12 +709,12 @@
                             "start": {
                               "line": 26,
                               "column": 9,
-                              "program": "dynamicJsImport.ets"
+                              "program": "dynamicJsImport.ats"
                             },
                             "end": {
                               "line": 26,
                               "column": 18,
-                              "program": "dynamicJsImport.ets"
+                              "program": "dynamicJsImport.ats"
                             }
                           }
                         }
@@ -724,12 +724,12 @@
                         "start": {
                           "line": 26,
                           "column": 5,
-                          "program": "dynamicJsImport.ets"
+                          "program": "dynamicJsImport.ats"
                         },
                         "end": {
                           "line": 26,
                           "column": 18,
-                          "program": "dynamicJsImport.ets"
+                          "program": "dynamicJsImport.ats"
                         }
                       }
                     },
@@ -744,12 +744,12 @@
                             "start": {
                               "line": 27,
                               "column": 5,
-                              "program": "dynamicJsImport.ets"
+                              "program": "dynamicJsImport.ats"
                             },
                             "end": {
                               "line": 27,
                               "column": 6,
-                              "program": "dynamicJsImport.ets"
+                              "program": "dynamicJsImport.ats"
                             }
                           }
                         },
@@ -759,12 +759,12 @@
                           "start": {
                             "line": 27,
                             "column": 5,
-                            "program": "dynamicJsImport.ets"
+                            "program": "dynamicJsImport.ats"
                           },
                           "end": {
                             "line": 27,
                             "column": 8,
-                            "program": "dynamicJsImport.ets"
+                            "program": "dynamicJsImport.ats"
                           }
                         }
                       },
@@ -772,12 +772,12 @@
                         "start": {
                           "line": 27,
                           "column": 5,
-                          "program": "dynamicJsImport.ets"
+                          "program": "dynamicJsImport.ats"
                         },
                         "end": {
                           "line": 27,
                           "column": 9,
-                          "program": "dynamicJsImport.ets"
+                          "program": "dynamicJsImport.ats"
                         }
                       }
                     }
@@ -786,12 +786,12 @@
                     "start": {
                       "line": 23,
                       "column": 23,
-                      "program": "dynamicJsImport.ets"
+                      "program": "dynamicJsImport.ats"
                     },
                     "end": {
                       "line": 28,
                       "column": 2,
-                      "program": "dynamicJsImport.ets"
+                      "program": "dynamicJsImport.ats"
                     }
                   }
                 },
@@ -799,12 +799,12 @@
                   "start": {
                     "line": 23,
                     "column": 10,
-                    "program": "dynamicJsImport.ets"
+                    "program": "dynamicJsImport.ats"
                   },
                   "end": {
                     "line": 28,
                     "column": 2,
-                    "program": "dynamicJsImport.ets"
+                    "program": "dynamicJsImport.ats"
                   }
                 }
               },
@@ -812,12 +812,12 @@
                 "start": {
                   "line": 23,
                   "column": 10,
-                  "program": "dynamicJsImport.ets"
+                  "program": "dynamicJsImport.ats"
                 },
                 "end": {
                   "line": 28,
                   "column": 2,
-                  "program": "dynamicJsImport.ets"
+                  "program": "dynamicJsImport.ats"
                 }
               }
             },
@@ -826,12 +826,12 @@
               "start": {
                 "line": 23,
                 "column": 1,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               },
               "end": {
                 "line": 28,
                 "column": 2,
-                "program": "dynamicJsImport.ets"
+                "program": "dynamicJsImport.ats"
               }
             }
           }
@@ -840,12 +840,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "dynamicJsImport.ets"
+            "program": "dynamicJsImport.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "dynamicJsImport.ets"
+            "program": "dynamicJsImport.ats"
           }
         }
       },
@@ -853,12 +853,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "dynamicJsImport.ets"
+          "program": "dynamicJsImport.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "dynamicJsImport.ets"
+          "program": "dynamicJsImport.ats"
         }
       }
     }
@@ -867,16 +867,16 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "dynamicJsImport.ets"
+      "program": "dynamicJsImport.ats"
     },
     "end": {
       "line": 29,
       "column": 1,
-      "program": "dynamicJsImport.ets"
+      "program": "dynamicJsImport.ats"
     }
   }
 }
-[dynamicJsImport.ets:24:12] Semantic error ESE0371: Cannot find type 'B'.
-[dynamicJsImport.ets:24:20] Semantic error ESE0371: Cannot find type 'B'.
-[dynamicJsImport.ets:26:13] Semantic error ESE0252: Indexed access is not supported for such expression type.
-[dynamicJsImport.ets:27:5] Semantic error ESE0289: This expression is not callable.
+[dynamicJsImport.ats:24:12] Semantic error ESE0371: Cannot find type 'B'.
+[dynamicJsImport.ats:24:20] Semantic error ESE0371: Cannot find type 'B'.
+[dynamicJsImport.ats:26:13] Semantic error ESE0252: Indexed access is not supported for such expression type.
+[dynamicJsImport.ats:27:5] Semantic error ESE0289: This expression is not callable.

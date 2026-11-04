@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "lambda_cast_infer_type_void.ets"
+              "program": "lambda_cast_infer_type_void.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "lambda_cast_infer_type_void.ets"
+              "program": "lambda_cast_infer_type_void.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "lambda_cast_infer_type_void.ets"
+                  "program": "lambda_cast_infer_type_void.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "lambda_cast_infer_type_void.ets"
+                  "program": "lambda_cast_infer_type_void.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "lambda_cast_infer_type_void.ets"
+                      "program": "lambda_cast_infer_type_void.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "lambda_cast_infer_type_void.ets"
+                      "program": "lambda_cast_infer_type_void.ats"
                     }
                   }
                 },
@@ -85,12 +85,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 9,
-                                "program": "lambda_cast_infer_type_void.ets"
+                                "program": "lambda_cast_infer_type_void.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 10,
-                                "program": "lambda_cast_infer_type_void.ets"
+                                "program": "lambda_cast_infer_type_void.ats"
                               }
                             }
                           },
@@ -112,12 +112,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 19,
-                                      "program": "lambda_cast_infer_type_void.ets"
+                                      "program": "lambda_cast_infer_type_void.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 21,
-                                      "program": "lambda_cast_infer_type_void.ets"
+                                      "program": "lambda_cast_infer_type_void.ats"
                                     }
                                   }
                                 },
@@ -125,12 +125,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 13,
-                                    "program": "lambda_cast_infer_type_void.ets"
+                                    "program": "lambda_cast_infer_type_void.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 21,
-                                    "program": "lambda_cast_infer_type_void.ets"
+                                    "program": "lambda_cast_infer_type_void.ats"
                                   }
                                 }
                               },
@@ -138,12 +138,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 13,
-                                  "program": "lambda_cast_infer_type_void.ets"
+                                  "program": "lambda_cast_infer_type_void.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 21,
-                                  "program": "lambda_cast_infer_type_void.ets"
+                                  "program": "lambda_cast_infer_type_void.ats"
                                 }
                               }
                             },
@@ -156,12 +156,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 30,
-                                    "program": "lambda_cast_infer_type_void.ets"
+                                    "program": "lambda_cast_infer_type_void.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 34,
-                                    "program": "lambda_cast_infer_type_void.ets"
+                                    "program": "lambda_cast_infer_type_void.ats"
                                   }
                                 }
                               },
@@ -169,12 +169,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 25,
-                                  "program": "lambda_cast_infer_type_void.ets"
+                                  "program": "lambda_cast_infer_type_void.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 34,
-                                  "program": "lambda_cast_infer_type_void.ets"
+                                  "program": "lambda_cast_infer_type_void.ats"
                                 }
                               }
                             },
@@ -182,12 +182,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 13,
-                                "program": "lambda_cast_infer_type_void.ets"
+                                "program": "lambda_cast_infer_type_void.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 34,
-                                "program": "lambda_cast_infer_type_void.ets"
+                                "program": "lambda_cast_infer_type_void.ats"
                               }
                             }
                           },
@@ -195,12 +195,12 @@
                             "start": {
                               "line": 17,
                               "column": 9,
-                              "program": "lambda_cast_infer_type_void.ets"
+                              "program": "lambda_cast_infer_type_void.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 34,
-                              "program": "lambda_cast_infer_type_void.ets"
+                              "program": "lambda_cast_infer_type_void.ats"
                             }
                           }
                         }
@@ -210,12 +210,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "lambda_cast_infer_type_void.ets"
+                          "program": "lambda_cast_infer_type_void.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 34,
-                          "program": "lambda_cast_infer_type_void.ets"
+                          "program": "lambda_cast_infer_type_void.ats"
                         }
                       }
                     },
@@ -236,12 +236,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 26,
-                                    "program": "lambda_cast_infer_type_void.ets"
+                                    "program": "lambda_cast_infer_type_void.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 30,
-                                    "program": "lambda_cast_infer_type_void.ets"
+                                    "program": "lambda_cast_infer_type_void.ats"
                                   }
                                 }
                               },
@@ -249,12 +249,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 20,
-                                  "program": "lambda_cast_infer_type_void.ets"
+                                  "program": "lambda_cast_infer_type_void.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 30,
-                                  "program": "lambda_cast_infer_type_void.ets"
+                                  "program": "lambda_cast_infer_type_void.ats"
                                 }
                               }
                             },
@@ -262,12 +262,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 9,
-                                "program": "lambda_cast_infer_type_void.ets"
+                                "program": "lambda_cast_infer_type_void.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 17,
-                                "program": "lambda_cast_infer_type_void.ets"
+                                "program": "lambda_cast_infer_type_void.ats"
                               }
                             }
                           },
@@ -278,12 +278,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 33,
-                                "program": "lambda_cast_infer_type_void.ets"
+                                "program": "lambda_cast_infer_type_void.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 34,
-                                "program": "lambda_cast_infer_type_void.ets"
+                                "program": "lambda_cast_infer_type_void.ats"
                               }
                             }
                           },
@@ -291,12 +291,12 @@
                             "start": {
                               "line": 18,
                               "column": 9,
-                              "program": "lambda_cast_infer_type_void.ets"
+                              "program": "lambda_cast_infer_type_void.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 34,
-                              "program": "lambda_cast_infer_type_void.ets"
+                              "program": "lambda_cast_infer_type_void.ats"
                             }
                           }
                         }
@@ -306,12 +306,12 @@
                         "start": {
                           "line": 18,
                           "column": 5,
-                          "program": "lambda_cast_infer_type_void.ets"
+                          "program": "lambda_cast_infer_type_void.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 34,
-                          "program": "lambda_cast_infer_type_void.ets"
+                          "program": "lambda_cast_infer_type_void.ats"
                         }
                       }
                     }
@@ -320,12 +320,12 @@
                     "start": {
                       "line": 16,
                       "column": 18,
-                      "program": "lambda_cast_infer_type_void.ets"
+                      "program": "lambda_cast_infer_type_void.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 2,
-                      "program": "lambda_cast_infer_type_void.ets"
+                      "program": "lambda_cast_infer_type_void.ats"
                     }
                   }
                 },
@@ -333,12 +333,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "lambda_cast_infer_type_void.ets"
+                    "program": "lambda_cast_infer_type_void.ats"
                   },
                   "end": {
                     "line": 19,
                     "column": 2,
-                    "program": "lambda_cast_infer_type_void.ets"
+                    "program": "lambda_cast_infer_type_void.ats"
                   }
                 }
               },
@@ -346,12 +346,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "lambda_cast_infer_type_void.ets"
+                  "program": "lambda_cast_infer_type_void.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 2,
-                  "program": "lambda_cast_infer_type_void.ets"
+                  "program": "lambda_cast_infer_type_void.ats"
                 }
               }
             },
@@ -360,12 +360,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "lambda_cast_infer_type_void.ets"
+                "program": "lambda_cast_infer_type_void.ats"
               },
               "end": {
                 "line": 19,
                 "column": 2,
-                "program": "lambda_cast_infer_type_void.ets"
+                "program": "lambda_cast_infer_type_void.ats"
               }
             }
           }
@@ -374,12 +374,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "lambda_cast_infer_type_void.ets"
+            "program": "lambda_cast_infer_type_void.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "lambda_cast_infer_type_void.ets"
+            "program": "lambda_cast_infer_type_void.ats"
           }
         }
       },
@@ -387,12 +387,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "lambda_cast_infer_type_void.ets"
+          "program": "lambda_cast_infer_type_void.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "lambda_cast_infer_type_void.ets"
+          "program": "lambda_cast_infer_type_void.ats"
         }
       }
     }
@@ -401,13 +401,13 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "lambda_cast_infer_type_void.ets"
+      "program": "lambda_cast_infer_type_void.ats"
     },
     "end": {
       "line": 20,
       "column": 1,
-      "program": "lambda_cast_infer_type_void.ets"
+      "program": "lambda_cast_infer_type_void.ats"
     }
   }
 }
-[lambda_cast_infer_type_void.ets:17:13] Warning W670214: This cast can be excessive because it always succeeds
+[lambda_cast_infer_type_void.ats:17:13] Warning W670214: This cast can be excessive because it always succeeds

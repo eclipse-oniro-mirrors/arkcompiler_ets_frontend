@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "tryCatchErrorMissingParamType.ets"
+              "program": "tryCatchErrorMissingParamType.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "tryCatchErrorMissingParamType.ets"
+              "program": "tryCatchErrorMissingParamType.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "tryCatchErrorMissingParamType.ets"
+                  "program": "tryCatchErrorMissingParamType.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "tryCatchErrorMissingParamType.ets"
+                  "program": "tryCatchErrorMissingParamType.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "tryCatchErrorMissingParamType.ets"
+                      "program": "tryCatchErrorMissingParamType.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "tryCatchErrorMissingParamType.ets"
+                      "program": "tryCatchErrorMissingParamType.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 16,
                       "column": 18,
-                      "program": "tryCatchErrorMissingParamType.ets"
+                      "program": "tryCatchErrorMissingParamType.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 22,
-                      "program": "tryCatchErrorMissingParamType.ets"
+                      "program": "tryCatchErrorMissingParamType.ats"
                     }
                   }
                 },
@@ -108,12 +108,12 @@
                                       "start": {
                                         "line": 18,
                                         "column": 19,
-                                        "program": "tryCatchErrorMissingParamType.ets"
+                                        "program": "tryCatchErrorMissingParamType.ats"
                                       },
                                       "end": {
                                         "line": 18,
                                         "column": 24,
-                                        "program": "tryCatchErrorMissingParamType.ets"
+                                        "program": "tryCatchErrorMissingParamType.ats"
                                       }
                                     }
                                   },
@@ -121,12 +121,12 @@
                                     "start": {
                                       "line": 18,
                                       "column": 19,
-                                      "program": "tryCatchErrorMissingParamType.ets"
+                                      "program": "tryCatchErrorMissingParamType.ats"
                                     },
                                     "end": {
                                       "line": 18,
                                       "column": 24,
-                                      "program": "tryCatchErrorMissingParamType.ets"
+                                      "program": "tryCatchErrorMissingParamType.ats"
                                     }
                                   }
                                 },
@@ -134,12 +134,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 19,
-                                    "program": "tryCatchErrorMissingParamType.ets"
+                                    "program": "tryCatchErrorMissingParamType.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 24,
-                                    "program": "tryCatchErrorMissingParamType.ets"
+                                    "program": "tryCatchErrorMissingParamType.ats"
                                   }
                                 }
                               },
@@ -148,12 +148,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 15,
-                                  "program": "tryCatchErrorMissingParamType.ets"
+                                  "program": "tryCatchErrorMissingParamType.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 27,
-                                  "program": "tryCatchErrorMissingParamType.ets"
+                                  "program": "tryCatchErrorMissingParamType.ats"
                                 }
                               }
                             },
@@ -161,12 +161,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 9,
-                                "program": "tryCatchErrorMissingParamType.ets"
+                                "program": "tryCatchErrorMissingParamType.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 27,
-                                "program": "tryCatchErrorMissingParamType.ets"
+                                "program": "tryCatchErrorMissingParamType.ats"
                               }
                             }
                           }
@@ -175,12 +175,12 @@
                           "start": {
                             "line": 17,
                             "column": 9,
-                            "program": "tryCatchErrorMissingParamType.ets"
+                            "program": "tryCatchErrorMissingParamType.ats"
                           },
                           "end": {
                             "line": 19,
                             "column": 6,
-                            "program": "tryCatchErrorMissingParamType.ets"
+                            "program": "tryCatchErrorMissingParamType.ats"
                           }
                         }
                       },
@@ -194,12 +194,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 17,
-                                "program": "tryCatchErrorMissingParamType.ets"
+                                "program": "tryCatchErrorMissingParamType.ats"
                               },
                               "end": {
                                 "line": 21,
                                 "column": 6,
-                                "program": "tryCatchErrorMissingParamType.ets"
+                                "program": "tryCatchErrorMissingParamType.ats"
                               }
                             }
                           },
@@ -210,12 +210,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 14,
-                                "program": "tryCatchErrorMissingParamType.ets"
+                                "program": "tryCatchErrorMissingParamType.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 15,
-                                "program": "tryCatchErrorMissingParamType.ets"
+                                "program": "tryCatchErrorMissingParamType.ats"
                               }
                             }
                           },
@@ -223,12 +223,12 @@
                             "start": {
                               "line": 19,
                               "column": 7,
-                              "program": "tryCatchErrorMissingParamType.ets"
+                              "program": "tryCatchErrorMissingParamType.ats"
                             },
                             "end": {
                               "line": 21,
                               "column": 6,
-                              "program": "tryCatchErrorMissingParamType.ets"
+                              "program": "tryCatchErrorMissingParamType.ats"
                             }
                           }
                         }
@@ -238,12 +238,12 @@
                         "start": {
                           "line": 17,
                           "column": 5,
-                          "program": "tryCatchErrorMissingParamType.ets"
+                          "program": "tryCatchErrorMissingParamType.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 6,
-                          "program": "tryCatchErrorMissingParamType.ets"
+                          "program": "tryCatchErrorMissingParamType.ats"
                         }
                       }
                     }
@@ -252,12 +252,12 @@
                     "start": {
                       "line": 16,
                       "column": 23,
-                      "program": "tryCatchErrorMissingParamType.ets"
+                      "program": "tryCatchErrorMissingParamType.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 2,
-                      "program": "tryCatchErrorMissingParamType.ets"
+                      "program": "tryCatchErrorMissingParamType.ats"
                     }
                   }
                 },
@@ -265,12 +265,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "tryCatchErrorMissingParamType.ets"
+                    "program": "tryCatchErrorMissingParamType.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 2,
-                    "program": "tryCatchErrorMissingParamType.ets"
+                    "program": "tryCatchErrorMissingParamType.ats"
                   }
                 }
               },
@@ -278,12 +278,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "tryCatchErrorMissingParamType.ets"
+                  "program": "tryCatchErrorMissingParamType.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 2,
-                  "program": "tryCatchErrorMissingParamType.ets"
+                  "program": "tryCatchErrorMissingParamType.ats"
                 }
               }
             },
@@ -292,12 +292,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "tryCatchErrorMissingParamType.ets"
+                "program": "tryCatchErrorMissingParamType.ats"
               },
               "end": {
                 "line": 22,
                 "column": 2,
-                "program": "tryCatchErrorMissingParamType.ets"
+                "program": "tryCatchErrorMissingParamType.ats"
               }
             }
           }
@@ -306,12 +306,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "tryCatchErrorMissingParamType.ets"
+            "program": "tryCatchErrorMissingParamType.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "tryCatchErrorMissingParamType.ets"
+            "program": "tryCatchErrorMissingParamType.ats"
           }
         }
       },
@@ -319,12 +319,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "tryCatchErrorMissingParamType.ets"
+          "program": "tryCatchErrorMissingParamType.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "tryCatchErrorMissingParamType.ets"
+          "program": "tryCatchErrorMissingParamType.ats"
         }
       }
     }
@@ -333,12 +333,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "tryCatchErrorMissingParamType.ets"
+      "program": "tryCatchErrorMissingParamType.ats"
     },
     "end": {
       "line": 23,
       "column": 1,
-      "program": "tryCatchErrorMissingParamType.ets"
+      "program": "tryCatchErrorMissingParamType.ats"
     }
   }
 }

@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "generics_primitive_type_param_1.ets"
+              "program": "generics_primitive_type_param_1.ats"
             },
             "end": {
               "line": 16,
               "column": 8,
-              "program": "generics_primitive_type_param_1.ets"
+              "program": "generics_primitive_type_param_1.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                   "start": {
                     "line": 16,
                     "column": 9,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 10,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   }
                 }
               },
@@ -45,12 +45,12 @@
                 "start": {
                   "line": 16,
                   "column": 9,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 11,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             }
@@ -59,12 +59,12 @@
             "start": {
               "line": 16,
               "column": 8,
-              "program": "generics_primitive_type_param_1.ets"
+              "program": "generics_primitive_type_param_1.ats"
             },
             "end": {
               "line": 16,
               "column": 11,
-              "program": "generics_primitive_type_param_1.ets"
+              "program": "generics_primitive_type_param_1.ats"
             }
           }
         },
@@ -80,12 +80,12 @@
                 "start": {
                   "line": 17,
                   "column": 12,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 17,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -98,12 +98,12 @@
                   "start": {
                     "line": 17,
                     "column": 23,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 32,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   }
                 }
               },
@@ -118,12 +118,12 @@
                       "start": {
                         "line": 17,
                         "column": 36,
-                        "program": "generics_primitive_type_param_1.ets"
+                        "program": "generics_primitive_type_param_1.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 37,
-                        "program": "generics_primitive_type_param_1.ets"
+                        "program": "generics_primitive_type_param_1.ats"
                       }
                     }
                   },
@@ -131,12 +131,12 @@
                     "start": {
                       "line": 17,
                       "column": 36,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 37,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -144,12 +144,12 @@
                   "start": {
                     "line": 17,
                     "column": 36,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 37,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   }
                 }
               },
@@ -157,12 +157,12 @@
                 "start": {
                   "line": 17,
                   "column": 23,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 37,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -183,12 +183,12 @@
                     "start": {
                       "line": 17,
                       "column": 19,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 20,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -196,12 +196,12 @@
                   "start": {
                     "line": 17,
                     "column": 19,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 20,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   }
                 }
               },
@@ -209,12 +209,12 @@
                 "start": {
                   "line": 17,
                   "column": 19,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 20,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -223,12 +223,12 @@
               "start": {
                 "line": 17,
                 "column": 12,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               },
               "end": {
                 "line": 17,
                 "column": 37,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               }
             }
           },
@@ -241,12 +241,12 @@
                 "start": {
                   "line": 18,
                   "column": 12,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 22,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -257,12 +257,12 @@
                 "start": {
                   "line": 18,
                   "column": 30,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 31,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -278,12 +278,12 @@
                 "start": {
                   "line": 18,
                   "column": 24,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 27,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -292,12 +292,12 @@
               "start": {
                 "line": 18,
                 "column": 12,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               },
               "end": {
                 "line": 18,
                 "column": 31,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               }
             }
           },
@@ -310,12 +310,12 @@
                 "start": {
                   "line": 16,
                   "column": 13,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -334,12 +334,12 @@
                     "start": {
                       "line": 16,
                       "column": 13,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 13,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -354,12 +354,12 @@
                     "start": {
                       "line": 16,
                       "column": 13,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 13,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -367,12 +367,12 @@
                   "start": {
                     "line": 16,
                     "column": 13,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 13,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   }
                 }
               },
@@ -380,12 +380,12 @@
                 "start": {
                   "line": 16,
                   "column": 13,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -408,12 +408,12 @@
           "start": {
             "line": 16,
             "column": 12,
-            "program": "generics_primitive_type_param_1.ets"
+            "program": "generics_primitive_type_param_1.ats"
           },
           "end": {
             "line": 19,
             "column": 2,
-            "program": "generics_primitive_type_param_1.ets"
+            "program": "generics_primitive_type_param_1.ats"
           }
         }
       },
@@ -421,12 +421,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "generics_primitive_type_param_1.ets"
+          "program": "generics_primitive_type_param_1.ats"
         },
         "end": {
           "line": 19,
           "column": 2,
-          "program": "generics_primitive_type_param_1.ets"
+          "program": "generics_primitive_type_param_1.ats"
         }
       }
     },
@@ -440,12 +440,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "generics_primitive_type_param_1.ets"
+              "program": "generics_primitive_type_param_1.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "generics_primitive_type_param_1.ets"
+              "program": "generics_primitive_type_param_1.ats"
             }
           }
         },
@@ -506,12 +506,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -519,12 +519,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   }
                 }
               },
@@ -532,12 +532,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -546,12 +546,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               }
             }
           },
@@ -564,12 +564,12 @@
                 "start": {
                   "line": 21,
                   "column": 10,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 13,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -589,12 +589,12 @@
                     "start": {
                       "line": 21,
                       "column": 10,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 13,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -613,12 +613,12 @@
                           "start": {
                             "line": 21,
                             "column": 18,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           },
                           "end": {
                             "line": 21,
                             "column": 21,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           }
                         }
                       },
@@ -626,12 +626,12 @@
                         "start": {
                           "line": 21,
                           "column": 14,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 21,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -639,12 +639,12 @@
                       "start": {
                         "line": 21,
                         "column": 14,
-                        "program": "generics_primitive_type_param_1.ets"
+                        "program": "generics_primitive_type_param_1.ats"
                       },
                       "end": {
                         "line": 21,
                         "column": 21,
-                        "program": "generics_primitive_type_param_1.ets"
+                        "program": "generics_primitive_type_param_1.ats"
                       }
                     }
                   }
@@ -655,12 +655,12 @@
                     "start": {
                       "line": 21,
                       "column": 24,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 28,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -671,12 +671,12 @@
                     "start": {
                       "line": 21,
                       "column": 29,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 31,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -684,12 +684,12 @@
                   "start": {
                     "line": 21,
                     "column": 10,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   },
                   "end": {
                     "line": 21,
                     "column": 31,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   }
                 }
               },
@@ -697,12 +697,12 @@
                 "start": {
                   "line": 21,
                   "column": 10,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 31,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -711,12 +711,12 @@
               "start": {
                 "line": 21,
                 "column": 1,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               },
               "end": {
                 "line": 21,
                 "column": 31,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               }
             }
           },
@@ -729,12 +729,12 @@
                 "start": {
                   "line": 23,
                   "column": 10,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 14,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -754,12 +754,12 @@
                     "start": {
                       "line": 23,
                       "column": 10,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 14,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -773,12 +773,12 @@
                     "start": {
                       "line": 23,
                       "column": 18,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 22,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -804,12 +804,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 16,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 17,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -822,12 +822,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 18,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 21,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         }
                                       }
                                     }
@@ -836,12 +836,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 17,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 22,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -849,12 +849,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 16,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 22,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -862,12 +862,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 16,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 22,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -875,12 +875,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 14,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -897,12 +897,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 29,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 30,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -915,12 +915,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 31,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 34,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         }
                                       }
                                     }
@@ -929,12 +929,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 30,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 35,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -942,12 +942,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 29,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 35,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -955,12 +955,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 29,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 35,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -969,12 +969,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 25,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 38,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -982,12 +982,12 @@
                             "start": {
                               "line": 24,
                               "column": 9,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 38,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         }
@@ -997,12 +997,12 @@
                         "start": {
                           "line": 24,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 38,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1020,12 +1020,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 5,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 10,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1036,12 +1036,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 11,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 16,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1051,12 +1051,12 @@
                             "start": {
                               "line": 25,
                               "column": 5,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 16,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -1067,12 +1067,12 @@
                             "start": {
                               "line": 25,
                               "column": 19,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 20,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -1080,12 +1080,12 @@
                           "start": {
                             "line": 25,
                             "column": 5,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           },
                           "end": {
                             "line": 25,
                             "column": 20,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           }
                         }
                       },
@@ -1093,12 +1093,12 @@
                         "start": {
                           "line": 25,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 21,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1113,12 +1113,12 @@
                             "start": {
                               "line": 26,
                               "column": 5,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 26,
                               "column": 8,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -1132,12 +1132,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 9,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 14,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1148,12 +1148,12 @@
                                 "start": {
                                   "line": 26,
                                   "column": 15,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 26,
                                   "column": 20,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1163,12 +1163,12 @@
                               "start": {
                                 "line": 26,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 26,
                                 "column": 20,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           }
@@ -1178,12 +1178,12 @@
                           "start": {
                             "line": 26,
                             "column": 5,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           },
                           "end": {
                             "line": 26,
                             "column": 21,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           }
                         }
                       },
@@ -1191,12 +1191,12 @@
                         "start": {
                           "line": 26,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 26,
                           "column": 22,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1212,12 +1212,12 @@
                               "start": {
                                 "line": 27,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 27,
                                 "column": 11,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1230,12 +1230,12 @@
                                 "start": {
                                   "line": 27,
                                   "column": 14,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 27,
                                   "column": 19,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1246,12 +1246,12 @@
                                 "start": {
                                   "line": 27,
                                   "column": 20,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 27,
                                   "column": 25,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1261,12 +1261,12 @@
                               "start": {
                                 "line": 27,
                                 "column": 14,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 27,
                                 "column": 25,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1274,12 +1274,12 @@
                             "start": {
                               "line": 27,
                               "column": 9,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 27,
                               "column": 25,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         }
@@ -1289,12 +1289,12 @@
                         "start": {
                           "line": 27,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 27,
                           "column": 26,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1312,12 +1312,12 @@
                                 "start": {
                                   "line": 28,
                                   "column": 13,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 28,
                                   "column": 16,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1325,12 +1325,12 @@
                               "start": {
                                 "line": 28,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 28,
                                 "column": 11,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1343,12 +1343,12 @@
                                 "start": {
                                   "line": 28,
                                   "column": 19,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 28,
                                   "column": 24,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1359,12 +1359,12 @@
                                 "start": {
                                   "line": 28,
                                   "column": 25,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 28,
                                   "column": 30,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1374,12 +1374,12 @@
                               "start": {
                                 "line": 28,
                                 "column": 19,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 28,
                                 "column": 30,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1387,12 +1387,12 @@
                             "start": {
                               "line": 28,
                               "column": 9,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 28,
                               "column": 30,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         }
@@ -1402,12 +1402,12 @@
                         "start": {
                           "line": 28,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 28,
                           "column": 31,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1425,12 +1425,12 @@
                                 "start": {
                                   "line": 29,
                                   "column": 13,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 29,
                                   "column": 20,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1438,12 +1438,12 @@
                               "start": {
                                 "line": 29,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 29,
                                 "column": 11,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1457,12 +1457,12 @@
                                 "start": {
                                   "line": 29,
                                   "column": 23,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 29,
                                   "column": 25,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1473,12 +1473,12 @@
                                 "start": {
                                   "line": 29,
                                   "column": 29,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 29,
                                   "column": 30,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1486,12 +1486,12 @@
                               "start": {
                                 "line": 29,
                                 "column": 23,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 29,
                                 "column": 30,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1499,12 +1499,12 @@
                             "start": {
                               "line": 29,
                               "column": 9,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 29,
                               "column": 30,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         }
@@ -1514,12 +1514,12 @@
                         "start": {
                           "line": 29,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 29,
                           "column": 31,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1537,12 +1537,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 5,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 10,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1553,12 +1553,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 11,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 16,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1568,12 +1568,12 @@
                             "start": {
                               "line": 30,
                               "column": 5,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 30,
                               "column": 16,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -1586,12 +1586,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 19,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 24,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1602,12 +1602,12 @@
                               "start": {
                                 "line": 30,
                                 "column": 25,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 30,
                                 "column": 35,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1617,12 +1617,12 @@
                             "start": {
                               "line": 30,
                               "column": 19,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 30,
                               "column": 35,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -1630,12 +1630,12 @@
                           "start": {
                             "line": 30,
                             "column": 5,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           },
                           "end": {
                             "line": 30,
                             "column": 35,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           }
                         }
                       },
@@ -1643,12 +1643,12 @@
                         "start": {
                           "line": 30,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 30,
                           "column": 36,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1671,12 +1671,12 @@
                                     "start": {
                                       "line": 32,
                                       "column": 19,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 32,
                                       "column": 20,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -1689,12 +1689,12 @@
                                         "start": {
                                           "line": 32,
                                           "column": 21,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         },
                                         "end": {
                                           "line": 32,
                                           "column": 27,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         }
                                       }
                                     }
@@ -1703,12 +1703,12 @@
                                     "start": {
                                       "line": 32,
                                       "column": 20,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 32,
                                       "column": 28,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -1716,12 +1716,12 @@
                                   "start": {
                                     "line": 32,
                                     "column": 19,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 32,
                                     "column": 28,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -1729,12 +1729,12 @@
                                 "start": {
                                   "line": 32,
                                   "column": 19,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 32,
                                   "column": 28,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1742,12 +1742,12 @@
                               "start": {
                                 "line": 32,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 32,
                                 "column": 17,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1764,12 +1764,12 @@
                                     "start": {
                                       "line": 32,
                                       "column": 35,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 32,
                                       "column": 36,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -1782,12 +1782,12 @@
                                         "start": {
                                           "line": 32,
                                           "column": 37,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         },
                                         "end": {
                                           "line": 32,
                                           "column": 43,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         }
                                       }
                                     }
@@ -1796,12 +1796,12 @@
                                     "start": {
                                       "line": 32,
                                       "column": 36,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 32,
                                       "column": 44,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -1809,12 +1809,12 @@
                                   "start": {
                                     "line": 32,
                                     "column": 35,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 32,
                                     "column": 44,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -1822,12 +1822,12 @@
                                 "start": {
                                   "line": 32,
                                   "column": 35,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 32,
                                   "column": 44,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -1836,12 +1836,12 @@
                               "start": {
                                 "line": 32,
                                 "column": 31,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 32,
                                 "column": 47,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1849,12 +1849,12 @@
                             "start": {
                               "line": 32,
                               "column": 9,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 32,
                               "column": 47,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         }
@@ -1864,12 +1864,12 @@
                         "start": {
                           "line": 32,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 32,
                           "column": 47,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1887,12 +1887,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 5,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 13,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1903,12 +1903,12 @@
                               "start": {
                                 "line": 33,
                                 "column": 14,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 33,
                                 "column": 19,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -1918,12 +1918,12 @@
                             "start": {
                               "line": 33,
                               "column": 5,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 33,
                               "column": 19,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -1934,12 +1934,12 @@
                             "start": {
                               "line": 33,
                               "column": 22,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 33,
                               "column": 25,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -1947,12 +1947,12 @@
                           "start": {
                             "line": 33,
                             "column": 5,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           },
                           "end": {
                             "line": 33,
                             "column": 25,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           }
                         }
                       },
@@ -1960,12 +1960,12 @@
                         "start": {
                           "line": 33,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 33,
                           "column": 26,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -1981,12 +1981,12 @@
                               "start": {
                                 "line": 34,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 34,
                                 "column": 11,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -2002,12 +2002,12 @@
                                   "start": {
                                     "line": 34,
                                     "column": 14,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 34,
                                     "column": 22,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -2018,12 +2018,12 @@
                                   "start": {
                                     "line": 34,
                                     "column": 23,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 34,
                                     "column": 28,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -2033,12 +2033,12 @@
                                 "start": {
                                   "line": 34,
                                   "column": 14,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 34,
                                   "column": 28,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -2049,12 +2049,12 @@
                                 "start": {
                                   "line": 34,
                                   "column": 31,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 34,
                                   "column": 34,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -2062,12 +2062,12 @@
                               "start": {
                                 "line": 34,
                                 "column": 14,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 34,
                                 "column": 34,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -2075,12 +2075,12 @@
                             "start": {
                               "line": 34,
                               "column": 9,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 34,
                               "column": 34,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         }
@@ -2090,12 +2090,12 @@
                         "start": {
                           "line": 34,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 34,
                           "column": 35,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -2118,12 +2118,12 @@
                                     "start": {
                                       "line": 36,
                                       "column": 20,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 36,
                                       "column": 21,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -2136,12 +2136,12 @@
                                         "start": {
                                           "line": 36,
                                           "column": 22,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         },
                                         "end": {
                                           "line": 36,
                                           "column": 29,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         }
                                       }
                                     }
@@ -2150,12 +2150,12 @@
                                     "start": {
                                       "line": 36,
                                       "column": 21,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 36,
                                       "column": 30,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -2163,12 +2163,12 @@
                                   "start": {
                                     "line": 36,
                                     "column": 20,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 36,
                                     "column": 30,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -2176,12 +2176,12 @@
                                 "start": {
                                   "line": 36,
                                   "column": 20,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 36,
                                   "column": 30,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -2189,12 +2189,12 @@
                               "start": {
                                 "line": 36,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 36,
                                 "column": 18,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -2211,12 +2211,12 @@
                                     "start": {
                                       "line": 36,
                                       "column": 37,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 36,
                                       "column": 38,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -2229,12 +2229,12 @@
                                         "start": {
                                           "line": 36,
                                           "column": 39,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         },
                                         "end": {
                                           "line": 36,
                                           "column": 46,
-                                          "program": "generics_primitive_type_param_1.ets"
+                                          "program": "generics_primitive_type_param_1.ats"
                                         }
                                       }
                                     }
@@ -2243,12 +2243,12 @@
                                     "start": {
                                       "line": 36,
                                       "column": 38,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     },
                                     "end": {
                                       "line": 36,
                                       "column": 47,
-                                      "program": "generics_primitive_type_param_1.ets"
+                                      "program": "generics_primitive_type_param_1.ats"
                                     }
                                   }
                                 },
@@ -2256,12 +2256,12 @@
                                   "start": {
                                     "line": 36,
                                     "column": 37,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 36,
                                     "column": 47,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -2269,12 +2269,12 @@
                                 "start": {
                                   "line": 36,
                                   "column": 37,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 36,
                                   "column": 47,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -2283,12 +2283,12 @@
                               "start": {
                                 "line": 36,
                                 "column": 33,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 36,
                                 "column": 50,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -2296,12 +2296,12 @@
                             "start": {
                               "line": 36,
                               "column": 9,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 36,
                               "column": 50,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         }
@@ -2311,12 +2311,12 @@
                         "start": {
                           "line": 36,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 36,
                           "column": 50,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -2334,12 +2334,12 @@
                               "start": {
                                 "line": 37,
                                 "column": 5,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 37,
                                 "column": 14,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -2350,12 +2350,12 @@
                               "start": {
                                 "line": 37,
                                 "column": 15,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 37,
                                 "column": 20,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -2365,12 +2365,12 @@
                             "start": {
                               "line": 37,
                               "column": 5,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 37,
                               "column": 20,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -2381,12 +2381,12 @@
                             "start": {
                               "line": 37,
                               "column": 23,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 37,
                               "column": 28,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         },
@@ -2394,12 +2394,12 @@
                           "start": {
                             "line": 37,
                             "column": 5,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           },
                           "end": {
                             "line": 37,
                             "column": 28,
-                            "program": "generics_primitive_type_param_1.ets"
+                            "program": "generics_primitive_type_param_1.ats"
                           }
                         }
                       },
@@ -2407,12 +2407,12 @@
                         "start": {
                           "line": 37,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 37,
                           "column": 29,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     },
@@ -2428,12 +2428,12 @@
                               "start": {
                                 "line": 38,
                                 "column": 9,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 38,
                                 "column": 11,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -2449,12 +2449,12 @@
                                   "start": {
                                     "line": 38,
                                     "column": 14,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 38,
                                     "column": 23,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -2465,12 +2465,12 @@
                                   "start": {
                                     "line": 38,
                                     "column": 24,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   },
                                   "end": {
                                     "line": 38,
                                     "column": 29,
-                                    "program": "generics_primitive_type_param_1.ets"
+                                    "program": "generics_primitive_type_param_1.ats"
                                   }
                                 }
                               },
@@ -2480,12 +2480,12 @@
                                 "start": {
                                   "line": 38,
                                   "column": 14,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 38,
                                   "column": 29,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -2496,12 +2496,12 @@
                                 "start": {
                                   "line": 38,
                                   "column": 33,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 },
                                 "end": {
                                   "line": 38,
                                   "column": 38,
-                                  "program": "generics_primitive_type_param_1.ets"
+                                  "program": "generics_primitive_type_param_1.ats"
                                 }
                               }
                             },
@@ -2509,12 +2509,12 @@
                               "start": {
                                 "line": 38,
                                 "column": 14,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               },
                               "end": {
                                 "line": 38,
                                 "column": 38,
-                                "program": "generics_primitive_type_param_1.ets"
+                                "program": "generics_primitive_type_param_1.ats"
                               }
                             }
                           },
@@ -2522,12 +2522,12 @@
                             "start": {
                               "line": 38,
                               "column": 9,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             },
                             "end": {
                               "line": 38,
                               "column": 38,
-                              "program": "generics_primitive_type_param_1.ets"
+                              "program": "generics_primitive_type_param_1.ats"
                             }
                           }
                         }
@@ -2537,12 +2537,12 @@
                         "start": {
                           "line": 38,
                           "column": 5,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         },
                         "end": {
                           "line": 38,
                           "column": 39,
-                          "program": "generics_primitive_type_param_1.ets"
+                          "program": "generics_primitive_type_param_1.ats"
                         }
                       }
                     }
@@ -2551,12 +2551,12 @@
                     "start": {
                       "line": 23,
                       "column": 23,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     },
                     "end": {
                       "line": 39,
                       "column": 2,
-                      "program": "generics_primitive_type_param_1.ets"
+                      "program": "generics_primitive_type_param_1.ats"
                     }
                   }
                 },
@@ -2564,12 +2564,12 @@
                   "start": {
                     "line": 23,
                     "column": 10,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   },
                   "end": {
                     "line": 39,
                     "column": 2,
-                    "program": "generics_primitive_type_param_1.ets"
+                    "program": "generics_primitive_type_param_1.ats"
                   }
                 }
               },
@@ -2577,12 +2577,12 @@
                 "start": {
                   "line": 23,
                   "column": 10,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 },
                 "end": {
                   "line": 39,
                   "column": 2,
-                  "program": "generics_primitive_type_param_1.ets"
+                  "program": "generics_primitive_type_param_1.ats"
                 }
               }
             },
@@ -2591,12 +2591,12 @@
               "start": {
                 "line": 23,
                 "column": 1,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               },
               "end": {
                 "line": 39,
                 "column": 2,
-                "program": "generics_primitive_type_param_1.ets"
+                "program": "generics_primitive_type_param_1.ats"
               }
             }
           }
@@ -2605,12 +2605,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "generics_primitive_type_param_1.ets"
+            "program": "generics_primitive_type_param_1.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "generics_primitive_type_param_1.ets"
+            "program": "generics_primitive_type_param_1.ats"
           }
         }
       },
@@ -2618,12 +2618,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "generics_primitive_type_param_1.ets"
+          "program": "generics_primitive_type_param_1.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "generics_primitive_type_param_1.ets"
+          "program": "generics_primitive_type_param_1.ats"
         }
       }
     }
@@ -2632,12 +2632,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "generics_primitive_type_param_1.ets"
+      "program": "generics_primitive_type_param_1.ats"
     },
     "end": {
       "line": 40,
       "column": 1,
-      "program": "generics_primitive_type_param_1.ets"
+      "program": "generics_primitive_type_param_1.ats"
     }
   }
 }

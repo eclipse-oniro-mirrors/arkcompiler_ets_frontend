@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "lambda_infer_type_return_array.ets"
+              "program": "lambda_infer_type_return_array.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "lambda_infer_type_return_array.ets"
+              "program": "lambda_infer_type_return_array.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "lambda_infer_type_return_array.ets"
+                  "program": "lambda_infer_type_return_array.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 14,
-                  "program": "lambda_infer_type_return_array.ets"
+                  "program": "lambda_infer_type_return_array.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "lambda_infer_type_return_array.ets"
+                      "program": "lambda_infer_type_return_array.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 14,
-                      "program": "lambda_infer_type_return_array.ets"
+                      "program": "lambda_infer_type_return_array.ats"
                     }
                   }
                 },
@@ -92,12 +92,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 7,
-                                      "program": "lambda_infer_type_return_array.ets"
+                                      "program": "lambda_infer_type_return_array.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 8,
-                                      "program": "lambda_infer_type_return_array.ets"
+                                      "program": "lambda_infer_type_return_array.ats"
                                     }
                                   }
                                 },
@@ -115,12 +115,12 @@
                                             "start": {
                                               "line": 17,
                                               "column": 7,
-                                              "program": "lambda_infer_type_return_array.ets"
+                                              "program": "lambda_infer_type_return_array.ats"
                                             },
                                             "end": {
                                               "line": 17,
                                               "column": 8,
-                                              "program": "lambda_infer_type_return_array.ets"
+                                              "program": "lambda_infer_type_return_array.ats"
                                             }
                                           }
                                         },
@@ -128,12 +128,12 @@
                                           "start": {
                                             "line": 17,
                                             "column": 7,
-                                            "program": "lambda_infer_type_return_array.ets"
+                                            "program": "lambda_infer_type_return_array.ats"
                                           },
                                           "end": {
                                             "line": 17,
                                             "column": 8,
-                                            "program": "lambda_infer_type_return_array.ets"
+                                            "program": "lambda_infer_type_return_array.ats"
                                           }
                                         }
                                       },
@@ -141,12 +141,12 @@
                                         "start": {
                                           "line": 17,
                                           "column": 7,
-                                          "program": "lambda_infer_type_return_array.ets"
+                                          "program": "lambda_infer_type_return_array.ats"
                                         },
                                         "end": {
                                           "line": 17,
                                           "column": 8,
-                                          "program": "lambda_infer_type_return_array.ets"
+                                          "program": "lambda_infer_type_return_array.ats"
                                         }
                                       }
                                     }
@@ -155,12 +155,12 @@
                                     "start": {
                                       "line": 17,
                                       "column": 7,
-                                      "program": "lambda_infer_type_return_array.ets"
+                                      "program": "lambda_infer_type_return_array.ats"
                                     },
                                     "end": {
                                       "line": 17,
                                       "column": 8,
-                                      "program": "lambda_infer_type_return_array.ets"
+                                      "program": "lambda_infer_type_return_array.ats"
                                     }
                                   }
                                 },
@@ -168,12 +168,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 7,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 8,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   }
                                 }
                               },
@@ -181,12 +181,12 @@
                                 "start": {
                                   "line": 17,
                                   "column": 11,
-                                  "program": "lambda_infer_type_return_array.ets"
+                                  "program": "lambda_infer_type_return_array.ats"
                                 },
                                 "end": {
                                   "line": 17,
                                   "column": 19,
-                                  "program": "lambda_infer_type_return_array.ets"
+                                  "program": "lambda_infer_type_return_array.ats"
                                 }
                               }
                             },
@@ -194,12 +194,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 7,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 8,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               }
                             }
                           },
@@ -213,12 +213,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 24,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 25,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   }
                                 }
                               },
@@ -229,12 +229,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 27,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 28,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   }
                                 }
                               },
@@ -245,12 +245,12 @@
                                   "start": {
                                     "line": 17,
                                     "column": 30,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   },
                                   "end": {
                                     "line": 17,
                                     "column": 31,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   }
                                 }
                               }
@@ -259,12 +259,12 @@
                               "start": {
                                 "line": 17,
                                 "column": 22,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               },
                               "end": {
                                 "line": 17,
                                 "column": 33,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               }
                             }
                           },
@@ -272,12 +272,12 @@
                             "start": {
                               "line": 17,
                               "column": 7,
-                              "program": "lambda_infer_type_return_array.ets"
+                              "program": "lambda_infer_type_return_array.ats"
                             },
                             "end": {
                               "line": 17,
                               "column": 33,
-                              "program": "lambda_infer_type_return_array.ets"
+                              "program": "lambda_infer_type_return_array.ats"
                             }
                           }
                         }
@@ -287,12 +287,12 @@
                         "start": {
                           "line": 17,
                           "column": 3,
-                          "program": "lambda_infer_type_return_array.ets"
+                          "program": "lambda_infer_type_return_array.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 33,
-                          "program": "lambda_infer_type_return_array.ets"
+                          "program": "lambda_infer_type_return_array.ats"
                         }
                       }
                     },
@@ -308,12 +308,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 7,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 8,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               }
                             }
                           },
@@ -338,12 +338,12 @@
                                         "start": {
                                           "line": 18,
                                           "column": 18,
-                                          "program": "lambda_infer_type_return_array.ets"
+                                          "program": "lambda_infer_type_return_array.ats"
                                         },
                                         "end": {
                                           "line": 18,
                                           "column": 19,
-                                          "program": "lambda_infer_type_return_array.ets"
+                                          "program": "lambda_infer_type_return_array.ats"
                                         }
                                       }
                                     },
@@ -365,12 +365,12 @@
                                   "start": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   },
                                   "end": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   }
                                 }
                               },
@@ -378,12 +378,12 @@
                                 "start": {
                                   "line": 18,
                                   "column": 12,
-                                  "program": "lambda_infer_type_return_array.ets"
+                                  "program": "lambda_infer_type_return_array.ats"
                                 },
                                 "end": {
                                   "line": 18,
                                   "column": 19,
-                                  "program": "lambda_infer_type_return_array.ets"
+                                  "program": "lambda_infer_type_return_array.ats"
                                 }
                               }
                             },
@@ -391,12 +391,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 12,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 19,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               }
                             }
                           },
@@ -404,12 +404,12 @@
                             "start": {
                               "line": 18,
                               "column": 7,
-                              "program": "lambda_infer_type_return_array.ets"
+                              "program": "lambda_infer_type_return_array.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 19,
-                              "program": "lambda_infer_type_return_array.ets"
+                              "program": "lambda_infer_type_return_array.ats"
                             }
                           }
                         }
@@ -419,12 +419,12 @@
                         "start": {
                           "line": 18,
                           "column": 3,
-                          "program": "lambda_infer_type_return_array.ets"
+                          "program": "lambda_infer_type_return_array.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 19,
-                          "program": "lambda_infer_type_return_array.ets"
+                          "program": "lambda_infer_type_return_array.ats"
                         }
                       }
                     },
@@ -450,12 +450,12 @@
                                       "start": {
                                         "line": 19,
                                         "column": 24,
-                                        "program": "lambda_infer_type_return_array.ets"
+                                        "program": "lambda_infer_type_return_array.ats"
                                       },
                                       "end": {
                                         "line": 19,
                                         "column": 32,
-                                        "program": "lambda_infer_type_return_array.ets"
+                                        "program": "lambda_infer_type_return_array.ats"
                                       }
                                     }
                                   },
@@ -473,12 +473,12 @@
                                               "start": {
                                                 "line": 19,
                                                 "column": 24,
-                                                "program": "lambda_infer_type_return_array.ets"
+                                                "program": "lambda_infer_type_return_array.ats"
                                               },
                                               "end": {
                                                 "line": 19,
                                                 "column": 32,
-                                                "program": "lambda_infer_type_return_array.ets"
+                                                "program": "lambda_infer_type_return_array.ats"
                                               }
                                             }
                                           },
@@ -486,12 +486,12 @@
                                             "start": {
                                               "line": 19,
                                               "column": 24,
-                                              "program": "lambda_infer_type_return_array.ets"
+                                              "program": "lambda_infer_type_return_array.ats"
                                             },
                                             "end": {
                                               "line": 19,
                                               "column": 32,
-                                              "program": "lambda_infer_type_return_array.ets"
+                                              "program": "lambda_infer_type_return_array.ats"
                                             }
                                           }
                                         },
@@ -499,12 +499,12 @@
                                           "start": {
                                             "line": 19,
                                             "column": 24,
-                                            "program": "lambda_infer_type_return_array.ets"
+                                            "program": "lambda_infer_type_return_array.ats"
                                           },
                                           "end": {
                                             "line": 19,
                                             "column": 32,
-                                            "program": "lambda_infer_type_return_array.ets"
+                                            "program": "lambda_infer_type_return_array.ats"
                                           }
                                         }
                                       }
@@ -513,12 +513,12 @@
                                       "start": {
                                         "line": 19,
                                         "column": 24,
-                                        "program": "lambda_infer_type_return_array.ets"
+                                        "program": "lambda_infer_type_return_array.ats"
                                       },
                                       "end": {
                                         "line": 19,
                                         "column": 32,
-                                        "program": "lambda_infer_type_return_array.ets"
+                                        "program": "lambda_infer_type_return_array.ats"
                                       }
                                     }
                                   },
@@ -526,12 +526,12 @@
                                     "start": {
                                       "line": 19,
                                       "column": 24,
-                                      "program": "lambda_infer_type_return_array.ets"
+                                      "program": "lambda_infer_type_return_array.ats"
                                     },
                                     "end": {
                                       "line": 19,
                                       "column": 32,
-                                      "program": "lambda_infer_type_return_array.ets"
+                                      "program": "lambda_infer_type_return_array.ats"
                                     }
                                   }
                                 },
@@ -539,12 +539,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 24,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 32,
-                                    "program": "lambda_infer_type_return_array.ets"
+                                    "program": "lambda_infer_type_return_array.ats"
                                   }
                                 }
                               },
@@ -552,12 +552,12 @@
                                 "start": {
                                   "line": 19,
                                   "column": 18,
-                                  "program": "lambda_infer_type_return_array.ets"
+                                  "program": "lambda_infer_type_return_array.ats"
                                 },
                                 "end": {
                                   "line": 19,
                                   "column": 32,
-                                  "program": "lambda_infer_type_return_array.ets"
+                                  "program": "lambda_infer_type_return_array.ats"
                                 }
                               }
                             },
@@ -565,12 +565,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 7,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 15,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               }
                             }
                           },
@@ -581,12 +581,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 35,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 36,
-                                "program": "lambda_infer_type_return_array.ets"
+                                "program": "lambda_infer_type_return_array.ats"
                               }
                             }
                           },
@@ -594,12 +594,12 @@
                             "start": {
                               "line": 19,
                               "column": 7,
-                              "program": "lambda_infer_type_return_array.ets"
+                              "program": "lambda_infer_type_return_array.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 36,
-                              "program": "lambda_infer_type_return_array.ets"
+                              "program": "lambda_infer_type_return_array.ats"
                             }
                           }
                         }
@@ -609,12 +609,12 @@
                         "start": {
                           "line": 19,
                           "column": 3,
-                          "program": "lambda_infer_type_return_array.ets"
+                          "program": "lambda_infer_type_return_array.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 36,
-                          "program": "lambda_infer_type_return_array.ets"
+                          "program": "lambda_infer_type_return_array.ats"
                         }
                       }
                     }
@@ -623,12 +623,12 @@
                     "start": {
                       "line": 16,
                       "column": 18,
-                      "program": "lambda_infer_type_return_array.ets"
+                      "program": "lambda_infer_type_return_array.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 2,
-                      "program": "lambda_infer_type_return_array.ets"
+                      "program": "lambda_infer_type_return_array.ats"
                     }
                   }
                 },
@@ -636,12 +636,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "lambda_infer_type_return_array.ets"
+                    "program": "lambda_infer_type_return_array.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 2,
-                    "program": "lambda_infer_type_return_array.ets"
+                    "program": "lambda_infer_type_return_array.ats"
                   }
                 }
               },
@@ -649,12 +649,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "lambda_infer_type_return_array.ets"
+                  "program": "lambda_infer_type_return_array.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 2,
-                  "program": "lambda_infer_type_return_array.ets"
+                  "program": "lambda_infer_type_return_array.ats"
                 }
               }
             },
@@ -663,12 +663,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "lambda_infer_type_return_array.ets"
+                "program": "lambda_infer_type_return_array.ats"
               },
               "end": {
                 "line": 20,
                 "column": 2,
-                "program": "lambda_infer_type_return_array.ets"
+                "program": "lambda_infer_type_return_array.ats"
               }
             }
           }
@@ -677,12 +677,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "lambda_infer_type_return_array.ets"
+            "program": "lambda_infer_type_return_array.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "lambda_infer_type_return_array.ets"
+            "program": "lambda_infer_type_return_array.ats"
           }
         }
       },
@@ -690,12 +690,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "lambda_infer_type_return_array.ets"
+          "program": "lambda_infer_type_return_array.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "lambda_infer_type_return_array.ets"
+          "program": "lambda_infer_type_return_array.ats"
         }
       }
     }
@@ -704,12 +704,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "lambda_infer_type_return_array.ets"
+      "program": "lambda_infer_type_return_array.ats"
     },
     "end": {
       "line": 21,
       "column": 1,
-      "program": "lambda_infer_type_return_array.ets"
+      "program": "lambda_infer_type_return_array.ats"
     }
   }
 }

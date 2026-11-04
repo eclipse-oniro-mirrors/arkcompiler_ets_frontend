@@ -23,7 +23,7 @@ function(add_test project)
             --es2panda '${PANDA_RUN_PREFIX} $<TARGET_FILE:es2panda>'
             --arktsconfig ${CMAKE_CURRENT_BINARY_DIR}/arktsconfig_class_from.json 
             --stdlib ${PANDA_ROOT}/plugins/ets/stdlib
-            --target ./main.ets
+            --target ./main.ats
     )
     add_dependencies(es2panda_tests ${PROJECT_TARGET_NAME})
 endfunction()

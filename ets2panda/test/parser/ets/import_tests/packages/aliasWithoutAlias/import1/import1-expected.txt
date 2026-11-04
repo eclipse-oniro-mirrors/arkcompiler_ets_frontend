@@ -100,4 +100,4 @@
     }
   ]
 }
-[import1.ets:16:9] Syntax error ESY139148: The package keyword is deprecated.
+[import1.ats:16:9] Syntax error ESY139148: The package keyword is deprecated.

@@ -18,7 +18,7 @@ add_custom_target(es2panda-unit-test-fatal-error-interop-dynamic-file-not-found
     COMMAND python3 ${CMAKE_CURRENT_LIST_DIR}/../test_fatal_script.py
         --es2panda '${PANDA_RUN_PREFIX} $<TARGET_FILE:es2panda>'
         --config arktsconfig.json
-        --filepath main.ets
+        --filepath main.ats
         --stdlib ${PANDA_ROOT}/plugins/ets/stdlib
 )
 

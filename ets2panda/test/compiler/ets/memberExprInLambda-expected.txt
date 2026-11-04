@@ -10,12 +10,12 @@
           "start": {
             "line": 16,
             "column": 6,
-            "program": "memberExprInLambda.ets"
+            "program": "memberExprInLambda.ats"
           },
           "end": {
             "line": 16,
             "column": 19,
-            "program": "memberExprInLambda.ets"
+            "program": "memberExprInLambda.ats"
           }
         }
       },
@@ -28,12 +28,12 @@
             "start": {
               "line": 16,
               "column": 28,
-              "program": "memberExprInLambda.ets"
+              "program": "memberExprInLambda.ats"
             },
             "end": {
               "line": 16,
               "column": 32,
-              "program": "memberExprInLambda.ets"
+              "program": "memberExprInLambda.ats"
             }
           }
         },
@@ -41,12 +41,12 @@
           "start": {
             "line": 16,
             "column": 22,
-            "program": "memberExprInLambda.ets"
+            "program": "memberExprInLambda.ats"
           },
           "end": {
             "line": 16,
             "column": 32,
-            "program": "memberExprInLambda.ets"
+            "program": "memberExprInLambda.ats"
           }
         }
       },
@@ -54,12 +54,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "memberExprInLambda.ets"
+          "program": "memberExprInLambda.ats"
         },
         "end": {
           "line": 16,
           "column": 32,
-          "program": "memberExprInLambda.ets"
+          "program": "memberExprInLambda.ats"
         }
       }
     },
@@ -73,12 +73,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "memberExprInLambda.ets"
+              "program": "memberExprInLambda.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "memberExprInLambda.ets"
+              "program": "memberExprInLambda.ats"
             }
           }
         },
@@ -139,12 +139,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "memberExprInLambda.ets"
+                      "program": "memberExprInLambda.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "memberExprInLambda.ets"
+                      "program": "memberExprInLambda.ats"
                     }
                   }
                 },
@@ -152,12 +152,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "memberExprInLambda.ets"
+                    "program": "memberExprInLambda.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "memberExprInLambda.ets"
+                    "program": "memberExprInLambda.ats"
                   }
                 }
               },
@@ -165,12 +165,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "memberExprInLambda.ets"
+                  "program": "memberExprInLambda.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "memberExprInLambda.ets"
+                  "program": "memberExprInLambda.ats"
                 }
               }
             },
@@ -179,12 +179,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "memberExprInLambda.ets"
+                "program": "memberExprInLambda.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "memberExprInLambda.ets"
+                "program": "memberExprInLambda.ats"
               }
             }
           },
@@ -197,12 +197,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "memberExprInLambda.ets"
+                  "program": "memberExprInLambda.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 35,
-                  "program": "memberExprInLambda.ets"
+                  "program": "memberExprInLambda.ats"
                 }
               }
             },
@@ -222,12 +222,12 @@
                     "start": {
                       "line": 18,
                       "column": 10,
-                      "program": "memberExprInLambda.ets"
+                      "program": "memberExprInLambda.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 35,
-                      "program": "memberExprInLambda.ets"
+                      "program": "memberExprInLambda.ats"
                     }
                   }
                 },
@@ -241,12 +241,12 @@
                     "start": {
                       "line": 18,
                       "column": 39,
-                      "program": "memberExprInLambda.ets"
+                      "program": "memberExprInLambda.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 43,
-                      "program": "memberExprInLambda.ets"
+                      "program": "memberExprInLambda.ats"
                     }
                   }
                 },
@@ -272,12 +272,12 @@
                                     "start": {
                                       "line": 19,
                                       "column": 11,
-                                      "program": "memberExprInLambda.ets"
+                                      "program": "memberExprInLambda.ats"
                                     },
                                     "end": {
                                       "line": 19,
                                       "column": 14,
-                                      "program": "memberExprInLambda.ets"
+                                      "program": "memberExprInLambda.ats"
                                     }
                                   }
                                 },
@@ -295,12 +295,12 @@
                                             "start": {
                                               "line": 19,
                                               "column": 11,
-                                              "program": "memberExprInLambda.ets"
+                                              "program": "memberExprInLambda.ats"
                                             },
                                             "end": {
                                               "line": 19,
                                               "column": 14,
-                                              "program": "memberExprInLambda.ets"
+                                              "program": "memberExprInLambda.ats"
                                             }
                                           }
                                         },
@@ -308,12 +308,12 @@
                                           "start": {
                                             "line": 19,
                                             "column": 11,
-                                            "program": "memberExprInLambda.ets"
+                                            "program": "memberExprInLambda.ats"
                                           },
                                           "end": {
                                             "line": 19,
                                             "column": 14,
-                                            "program": "memberExprInLambda.ets"
+                                            "program": "memberExprInLambda.ats"
                                           }
                                         }
                                       },
@@ -321,12 +321,12 @@
                                         "start": {
                                           "line": 19,
                                           "column": 11,
-                                          "program": "memberExprInLambda.ets"
+                                          "program": "memberExprInLambda.ats"
                                         },
                                         "end": {
                                           "line": 19,
                                           "column": 14,
-                                          "program": "memberExprInLambda.ets"
+                                          "program": "memberExprInLambda.ats"
                                         }
                                       }
                                     }
@@ -335,12 +335,12 @@
                                     "start": {
                                       "line": 19,
                                       "column": 11,
-                                      "program": "memberExprInLambda.ets"
+                                      "program": "memberExprInLambda.ats"
                                     },
                                     "end": {
                                       "line": 19,
                                       "column": 14,
-                                      "program": "memberExprInLambda.ets"
+                                      "program": "memberExprInLambda.ats"
                                     }
                                   }
                                 },
@@ -348,12 +348,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 11,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 14,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   }
                                 }
                               },
@@ -361,12 +361,12 @@
                                 "start": {
                                   "line": 19,
                                   "column": 16,
-                                  "program": "memberExprInLambda.ets"
+                                  "program": "memberExprInLambda.ats"
                                 },
                                 "end": {
                                   "line": 19,
                                   "column": 24,
-                                  "program": "memberExprInLambda.ets"
+                                  "program": "memberExprInLambda.ats"
                                 }
                               }
                             },
@@ -374,12 +374,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 11,
-                                "program": "memberExprInLambda.ets"
+                                "program": "memberExprInLambda.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 14,
-                                "program": "memberExprInLambda.ets"
+                                "program": "memberExprInLambda.ats"
                               }
                             }
                           },
@@ -393,12 +393,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 28,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 29,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   }
                                 }
                               },
@@ -409,12 +409,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 31,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 32,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   }
                                 }
                               },
@@ -425,12 +425,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 34,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 35,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   }
                                 }
                               },
@@ -441,12 +441,12 @@
                                   "start": {
                                     "line": 19,
                                     "column": 37,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   },
                                   "end": {
                                     "line": 19,
                                     "column": 38,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   }
                                 }
                               }
@@ -455,12 +455,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 27,
-                                "program": "memberExprInLambda.ets"
+                                "program": "memberExprInLambda.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 39,
-                                "program": "memberExprInLambda.ets"
+                                "program": "memberExprInLambda.ats"
                               }
                             }
                           },
@@ -468,12 +468,12 @@
                             "start": {
                               "line": 19,
                               "column": 11,
-                              "program": "memberExprInLambda.ets"
+                              "program": "memberExprInLambda.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 39,
-                              "program": "memberExprInLambda.ets"
+                              "program": "memberExprInLambda.ats"
                             }
                           }
                         }
@@ -483,12 +483,12 @@
                         "start": {
                           "line": 19,
                           "column": 5,
-                          "program": "memberExprInLambda.ets"
+                          "program": "memberExprInLambda.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 39,
-                          "program": "memberExprInLambda.ets"
+                          "program": "memberExprInLambda.ats"
                         }
                       }
                     },
@@ -511,12 +511,12 @@
                                     "start": {
                                       "line": 20,
                                       "column": 25,
-                                      "program": "memberExprInLambda.ets"
+                                      "program": "memberExprInLambda.ats"
                                     },
                                     "end": {
                                       "line": 20,
                                       "column": 38,
-                                      "program": "memberExprInLambda.ets"
+                                      "program": "memberExprInLambda.ats"
                                     }
                                   }
                                 },
@@ -524,12 +524,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 25,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   },
                                   "end": {
                                     "line": 20,
                                     "column": 38,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   }
                                 }
                               },
@@ -537,12 +537,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 25,
-                                  "program": "memberExprInLambda.ets"
+                                  "program": "memberExprInLambda.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 38,
-                                  "program": "memberExprInLambda.ets"
+                                  "program": "memberExprInLambda.ats"
                                 }
                               }
                             },
@@ -550,12 +550,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 11,
-                                "program": "memberExprInLambda.ets"
+                                "program": "memberExprInLambda.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 23,
-                                "program": "memberExprInLambda.ets"
+                                "program": "memberExprInLambda.ats"
                               }
                             }
                           },
@@ -583,12 +583,12 @@
                                             "start": {
                                               "line": 21,
                                               "column": 15,
-                                              "program": "memberExprInLambda.ets"
+                                              "program": "memberExprInLambda.ats"
                                             },
                                             "end": {
                                               "line": 21,
                                               "column": 21,
-                                              "program": "memberExprInLambda.ets"
+                                              "program": "memberExprInLambda.ats"
                                             }
                                           }
                                         },
@@ -601,12 +601,12 @@
                                               "start": {
                                                 "line": 21,
                                                 "column": 24,
-                                                "program": "memberExprInLambda.ets"
+                                                "program": "memberExprInLambda.ats"
                                               },
                                               "end": {
                                                 "line": 21,
                                                 "column": 27,
-                                                "program": "memberExprInLambda.ets"
+                                                "program": "memberExprInLambda.ats"
                                               }
                                             }
                                           },
@@ -617,12 +617,12 @@
                                               "start": {
                                                 "line": 21,
                                                 "column": 28,
-                                                "program": "memberExprInLambda.ets"
+                                                "program": "memberExprInLambda.ats"
                                               },
                                               "end": {
                                                 "line": 21,
                                                 "column": 34,
-                                                "program": "memberExprInLambda.ets"
+                                                "program": "memberExprInLambda.ats"
                                               }
                                             }
                                           },
@@ -632,12 +632,12 @@
                                             "start": {
                                               "line": 21,
                                               "column": 24,
-                                              "program": "memberExprInLambda.ets"
+                                              "program": "memberExprInLambda.ats"
                                             },
                                             "end": {
                                               "line": 21,
                                               "column": 34,
-                                              "program": "memberExprInLambda.ets"
+                                              "program": "memberExprInLambda.ats"
                                             }
                                           }
                                         },
@@ -645,12 +645,12 @@
                                           "start": {
                                             "line": 21,
                                             "column": 15,
-                                            "program": "memberExprInLambda.ets"
+                                            "program": "memberExprInLambda.ats"
                                           },
                                           "end": {
                                             "line": 21,
                                             "column": 34,
-                                            "program": "memberExprInLambda.ets"
+                                            "program": "memberExprInLambda.ats"
                                           }
                                         }
                                       }
@@ -660,12 +660,12 @@
                                       "start": {
                                         "line": 21,
                                         "column": 9,
-                                        "program": "memberExprInLambda.ets"
+                                        "program": "memberExprInLambda.ats"
                                       },
                                       "end": {
                                         "line": 21,
                                         "column": 35,
-                                        "program": "memberExprInLambda.ets"
+                                        "program": "memberExprInLambda.ats"
                                       }
                                     }
                                   }
@@ -674,12 +674,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 47,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 6,
-                                    "program": "memberExprInLambda.ets"
+                                    "program": "memberExprInLambda.ats"
                                   }
                                 }
                               },
@@ -687,12 +687,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 41,
-                                  "program": "memberExprInLambda.ets"
+                                  "program": "memberExprInLambda.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 6,
-                                  "program": "memberExprInLambda.ets"
+                                  "program": "memberExprInLambda.ats"
                                 }
                               }
                             },
@@ -700,12 +700,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 41,
-                                "program": "memberExprInLambda.ets"
+                                "program": "memberExprInLambda.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 6,
-                                "program": "memberExprInLambda.ets"
+                                "program": "memberExprInLambda.ats"
                               }
                             }
                           },
@@ -713,12 +713,12 @@
                             "start": {
                               "line": 20,
                               "column": 11,
-                              "program": "memberExprInLambda.ets"
+                              "program": "memberExprInLambda.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 6,
-                              "program": "memberExprInLambda.ets"
+                              "program": "memberExprInLambda.ats"
                             }
                           }
                         }
@@ -728,12 +728,12 @@
                         "start": {
                           "line": 20,
                           "column": 5,
-                          "program": "memberExprInLambda.ets"
+                          "program": "memberExprInLambda.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 6,
-                          "program": "memberExprInLambda.ets"
+                          "program": "memberExprInLambda.ats"
                         }
                       }
                     }
@@ -742,12 +742,12 @@
                     "start": {
                       "line": 18,
                       "column": 44,
-                      "program": "memberExprInLambda.ets"
+                      "program": "memberExprInLambda.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 2,
-                      "program": "memberExprInLambda.ets"
+                      "program": "memberExprInLambda.ats"
                     }
                   }
                 },
@@ -755,12 +755,12 @@
                   "start": {
                     "line": 18,
                     "column": 10,
-                    "program": "memberExprInLambda.ets"
+                    "program": "memberExprInLambda.ats"
                   },
                   "end": {
                     "line": 23,
                     "column": 2,
-                    "program": "memberExprInLambda.ets"
+                    "program": "memberExprInLambda.ats"
                   }
                 }
               },
@@ -768,12 +768,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "memberExprInLambda.ets"
+                  "program": "memberExprInLambda.ats"
                 },
                 "end": {
                   "line": 23,
                   "column": 2,
-                  "program": "memberExprInLambda.ets"
+                  "program": "memberExprInLambda.ats"
                 }
               }
             },
@@ -782,12 +782,12 @@
               "start": {
                 "line": 18,
                 "column": 1,
-                "program": "memberExprInLambda.ets"
+                "program": "memberExprInLambda.ats"
               },
               "end": {
                 "line": 23,
                 "column": 2,
-                "program": "memberExprInLambda.ets"
+                "program": "memberExprInLambda.ats"
               }
             }
           }
@@ -796,12 +796,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "memberExprInLambda.ets"
+            "program": "memberExprInLambda.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "memberExprInLambda.ets"
+            "program": "memberExprInLambda.ats"
           }
         }
       },
@@ -809,12 +809,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "memberExprInLambda.ets"
+          "program": "memberExprInLambda.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "memberExprInLambda.ets"
+          "program": "memberExprInLambda.ats"
         }
       }
     }
@@ -823,12 +823,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "memberExprInLambda.ets"
+      "program": "memberExprInLambda.ats"
     },
     "end": {
       "line": 23,
       "column": 2,
-      "program": "memberExprInLambda.ets"
+      "program": "memberExprInLambda.ats"
     }
   }
 }

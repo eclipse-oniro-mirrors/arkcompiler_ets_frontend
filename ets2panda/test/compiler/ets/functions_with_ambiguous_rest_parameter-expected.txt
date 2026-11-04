@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "functions_with_ambiguous_rest_parameter.ets"
+              "program": "functions_with_ambiguous_rest_parameter.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "functions_with_ambiguous_rest_parameter.ets"
+              "program": "functions_with_ambiguous_rest_parameter.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                  "program": "functions_with_ambiguous_rest_parameter.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                  "program": "functions_with_ambiguous_rest_parameter.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 13,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     }
                   }
                 },
@@ -81,12 +81,12 @@
                           "start": {
                             "line": 16,
                             "column": 17,
-                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                            "program": "functions_with_ambiguous_rest_parameter.ats"
                           },
                           "end": {
                             "line": 16,
                             "column": 18,
-                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                            "program": "functions_with_ambiguous_rest_parameter.ats"
                           }
                         }
                       },
@@ -101,12 +101,12 @@
                               "start": {
                                 "line": 16,
                                 "column": 20,
-                                "program": "functions_with_ambiguous_rest_parameter.ets"
+                                "program": "functions_with_ambiguous_rest_parameter.ats"
                               },
                               "end": {
                                 "line": 16,
                                 "column": 28,
-                                "program": "functions_with_ambiguous_rest_parameter.ets"
+                                "program": "functions_with_ambiguous_rest_parameter.ats"
                               }
                             }
                           },
@@ -124,12 +124,12 @@
                                       "start": {
                                         "line": 16,
                                         "column": 20,
-                                        "program": "functions_with_ambiguous_rest_parameter.ets"
+                                        "program": "functions_with_ambiguous_rest_parameter.ats"
                                       },
                                       "end": {
                                         "line": 16,
                                         "column": 28,
-                                        "program": "functions_with_ambiguous_rest_parameter.ets"
+                                        "program": "functions_with_ambiguous_rest_parameter.ats"
                                       }
                                     }
                                   },
@@ -137,12 +137,12 @@
                                     "start": {
                                       "line": 16,
                                       "column": 20,
-                                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                                      "program": "functions_with_ambiguous_rest_parameter.ats"
                                     },
                                     "end": {
                                       "line": 16,
                                       "column": 28,
-                                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                                      "program": "functions_with_ambiguous_rest_parameter.ats"
                                     }
                                   }
                                 },
@@ -150,12 +150,12 @@
                                   "start": {
                                     "line": 16,
                                     "column": 20,
-                                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                                    "program": "functions_with_ambiguous_rest_parameter.ats"
                                   },
                                   "end": {
                                     "line": 16,
                                     "column": 28,
-                                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                                    "program": "functions_with_ambiguous_rest_parameter.ats"
                                   }
                                 }
                               }
@@ -164,12 +164,12 @@
                               "start": {
                                 "line": 16,
                                 "column": 20,
-                                "program": "functions_with_ambiguous_rest_parameter.ets"
+                                "program": "functions_with_ambiguous_rest_parameter.ats"
                               },
                               "end": {
                                 "line": 16,
                                 "column": 28,
-                                "program": "functions_with_ambiguous_rest_parameter.ets"
+                                "program": "functions_with_ambiguous_rest_parameter.ats"
                               }
                             }
                           },
@@ -177,12 +177,12 @@
                             "start": {
                               "line": 16,
                               "column": 20,
-                              "program": "functions_with_ambiguous_rest_parameter.ets"
+                              "program": "functions_with_ambiguous_rest_parameter.ats"
                             },
                             "end": {
                               "line": 16,
                               "column": 28,
-                              "program": "functions_with_ambiguous_rest_parameter.ets"
+                              "program": "functions_with_ambiguous_rest_parameter.ats"
                             }
                           }
                         },
@@ -190,12 +190,12 @@
                           "start": {
                             "line": 16,
                             "column": 20,
-                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                            "program": "functions_with_ambiguous_rest_parameter.ats"
                           },
                           "end": {
                             "line": 16,
                             "column": 28,
-                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                            "program": "functions_with_ambiguous_rest_parameter.ats"
                           }
                         }
                       },
@@ -203,12 +203,12 @@
                         "start": {
                           "line": 16,
                           "column": 14,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         },
                         "end": {
                           "line": 16,
                           "column": 28,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         }
                       }
                     },
@@ -216,12 +216,12 @@
                       "start": {
                         "line": 16,
                         "column": 14,
-                        "program": "functions_with_ambiguous_rest_parameter.ets"
+                        "program": "functions_with_ambiguous_rest_parameter.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 28,
-                        "program": "functions_with_ambiguous_rest_parameter.ets"
+                        "program": "functions_with_ambiguous_rest_parameter.ats"
                       }
                     }
                   }
@@ -232,12 +232,12 @@
                     "start": {
                       "line": 16,
                       "column": 31,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 35,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     }
                   }
                 },
@@ -248,12 +248,12 @@
                     "start": {
                       "line": 16,
                       "column": 36,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 2,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     }
                   }
                 },
@@ -261,12 +261,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                    "program": "functions_with_ambiguous_rest_parameter.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 2,
-                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                    "program": "functions_with_ambiguous_rest_parameter.ats"
                   }
                 }
               },
@@ -274,12 +274,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                  "program": "functions_with_ambiguous_rest_parameter.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 2,
-                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                  "program": "functions_with_ambiguous_rest_parameter.ats"
                 }
               }
             },
@@ -293,12 +293,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 13,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     }
                   }
                 },
@@ -318,12 +318,12 @@
                         "start": {
                           "line": 20,
                           "column": 10,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 13,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         }
                       }
                     },
@@ -342,12 +342,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 17,
-                                "program": "functions_with_ambiguous_rest_parameter.ets"
+                                "program": "functions_with_ambiguous_rest_parameter.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 18,
-                                "program": "functions_with_ambiguous_rest_parameter.ets"
+                                "program": "functions_with_ambiguous_rest_parameter.ats"
                               }
                             }
                           },
@@ -362,12 +362,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 20,
-                                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                                    "program": "functions_with_ambiguous_rest_parameter.ats"
                                   },
                                   "end": {
                                     "line": 20,
                                     "column": 28,
-                                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                                    "program": "functions_with_ambiguous_rest_parameter.ats"
                                   }
                                 }
                               },
@@ -385,12 +385,12 @@
                                           "start": {
                                             "line": 20,
                                             "column": 20,
-                                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                                            "program": "functions_with_ambiguous_rest_parameter.ats"
                                           },
                                           "end": {
                                             "line": 20,
                                             "column": 28,
-                                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                                            "program": "functions_with_ambiguous_rest_parameter.ats"
                                           }
                                         }
                                       },
@@ -398,12 +398,12 @@
                                         "start": {
                                           "line": 20,
                                           "column": 20,
-                                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                                          "program": "functions_with_ambiguous_rest_parameter.ats"
                                         },
                                         "end": {
                                           "line": 20,
                                           "column": 28,
-                                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                                          "program": "functions_with_ambiguous_rest_parameter.ats"
                                         }
                                       }
                                     },
@@ -411,12 +411,12 @@
                                       "start": {
                                         "line": 20,
                                         "column": 20,
-                                        "program": "functions_with_ambiguous_rest_parameter.ets"
+                                        "program": "functions_with_ambiguous_rest_parameter.ats"
                                       },
                                       "end": {
                                         "line": 20,
                                         "column": 28,
-                                        "program": "functions_with_ambiguous_rest_parameter.ets"
+                                        "program": "functions_with_ambiguous_rest_parameter.ats"
                                       }
                                     }
                                   }
@@ -425,12 +425,12 @@
                                   "start": {
                                     "line": 20,
                                     "column": 20,
-                                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                                    "program": "functions_with_ambiguous_rest_parameter.ats"
                                   },
                                   "end": {
                                     "line": 20,
                                     "column": 28,
-                                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                                    "program": "functions_with_ambiguous_rest_parameter.ats"
                                   }
                                 }
                               },
@@ -438,12 +438,12 @@
                                 "start": {
                                   "line": 20,
                                   "column": 20,
-                                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                                  "program": "functions_with_ambiguous_rest_parameter.ats"
                                 },
                                 "end": {
                                   "line": 20,
                                   "column": 28,
-                                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                                  "program": "functions_with_ambiguous_rest_parameter.ats"
                                 }
                               }
                             },
@@ -451,12 +451,12 @@
                               "start": {
                                 "line": 20,
                                 "column": 20,
-                                "program": "functions_with_ambiguous_rest_parameter.ets"
+                                "program": "functions_with_ambiguous_rest_parameter.ats"
                               },
                               "end": {
                                 "line": 20,
                                 "column": 28,
-                                "program": "functions_with_ambiguous_rest_parameter.ets"
+                                "program": "functions_with_ambiguous_rest_parameter.ats"
                               }
                             }
                           },
@@ -464,12 +464,12 @@
                             "start": {
                               "line": 20,
                               "column": 14,
-                              "program": "functions_with_ambiguous_rest_parameter.ets"
+                              "program": "functions_with_ambiguous_rest_parameter.ats"
                             },
                             "end": {
                               "line": 20,
                               "column": 28,
-                              "program": "functions_with_ambiguous_rest_parameter.ets"
+                              "program": "functions_with_ambiguous_rest_parameter.ats"
                             }
                           }
                         },
@@ -477,12 +477,12 @@
                           "start": {
                             "line": 20,
                             "column": 14,
-                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                            "program": "functions_with_ambiguous_rest_parameter.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 28,
-                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                            "program": "functions_with_ambiguous_rest_parameter.ats"
                           }
                         }
                       }
@@ -493,12 +493,12 @@
                         "start": {
                           "line": 20,
                           "column": 31,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 35,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         }
                       }
                     },
@@ -509,12 +509,12 @@
                         "start": {
                           "line": 20,
                           "column": 36,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 2,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         }
                       }
                     },
@@ -522,12 +522,12 @@
                       "start": {
                         "line": 20,
                         "column": 10,
-                        "program": "functions_with_ambiguous_rest_parameter.ets"
+                        "program": "functions_with_ambiguous_rest_parameter.ats"
                       },
                       "end": {
                         "line": 22,
                         "column": 2,
-                        "program": "functions_with_ambiguous_rest_parameter.ets"
+                        "program": "functions_with_ambiguous_rest_parameter.ats"
                       }
                     }
                   },
@@ -535,12 +535,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 2,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     }
                   }
                 },
@@ -549,12 +549,12 @@
                   "start": {
                     "line": 20,
                     "column": 1,
-                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                    "program": "functions_with_ambiguous_rest_parameter.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 2,
-                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                    "program": "functions_with_ambiguous_rest_parameter.ats"
                   }
                 }
               }
@@ -563,12 +563,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "functions_with_ambiguous_rest_parameter.ets"
+                "program": "functions_with_ambiguous_rest_parameter.ats"
               },
               "end": {
                 "line": 18,
                 "column": 2,
-                "program": "functions_with_ambiguous_rest_parameter.ets"
+                "program": "functions_with_ambiguous_rest_parameter.ats"
               }
             }
           },
@@ -581,12 +581,12 @@
                 "start": {
                   "line": 24,
                   "column": 10,
-                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                  "program": "functions_with_ambiguous_rest_parameter.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 14,
-                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                  "program": "functions_with_ambiguous_rest_parameter.ats"
                 }
               }
             },
@@ -606,12 +606,12 @@
                     "start": {
                       "line": 24,
                       "column": 10,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 14,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     }
                   }
                 },
@@ -625,12 +625,12 @@
                     "start": {
                       "line": 24,
                       "column": 18,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 22,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     }
                   }
                 },
@@ -648,12 +648,12 @@
                             "start": {
                               "line": 25,
                               "column": 5,
-                              "program": "functions_with_ambiguous_rest_parameter.ets"
+                              "program": "functions_with_ambiguous_rest_parameter.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 8,
-                              "program": "functions_with_ambiguous_rest_parameter.ets"
+                              "program": "functions_with_ambiguous_rest_parameter.ats"
                             }
                           }
                         },
@@ -663,12 +663,12 @@
                           "start": {
                             "line": 25,
                             "column": 5,
-                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                            "program": "functions_with_ambiguous_rest_parameter.ats"
                           },
                           "end": {
                             "line": 25,
                             "column": 10,
-                            "program": "functions_with_ambiguous_rest_parameter.ets"
+                            "program": "functions_with_ambiguous_rest_parameter.ats"
                           }
                         }
                       },
@@ -676,12 +676,12 @@
                         "start": {
                           "line": 25,
                           "column": 5,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 11,
-                          "program": "functions_with_ambiguous_rest_parameter.ets"
+                          "program": "functions_with_ambiguous_rest_parameter.ats"
                         }
                       }
                     }
@@ -690,12 +690,12 @@
                     "start": {
                       "line": 24,
                       "column": 23,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 2,
-                      "program": "functions_with_ambiguous_rest_parameter.ets"
+                      "program": "functions_with_ambiguous_rest_parameter.ats"
                     }
                   }
                 },
@@ -703,12 +703,12 @@
                   "start": {
                     "line": 24,
                     "column": 10,
-                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                    "program": "functions_with_ambiguous_rest_parameter.ats"
                   },
                   "end": {
                     "line": 26,
                     "column": 2,
-                    "program": "functions_with_ambiguous_rest_parameter.ets"
+                    "program": "functions_with_ambiguous_rest_parameter.ats"
                   }
                 }
               },
@@ -716,12 +716,12 @@
                 "start": {
                   "line": 24,
                   "column": 10,
-                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                  "program": "functions_with_ambiguous_rest_parameter.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 2,
-                  "program": "functions_with_ambiguous_rest_parameter.ets"
+                  "program": "functions_with_ambiguous_rest_parameter.ats"
                 }
               }
             },
@@ -730,12 +730,12 @@
               "start": {
                 "line": 24,
                 "column": 1,
-                "program": "functions_with_ambiguous_rest_parameter.ets"
+                "program": "functions_with_ambiguous_rest_parameter.ats"
               },
               "end": {
                 "line": 26,
                 "column": 2,
-                "program": "functions_with_ambiguous_rest_parameter.ets"
+                "program": "functions_with_ambiguous_rest_parameter.ats"
               }
             }
           }
@@ -744,12 +744,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "functions_with_ambiguous_rest_parameter.ets"
+            "program": "functions_with_ambiguous_rest_parameter.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "functions_with_ambiguous_rest_parameter.ets"
+            "program": "functions_with_ambiguous_rest_parameter.ats"
           }
         }
       },
@@ -757,12 +757,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "functions_with_ambiguous_rest_parameter.ets"
+          "program": "functions_with_ambiguous_rest_parameter.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "functions_with_ambiguous_rest_parameter.ets"
+          "program": "functions_with_ambiguous_rest_parameter.ats"
         }
       }
     }
@@ -771,13 +771,13 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "functions_with_ambiguous_rest_parameter.ets"
+      "program": "functions_with_ambiguous_rest_parameter.ats"
     },
     "end": {
       "line": 26,
       "column": 2,
-      "program": "functions_with_ambiguous_rest_parameter.ets"
+      "program": "functions_with_ambiguous_rest_parameter.ats"
     }
   }
 }
-[functions_with_ambiguous_rest_parameter.ets:20:1] Semantic error ESE0131: Function foo with this assembly signature already declared.
+[functions_with_ambiguous_rest_parameter.ats:20:1] Semantic error ESE0131: Function foo with this assembly signature already declared.

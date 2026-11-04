@@ -11,12 +11,12 @@
             "start": {
               "line": 19,
               "column": 7,
-              "program": "global_const_vars3.ets"
+              "program": "global_const_vars3.ats"
             },
             "end": {
               "line": 19,
               "column": 10,
-              "program": "global_const_vars3.ets"
+              "program": "global_const_vars3.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 20,
                   "column": 21,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 25,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -58,12 +58,12 @@
                     "start": {
                       "line": 20,
                       "column": 27,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 31,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -71,12 +71,12 @@
                   "start": {
                     "line": 20,
                     "column": 27,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 31,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   }
                 }
               },
@@ -84,12 +84,12 @@
                 "start": {
                   "line": 20,
                   "column": 27,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 31,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -98,12 +98,12 @@
               "start": {
                 "line": 20,
                 "column": 21,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               },
               "end": {
                 "line": 20,
                 "column": 31,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               }
             }
           },
@@ -116,12 +116,12 @@
                 "start": {
                   "line": 22,
                   "column": 5,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 16,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -141,12 +141,12 @@
                     "start": {
                       "line": 22,
                       "column": 5,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 16,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -170,12 +170,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 9,
-                                "program": "global_const_vars3.ets"
+                                "program": "global_const_vars3.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 13,
-                                "program": "global_const_vars3.ets"
+                                "program": "global_const_vars3.ats"
                               }
                             }
                           },
@@ -186,12 +186,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 14,
-                                "program": "global_const_vars3.ets"
+                                "program": "global_const_vars3.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 18,
-                                "program": "global_const_vars3.ets"
+                                "program": "global_const_vars3.ats"
                               }
                             }
                           },
@@ -201,12 +201,12 @@
                             "start": {
                               "line": 23,
                               "column": 9,
-                              "program": "global_const_vars3.ets"
+                              "program": "global_const_vars3.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 18,
-                              "program": "global_const_vars3.ets"
+                              "program": "global_const_vars3.ats"
                             }
                           }
                         },
@@ -223,12 +223,12 @@
                                   "start": {
                                     "line": 23,
                                     "column": 25,
-                                    "program": "global_const_vars3.ets"
+                                    "program": "global_const_vars3.ats"
                                   },
                                   "end": {
                                     "line": 23,
                                     "column": 29,
-                                    "program": "global_const_vars3.ets"
+                                    "program": "global_const_vars3.ats"
                                   }
                                 }
                               },
@@ -236,12 +236,12 @@
                                 "start": {
                                   "line": 23,
                                   "column": 25,
-                                  "program": "global_const_vars3.ets"
+                                  "program": "global_const_vars3.ats"
                                 },
                                 "end": {
                                   "line": 23,
                                   "column": 29,
-                                  "program": "global_const_vars3.ets"
+                                  "program": "global_const_vars3.ats"
                                 }
                               }
                             },
@@ -249,12 +249,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 25,
-                                "program": "global_const_vars3.ets"
+                                "program": "global_const_vars3.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 29,
-                                "program": "global_const_vars3.ets"
+                                "program": "global_const_vars3.ats"
                               }
                             }
                           },
@@ -263,12 +263,12 @@
                             "start": {
                               "line": 23,
                               "column": 21,
-                              "program": "global_const_vars3.ets"
+                              "program": "global_const_vars3.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 32,
-                              "program": "global_const_vars3.ets"
+                              "program": "global_const_vars3.ats"
                             }
                           }
                         },
@@ -276,12 +276,12 @@
                           "start": {
                             "line": 23,
                             "column": 9,
-                            "program": "global_const_vars3.ets"
+                            "program": "global_const_vars3.ats"
                           },
                           "end": {
                             "line": 23,
                             "column": 32,
-                            "program": "global_const_vars3.ets"
+                            "program": "global_const_vars3.ats"
                           }
                         }
                       },
@@ -289,12 +289,12 @@
                         "start": {
                           "line": 23,
                           "column": 9,
-                          "program": "global_const_vars3.ets"
+                          "program": "global_const_vars3.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 32,
-                          "program": "global_const_vars3.ets"
+                          "program": "global_const_vars3.ats"
                         }
                       }
                     }
@@ -303,12 +303,12 @@
                     "start": {
                       "line": 22,
                       "column": 19,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 6,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -316,12 +316,12 @@
                   "start": {
                     "line": 22,
                     "column": 16,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 6,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   }
                 }
               },
@@ -329,12 +329,12 @@
                 "start": {
                   "line": 22,
                   "column": 16,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 6,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -343,12 +343,12 @@
               "start": {
                 "line": 22,
                 "column": 5,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               },
               "end": {
                 "line": 24,
                 "column": 6,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               }
             }
           },
@@ -361,12 +361,12 @@
                 "start": {
                   "line": 26,
                   "column": 12,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 16,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -386,12 +386,12 @@
                     "start": {
                       "line": 26,
                       "column": 12,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 16,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -405,12 +405,12 @@
                     "start": {
                       "line": 26,
                       "column": 20,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 24,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -421,12 +421,12 @@
                     "start": {
                       "line": 26,
                       "column": 25,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 27,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -434,12 +434,12 @@
                   "start": {
                     "line": 26,
                     "column": 16,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   },
                   "end": {
                     "line": 26,
                     "column": 27,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   }
                 }
               },
@@ -447,12 +447,12 @@
                 "start": {
                   "line": 26,
                   "column": 16,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 27,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -461,12 +461,12 @@
               "start": {
                 "line": 26,
                 "column": 12,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               },
               "end": {
                 "line": 26,
                 "column": 27,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               }
             }
           }
@@ -475,12 +475,12 @@
           "start": {
             "line": 19,
             "column": 11,
-            "program": "global_const_vars3.ets"
+            "program": "global_const_vars3.ats"
           },
           "end": {
             "line": 27,
             "column": 2,
-            "program": "global_const_vars3.ets"
+            "program": "global_const_vars3.ats"
           }
         }
       },
@@ -488,12 +488,12 @@
         "start": {
           "line": 19,
           "column": 1,
-          "program": "global_const_vars3.ets"
+          "program": "global_const_vars3.ats"
         },
         "end": {
           "line": 27,
           "column": 2,
-          "program": "global_const_vars3.ets"
+          "program": "global_const_vars3.ats"
         }
       }
     },
@@ -507,12 +507,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "global_const_vars3.ets"
+              "program": "global_const_vars3.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "global_const_vars3.ets"
+              "program": "global_const_vars3.ats"
             }
           }
         },
@@ -573,12 +573,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -586,12 +586,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   }
                 }
               },
@@ -599,12 +599,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -613,12 +613,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               }
             }
           },
@@ -631,12 +631,12 @@
                 "start": {
                   "line": 16,
                   "column": 7,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 8,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -647,12 +647,12 @@
                 "start": {
                   "line": 16,
                   "column": 16,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 17,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -668,12 +668,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 13,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -682,12 +682,12 @@
               "start": {
                 "line": 16,
                 "column": 7,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               },
               "end": {
                 "line": 16,
                 "column": 17,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               }
             }
           },
@@ -700,12 +700,12 @@
                 "start": {
                   "line": 17,
                   "column": 7,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 10,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -722,12 +722,12 @@
                       "start": {
                         "line": 17,
                         "column": 23,
-                        "program": "global_const_vars3.ets"
+                        "program": "global_const_vars3.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 27,
-                        "program": "global_const_vars3.ets"
+                        "program": "global_const_vars3.ats"
                       }
                     }
                   },
@@ -735,12 +735,12 @@
                     "start": {
                       "line": 17,
                       "column": 23,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 27,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -748,12 +748,12 @@
                   "start": {
                     "line": 17,
                     "column": 23,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 27,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   }
                 }
               },
@@ -762,12 +762,12 @@
                 "start": {
                   "line": 17,
                   "column": 19,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 30,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -788,12 +788,12 @@
                     "start": {
                       "line": 17,
                       "column": 12,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 16,
-                      "program": "global_const_vars3.ets"
+                      "program": "global_const_vars3.ats"
                     }
                   }
                 },
@@ -801,12 +801,12 @@
                   "start": {
                     "line": 17,
                     "column": 12,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 16,
-                    "program": "global_const_vars3.ets"
+                    "program": "global_const_vars3.ats"
                   }
                 }
               },
@@ -814,12 +814,12 @@
                 "start": {
                   "line": 17,
                   "column": 12,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 16,
-                  "program": "global_const_vars3.ets"
+                  "program": "global_const_vars3.ats"
                 }
               }
             },
@@ -828,12 +828,12 @@
               "start": {
                 "line": 17,
                 "column": 7,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               },
               "end": {
                 "line": 17,
                 "column": 30,
-                "program": "global_const_vars3.ets"
+                "program": "global_const_vars3.ats"
               }
             }
           }
@@ -842,12 +842,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "global_const_vars3.ets"
+            "program": "global_const_vars3.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "global_const_vars3.ets"
+            "program": "global_const_vars3.ats"
           }
         }
       },
@@ -855,12 +855,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "global_const_vars3.ets"
+          "program": "global_const_vars3.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "global_const_vars3.ets"
+          "program": "global_const_vars3.ats"
         }
       }
     }
@@ -869,12 +869,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "global_const_vars3.ets"
+      "program": "global_const_vars3.ats"
     },
     "end": {
       "line": 28,
       "column": 1,
-      "program": "global_const_vars3.ets"
+      "program": "global_const_vars3.ats"
     }
   }
 }

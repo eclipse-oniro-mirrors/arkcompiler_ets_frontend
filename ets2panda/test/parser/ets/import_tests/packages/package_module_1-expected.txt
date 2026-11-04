@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "package_module_1.ets"
+              "program": "package_module_1.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "package_module_1.ets"
+              "program": "package_module_1.ats"
             }
           }
         },
@@ -77,12 +77,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     }
                   }
                 },
@@ -90,12 +90,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "package_module_1.ets"
+                    "program": "package_module_1.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "package_module_1.ets"
+                    "program": "package_module_1.ats"
                   }
                 }
               },
@@ -103,12 +103,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 }
               }
             },
@@ -117,12 +117,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "package_module_1.ets"
+                "program": "package_module_1.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "package_module_1.ets"
+                "program": "package_module_1.ats"
               }
             }
           },
@@ -135,12 +135,12 @@
                 "start": {
                   "line": 16,
                   "column": 14,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 17,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 }
               }
             },
@@ -151,12 +151,12 @@
                 "start": {
                   "line": 16,
                   "column": 28,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 38,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 }
               }
             },
@@ -172,12 +172,12 @@
                 "start": {
                   "line": 16,
                   "column": 19,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 25,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 }
               }
             },
@@ -186,12 +186,12 @@
               "start": {
                 "line": 16,
                 "column": 14,
-                "program": "package_module_1.ets"
+                "program": "package_module_1.ats"
               },
               "end": {
                 "line": 16,
                 "column": 38,
-                "program": "package_module_1.ets"
+                "program": "package_module_1.ats"
               }
             }
           },
@@ -204,12 +204,12 @@
                 "start": {
                   "line": 18,
                   "column": 17,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 20,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 }
               }
             },
@@ -229,12 +229,12 @@
                     "start": {
                       "line": 18,
                       "column": 17,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 20,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     }
                   }
                 },
@@ -253,12 +253,12 @@
                           "start": {
                             "line": 18,
                             "column": 24,
-                            "program": "package_module_1.ets"
+                            "program": "package_module_1.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 30,
-                            "program": "package_module_1.ets"
+                            "program": "package_module_1.ats"
                           }
                         }
                       },
@@ -266,12 +266,12 @@
                         "start": {
                           "line": 18,
                           "column": 21,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 30,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         }
                       }
                     },
@@ -279,12 +279,12 @@
                       "start": {
                         "line": 18,
                         "column": 21,
-                        "program": "package_module_1.ets"
+                        "program": "package_module_1.ats"
                       },
                       "end": {
                         "line": 18,
                         "column": 30,
-                        "program": "package_module_1.ets"
+                        "program": "package_module_1.ats"
                       }
                     }
                   }
@@ -295,12 +295,12 @@
                     "start": {
                       "line": 18,
                       "column": 33,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 39,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     }
                   }
                 },
@@ -316,12 +316,12 @@
                           "start": {
                             "line": 19,
                             "column": 12,
-                            "program": "package_module_1.ets"
+                            "program": "package_module_1.ats"
                           },
                           "end": {
                             "line": 19,
                             "column": 13,
-                            "program": "package_module_1.ets"
+                            "program": "package_module_1.ats"
                           }
                         }
                       },
@@ -329,12 +329,12 @@
                         "start": {
                           "line": 19,
                           "column": 5,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 14,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         }
                       }
                     }
@@ -343,12 +343,12 @@
                     "start": {
                       "line": 18,
                       "column": 40,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 2,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     }
                   }
                 },
@@ -356,12 +356,12 @@
                   "start": {
                     "line": 18,
                     "column": 17,
-                    "program": "package_module_1.ets"
+                    "program": "package_module_1.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 2,
-                    "program": "package_module_1.ets"
+                    "program": "package_module_1.ats"
                   }
                 }
               },
@@ -369,12 +369,12 @@
                 "start": {
                   "line": 18,
                   "column": 17,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 2,
-                  "program": "package_module_1.ets"
+                  "program": "package_module_1.ats"
                 }
               }
             },
@@ -388,12 +388,12 @@
                     "start": {
                       "line": 22,
                       "column": 17,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 20,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     }
                   }
                 },
@@ -413,12 +413,12 @@
                         "start": {
                           "line": 22,
                           "column": 17,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 20,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         }
                       }
                     },
@@ -437,12 +437,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 24,
-                                "program": "package_module_1.ets"
+                                "program": "package_module_1.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 29,
-                                "program": "package_module_1.ets"
+                                "program": "package_module_1.ats"
                               }
                             }
                           },
@@ -450,12 +450,12 @@
                             "start": {
                               "line": 22,
                               "column": 21,
-                              "program": "package_module_1.ets"
+                              "program": "package_module_1.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 29,
-                              "program": "package_module_1.ets"
+                              "program": "package_module_1.ats"
                             }
                           }
                         },
@@ -463,12 +463,12 @@
                           "start": {
                             "line": 22,
                             "column": 21,
-                            "program": "package_module_1.ets"
+                            "program": "package_module_1.ats"
                           },
                           "end": {
                             "line": 22,
                             "column": 29,
-                            "program": "package_module_1.ets"
+                            "program": "package_module_1.ats"
                           }
                         }
                       }
@@ -479,12 +479,12 @@
                         "start": {
                           "line": 22,
                           "column": 32,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 37,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         }
                       }
                     },
@@ -500,12 +500,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 12,
-                                "program": "package_module_1.ets"
+                                "program": "package_module_1.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 13,
-                                "program": "package_module_1.ets"
+                                "program": "package_module_1.ats"
                               }
                             }
                           },
@@ -513,12 +513,12 @@
                             "start": {
                               "line": 23,
                               "column": 5,
-                              "program": "package_module_1.ets"
+                              "program": "package_module_1.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 14,
-                              "program": "package_module_1.ets"
+                              "program": "package_module_1.ats"
                             }
                           }
                         }
@@ -527,12 +527,12 @@
                         "start": {
                           "line": 22,
                           "column": 38,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 2,
-                          "program": "package_module_1.ets"
+                          "program": "package_module_1.ats"
                         }
                       }
                     },
@@ -540,12 +540,12 @@
                       "start": {
                         "line": 22,
                         "column": 17,
-                        "program": "package_module_1.ets"
+                        "program": "package_module_1.ats"
                       },
                       "end": {
                         "line": 24,
                         "column": 2,
-                        "program": "package_module_1.ets"
+                        "program": "package_module_1.ats"
                       }
                     }
                   },
@@ -553,12 +553,12 @@
                     "start": {
                       "line": 22,
                       "column": 17,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 2,
-                      "program": "package_module_1.ets"
+                      "program": "package_module_1.ats"
                     }
                   }
                 },
@@ -567,12 +567,12 @@
                   "start": {
                     "line": 22,
                     "column": 1,
-                    "program": "package_module_1.ets"
+                    "program": "package_module_1.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 2,
-                    "program": "package_module_1.ets"
+                    "program": "package_module_1.ats"
                   }
                 }
               }
@@ -581,12 +581,12 @@
               "start": {
                 "line": 18,
                 "column": 1,
-                "program": "package_module_1.ets"
+                "program": "package_module_1.ats"
               },
               "end": {
                 "line": 20,
                 "column": 2,
-                "program": "package_module_1.ets"
+                "program": "package_module_1.ats"
               }
             }
           }
@@ -595,12 +595,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "package_module_1.ets"
+            "program": "package_module_1.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "package_module_1.ets"
+            "program": "package_module_1.ats"
           }
         }
       },
@@ -608,12 +608,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "package_module_1.ets"
+          "program": "package_module_1.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "package_module_1.ets"
+          "program": "package_module_1.ats"
         }
       }
     }
@@ -622,12 +622,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "package_module_1.ets"
+      "program": "package_module_1.ats"
     },
     "end": {
       "line": 25,
       "column": 1,
-      "program": "package_module_1.ets"
+      "program": "package_module_1.ats"
     }
   }
 }

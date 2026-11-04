@@ -10,12 +10,12 @@
           "start": {
             "line": 20,
             "column": 27,
-            "program": "instanceof_dyndecl_jsvalue.ets"
+            "program": "instanceof_dyndecl_jsvalue.ats"
           },
           "end": {
             "line": 20,
             "column": 68,
-            "program": "instanceof_dyndecl_jsvalue.ets"
+            "program": "instanceof_dyndecl_jsvalue.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "instanceof_dyndecl_jsvalue.ets"
+                "program": "instanceof_dyndecl_jsvalue.ats"
               },
               "end": {
                 "line": 20,
                 "column": 19,
-                "program": "instanceof_dyndecl_jsvalue.ets"
+                "program": "instanceof_dyndecl_jsvalue.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "instanceof_dyndecl_jsvalue.ets"
+                "program": "instanceof_dyndecl_jsvalue.ats"
               },
               "end": {
                 "line": 20,
                 "column": 19,
-                "program": "instanceof_dyndecl_jsvalue.ets"
+                "program": "instanceof_dyndecl_jsvalue.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 20,
               "column": 10,
-              "program": "instanceof_dyndecl_jsvalue.ets"
+              "program": "instanceof_dyndecl_jsvalue.ats"
             },
             "end": {
               "line": 20,
               "column": 19,
-              "program": "instanceof_dyndecl_jsvalue.ets"
+              "program": "instanceof_dyndecl_jsvalue.ats"
             }
           }
         }
@@ -72,12 +72,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "instanceof_dyndecl_jsvalue.ets"
+          "program": "instanceof_dyndecl_jsvalue.ats"
         },
         "end": {
           "line": 20,
           "column": 68,
-          "program": "instanceof_dyndecl_jsvalue.ets"
+          "program": "instanceof_dyndecl_jsvalue.ats"
         }
       }
     },
@@ -91,12 +91,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "instanceof_dyndecl_jsvalue.ets"
+              "program": "instanceof_dyndecl_jsvalue.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "instanceof_dyndecl_jsvalue.ets"
+              "program": "instanceof_dyndecl_jsvalue.ats"
             }
           }
         },
@@ -157,12 +157,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "instanceof_dyndecl_jsvalue.ets"
+                      "program": "instanceof_dyndecl_jsvalue.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "instanceof_dyndecl_jsvalue.ets"
+                      "program": "instanceof_dyndecl_jsvalue.ats"
                     }
                   }
                 },
@@ -170,12 +170,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "instanceof_dyndecl_jsvalue.ets"
+                    "program": "instanceof_dyndecl_jsvalue.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "instanceof_dyndecl_jsvalue.ets"
+                    "program": "instanceof_dyndecl_jsvalue.ats"
                   }
                 }
               },
@@ -183,12 +183,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "instanceof_dyndecl_jsvalue.ets"
+                  "program": "instanceof_dyndecl_jsvalue.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "instanceof_dyndecl_jsvalue.ets"
+                  "program": "instanceof_dyndecl_jsvalue.ats"
                 }
               }
             },
@@ -197,12 +197,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "instanceof_dyndecl_jsvalue.ets"
+                "program": "instanceof_dyndecl_jsvalue.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "instanceof_dyndecl_jsvalue.ets"
+                "program": "instanceof_dyndecl_jsvalue.ats"
               }
             }
           },
@@ -215,12 +215,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "instanceof_dyndecl_jsvalue.ets"
+                  "program": "instanceof_dyndecl_jsvalue.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 21,
-                  "program": "instanceof_dyndecl_jsvalue.ets"
+                  "program": "instanceof_dyndecl_jsvalue.ats"
                 }
               }
             },
@@ -240,12 +240,12 @@
                     "start": {
                       "line": 22,
                       "column": 10,
-                      "program": "instanceof_dyndecl_jsvalue.ets"
+                      "program": "instanceof_dyndecl_jsvalue.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 21,
-                      "program": "instanceof_dyndecl_jsvalue.ets"
+                      "program": "instanceof_dyndecl_jsvalue.ats"
                     }
                   }
                 },
@@ -269,12 +269,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 25,
-                                "program": "instanceof_dyndecl_jsvalue.ets"
+                                "program": "instanceof_dyndecl_jsvalue.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 34,
-                                "program": "instanceof_dyndecl_jsvalue.ets"
+                                "program": "instanceof_dyndecl_jsvalue.ats"
                               }
                             }
                           },
@@ -282,12 +282,12 @@
                             "start": {
                               "line": 22,
                               "column": 25,
-                              "program": "instanceof_dyndecl_jsvalue.ets"
+                              "program": "instanceof_dyndecl_jsvalue.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 34,
-                              "program": "instanceof_dyndecl_jsvalue.ets"
+                              "program": "instanceof_dyndecl_jsvalue.ats"
                             }
                           }
                         },
@@ -295,12 +295,12 @@
                           "start": {
                             "line": 22,
                             "column": 25,
-                            "program": "instanceof_dyndecl_jsvalue.ets"
+                            "program": "instanceof_dyndecl_jsvalue.ats"
                           },
                           "end": {
                             "line": 22,
                             "column": 34,
-                            "program": "instanceof_dyndecl_jsvalue.ets"
+                            "program": "instanceof_dyndecl_jsvalue.ats"
                           }
                         }
                       },
@@ -308,12 +308,12 @@
                         "start": {
                           "line": 22,
                           "column": 22,
-                          "program": "instanceof_dyndecl_jsvalue.ets"
+                          "program": "instanceof_dyndecl_jsvalue.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 34,
-                          "program": "instanceof_dyndecl_jsvalue.ets"
+                          "program": "instanceof_dyndecl_jsvalue.ats"
                         }
                       }
                     },
@@ -321,12 +321,12 @@
                       "start": {
                         "line": 22,
                         "column": 22,
-                        "program": "instanceof_dyndecl_jsvalue.ets"
+                        "program": "instanceof_dyndecl_jsvalue.ats"
                       },
                       "end": {
                         "line": 22,
                         "column": 34,
-                        "program": "instanceof_dyndecl_jsvalue.ets"
+                        "program": "instanceof_dyndecl_jsvalue.ats"
                       }
                     }
                   }
@@ -337,12 +337,12 @@
                     "start": {
                       "line": 22,
                       "column": 37,
-                      "program": "instanceof_dyndecl_jsvalue.ets"
+                      "program": "instanceof_dyndecl_jsvalue.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 44,
-                      "program": "instanceof_dyndecl_jsvalue.ets"
+                      "program": "instanceof_dyndecl_jsvalue.ats"
                     }
                   }
                 },
@@ -361,12 +361,12 @@
                             "start": {
                               "line": 23,
                               "column": 12,
-                              "program": "instanceof_dyndecl_jsvalue.ets"
+                              "program": "instanceof_dyndecl_jsvalue.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 13,
-                              "program": "instanceof_dyndecl_jsvalue.ets"
+                              "program": "instanceof_dyndecl_jsvalue.ats"
                             }
                           }
                         },
@@ -381,12 +381,12 @@
                                 "start": {
                                   "line": 23,
                                   "column": 25,
-                                  "program": "instanceof_dyndecl_jsvalue.ets"
+                                  "program": "instanceof_dyndecl_jsvalue.ats"
                                 },
                                 "end": {
                                   "line": 23,
                                   "column": 32,
-                                  "program": "instanceof_dyndecl_jsvalue.ets"
+                                  "program": "instanceof_dyndecl_jsvalue.ats"
                                 }
                               }
                             },
@@ -394,12 +394,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 25,
-                                "program": "instanceof_dyndecl_jsvalue.ets"
+                                "program": "instanceof_dyndecl_jsvalue.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 32,
-                                "program": "instanceof_dyndecl_jsvalue.ets"
+                                "program": "instanceof_dyndecl_jsvalue.ats"
                               }
                             }
                           },
@@ -407,12 +407,12 @@
                             "start": {
                               "line": 23,
                               "column": 25,
-                              "program": "instanceof_dyndecl_jsvalue.ets"
+                              "program": "instanceof_dyndecl_jsvalue.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 32,
-                              "program": "instanceof_dyndecl_jsvalue.ets"
+                              "program": "instanceof_dyndecl_jsvalue.ats"
                             }
                           }
                         },
@@ -420,12 +420,12 @@
                           "start": {
                             "line": 23,
                             "column": 12,
-                            "program": "instanceof_dyndecl_jsvalue.ets"
+                            "program": "instanceof_dyndecl_jsvalue.ats"
                           },
                           "end": {
                             "line": 23,
                             "column": 32,
-                            "program": "instanceof_dyndecl_jsvalue.ets"
+                            "program": "instanceof_dyndecl_jsvalue.ats"
                           }
                         }
                       },
@@ -433,12 +433,12 @@
                         "start": {
                           "line": 23,
                           "column": 5,
-                          "program": "instanceof_dyndecl_jsvalue.ets"
+                          "program": "instanceof_dyndecl_jsvalue.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 33,
-                          "program": "instanceof_dyndecl_jsvalue.ets"
+                          "program": "instanceof_dyndecl_jsvalue.ats"
                         }
                       }
                     }
@@ -447,12 +447,12 @@
                     "start": {
                       "line": 22,
                       "column": 45,
-                      "program": "instanceof_dyndecl_jsvalue.ets"
+                      "program": "instanceof_dyndecl_jsvalue.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 2,
-                      "program": "instanceof_dyndecl_jsvalue.ets"
+                      "program": "instanceof_dyndecl_jsvalue.ats"
                     }
                   }
                 },
@@ -460,12 +460,12 @@
                   "start": {
                     "line": 22,
                     "column": 10,
-                    "program": "instanceof_dyndecl_jsvalue.ets"
+                    "program": "instanceof_dyndecl_jsvalue.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 2,
-                    "program": "instanceof_dyndecl_jsvalue.ets"
+                    "program": "instanceof_dyndecl_jsvalue.ats"
                   }
                 }
               },
@@ -473,12 +473,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "instanceof_dyndecl_jsvalue.ets"
+                  "program": "instanceof_dyndecl_jsvalue.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 2,
-                  "program": "instanceof_dyndecl_jsvalue.ets"
+                  "program": "instanceof_dyndecl_jsvalue.ats"
                 }
               }
             },
@@ -487,12 +487,12 @@
               "start": {
                 "line": 22,
                 "column": 1,
-                "program": "instanceof_dyndecl_jsvalue.ets"
+                "program": "instanceof_dyndecl_jsvalue.ats"
               },
               "end": {
                 "line": 24,
                 "column": 2,
-                "program": "instanceof_dyndecl_jsvalue.ets"
+                "program": "instanceof_dyndecl_jsvalue.ats"
               }
             }
           }
@@ -501,12 +501,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "instanceof_dyndecl_jsvalue.ets"
+            "program": "instanceof_dyndecl_jsvalue.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "instanceof_dyndecl_jsvalue.ets"
+            "program": "instanceof_dyndecl_jsvalue.ats"
           }
         }
       },
@@ -514,12 +514,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "instanceof_dyndecl_jsvalue.ets"
+          "program": "instanceof_dyndecl_jsvalue.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "instanceof_dyndecl_jsvalue.ets"
+          "program": "instanceof_dyndecl_jsvalue.ats"
         }
       }
     }
@@ -528,12 +528,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "instanceof_dyndecl_jsvalue.ets"
+      "program": "instanceof_dyndecl_jsvalue.ats"
     },
     "end": {
       "line": 25,
       "column": 1,
-      "program": "instanceof_dyndecl_jsvalue.ets"
+      "program": "instanceof_dyndecl_jsvalue.ats"
     }
   }
 }

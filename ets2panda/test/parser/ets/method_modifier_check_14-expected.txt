@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "method_modifier_check_14.ets"
+              "program": "method_modifier_check_14.ats"
             },
             "end": {
               "line": 16,
               "column": 8,
-              "program": "method_modifier_check_14.ets"
+              "program": "method_modifier_check_14.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 19,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 22,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 17,
                       "column": 19,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 22,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 17,
                       "column": 27,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 31,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     }
                   }
                 },
@@ -89,12 +89,12 @@
                   "start": {
                     "line": 17,
                     "column": 22,
-                    "program": "method_modifier_check_14.ets"
+                    "program": "method_modifier_check_14.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 31,
-                    "program": "method_modifier_check_14.ets"
+                    "program": "method_modifier_check_14.ats"
                   }
                 }
               },
@@ -102,12 +102,12 @@
                 "start": {
                   "line": 17,
                   "column": 22,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 31,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 }
               }
             },
@@ -116,12 +116,12 @@
               "start": {
                 "line": 17,
                 "column": 19,
-                "program": "method_modifier_check_14.ets"
+                "program": "method_modifier_check_14.ats"
               },
               "end": {
                 "line": 17,
                 "column": 31,
-                "program": "method_modifier_check_14.ets"
+                "program": "method_modifier_check_14.ats"
               }
             }
           },
@@ -134,12 +134,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 }
               }
             },
@@ -158,12 +158,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     }
                   }
                 },
@@ -178,12 +178,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     }
                   }
                 },
@@ -191,12 +191,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "method_modifier_check_14.ets"
+                    "program": "method_modifier_check_14.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 10,
-                    "program": "method_modifier_check_14.ets"
+                    "program": "method_modifier_check_14.ats"
                   }
                 }
               },
@@ -204,12 +204,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 }
               }
             },
@@ -232,12 +232,12 @@
           "start": {
             "line": 16,
             "column": 9,
-            "program": "method_modifier_check_14.ets"
+            "program": "method_modifier_check_14.ats"
           },
           "end": {
             "line": 18,
             "column": 2,
-            "program": "method_modifier_check_14.ets"
+            "program": "method_modifier_check_14.ats"
           }
         }
       },
@@ -245,12 +245,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "method_modifier_check_14.ets"
+          "program": "method_modifier_check_14.ats"
         },
         "end": {
           "line": 18,
           "column": 2,
-          "program": "method_modifier_check_14.ets"
+          "program": "method_modifier_check_14.ats"
         }
       }
     },
@@ -264,12 +264,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "method_modifier_check_14.ets"
+              "program": "method_modifier_check_14.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "method_modifier_check_14.ets"
+              "program": "method_modifier_check_14.ats"
             }
           }
         },
@@ -330,12 +330,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "method_modifier_check_14.ets"
+                      "program": "method_modifier_check_14.ats"
                     }
                   }
                 },
@@ -343,12 +343,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "method_modifier_check_14.ets"
+                    "program": "method_modifier_check_14.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "method_modifier_check_14.ets"
+                    "program": "method_modifier_check_14.ats"
                   }
                 }
               },
@@ -356,12 +356,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "method_modifier_check_14.ets"
+                  "program": "method_modifier_check_14.ats"
                 }
               }
             },
@@ -370,12 +370,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "method_modifier_check_14.ets"
+                "program": "method_modifier_check_14.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "method_modifier_check_14.ets"
+                "program": "method_modifier_check_14.ats"
               }
             }
           }
@@ -384,12 +384,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "method_modifier_check_14.ets"
+            "program": "method_modifier_check_14.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "method_modifier_check_14.ets"
+            "program": "method_modifier_check_14.ats"
           }
         }
       },
@@ -397,12 +397,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "method_modifier_check_14.ets"
+          "program": "method_modifier_check_14.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "method_modifier_check_14.ets"
+          "program": "method_modifier_check_14.ats"
         }
       }
     }
@@ -411,12 +411,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "method_modifier_check_14.ets"
+      "program": "method_modifier_check_14.ats"
     },
     "end": {
       "line": 19,
       "column": 1,
-      "program": "method_modifier_check_14.ets"
+      "program": "method_modifier_check_14.ats"
     }
   }
 }

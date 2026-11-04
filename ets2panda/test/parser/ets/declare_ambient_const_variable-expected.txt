@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "declare_ambient_const_variable.ets"
+              "program": "declare_ambient_const_variable.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "declare_ambient_const_variable.ets"
+              "program": "declare_ambient_const_variable.ats"
             }
           }
         },
@@ -77,12 +77,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "declare_ambient_const_variable.ets"
+                      "program": "declare_ambient_const_variable.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "declare_ambient_const_variable.ets"
+                      "program": "declare_ambient_const_variable.ats"
                     }
                   }
                 },
@@ -90,12 +90,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "declare_ambient_const_variable.ets"
+                    "program": "declare_ambient_const_variable.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "declare_ambient_const_variable.ets"
+                    "program": "declare_ambient_const_variable.ats"
                   }
                 }
               },
@@ -103,12 +103,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "declare_ambient_const_variable.ets"
+                  "program": "declare_ambient_const_variable.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "declare_ambient_const_variable.ets"
+                  "program": "declare_ambient_const_variable.ats"
                 }
               }
             },
@@ -117,12 +117,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "declare_ambient_const_variable.ets"
+                "program": "declare_ambient_const_variable.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "declare_ambient_const_variable.ets"
+                "program": "declare_ambient_const_variable.ats"
               }
             }
           },
@@ -135,12 +135,12 @@
                 "start": {
                   "line": 16,
                   "column": 15,
-                  "program": "declare_ambient_const_variable.ets"
+                  "program": "declare_ambient_const_variable.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 16,
-                  "program": "declare_ambient_const_variable.ets"
+                  "program": "declare_ambient_const_variable.ats"
                 }
               }
             },
@@ -161,12 +161,12 @@
                     "start": {
                       "line": 16,
                       "column": 19,
-                      "program": "declare_ambient_const_variable.ets"
+                      "program": "declare_ambient_const_variable.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 25,
-                      "program": "declare_ambient_const_variable.ets"
+                      "program": "declare_ambient_const_variable.ats"
                     }
                   }
                 },
@@ -174,12 +174,12 @@
                   "start": {
                     "line": 16,
                     "column": 19,
-                    "program": "declare_ambient_const_variable.ets"
+                    "program": "declare_ambient_const_variable.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 25,
-                    "program": "declare_ambient_const_variable.ets"
+                    "program": "declare_ambient_const_variable.ats"
                   }
                 }
               },
@@ -187,12 +187,12 @@
                 "start": {
                   "line": 16,
                   "column": 19,
-                  "program": "declare_ambient_const_variable.ets"
+                  "program": "declare_ambient_const_variable.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 25,
-                  "program": "declare_ambient_const_variable.ets"
+                  "program": "declare_ambient_const_variable.ats"
                 }
               }
             },
@@ -201,12 +201,12 @@
               "start": {
                 "line": 16,
                 "column": 15,
-                "program": "declare_ambient_const_variable.ets"
+                "program": "declare_ambient_const_variable.ats"
               },
               "end": {
                 "line": 16,
                 "column": 16,
-                "program": "declare_ambient_const_variable.ets"
+                "program": "declare_ambient_const_variable.ats"
               }
             }
           }
@@ -215,12 +215,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "declare_ambient_const_variable.ets"
+            "program": "declare_ambient_const_variable.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "declare_ambient_const_variable.ets"
+            "program": "declare_ambient_const_variable.ats"
           }
         }
       },
@@ -228,12 +228,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "declare_ambient_const_variable.ets"
+          "program": "declare_ambient_const_variable.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "declare_ambient_const_variable.ets"
+          "program": "declare_ambient_const_variable.ats"
         }
       }
     }
@@ -242,12 +242,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "declare_ambient_const_variable.ets"
+      "program": "declare_ambient_const_variable.ats"
     },
     "end": {
       "line": 17,
       "column": 1,
-      "program": "declare_ambient_const_variable.ets"
+      "program": "declare_ambient_const_variable.ats"
     }
   }
 }

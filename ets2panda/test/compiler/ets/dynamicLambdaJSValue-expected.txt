@@ -10,12 +10,12 @@
           "start": {
             "line": 20,
             "column": 19,
-            "program": "dynamicLambdaJSValue.ets"
+            "program": "dynamicLambdaJSValue.ats"
           },
           "end": {
             "line": 20,
             "column": 41,
-            "program": "dynamicLambdaJSValue.ets"
+            "program": "dynamicLambdaJSValue.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamicLambdaJSValue.ets"
+                "program": "dynamicLambdaJSValue.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamicLambdaJSValue.ets"
+                "program": "dynamicLambdaJSValue.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamicLambdaJSValue.ets"
+                "program": "dynamicLambdaJSValue.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamicLambdaJSValue.ets"
+                "program": "dynamicLambdaJSValue.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 20,
               "column": 10,
-              "program": "dynamicLambdaJSValue.ets"
+              "program": "dynamicLambdaJSValue.ats"
             },
             "end": {
               "line": 20,
               "column": 11,
-              "program": "dynamicLambdaJSValue.ets"
+              "program": "dynamicLambdaJSValue.ats"
             }
           }
         }
@@ -72,12 +72,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "dynamicLambdaJSValue.ets"
+          "program": "dynamicLambdaJSValue.ats"
         },
         "end": {
           "line": 20,
           "column": 41,
-          "program": "dynamicLambdaJSValue.ets"
+          "program": "dynamicLambdaJSValue.ats"
         }
       }
     },
@@ -91,12 +91,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "dynamicLambdaJSValue.ets"
+              "program": "dynamicLambdaJSValue.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "dynamicLambdaJSValue.ets"
+              "program": "dynamicLambdaJSValue.ats"
             }
           }
         },
@@ -157,12 +157,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "dynamicLambdaJSValue.ets"
+                      "program": "dynamicLambdaJSValue.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "dynamicLambdaJSValue.ets"
+                      "program": "dynamicLambdaJSValue.ats"
                     }
                   }
                 },
@@ -170,12 +170,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "dynamicLambdaJSValue.ets"
+                    "program": "dynamicLambdaJSValue.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "dynamicLambdaJSValue.ets"
+                    "program": "dynamicLambdaJSValue.ats"
                   }
                 }
               },
@@ -183,12 +183,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "dynamicLambdaJSValue.ets"
+                  "program": "dynamicLambdaJSValue.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "dynamicLambdaJSValue.ets"
+                  "program": "dynamicLambdaJSValue.ats"
                 }
               }
             },
@@ -197,12 +197,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "dynamicLambdaJSValue.ets"
+                "program": "dynamicLambdaJSValue.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "dynamicLambdaJSValue.ets"
+                "program": "dynamicLambdaJSValue.ats"
               }
             }
           },
@@ -215,12 +215,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "dynamicLambdaJSValue.ets"
+                  "program": "dynamicLambdaJSValue.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 13,
-                  "program": "dynamicLambdaJSValue.ets"
+                  "program": "dynamicLambdaJSValue.ats"
                 }
               }
             },
@@ -240,12 +240,12 @@
                     "start": {
                       "line": 22,
                       "column": 10,
-                      "program": "dynamicLambdaJSValue.ets"
+                      "program": "dynamicLambdaJSValue.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 13,
-                      "program": "dynamicLambdaJSValue.ets"
+                      "program": "dynamicLambdaJSValue.ats"
                     }
                   }
                 },
@@ -259,12 +259,12 @@
                     "start": {
                       "line": 22,
                       "column": 17,
-                      "program": "dynamicLambdaJSValue.ets"
+                      "program": "dynamicLambdaJSValue.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 20,
-                      "program": "dynamicLambdaJSValue.ets"
+                      "program": "dynamicLambdaJSValue.ats"
                     }
                   }
                 },
@@ -283,12 +283,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 9,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 10,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               }
                             }
                           },
@@ -305,12 +305,12 @@
                                     "start": {
                                       "line": 23,
                                       "column": 17,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 23,
                                       "column": 18,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 },
@@ -318,12 +318,12 @@
                                   "start": {
                                     "line": 23,
                                     "column": 17,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   },
                                   "end": {
                                     "line": 23,
                                     "column": 18,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   }
                                 }
                               },
@@ -331,12 +331,12 @@
                                 "start": {
                                   "line": 23,
                                   "column": 17,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 },
                                 "end": {
                                   "line": 23,
                                   "column": 18,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 }
                               }
                             },
@@ -345,12 +345,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 13,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 21,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               }
                             }
                           },
@@ -358,12 +358,12 @@
                             "start": {
                               "line": 23,
                               "column": 9,
-                              "program": "dynamicLambdaJSValue.ets"
+                              "program": "dynamicLambdaJSValue.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 21,
-                              "program": "dynamicLambdaJSValue.ets"
+                              "program": "dynamicLambdaJSValue.ats"
                             }
                           }
                         }
@@ -373,12 +373,12 @@
                         "start": {
                           "line": 23,
                           "column": 5,
-                          "program": "dynamicLambdaJSValue.ets"
+                          "program": "dynamicLambdaJSValue.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 21,
-                          "program": "dynamicLambdaJSValue.ets"
+                          "program": "dynamicLambdaJSValue.ats"
                         }
                       }
                     },
@@ -401,12 +401,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 12,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 19,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 },
@@ -414,12 +414,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 12,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 19,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   }
                                 }
                               },
@@ -427,12 +427,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 12,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 19,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 }
                               }
                             },
@@ -440,12 +440,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 9,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 10,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               }
                             }
                           },
@@ -469,12 +469,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 26,
-                                          "program": "dynamicLambdaJSValue.ets"
+                                          "program": "dynamicLambdaJSValue.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 29,
-                                          "program": "dynamicLambdaJSValue.ets"
+                                          "program": "dynamicLambdaJSValue.ats"
                                         }
                                       }
                                     },
@@ -482,12 +482,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 23,
-                                        "program": "dynamicLambdaJSValue.ets"
+                                        "program": "dynamicLambdaJSValue.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 29,
-                                        "program": "dynamicLambdaJSValue.ets"
+                                        "program": "dynamicLambdaJSValue.ats"
                                       }
                                     }
                                   },
@@ -495,12 +495,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 23,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 29,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 },
@@ -515,12 +515,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 34,
-                                          "program": "dynamicLambdaJSValue.ets"
+                                          "program": "dynamicLambdaJSValue.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 37,
-                                          "program": "dynamicLambdaJSValue.ets"
+                                          "program": "dynamicLambdaJSValue.ats"
                                         }
                                       }
                                     },
@@ -528,12 +528,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 31,
-                                        "program": "dynamicLambdaJSValue.ets"
+                                        "program": "dynamicLambdaJSValue.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 37,
-                                        "program": "dynamicLambdaJSValue.ets"
+                                        "program": "dynamicLambdaJSValue.ats"
                                       }
                                     }
                                   },
@@ -541,12 +541,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 31,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 37,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 }
@@ -557,12 +557,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 40,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 43,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   }
                                 }
                               },
@@ -584,12 +584,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 56,
-                                              "program": "dynamicLambdaJSValue.ets"
+                                              "program": "dynamicLambdaJSValue.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 57,
-                                              "program": "dynamicLambdaJSValue.ets"
+                                              "program": "dynamicLambdaJSValue.ats"
                                             }
                                           }
                                         },
@@ -600,12 +600,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 60,
-                                              "program": "dynamicLambdaJSValue.ets"
+                                              "program": "dynamicLambdaJSValue.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 61,
-                                              "program": "dynamicLambdaJSValue.ets"
+                                              "program": "dynamicLambdaJSValue.ats"
                                             }
                                           }
                                         },
@@ -613,12 +613,12 @@
                                           "start": {
                                             "line": 24,
                                             "column": 56,
-                                            "program": "dynamicLambdaJSValue.ets"
+                                            "program": "dynamicLambdaJSValue.ats"
                                           },
                                           "end": {
                                             "line": 24,
                                             "column": 61,
-                                            "program": "dynamicLambdaJSValue.ets"
+                                            "program": "dynamicLambdaJSValue.ats"
                                           }
                                         }
                                       },
@@ -632,12 +632,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 64,
-                                              "program": "dynamicLambdaJSValue.ets"
+                                              "program": "dynamicLambdaJSValue.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 65,
-                                              "program": "dynamicLambdaJSValue.ets"
+                                              "program": "dynamicLambdaJSValue.ats"
                                             }
                                           }
                                         },
@@ -648,12 +648,12 @@
                                             "start": {
                                               "line": 24,
                                               "column": 68,
-                                              "program": "dynamicLambdaJSValue.ets"
+                                              "program": "dynamicLambdaJSValue.ats"
                                             },
                                             "end": {
                                               "line": 24,
                                               "column": 69,
-                                              "program": "dynamicLambdaJSValue.ets"
+                                              "program": "dynamicLambdaJSValue.ats"
                                             }
                                           }
                                         },
@@ -661,12 +661,12 @@
                                           "start": {
                                             "line": 24,
                                             "column": 64,
-                                            "program": "dynamicLambdaJSValue.ets"
+                                            "program": "dynamicLambdaJSValue.ats"
                                           },
                                           "end": {
                                             "line": 24,
                                             "column": 69,
-                                            "program": "dynamicLambdaJSValue.ets"
+                                            "program": "dynamicLambdaJSValue.ats"
                                           }
                                         }
                                       },
@@ -674,12 +674,12 @@
                                         "start": {
                                           "line": 24,
                                           "column": 60,
-                                          "program": "dynamicLambdaJSValue.ets"
+                                          "program": "dynamicLambdaJSValue.ats"
                                         },
                                         "end": {
                                           "line": 24,
                                           "column": 69,
-                                          "program": "dynamicLambdaJSValue.ets"
+                                          "program": "dynamicLambdaJSValue.ats"
                                         }
                                       }
                                     },
@@ -687,12 +687,12 @@
                                       "start": {
                                         "line": 24,
                                         "column": 49,
-                                        "program": "dynamicLambdaJSValue.ets"
+                                        "program": "dynamicLambdaJSValue.ats"
                                       },
                                       "end": {
                                         "line": 24,
                                         "column": 70,
-                                        "program": "dynamicLambdaJSValue.ets"
+                                        "program": "dynamicLambdaJSValue.ats"
                                       }
                                     }
                                   }
@@ -701,12 +701,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 47,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 72,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   }
                                 }
                               },
@@ -714,12 +714,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 22,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 72,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 }
                               }
                             },
@@ -727,12 +727,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 22,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 72,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               }
                             }
                           },
@@ -740,12 +740,12 @@
                             "start": {
                               "line": 24,
                               "column": 9,
-                              "program": "dynamicLambdaJSValue.ets"
+                              "program": "dynamicLambdaJSValue.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 72,
-                              "program": "dynamicLambdaJSValue.ets"
+                              "program": "dynamicLambdaJSValue.ats"
                             }
                           }
                         }
@@ -755,12 +755,12 @@
                         "start": {
                           "line": 24,
                           "column": 5,
-                          "program": "dynamicLambdaJSValue.ets"
+                          "program": "dynamicLambdaJSValue.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 72,
-                          "program": "dynamicLambdaJSValue.ets"
+                          "program": "dynamicLambdaJSValue.ats"
                         }
                       }
                     },
@@ -776,12 +776,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 9,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 12,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               }
                             }
                           },
@@ -798,12 +798,12 @@
                                     "start": {
                                       "line": 25,
                                       "column": 15,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 25,
                                       "column": 16,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 },
@@ -814,12 +814,12 @@
                                     "start": {
                                       "line": 25,
                                       "column": 17,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 25,
                                       "column": 20,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 },
@@ -829,12 +829,12 @@
                                   "start": {
                                     "line": 25,
                                     "column": 15,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   },
                                   "end": {
                                     "line": 25,
                                     "column": 20,
-                                    "program": "dynamicLambdaJSValue.ets"
+                                    "program": "dynamicLambdaJSValue.ats"
                                   }
                                 }
                               },
@@ -846,12 +846,12 @@
                                     "start": {
                                       "line": 25,
                                       "column": 21,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 25,
                                       "column": 22,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 },
@@ -862,12 +862,12 @@
                                     "start": {
                                       "line": 25,
                                       "column": 24,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 25,
                                       "column": 25,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 },
@@ -878,12 +878,12 @@
                                     "start": {
                                       "line": 25,
                                       "column": 27,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     },
                                     "end": {
                                       "line": 25,
                                       "column": 28,
-                                      "program": "dynamicLambdaJSValue.ets"
+                                      "program": "dynamicLambdaJSValue.ats"
                                     }
                                   }
                                 }
@@ -893,12 +893,12 @@
                                 "start": {
                                   "line": 25,
                                   "column": 15,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 },
                                 "end": {
                                   "line": 25,
                                   "column": 29,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 }
                               }
                             },
@@ -908,12 +908,12 @@
                                 "start": {
                                   "line": 25,
                                   "column": 33,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 },
                                 "end": {
                                   "line": 25,
                                   "column": 36,
-                                  "program": "dynamicLambdaJSValue.ets"
+                                  "program": "dynamicLambdaJSValue.ats"
                                 }
                               }
                             },
@@ -921,12 +921,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 15,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 36,
-                                "program": "dynamicLambdaJSValue.ets"
+                                "program": "dynamicLambdaJSValue.ats"
                               }
                             }
                           },
@@ -934,12 +934,12 @@
                             "start": {
                               "line": 25,
                               "column": 9,
-                              "program": "dynamicLambdaJSValue.ets"
+                              "program": "dynamicLambdaJSValue.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 36,
-                              "program": "dynamicLambdaJSValue.ets"
+                              "program": "dynamicLambdaJSValue.ats"
                             }
                           }
                         }
@@ -949,12 +949,12 @@
                         "start": {
                           "line": 25,
                           "column": 5,
-                          "program": "dynamicLambdaJSValue.ets"
+                          "program": "dynamicLambdaJSValue.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 37,
-                          "program": "dynamicLambdaJSValue.ets"
+                          "program": "dynamicLambdaJSValue.ats"
                         }
                       }
                     },
@@ -967,12 +967,12 @@
                           "start": {
                             "line": 26,
                             "column": 12,
-                            "program": "dynamicLambdaJSValue.ets"
+                            "program": "dynamicLambdaJSValue.ats"
                           },
                           "end": {
                             "line": 26,
                             "column": 15,
-                            "program": "dynamicLambdaJSValue.ets"
+                            "program": "dynamicLambdaJSValue.ats"
                           }
                         }
                       },
@@ -980,12 +980,12 @@
                         "start": {
                           "line": 26,
                           "column": 5,
-                          "program": "dynamicLambdaJSValue.ets"
+                          "program": "dynamicLambdaJSValue.ats"
                         },
                         "end": {
                           "line": 26,
                           "column": 16,
-                          "program": "dynamicLambdaJSValue.ets"
+                          "program": "dynamicLambdaJSValue.ats"
                         }
                       }
                     }
@@ -994,12 +994,12 @@
                     "start": {
                       "line": 22,
                       "column": 21,
-                      "program": "dynamicLambdaJSValue.ets"
+                      "program": "dynamicLambdaJSValue.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 2,
-                      "program": "dynamicLambdaJSValue.ets"
+                      "program": "dynamicLambdaJSValue.ats"
                     }
                   }
                 },
@@ -1007,12 +1007,12 @@
                   "start": {
                     "line": 22,
                     "column": 10,
-                    "program": "dynamicLambdaJSValue.ets"
+                    "program": "dynamicLambdaJSValue.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 2,
-                    "program": "dynamicLambdaJSValue.ets"
+                    "program": "dynamicLambdaJSValue.ats"
                   }
                 }
               },
@@ -1020,12 +1020,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "dynamicLambdaJSValue.ets"
+                  "program": "dynamicLambdaJSValue.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 2,
-                  "program": "dynamicLambdaJSValue.ets"
+                  "program": "dynamicLambdaJSValue.ats"
                 }
               }
             },
@@ -1034,12 +1034,12 @@
               "start": {
                 "line": 22,
                 "column": 1,
-                "program": "dynamicLambdaJSValue.ets"
+                "program": "dynamicLambdaJSValue.ats"
               },
               "end": {
                 "line": 27,
                 "column": 2,
-                "program": "dynamicLambdaJSValue.ets"
+                "program": "dynamicLambdaJSValue.ats"
               }
             }
           }
@@ -1048,12 +1048,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "dynamicLambdaJSValue.ets"
+            "program": "dynamicLambdaJSValue.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "dynamicLambdaJSValue.ets"
+            "program": "dynamicLambdaJSValue.ats"
           }
         }
       },
@@ -1061,12 +1061,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "dynamicLambdaJSValue.ets"
+          "program": "dynamicLambdaJSValue.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "dynamicLambdaJSValue.ets"
+          "program": "dynamicLambdaJSValue.ats"
         }
       }
     }
@@ -1075,14 +1075,14 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "dynamicLambdaJSValue.ets"
+      "program": "dynamicLambdaJSValue.ats"
     },
     "end": {
       "line": 28,
       "column": 1,
-      "program": "dynamicLambdaJSValue.ets"
+      "program": "dynamicLambdaJSValue.ats"
     }
   }
 }
-[dynamicLambdaJSValue.ets:23:17] Semantic error ESE0371: Cannot find type 'A'.
-[dynamicLambdaJSValue.ets:24:22] Semantic error ESE0318: Type '((p1: Int, p2: Int) => Int)' cannot be assigned to type 'JSValue'
+[dynamicLambdaJSValue.ats:23:17] Semantic error ESE0371: Cannot find type 'A'.
+[dynamicLambdaJSValue.ats:24:22] Semantic error ESE0318: Type '((p1: Int, p2: Int) => Int)' cannot be assigned to type 'JSValue'

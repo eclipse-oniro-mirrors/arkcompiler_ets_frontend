@@ -6,7 +6,7 @@
                         "std": ["${PANDA_ROOT}/plugins/ets/stdlib/std"]
 		},
 		"dependencies": {
-			"js": { "language": "js", "path": "${CMAKE_CURRENT_SOURCE_DIR}/${project}/js/index.ets", "ohmUrl": "${CMAKE_CURRENT_SOURCE_DIR}/${project}/js/index" }
+			"js": { "language": "js", "path": "${CMAKE_CURRENT_SOURCE_DIR}/${project}/js/index.ats", "ohmUrl": "${CMAKE_CURRENT_SOURCE_DIR}/${project}/js/index" }
 		}
 	}
 }

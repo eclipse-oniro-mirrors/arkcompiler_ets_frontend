@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 16,
-              "program": "abstractNewClassInstanceExpression.ets"
+              "program": "abstractNewClassInstanceExpression.ats"
             },
             "end": {
               "line": 16,
               "column": 17,
-              "program": "abstractNewClassInstanceExpression.ets"
+              "program": "abstractNewClassInstanceExpression.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 14,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 17,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 17,
                       "column": 14,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 17,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 17,
                       "column": 21,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 25,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -89,12 +89,12 @@
                   "start": {
                     "line": 17,
                     "column": 17,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   },
                   "end": {
                     "line": 17,
                     "column": 25,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   }
                 }
               },
@@ -102,12 +102,12 @@
                 "start": {
                   "line": 17,
                   "column": 17,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 25,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -116,12 +116,12 @@
               "start": {
                 "line": 17,
                 "column": 14,
-                "program": "abstractNewClassInstanceExpression.ets"
+                "program": "abstractNewClassInstanceExpression.ats"
               },
               "end": {
                 "line": 17,
                 "column": 25,
-                "program": "abstractNewClassInstanceExpression.ets"
+                "program": "abstractNewClassInstanceExpression.ats"
               }
             }
           },
@@ -134,12 +134,12 @@
                 "start": {
                   "line": 16,
                   "column": 19,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 19,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -158,12 +158,12 @@
                     "start": {
                       "line": 16,
                       "column": 19,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 19,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -178,12 +178,12 @@
                     "start": {
                       "line": 16,
                       "column": 19,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 19,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -191,12 +191,12 @@
                   "start": {
                     "line": 16,
                     "column": 19,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 19,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   }
                 }
               },
@@ -204,12 +204,12 @@
                 "start": {
                   "line": 16,
                   "column": 19,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 19,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -232,12 +232,12 @@
           "start": {
             "line": 16,
             "column": 18,
-            "program": "abstractNewClassInstanceExpression.ets"
+            "program": "abstractNewClassInstanceExpression.ats"
           },
           "end": {
             "line": 18,
             "column": 2,
-            "program": "abstractNewClassInstanceExpression.ets"
+            "program": "abstractNewClassInstanceExpression.ats"
           }
         }
       },
@@ -245,12 +245,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         },
         "end": {
           "line": 18,
           "column": 2,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         }
       }
     },
@@ -264,12 +264,12 @@
             "start": {
               "line": 20,
               "column": 7,
-              "program": "abstractNewClassInstanceExpression.ets"
+              "program": "abstractNewClassInstanceExpression.ats"
             },
             "end": {
               "line": 20,
               "column": 8,
-              "program": "abstractNewClassInstanceExpression.ets"
+              "program": "abstractNewClassInstanceExpression.ats"
             }
           }
         },
@@ -285,12 +285,12 @@
                 "start": {
                   "line": 20,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -309,12 +309,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -329,12 +329,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -342,12 +342,12 @@
                   "start": {
                     "line": 20,
                     "column": 10,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 10,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   }
                 }
               },
@@ -355,12 +355,12 @@
                 "start": {
                   "line": 20,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -383,12 +383,12 @@
           "start": {
             "line": 20,
             "column": 9,
-            "program": "abstractNewClassInstanceExpression.ets"
+            "program": "abstractNewClassInstanceExpression.ats"
           },
           "end": {
             "line": 22,
             "column": 2,
-            "program": "abstractNewClassInstanceExpression.ets"
+            "program": "abstractNewClassInstanceExpression.ats"
           }
         }
       },
@@ -396,12 +396,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         },
         "end": {
           "line": 22,
           "column": 2,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         }
       }
     },
@@ -415,12 +415,12 @@
             "start": {
               "line": 24,
               "column": 7,
-              "program": "abstractNewClassInstanceExpression.ets"
+              "program": "abstractNewClassInstanceExpression.ats"
             },
             "end": {
               "line": 24,
               "column": 8,
-              "program": "abstractNewClassInstanceExpression.ets"
+              "program": "abstractNewClassInstanceExpression.ats"
             }
           }
         },
@@ -436,12 +436,12 @@
                 "start": {
                   "line": 26,
                   "column": 5,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 8,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -458,12 +458,12 @@
                       "start": {
                         "line": 26,
                         "column": 18,
-                        "program": "abstractNewClassInstanceExpression.ets"
+                        "program": "abstractNewClassInstanceExpression.ats"
                       },
                       "end": {
                         "line": 26,
                         "column": 19,
-                        "program": "abstractNewClassInstanceExpression.ets"
+                        "program": "abstractNewClassInstanceExpression.ats"
                       }
                     }
                   },
@@ -471,12 +471,12 @@
                     "start": {
                       "line": 26,
                       "column": 18,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 19,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -484,12 +484,12 @@
                   "start": {
                     "line": 26,
                     "column": 18,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   },
                   "end": {
                     "line": 26,
                     "column": 19,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   }
                 }
               },
@@ -498,12 +498,12 @@
                 "start": {
                   "line": 26,
                   "column": 14,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 23,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -524,12 +524,12 @@
                     "start": {
                       "line": 26,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 11,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -537,12 +537,12 @@
                   "start": {
                     "line": 26,
                     "column": 10,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   },
                   "end": {
                     "line": 26,
                     "column": 11,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   }
                 }
               },
@@ -550,12 +550,12 @@
                 "start": {
                   "line": 26,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 11,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -564,12 +564,12 @@
               "start": {
                 "line": 26,
                 "column": 5,
-                "program": "abstractNewClassInstanceExpression.ets"
+                "program": "abstractNewClassInstanceExpression.ats"
               },
               "end": {
                 "line": 26,
                 "column": 23,
-                "program": "abstractNewClassInstanceExpression.ets"
+                "program": "abstractNewClassInstanceExpression.ats"
               }
             }
           },
@@ -582,12 +582,12 @@
                 "start": {
                   "line": 27,
                   "column": 18,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 21,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -607,12 +607,12 @@
                     "start": {
                       "line": 27,
                       "column": 18,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 21,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -626,12 +626,12 @@
                     "start": {
                       "line": 27,
                       "column": 25,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 29,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -642,12 +642,12 @@
                     "start": {
                       "line": 27,
                       "column": 30,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 29,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -655,12 +655,12 @@
                   "start": {
                     "line": 27,
                     "column": 21,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   },
                   "end": {
                     "line": 29,
                     "column": 10,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   }
                 }
               },
@@ -668,12 +668,12 @@
                 "start": {
                   "line": 27,
                   "column": 21,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 29,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -682,12 +682,12 @@
               "start": {
                 "line": 27,
                 "column": 18,
-                "program": "abstractNewClassInstanceExpression.ets"
+                "program": "abstractNewClassInstanceExpression.ats"
               },
               "end": {
                 "line": 29,
                 "column": 10,
-                "program": "abstractNewClassInstanceExpression.ets"
+                "program": "abstractNewClassInstanceExpression.ats"
               }
             }
           },
@@ -700,12 +700,12 @@
                 "start": {
                   "line": 24,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -724,12 +724,12 @@
                     "start": {
                       "line": 24,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -744,12 +744,12 @@
                     "start": {
                       "line": 24,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 10,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -757,12 +757,12 @@
                   "start": {
                     "line": 24,
                     "column": 10,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 10,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   }
                 }
               },
@@ -770,12 +770,12 @@
                 "start": {
                   "line": 24,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 10,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -798,12 +798,12 @@
           "start": {
             "line": 24,
             "column": 9,
-            "program": "abstractNewClassInstanceExpression.ets"
+            "program": "abstractNewClassInstanceExpression.ats"
           },
           "end": {
             "line": 30,
             "column": 6,
-            "program": "abstractNewClassInstanceExpression.ets"
+            "program": "abstractNewClassInstanceExpression.ats"
           }
         }
       },
@@ -811,12 +811,12 @@
         "start": {
           "line": 24,
           "column": 1,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         },
         "end": {
           "line": 30,
           "column": 6,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         }
       }
     },
@@ -826,12 +826,12 @@
         "start": {
           "line": 32,
           "column": 11,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         },
         "end": {
           "line": 32,
           "column": 12,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         }
       }
     },
@@ -845,12 +845,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "abstractNewClassInstanceExpression.ets"
+              "program": "abstractNewClassInstanceExpression.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "abstractNewClassInstanceExpression.ets"
+              "program": "abstractNewClassInstanceExpression.ats"
             }
           }
         },
@@ -911,12 +911,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "abstractNewClassInstanceExpression.ets"
+                      "program": "abstractNewClassInstanceExpression.ats"
                     }
                   }
                 },
@@ -924,12 +924,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "abstractNewClassInstanceExpression.ets"
+                    "program": "abstractNewClassInstanceExpression.ats"
                   }
                 }
               },
@@ -937,12 +937,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "abstractNewClassInstanceExpression.ets"
+                  "program": "abstractNewClassInstanceExpression.ats"
                 }
               }
             },
@@ -951,12 +951,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "abstractNewClassInstanceExpression.ets"
+                "program": "abstractNewClassInstanceExpression.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "abstractNewClassInstanceExpression.ets"
+                "program": "abstractNewClassInstanceExpression.ats"
               }
             }
           }
@@ -965,12 +965,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "abstractNewClassInstanceExpression.ets"
+            "program": "abstractNewClassInstanceExpression.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "abstractNewClassInstanceExpression.ets"
+            "program": "abstractNewClassInstanceExpression.ats"
           }
         }
       },
@@ -978,12 +978,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "abstractNewClassInstanceExpression.ets"
+          "program": "abstractNewClassInstanceExpression.ats"
         }
       }
     }
@@ -992,19 +992,19 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "abstractNewClassInstanceExpression.ets"
+      "program": "abstractNewClassInstanceExpression.ats"
     },
     "end": {
       "line": 36,
       "column": 1,
-      "program": "abstractNewClassInstanceExpression.ets"
+      "program": "abstractNewClassInstanceExpression.ats"
     }
   }
 }
-[abstractNewClassInstanceExpression.ets:26:14] Semantic error ESE0052: A is abstract therefore cannot be instantiated.
-[abstractNewClassInstanceExpression.ets:26:22] Syntax error ESY0227: Unexpected token '{'.
-[abstractNewClassInstanceExpression.ets:27:21] Semantic error ESE0136: Method foo(): undefined in B not overriding any method
-[abstractNewClassInstanceExpression.ets:32:11] Syntax error ESY0318: Class cannot be used as object.
-[abstractNewClassInstanceExpression.ets:32:11] Syntax error ESY0038: Label must be followed by a loop statement.
-[abstractNewClassInstanceExpression.ets:32:23] Syntax error ESY0227: Unexpected token '{'.
-[abstractNewClassInstanceExpression.ets:35:1] Syntax error ESY0227: Unexpected token '}'.
+[abstractNewClassInstanceExpression.ats:26:14] Semantic error ESE0052: A is abstract therefore cannot be instantiated.
+[abstractNewClassInstanceExpression.ats:26:22] Syntax error ESY0227: Unexpected token '{'.
+[abstractNewClassInstanceExpression.ats:27:21] Semantic error ESE0136: Method foo(): undefined in B not overriding any method
+[abstractNewClassInstanceExpression.ats:32:11] Syntax error ESY0318: Class cannot be used as object.
+[abstractNewClassInstanceExpression.ats:32:11] Syntax error ESY0038: Label must be followed by a loop statement.
+[abstractNewClassInstanceExpression.ats:32:23] Syntax error ESY0227: Unexpected token '{'.
+[abstractNewClassInstanceExpression.ats:35:1] Syntax error ESY0227: Unexpected token '}'.

@@ -12,12 +12,12 @@
             "start": {
               "line": 16,
               "column": 15,
-              "program": "re_export_12.ets"
+              "program": "re_export_12.ats"
             },
             "end": {
               "line": 16,
               "column": 25,
-              "program": "re_export_12.ets"
+              "program": "re_export_12.ats"
             }
           }
         },
@@ -44,12 +44,12 @@
               "start": {
                 "line": 16,
                 "column": 8,
-                "program": "re_export_12.ets"
+                "program": "re_export_12.ats"
               },
               "end": {
                 "line": 16,
                 "column": 14,
-                "program": "re_export_12.ets"
+                "program": "re_export_12.ats"
               }
             }
           }
@@ -58,12 +58,12 @@
           "start": {
             "line": 16,
             "column": 1,
-            "program": "re_export_12.ets"
+            "program": "re_export_12.ats"
           },
           "end": {
             "line": 16,
             "column": 25,
-            "program": "re_export_12.ets"
+            "program": "re_export_12.ats"
           }
         }
       },
@@ -71,12 +71,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "re_export_12.ets"
+          "program": "re_export_12.ats"
         },
         "end": {
           "line": 16,
           "column": 25,
-          "program": "re_export_12.ets"
+          "program": "re_export_12.ats"
         }
       }
     },
@@ -91,12 +91,12 @@
             "start": {
               "line": 17,
               "column": 15,
-              "program": "re_export_12.ets"
+              "program": "re_export_12.ats"
             },
             "end": {
               "line": 17,
               "column": 27,
-              "program": "re_export_12.ets"
+              "program": "re_export_12.ats"
             }
           }
         },
@@ -123,12 +123,12 @@
               "start": {
                 "line": 17,
                 "column": 8,
-                "program": "re_export_12.ets"
+                "program": "re_export_12.ats"
               },
               "end": {
                 "line": 17,
                 "column": 14,
-                "program": "re_export_12.ets"
+                "program": "re_export_12.ats"
               }
             }
           }
@@ -137,12 +137,12 @@
           "start": {
             "line": 17,
             "column": 1,
-            "program": "re_export_12.ets"
+            "program": "re_export_12.ats"
           },
           "end": {
             "line": 17,
             "column": 27,
-            "program": "re_export_12.ets"
+            "program": "re_export_12.ats"
           }
         }
       },
@@ -150,12 +150,12 @@
         "start": {
           "line": 17,
           "column": 1,
-          "program": "re_export_12.ets"
+          "program": "re_export_12.ats"
         },
         "end": {
           "line": 17,
           "column": 27,
-          "program": "re_export_12.ets"
+          "program": "re_export_12.ats"
         }
       }
     },
@@ -169,12 +169,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "re_export_12.ets"
+              "program": "re_export_12.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "re_export_12.ets"
+              "program": "re_export_12.ats"
             }
           }
         },
@@ -235,12 +235,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "re_export_12.ets"
+                      "program": "re_export_12.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "re_export_12.ets"
+                      "program": "re_export_12.ats"
                     }
                   }
                 },
@@ -248,12 +248,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "re_export_12.ets"
+                    "program": "re_export_12.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "re_export_12.ets"
+                    "program": "re_export_12.ats"
                   }
                 }
               },
@@ -261,12 +261,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "re_export_12.ets"
+                  "program": "re_export_12.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "re_export_12.ets"
+                  "program": "re_export_12.ats"
                 }
               }
             },
@@ -275,12 +275,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "re_export_12.ets"
+                "program": "re_export_12.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "re_export_12.ets"
+                "program": "re_export_12.ats"
               }
             }
           }
@@ -289,12 +289,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "re_export_12.ets"
+            "program": "re_export_12.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "re_export_12.ets"
+            "program": "re_export_12.ats"
           }
         }
       },
@@ -302,12 +302,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "re_export_12.ets"
+          "program": "re_export_12.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "re_export_12.ets"
+          "program": "re_export_12.ats"
         }
       }
     }
@@ -316,13 +316,13 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "re_export_12.ets"
+      "program": "re_export_12.ats"
     },
     "end": {
       "line": 20,
       "column": 1,
-      "program": "re_export_12.ets"
+      "program": "re_export_12.ats"
     }
   }
 }
-[re_export_12.ets:17:8] Semantic error ESE130586: The entity named 'foo' is already exported.
+[re_export_12.ats:17:8] Semantic error ESE130586: The entity named 'foo' is already exported.

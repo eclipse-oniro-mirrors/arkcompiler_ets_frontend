@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "inferTypeOfArray.ets"
+              "program": "inferTypeOfArray.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "inferTypeOfArray.ets"
+              "program": "inferTypeOfArray.ats"
             }
           }
         },
@@ -77,12 +77,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -90,12 +90,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "inferTypeOfArray.ets"
+                    "program": "inferTypeOfArray.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "inferTypeOfArray.ets"
+                    "program": "inferTypeOfArray.ats"
                   }
                 }
               },
@@ -103,12 +103,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -117,12 +117,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               }
             }
           },
@@ -135,12 +135,12 @@
                 "start": {
                   "line": 16,
                   "column": 5,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 6,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -151,12 +151,12 @@
                 "start": {
                   "line": 16,
                   "column": 9,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -171,12 +171,12 @@
               "start": {
                 "line": 16,
                 "column": 5,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               },
               "end": {
                 "line": 16,
                 "column": 10,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               }
             }
           },
@@ -189,12 +189,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 6,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -205,12 +205,12 @@
                 "start": {
                   "line": 17,
                   "column": 9,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 11,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -225,12 +225,12 @@
               "start": {
                 "line": 17,
                 "column": 5,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               },
               "end": {
                 "line": 17,
                 "column": 11,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               }
             }
           },
@@ -243,12 +243,12 @@
                 "start": {
                   "line": 18,
                   "column": 5,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 6,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -262,12 +262,12 @@
                     "start": {
                       "line": 18,
                       "column": 10,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 13,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 }
@@ -276,12 +276,12 @@
                 "start": {
                   "line": 18,
                   "column": 9,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 14,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -296,12 +296,12 @@
               "start": {
                 "line": 18,
                 "column": 5,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               },
               "end": {
                 "line": 18,
                 "column": 14,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               }
             }
           },
@@ -314,12 +314,12 @@
                 "start": {
                   "line": 19,
                   "column": 5,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 6,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -333,12 +333,12 @@
                     "start": {
                       "line": 19,
                       "column": 10,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 11,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -349,12 +349,12 @@
                     "start": {
                       "line": 19,
                       "column": 13,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 14,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -365,12 +365,12 @@
                     "start": {
                       "line": 19,
                       "column": 16,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 19,
                       "column": 17,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 }
@@ -379,12 +379,12 @@
                 "start": {
                   "line": 19,
                   "column": 9,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 19,
                   "column": 18,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -399,12 +399,12 @@
               "start": {
                 "line": 19,
                 "column": 5,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               },
               "end": {
                 "line": 19,
                 "column": 18,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               }
             }
           },
@@ -417,12 +417,12 @@
                 "start": {
                   "line": 20,
                   "column": 5,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 6,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -436,12 +436,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 11,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -452,12 +452,12 @@
                     "start": {
                       "line": 20,
                       "column": 13,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 16,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -468,12 +468,12 @@
                     "start": {
                       "line": 20,
                       "column": 18,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 19,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -484,12 +484,12 @@
                     "start": {
                       "line": 20,
                       "column": 21,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 22,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -506,12 +506,12 @@
                           "start": {
                             "line": 20,
                             "column": 28,
-                            "program": "inferTypeOfArray.ets"
+                            "program": "inferTypeOfArray.ats"
                           },
                           "end": {
                             "line": 20,
                             "column": 31,
-                            "program": "inferTypeOfArray.ets"
+                            "program": "inferTypeOfArray.ats"
                           }
                         }
                       },
@@ -519,12 +519,12 @@
                         "start": {
                           "line": 20,
                           "column": 28,
-                          "program": "inferTypeOfArray.ets"
+                          "program": "inferTypeOfArray.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 31,
-                          "program": "inferTypeOfArray.ets"
+                          "program": "inferTypeOfArray.ats"
                         }
                       }
                     },
@@ -532,12 +532,12 @@
                       "start": {
                         "line": 20,
                         "column": 28,
-                        "program": "inferTypeOfArray.ets"
+                        "program": "inferTypeOfArray.ats"
                       },
                       "end": {
                         "line": 20,
                         "column": 31,
-                        "program": "inferTypeOfArray.ets"
+                        "program": "inferTypeOfArray.ats"
                       }
                     }
                   },
@@ -546,12 +546,12 @@
                     "start": {
                       "line": 20,
                       "column": 24,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 34,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 }
@@ -560,12 +560,12 @@
                 "start": {
                   "line": 20,
                   "column": 9,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 34,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -580,12 +580,12 @@
               "start": {
                 "line": 20,
                 "column": 5,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               },
               "end": {
                 "line": 20,
                 "column": 34,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               }
             }
           },
@@ -598,12 +598,12 @@
                 "start": {
                   "line": 21,
                   "column": 5,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 6,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -614,12 +614,12 @@
                 "start": {
                   "line": 21,
                   "column": 9,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 11,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -634,12 +634,12 @@
               "start": {
                 "line": 21,
                 "column": 5,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               },
               "end": {
                 "line": 21,
                 "column": 11,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               }
             }
           },
@@ -652,12 +652,12 @@
                 "start": {
                   "line": 22,
                   "column": 5,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 6,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -673,12 +673,12 @@
                     "start": {
                       "line": 22,
                       "column": 9,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 10,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -689,12 +689,12 @@
                     "start": {
                       "line": 22,
                       "column": 11,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 12,
-                      "program": "inferTypeOfArray.ets"
+                      "program": "inferTypeOfArray.ats"
                     }
                   }
                 },
@@ -704,12 +704,12 @@
                   "start": {
                     "line": 22,
                     "column": 9,
-                    "program": "inferTypeOfArray.ets"
+                    "program": "inferTypeOfArray.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 13,
-                    "program": "inferTypeOfArray.ets"
+                    "program": "inferTypeOfArray.ats"
                   }
                 }
               },
@@ -720,12 +720,12 @@
                   "start": {
                     "line": 22,
                     "column": 16,
-                    "program": "inferTypeOfArray.ets"
+                    "program": "inferTypeOfArray.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 19,
-                    "program": "inferTypeOfArray.ets"
+                    "program": "inferTypeOfArray.ats"
                   }
                 }
               },
@@ -733,12 +733,12 @@
                 "start": {
                   "line": 22,
                   "column": 9,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 19,
-                  "program": "inferTypeOfArray.ets"
+                  "program": "inferTypeOfArray.ats"
                 }
               }
             },
@@ -753,12 +753,12 @@
               "start": {
                 "line": 22,
                 "column": 5,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               },
               "end": {
                 "line": 22,
                 "column": 19,
-                "program": "inferTypeOfArray.ets"
+                "program": "inferTypeOfArray.ats"
               }
             }
           }
@@ -767,12 +767,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "inferTypeOfArray.ets"
+            "program": "inferTypeOfArray.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "inferTypeOfArray.ets"
+            "program": "inferTypeOfArray.ats"
           }
         }
       },
@@ -780,12 +780,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "inferTypeOfArray.ets"
+          "program": "inferTypeOfArray.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "inferTypeOfArray.ets"
+          "program": "inferTypeOfArray.ats"
         }
       }
     }
@@ -794,16 +794,16 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "inferTypeOfArray.ets"
+      "program": "inferTypeOfArray.ats"
     },
     "end": {
       "line": 25,
       "column": 1,
-      "program": "inferTypeOfArray.ets"
+      "program": "inferTypeOfArray.ats"
     }
   }
 }
-[inferTypeOfArray.ets:17:9] Semantic error ESE0301: Can't resolve array type
-[inferTypeOfArray.ets:21:9] Semantic error ESE0301: Can't resolve array type
-[inferTypeOfArray.ets:23:1] Semantic error ESE0252: Indexed access is not supported for such expression type.
-[inferTypeOfArray.ets:24:1] Semantic error ESE0252: Indexed access is not supported for such expression type.
+[inferTypeOfArray.ats:17:9] Semantic error ESE0301: Can't resolve array type
+[inferTypeOfArray.ats:21:9] Semantic error ESE0301: Can't resolve array type
+[inferTypeOfArray.ats:23:1] Semantic error ESE0252: Indexed access is not supported for such expression type.
+[inferTypeOfArray.ats:24:1] Semantic error ESE0252: Indexed access is not supported for such expression type.

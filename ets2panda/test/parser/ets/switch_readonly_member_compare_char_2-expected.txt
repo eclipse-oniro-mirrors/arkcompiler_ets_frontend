@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "switch_readonly_member_compare_char_2.ets"
+              "program": "switch_readonly_member_compare_char_2.ats"
             },
             "end": {
               "line": 16,
               "column": 10,
-              "program": "switch_readonly_member_compare_char_2.ets"
+              "program": "switch_readonly_member_compare_char_2.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 21,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 23,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -48,12 +48,12 @@
                 "start": {
                   "line": 17,
                   "column": 26,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 30,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -68,12 +68,12 @@
               "start": {
                 "line": 17,
                 "column": 21,
-                "program": "switch_readonly_member_compare_char_2.ets"
+                "program": "switch_readonly_member_compare_char_2.ats"
               },
               "end": {
                 "line": 17,
                 "column": 30,
-                "program": "switch_readonly_member_compare_char_2.ets"
+                "program": "switch_readonly_member_compare_char_2.ats"
               }
             }
           },
@@ -86,12 +86,12 @@
                 "start": {
                   "line": 16,
                   "column": 12,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 12,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -110,12 +110,12 @@
                     "start": {
                       "line": 16,
                       "column": 12,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 12,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     }
                   }
                 },
@@ -130,12 +130,12 @@
                     "start": {
                       "line": 16,
                       "column": 12,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 12,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     }
                   }
                 },
@@ -143,12 +143,12 @@
                   "start": {
                     "line": 16,
                     "column": 12,
-                    "program": "switch_readonly_member_compare_char_2.ets"
+                    "program": "switch_readonly_member_compare_char_2.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 12,
-                    "program": "switch_readonly_member_compare_char_2.ets"
+                    "program": "switch_readonly_member_compare_char_2.ats"
                   }
                 }
               },
@@ -156,12 +156,12 @@
                 "start": {
                   "line": 16,
                   "column": 12,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 12,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -184,12 +184,12 @@
           "start": {
             "line": 16,
             "column": 11,
-            "program": "switch_readonly_member_compare_char_2.ets"
+            "program": "switch_readonly_member_compare_char_2.ats"
           },
           "end": {
             "line": 18,
             "column": 2,
-            "program": "switch_readonly_member_compare_char_2.ets"
+            "program": "switch_readonly_member_compare_char_2.ats"
           }
         }
       },
@@ -197,12 +197,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "switch_readonly_member_compare_char_2.ets"
+          "program": "switch_readonly_member_compare_char_2.ats"
         },
         "end": {
           "line": 18,
           "column": 2,
-          "program": "switch_readonly_member_compare_char_2.ets"
+          "program": "switch_readonly_member_compare_char_2.ats"
         }
       }
     },
@@ -216,12 +216,12 @@
             "start": {
               "line": 20,
               "column": 7,
-              "program": "switch_readonly_member_compare_char_2.ets"
+              "program": "switch_readonly_member_compare_char_2.ats"
             },
             "end": {
               "line": 20,
               "column": 10,
-              "program": "switch_readonly_member_compare_char_2.ets"
+              "program": "switch_readonly_member_compare_char_2.ats"
             }
           }
         },
@@ -237,12 +237,12 @@
                 "start": {
                   "line": 21,
                   "column": 21,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 23,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -253,12 +253,12 @@
                 "start": {
                   "line": 21,
                   "column": 26,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 21,
                   "column": 30,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -273,12 +273,12 @@
               "start": {
                 "line": 21,
                 "column": 21,
-                "program": "switch_readonly_member_compare_char_2.ets"
+                "program": "switch_readonly_member_compare_char_2.ats"
               },
               "end": {
                 "line": 21,
                 "column": 30,
-                "program": "switch_readonly_member_compare_char_2.ets"
+                "program": "switch_readonly_member_compare_char_2.ats"
               }
             }
           },
@@ -291,12 +291,12 @@
                 "start": {
                   "line": 20,
                   "column": 12,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 12,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -315,12 +315,12 @@
                     "start": {
                       "line": 20,
                       "column": 12,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 12,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     }
                   }
                 },
@@ -335,12 +335,12 @@
                     "start": {
                       "line": 20,
                       "column": 12,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 12,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     }
                   }
                 },
@@ -348,12 +348,12 @@
                   "start": {
                     "line": 20,
                     "column": 12,
-                    "program": "switch_readonly_member_compare_char_2.ets"
+                    "program": "switch_readonly_member_compare_char_2.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 12,
-                    "program": "switch_readonly_member_compare_char_2.ets"
+                    "program": "switch_readonly_member_compare_char_2.ats"
                   }
                 }
               },
@@ -361,12 +361,12 @@
                 "start": {
                   "line": 20,
                   "column": 12,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 12,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -389,12 +389,12 @@
           "start": {
             "line": 20,
             "column": 11,
-            "program": "switch_readonly_member_compare_char_2.ets"
+            "program": "switch_readonly_member_compare_char_2.ats"
           },
           "end": {
             "line": 22,
             "column": 2,
-            "program": "switch_readonly_member_compare_char_2.ets"
+            "program": "switch_readonly_member_compare_char_2.ats"
           }
         }
       },
@@ -402,12 +402,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "switch_readonly_member_compare_char_2.ets"
+          "program": "switch_readonly_member_compare_char_2.ats"
         },
         "end": {
           "line": 22,
           "column": 2,
-          "program": "switch_readonly_member_compare_char_2.ets"
+          "program": "switch_readonly_member_compare_char_2.ats"
         }
       }
     },
@@ -421,12 +421,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "switch_readonly_member_compare_char_2.ets"
+              "program": "switch_readonly_member_compare_char_2.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "switch_readonly_member_compare_char_2.ets"
+              "program": "switch_readonly_member_compare_char_2.ats"
             }
           }
         },
@@ -442,12 +442,12 @@
                 "start": {
                   "line": 24,
                   "column": 10,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 24,
                   "column": 14,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -467,12 +467,12 @@
                     "start": {
                       "line": 24,
                       "column": 10,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 14,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     }
                   }
                 },
@@ -495,12 +495,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 9,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 10,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               }
                             }
                           },
@@ -511,12 +511,12 @@
                               "start": {
                                 "line": 25,
                                 "column": 13,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               },
                               "end": {
                                 "line": 25,
                                 "column": 17,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               }
                             }
                           },
@@ -524,12 +524,12 @@
                             "start": {
                               "line": 25,
                               "column": 9,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             },
                             "end": {
                               "line": 25,
                               "column": 17,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             }
                           }
                         }
@@ -539,12 +539,12 @@
                         "start": {
                           "line": 25,
                           "column": 5,
-                          "program": "switch_readonly_member_compare_char_2.ets"
+                          "program": "switch_readonly_member_compare_char_2.ats"
                         },
                         "end": {
                           "line": 25,
                           "column": 17,
-                          "program": "switch_readonly_member_compare_char_2.ets"
+                          "program": "switch_readonly_member_compare_char_2.ats"
                         }
                       }
                     },
@@ -557,12 +557,12 @@
                           "start": {
                             "line": 26,
                             "column": 13,
-                            "program": "switch_readonly_member_compare_char_2.ets"
+                            "program": "switch_readonly_member_compare_char_2.ats"
                           },
                           "end": {
                             "line": 26,
                             "column": 14,
-                            "program": "switch_readonly_member_compare_char_2.ets"
+                            "program": "switch_readonly_member_compare_char_2.ats"
                           }
                         }
                       },
@@ -576,12 +576,12 @@
                               "start": {
                                 "line": 27,
                                 "column": 14,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               },
                               "end": {
                                 "line": 27,
                                 "column": 18,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               }
                             }
                           },
@@ -593,12 +593,12 @@
                                 "start": {
                                   "line": 28,
                                   "column": 13,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 },
                                 "end": {
                                   "line": 28,
                                   "column": 19,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 }
                               }
                             }
@@ -607,12 +607,12 @@
                             "start": {
                               "line": 27,
                               "column": 9,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             },
                             "end": {
                               "line": 28,
                               "column": 19,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             }
                           }
                         },
@@ -627,12 +627,12 @@
                                 "start": {
                                   "line": 29,
                                   "column": 14,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 },
                                 "end": {
                                   "line": 29,
                                   "column": 17,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 }
                               }
                             },
@@ -643,12 +643,12 @@
                                 "start": {
                                   "line": 29,
                                   "column": 18,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 },
                                 "end": {
                                   "line": 29,
                                   "column": 20,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 }
                               }
                             },
@@ -658,12 +658,12 @@
                               "start": {
                                 "line": 29,
                                 "column": 14,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               },
                               "end": {
                                 "line": 29,
                                 "column": 20,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               }
                             }
                           },
@@ -675,12 +675,12 @@
                                 "start": {
                                   "line": 30,
                                   "column": 13,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 },
                                 "end": {
                                   "line": 30,
                                   "column": 19,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 }
                               }
                             }
@@ -689,12 +689,12 @@
                             "start": {
                               "line": 29,
                               "column": 9,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             },
                             "end": {
                               "line": 30,
                               "column": 19,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             }
                           }
                         },
@@ -709,12 +709,12 @@
                                 "start": {
                                   "line": 31,
                                   "column": 14,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 },
                                 "end": {
                                   "line": 31,
                                   "column": 17,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 }
                               }
                             },
@@ -725,12 +725,12 @@
                                 "start": {
                                   "line": 31,
                                   "column": 18,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 },
                                 "end": {
                                   "line": 31,
                                   "column": 20,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 }
                               }
                             },
@@ -740,12 +740,12 @@
                               "start": {
                                 "line": 31,
                                 "column": 14,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               },
                               "end": {
                                 "line": 31,
                                 "column": 20,
-                                "program": "switch_readonly_member_compare_char_2.ets"
+                                "program": "switch_readonly_member_compare_char_2.ats"
                               }
                             }
                           },
@@ -757,12 +757,12 @@
                                 "start": {
                                   "line": 32,
                                   "column": 13,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 },
                                 "end": {
                                   "line": 32,
                                   "column": 19,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 }
                               }
                             }
@@ -771,12 +771,12 @@
                             "start": {
                               "line": 31,
                               "column": 9,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             },
                             "end": {
                               "line": 32,
                               "column": 19,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             }
                           }
                         },
@@ -791,12 +791,12 @@
                                 "start": {
                                   "line": 33,
                                   "column": 18,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 },
                                 "end": {
                                   "line": 33,
                                   "column": 24,
-                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                  "program": "switch_readonly_member_compare_char_2.ats"
                                 }
                               }
                             }
@@ -805,12 +805,12 @@
                             "start": {
                               "line": 33,
                               "column": 9,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             },
                             "end": {
                               "line": 33,
                               "column": 24,
-                              "program": "switch_readonly_member_compare_char_2.ets"
+                              "program": "switch_readonly_member_compare_char_2.ats"
                             }
                           }
                         }
@@ -819,12 +819,12 @@
                         "start": {
                           "line": 26,
                           "column": 5,
-                          "program": "switch_readonly_member_compare_char_2.ets"
+                          "program": "switch_readonly_member_compare_char_2.ats"
                         },
                         "end": {
                           "line": 34,
                           "column": 6,
-                          "program": "switch_readonly_member_compare_char_2.ets"
+                          "program": "switch_readonly_member_compare_char_2.ats"
                         }
                       }
                     }
@@ -833,12 +833,12 @@
                     "start": {
                       "line": 24,
                       "column": 17,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     },
                     "end": {
                       "line": 35,
                       "column": 2,
-                      "program": "switch_readonly_member_compare_char_2.ets"
+                      "program": "switch_readonly_member_compare_char_2.ats"
                     }
                   }
                 },
@@ -846,12 +846,12 @@
                   "start": {
                     "line": 24,
                     "column": 10,
-                    "program": "switch_readonly_member_compare_char_2.ets"
+                    "program": "switch_readonly_member_compare_char_2.ats"
                   },
                   "end": {
                     "line": 35,
                     "column": 2,
-                    "program": "switch_readonly_member_compare_char_2.ets"
+                    "program": "switch_readonly_member_compare_char_2.ats"
                   }
                 }
               },
@@ -859,12 +859,12 @@
                 "start": {
                   "line": 24,
                   "column": 10,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 },
                 "end": {
                   "line": 35,
                   "column": 2,
-                  "program": "switch_readonly_member_compare_char_2.ets"
+                  "program": "switch_readonly_member_compare_char_2.ats"
                 }
               }
             },
@@ -873,12 +873,12 @@
               "start": {
                 "line": 24,
                 "column": 1,
-                "program": "switch_readonly_member_compare_char_2.ets"
+                "program": "switch_readonly_member_compare_char_2.ats"
               },
               "end": {
                 "line": 35,
                 "column": 2,
-                "program": "switch_readonly_member_compare_char_2.ets"
+                "program": "switch_readonly_member_compare_char_2.ats"
               }
             }
           }
@@ -887,12 +887,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "switch_readonly_member_compare_char_2.ets"
+            "program": "switch_readonly_member_compare_char_2.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "switch_readonly_member_compare_char_2.ets"
+            "program": "switch_readonly_member_compare_char_2.ats"
           }
         }
       },
@@ -900,12 +900,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "switch_readonly_member_compare_char_2.ets"
+          "program": "switch_readonly_member_compare_char_2.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "switch_readonly_member_compare_char_2.ets"
+          "program": "switch_readonly_member_compare_char_2.ats"
         }
       }
     }
@@ -914,12 +914,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "switch_readonly_member_compare_char_2.ets"
+      "program": "switch_readonly_member_compare_char_2.ats"
     },
     "end": {
       "line": 36,
       "column": 1,
-      "program": "switch_readonly_member_compare_char_2.ets"
+      "program": "switch_readonly_member_compare_char_2.ats"
     }
   }
 }

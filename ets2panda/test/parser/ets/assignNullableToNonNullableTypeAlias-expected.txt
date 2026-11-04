@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "assignNullableToNonNullableTypeAlias.ets"
+              "program": "assignNullableToNonNullableTypeAlias.ats"
             },
             "end": {
               "line": 16,
               "column": 8,
-              "program": "assignNullableToNonNullableTypeAlias.ets"
+              "program": "assignNullableToNonNullableTypeAlias.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 }
               }
             },
@@ -56,12 +56,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     }
                   }
                 },
@@ -76,12 +76,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     }
                   }
                 },
@@ -89,12 +89,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                    "program": "assignNullableToNonNullableTypeAlias.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 10,
-                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                    "program": "assignNullableToNonNullableTypeAlias.ats"
                   }
                 }
               },
@@ -102,12 +102,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 }
               }
             },
@@ -130,12 +130,12 @@
           "start": {
             "line": 16,
             "column": 9,
-            "program": "assignNullableToNonNullableTypeAlias.ets"
+            "program": "assignNullableToNonNullableTypeAlias.ats"
           },
           "end": {
             "line": 16,
             "column": 11,
-            "program": "assignNullableToNonNullableTypeAlias.ets"
+            "program": "assignNullableToNonNullableTypeAlias.ats"
           }
         }
       },
@@ -143,12 +143,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "assignNullableToNonNullableTypeAlias.ets"
+          "program": "assignNullableToNonNullableTypeAlias.ats"
         },
         "end": {
           "line": 16,
           "column": 11,
-          "program": "assignNullableToNonNullableTypeAlias.ets"
+          "program": "assignNullableToNonNullableTypeAlias.ats"
         }
       }
     },
@@ -161,12 +161,12 @@
           "start": {
             "line": 18,
             "column": 6,
-            "program": "assignNullableToNonNullableTypeAlias.ets"
+            "program": "assignNullableToNonNullableTypeAlias.ats"
           },
           "end": {
             "line": 18,
             "column": 8,
-            "program": "assignNullableToNonNullableTypeAlias.ets"
+            "program": "assignNullableToNonNullableTypeAlias.ats"
           }
         }
       },
@@ -184,12 +184,12 @@
                   "start": {
                     "line": 18,
                     "column": 11,
-                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                    "program": "assignNullableToNonNullableTypeAlias.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 12,
-                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                    "program": "assignNullableToNonNullableTypeAlias.ats"
                   }
                 }
               },
@@ -197,12 +197,12 @@
                 "start": {
                   "line": 18,
                   "column": 11,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 12,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 }
               }
             },
@@ -210,12 +210,12 @@
               "start": {
                 "line": 18,
                 "column": 11,
-                "program": "assignNullableToNonNullableTypeAlias.ets"
+                "program": "assignNullableToNonNullableTypeAlias.ats"
               },
               "end": {
                 "line": 18,
                 "column": 12,
-                "program": "assignNullableToNonNullableTypeAlias.ets"
+                "program": "assignNullableToNonNullableTypeAlias.ats"
               }
             }
           },
@@ -225,12 +225,12 @@
               "start": {
                 "line": 18,
                 "column": 15,
-                "program": "assignNullableToNonNullableTypeAlias.ets"
+                "program": "assignNullableToNonNullableTypeAlias.ats"
               },
               "end": {
                 "line": 18,
                 "column": 19,
-                "program": "assignNullableToNonNullableTypeAlias.ets"
+                "program": "assignNullableToNonNullableTypeAlias.ats"
               }
             }
           }
@@ -239,12 +239,12 @@
           "start": {
             "line": 18,
             "column": 11,
-            "program": "assignNullableToNonNullableTypeAlias.ets"
+            "program": "assignNullableToNonNullableTypeAlias.ats"
           },
           "end": {
             "line": 18,
             "column": 19,
-            "program": "assignNullableToNonNullableTypeAlias.ets"
+            "program": "assignNullableToNonNullableTypeAlias.ats"
           }
         }
       },
@@ -252,12 +252,12 @@
         "start": {
           "line": 18,
           "column": 1,
-          "program": "assignNullableToNonNullableTypeAlias.ets"
+          "program": "assignNullableToNonNullableTypeAlias.ats"
         },
         "end": {
           "line": 18,
           "column": 19,
-          "program": "assignNullableToNonNullableTypeAlias.ets"
+          "program": "assignNullableToNonNullableTypeAlias.ats"
         }
       }
     },
@@ -271,12 +271,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "assignNullableToNonNullableTypeAlias.ets"
+              "program": "assignNullableToNonNullableTypeAlias.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "assignNullableToNonNullableTypeAlias.ets"
+              "program": "assignNullableToNonNullableTypeAlias.ats"
             }
           }
         },
@@ -292,12 +292,12 @@
                 "start": {
                   "line": 20,
                   "column": 10,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 14,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 }
               }
             },
@@ -317,12 +317,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 14,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     }
                   }
                 },
@@ -336,12 +336,12 @@
                     "start": {
                       "line": 20,
                       "column": 18,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 22,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     }
                   }
                 },
@@ -367,12 +367,12 @@
                                     "start": {
                                       "line": 21,
                                       "column": 13,
-                                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                                      "program": "assignNullableToNonNullableTypeAlias.ats"
                                     },
                                     "end": {
                                       "line": 21,
                                       "column": 19,
-                                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                                      "program": "assignNullableToNonNullableTypeAlias.ats"
                                     }
                                   }
                                 },
@@ -380,12 +380,12 @@
                                   "start": {
                                     "line": 21,
                                     "column": 13,
-                                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                                    "program": "assignNullableToNonNullableTypeAlias.ats"
                                   },
                                   "end": {
                                     "line": 21,
                                     "column": 19,
-                                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                                    "program": "assignNullableToNonNullableTypeAlias.ats"
                                   }
                                 }
                               },
@@ -393,12 +393,12 @@
                                 "start": {
                                   "line": 21,
                                   "column": 13,
-                                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                                  "program": "assignNullableToNonNullableTypeAlias.ats"
                                 },
                                 "end": {
                                   "line": 21,
                                   "column": 19,
-                                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                                  "program": "assignNullableToNonNullableTypeAlias.ats"
                                 }
                               }
                             },
@@ -406,12 +406,12 @@
                               "start": {
                                 "line": 21,
                                 "column": 9,
-                                "program": "assignNullableToNonNullableTypeAlias.ets"
+                                "program": "assignNullableToNonNullableTypeAlias.ats"
                               },
                               "end": {
                                 "line": 21,
                                 "column": 10,
-                                "program": "assignNullableToNonNullableTypeAlias.ets"
+                                "program": "assignNullableToNonNullableTypeAlias.ats"
                               }
                             }
                           },
@@ -420,12 +420,12 @@
                             "start": {
                               "line": 21,
                               "column": 9,
-                              "program": "assignNullableToNonNullableTypeAlias.ets"
+                              "program": "assignNullableToNonNullableTypeAlias.ats"
                             },
                             "end": {
                               "line": 21,
                               "column": 10,
-                              "program": "assignNullableToNonNullableTypeAlias.ets"
+                              "program": "assignNullableToNonNullableTypeAlias.ats"
                             }
                           }
                         }
@@ -435,12 +435,12 @@
                         "start": {
                           "line": 21,
                           "column": 5,
-                          "program": "assignNullableToNonNullableTypeAlias.ets"
+                          "program": "assignNullableToNonNullableTypeAlias.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 20,
-                          "program": "assignNullableToNonNullableTypeAlias.ets"
+                          "program": "assignNullableToNonNullableTypeAlias.ats"
                         }
                       }
                     },
@@ -463,12 +463,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 14,
-                                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                                      "program": "assignNullableToNonNullableTypeAlias.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 16,
-                                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                                      "program": "assignNullableToNonNullableTypeAlias.ats"
                                     }
                                   }
                                 },
@@ -476,12 +476,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 14,
-                                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                                    "program": "assignNullableToNonNullableTypeAlias.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 16,
-                                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                                    "program": "assignNullableToNonNullableTypeAlias.ats"
                                   }
                                 }
                               },
@@ -489,12 +489,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 14,
-                                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                                  "program": "assignNullableToNonNullableTypeAlias.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 16,
-                                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                                  "program": "assignNullableToNonNullableTypeAlias.ats"
                                 }
                               }
                             },
@@ -502,12 +502,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 9,
-                                "program": "assignNullableToNonNullableTypeAlias.ets"
+                                "program": "assignNullableToNonNullableTypeAlias.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 11,
-                                "program": "assignNullableToNonNullableTypeAlias.ets"
+                                "program": "assignNullableToNonNullableTypeAlias.ats"
                               }
                             }
                           },
@@ -524,12 +524,12 @@
                                     "start": {
                                       "line": 22,
                                       "column": 23,
-                                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                                      "program": "assignNullableToNonNullableTypeAlias.ats"
                                     },
                                     "end": {
                                       "line": 22,
                                       "column": 24,
-                                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                                      "program": "assignNullableToNonNullableTypeAlias.ats"
                                     }
                                   }
                                 },
@@ -537,12 +537,12 @@
                                   "start": {
                                     "line": 22,
                                     "column": 23,
-                                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                                    "program": "assignNullableToNonNullableTypeAlias.ats"
                                   },
                                   "end": {
                                     "line": 22,
                                     "column": 24,
-                                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                                    "program": "assignNullableToNonNullableTypeAlias.ats"
                                   }
                                 }
                               },
@@ -550,12 +550,12 @@
                                 "start": {
                                   "line": 22,
                                   "column": 23,
-                                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                                  "program": "assignNullableToNonNullableTypeAlias.ats"
                                 },
                                 "end": {
                                   "line": 22,
                                   "column": 24,
-                                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                                  "program": "assignNullableToNonNullableTypeAlias.ats"
                                 }
                               }
                             },
@@ -564,12 +564,12 @@
                               "start": {
                                 "line": 22,
                                 "column": 19,
-                                "program": "assignNullableToNonNullableTypeAlias.ets"
+                                "program": "assignNullableToNonNullableTypeAlias.ats"
                               },
                               "end": {
                                 "line": 22,
                                 "column": 27,
-                                "program": "assignNullableToNonNullableTypeAlias.ets"
+                                "program": "assignNullableToNonNullableTypeAlias.ats"
                               }
                             }
                           },
@@ -577,12 +577,12 @@
                             "start": {
                               "line": 22,
                               "column": 9,
-                              "program": "assignNullableToNonNullableTypeAlias.ets"
+                              "program": "assignNullableToNonNullableTypeAlias.ats"
                             },
                             "end": {
                               "line": 22,
                               "column": 27,
-                              "program": "assignNullableToNonNullableTypeAlias.ets"
+                              "program": "assignNullableToNonNullableTypeAlias.ats"
                             }
                           }
                         }
@@ -592,12 +592,12 @@
                         "start": {
                           "line": 22,
                           "column": 5,
-                          "program": "assignNullableToNonNullableTypeAlias.ets"
+                          "program": "assignNullableToNonNullableTypeAlias.ats"
                         },
                         "end": {
                           "line": 22,
                           "column": 27,
-                          "program": "assignNullableToNonNullableTypeAlias.ets"
+                          "program": "assignNullableToNonNullableTypeAlias.ats"
                         }
                       }
                     },
@@ -613,12 +613,12 @@
                             "start": {
                               "line": 24,
                               "column": 5,
-                              "program": "assignNullableToNonNullableTypeAlias.ets"
+                              "program": "assignNullableToNonNullableTypeAlias.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 6,
-                              "program": "assignNullableToNonNullableTypeAlias.ets"
+                              "program": "assignNullableToNonNullableTypeAlias.ats"
                             }
                           }
                         },
@@ -629,12 +629,12 @@
                             "start": {
                               "line": 24,
                               "column": 9,
-                              "program": "assignNullableToNonNullableTypeAlias.ets"
+                              "program": "assignNullableToNonNullableTypeAlias.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 11,
-                              "program": "assignNullableToNonNullableTypeAlias.ets"
+                              "program": "assignNullableToNonNullableTypeAlias.ats"
                             }
                           }
                         },
@@ -642,12 +642,12 @@
                           "start": {
                             "line": 24,
                             "column": 5,
-                            "program": "assignNullableToNonNullableTypeAlias.ets"
+                            "program": "assignNullableToNonNullableTypeAlias.ats"
                           },
                           "end": {
                             "line": 24,
                             "column": 11,
-                            "program": "assignNullableToNonNullableTypeAlias.ets"
+                            "program": "assignNullableToNonNullableTypeAlias.ats"
                           }
                         }
                       },
@@ -655,12 +655,12 @@
                         "start": {
                           "line": 24,
                           "column": 5,
-                          "program": "assignNullableToNonNullableTypeAlias.ets"
+                          "program": "assignNullableToNonNullableTypeAlias.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 12,
-                          "program": "assignNullableToNonNullableTypeAlias.ets"
+                          "program": "assignNullableToNonNullableTypeAlias.ats"
                         }
                       }
                     }
@@ -669,12 +669,12 @@
                     "start": {
                       "line": 20,
                       "column": 23,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 2,
-                      "program": "assignNullableToNonNullableTypeAlias.ets"
+                      "program": "assignNullableToNonNullableTypeAlias.ats"
                     }
                   }
                 },
@@ -682,12 +682,12 @@
                   "start": {
                     "line": 20,
                     "column": 10,
-                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                    "program": "assignNullableToNonNullableTypeAlias.ats"
                   },
                   "end": {
                     "line": 25,
                     "column": 2,
-                    "program": "assignNullableToNonNullableTypeAlias.ets"
+                    "program": "assignNullableToNonNullableTypeAlias.ats"
                   }
                 }
               },
@@ -695,12 +695,12 @@
                 "start": {
                   "line": 20,
                   "column": 10,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 },
                 "end": {
                   "line": 25,
                   "column": 2,
-                  "program": "assignNullableToNonNullableTypeAlias.ets"
+                  "program": "assignNullableToNonNullableTypeAlias.ats"
                 }
               }
             },
@@ -709,12 +709,12 @@
               "start": {
                 "line": 20,
                 "column": 1,
-                "program": "assignNullableToNonNullableTypeAlias.ets"
+                "program": "assignNullableToNonNullableTypeAlias.ats"
               },
               "end": {
                 "line": 25,
                 "column": 2,
-                "program": "assignNullableToNonNullableTypeAlias.ets"
+                "program": "assignNullableToNonNullableTypeAlias.ats"
               }
             }
           }
@@ -723,12 +723,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "assignNullableToNonNullableTypeAlias.ets"
+            "program": "assignNullableToNonNullableTypeAlias.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "assignNullableToNonNullableTypeAlias.ets"
+            "program": "assignNullableToNonNullableTypeAlias.ats"
           }
         }
       },
@@ -736,12 +736,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "assignNullableToNonNullableTypeAlias.ets"
+          "program": "assignNullableToNonNullableTypeAlias.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "assignNullableToNonNullableTypeAlias.ets"
+          "program": "assignNullableToNonNullableTypeAlias.ats"
         }
       }
     }
@@ -750,12 +750,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "assignNullableToNonNullableTypeAlias.ets"
+      "program": "assignNullableToNonNullableTypeAlias.ats"
     },
     "end": {
       "line": 26,
       "column": 1,
-      "program": "assignNullableToNonNullableTypeAlias.ets"
+      "program": "assignNullableToNonNullableTypeAlias.ats"
     }
   }
 }

@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "access_modifier_3.ets"
+              "program": "access_modifier_3.ats"
             },
             "end": {
               "line": 16,
               "column": 8,
-              "program": "access_modifier_3.ets"
+              "program": "access_modifier_3.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 19,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 20,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 }
               }
             },
@@ -53,12 +53,12 @@
                 "start": {
                   "line": 17,
                   "column": 22,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 25,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 }
               }
             },
@@ -67,12 +67,12 @@
               "start": {
                 "line": 17,
                 "column": 19,
-                "program": "access_modifier_3.ets"
+                "program": "access_modifier_3.ats"
               },
               "end": {
                 "line": 17,
                 "column": 25,
-                "program": "access_modifier_3.ets"
+                "program": "access_modifier_3.ats"
               }
             }
           },
@@ -85,12 +85,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 }
               }
             },
@@ -109,12 +109,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "access_modifier_3.ets"
+                      "program": "access_modifier_3.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "access_modifier_3.ets"
+                      "program": "access_modifier_3.ats"
                     }
                   }
                 },
@@ -129,12 +129,12 @@
                     "start": {
                       "line": 16,
                       "column": 10,
-                      "program": "access_modifier_3.ets"
+                      "program": "access_modifier_3.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 10,
-                      "program": "access_modifier_3.ets"
+                      "program": "access_modifier_3.ats"
                     }
                   }
                 },
@@ -142,12 +142,12 @@
                   "start": {
                     "line": 16,
                     "column": 10,
-                    "program": "access_modifier_3.ets"
+                    "program": "access_modifier_3.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 10,
-                    "program": "access_modifier_3.ets"
+                    "program": "access_modifier_3.ats"
                   }
                 }
               },
@@ -155,12 +155,12 @@
                 "start": {
                   "line": 16,
                   "column": 10,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 10,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 }
               }
             },
@@ -183,12 +183,12 @@
           "start": {
             "line": 16,
             "column": 9,
-            "program": "access_modifier_3.ets"
+            "program": "access_modifier_3.ats"
           },
           "end": {
             "line": 18,
             "column": 2,
-            "program": "access_modifier_3.ets"
+            "program": "access_modifier_3.ats"
           }
         }
       },
@@ -196,12 +196,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "access_modifier_3.ets"
+          "program": "access_modifier_3.ats"
         },
         "end": {
           "line": 18,
           "column": 2,
-          "program": "access_modifier_3.ets"
+          "program": "access_modifier_3.ats"
         }
       }
     },
@@ -215,12 +215,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "access_modifier_3.ets"
+              "program": "access_modifier_3.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "access_modifier_3.ets"
+              "program": "access_modifier_3.ats"
             }
           }
         },
@@ -281,12 +281,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "access_modifier_3.ets"
+                      "program": "access_modifier_3.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "access_modifier_3.ets"
+                      "program": "access_modifier_3.ats"
                     }
                   }
                 },
@@ -294,12 +294,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "access_modifier_3.ets"
+                    "program": "access_modifier_3.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "access_modifier_3.ets"
+                    "program": "access_modifier_3.ats"
                   }
                 }
               },
@@ -307,12 +307,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "access_modifier_3.ets"
+                  "program": "access_modifier_3.ats"
                 }
               }
             },
@@ -321,12 +321,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "access_modifier_3.ets"
+                "program": "access_modifier_3.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "access_modifier_3.ets"
+                "program": "access_modifier_3.ats"
               }
             }
           }
@@ -335,12 +335,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "access_modifier_3.ets"
+            "program": "access_modifier_3.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "access_modifier_3.ets"
+            "program": "access_modifier_3.ats"
           }
         }
       },
@@ -348,12 +348,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "access_modifier_3.ets"
+          "program": "access_modifier_3.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "access_modifier_3.ets"
+          "program": "access_modifier_3.ats"
         }
       }
     }
@@ -362,12 +362,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "access_modifier_3.ets"
+      "program": "access_modifier_3.ats"
     },
     "end": {
       "line": 19,
       "column": 1,
-      "program": "access_modifier_3.ets"
+      "program": "access_modifier_3.ats"
     }
   }
 }

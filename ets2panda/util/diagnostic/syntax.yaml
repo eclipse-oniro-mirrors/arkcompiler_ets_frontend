@@ -102,6 +102,10 @@ syntax:
   id: 311
   message: "'as const' assertion is not supported."
 
+- name: ATS_USE_STATIC_PROHIBITED
+  id: 152288
+  message: "'use static' is not allowed in a '.ats' file: the file extension already denotes a static program."
+
 - name: AWAIT_IN_ARROW_FUN_PARAM
   id: 46
   message: "await is not allowed in arrow function parameters."

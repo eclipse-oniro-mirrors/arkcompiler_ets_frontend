@@ -10,12 +10,12 @@
           "start": {
             "line": 16,
             "column": 22,
-            "program": "from-soft-keyword-1.ets"
+            "program": "from-soft-keyword-1.ats"
           },
           "end": {
             "line": 16,
             "column": 32,
-            "program": "from-soft-keyword-1.ets"
+            "program": "from-soft-keyword-1.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 16,
                 "column": 13,
-                "program": "from-soft-keyword-1.ets"
+                "program": "from-soft-keyword-1.ats"
               },
               "end": {
                 "line": 16,
                 "column": 16,
-                "program": "from-soft-keyword-1.ets"
+                "program": "from-soft-keyword-1.ats"
               }
             }
           },
@@ -42,12 +42,12 @@
             "start": {
               "line": 16,
               "column": 8,
-              "program": "from-soft-keyword-1.ets"
+              "program": "from-soft-keyword-1.ats"
             },
             "end": {
               "line": 16,
               "column": 16,
-              "program": "from-soft-keyword-1.ets"
+              "program": "from-soft-keyword-1.ats"
             }
           }
         }
@@ -56,12 +56,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "from-soft-keyword-1.ets"
+          "program": "from-soft-keyword-1.ats"
         },
         "end": {
           "line": 16,
           "column": 33,
-          "program": "from-soft-keyword-1.ets"
+          "program": "from-soft-keyword-1.ats"
         }
       }
     },
@@ -75,12 +75,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "from-soft-keyword-1.ets"
+              "program": "from-soft-keyword-1.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "from-soft-keyword-1.ets"
+              "program": "from-soft-keyword-1.ats"
             }
           }
         },
@@ -96,12 +96,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "from-soft-keyword-1.ets"
+                  "program": "from-soft-keyword-1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 14,
-                  "program": "from-soft-keyword-1.ets"
+                  "program": "from-soft-keyword-1.ats"
                 }
               }
             },
@@ -121,12 +121,12 @@
                     "start": {
                       "line": 18,
                       "column": 10,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 14,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     }
                   }
                 },
@@ -145,12 +145,12 @@
                           "start": {
                             "line": 18,
                             "column": 21,
-                            "program": "from-soft-keyword-1.ets"
+                            "program": "from-soft-keyword-1.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 24,
-                            "program": "from-soft-keyword-1.ets"
+                            "program": "from-soft-keyword-1.ats"
                           }
                         }
                       },
@@ -158,12 +158,12 @@
                         "start": {
                           "line": 18,
                           "column": 15,
-                          "program": "from-soft-keyword-1.ets"
+                          "program": "from-soft-keyword-1.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 24,
-                          "program": "from-soft-keyword-1.ets"
+                          "program": "from-soft-keyword-1.ats"
                         }
                       }
                     },
@@ -171,12 +171,12 @@
                       "start": {
                         "line": 18,
                         "column": 15,
-                        "program": "from-soft-keyword-1.ets"
+                        "program": "from-soft-keyword-1.ats"
                       },
                       "end": {
                         "line": 18,
                         "column": 24,
-                        "program": "from-soft-keyword-1.ets"
+                        "program": "from-soft-keyword-1.ats"
                       }
                     }
                   }
@@ -187,12 +187,12 @@
                     "start": {
                       "line": 18,
                       "column": 27,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 31,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     }
                   }
                 },
@@ -203,12 +203,12 @@
                     "start": {
                       "line": 18,
                       "column": 32,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 34,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     }
                   }
                 },
@@ -216,12 +216,12 @@
                   "start": {
                     "line": 18,
                     "column": 10,
-                    "program": "from-soft-keyword-1.ets"
+                    "program": "from-soft-keyword-1.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 34,
-                    "program": "from-soft-keyword-1.ets"
+                    "program": "from-soft-keyword-1.ats"
                   }
                 }
               },
@@ -229,12 +229,12 @@
                 "start": {
                   "line": 18,
                   "column": 10,
-                  "program": "from-soft-keyword-1.ets"
+                  "program": "from-soft-keyword-1.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 34,
-                  "program": "from-soft-keyword-1.ets"
+                  "program": "from-soft-keyword-1.ats"
                 }
               }
             },
@@ -243,12 +243,12 @@
               "start": {
                 "line": 18,
                 "column": 1,
-                "program": "from-soft-keyword-1.ets"
+                "program": "from-soft-keyword-1.ats"
               },
               "end": {
                 "line": 18,
                 "column": 34,
-                "program": "from-soft-keyword-1.ets"
+                "program": "from-soft-keyword-1.ats"
               }
             }
           },
@@ -261,12 +261,12 @@
                 "start": {
                   "line": 20,
                   "column": 10,
-                  "program": "from-soft-keyword-1.ets"
+                  "program": "from-soft-keyword-1.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 14,
-                  "program": "from-soft-keyword-1.ets"
+                  "program": "from-soft-keyword-1.ats"
                 }
               }
             },
@@ -286,12 +286,12 @@
                     "start": {
                       "line": 20,
                       "column": 10,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 14,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     }
                   }
                 },
@@ -305,12 +305,12 @@
                     "start": {
                       "line": 20,
                       "column": 18,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 22,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     }
                   }
                 },
@@ -339,12 +339,12 @@
                                         "start": {
                                           "line": 21,
                                           "column": 22,
-                                          "program": "from-soft-keyword-1.ets"
+                                          "program": "from-soft-keyword-1.ats"
                                         },
                                         "end": {
                                           "line": 21,
                                           "column": 26,
-                                          "program": "from-soft-keyword-1.ets"
+                                          "program": "from-soft-keyword-1.ats"
                                         }
                                       }
                                     },
@@ -352,12 +352,12 @@
                                       "start": {
                                         "line": 21,
                                         "column": 16,
-                                        "program": "from-soft-keyword-1.ets"
+                                        "program": "from-soft-keyword-1.ats"
                                       },
                                       "end": {
                                         "line": 21,
                                         "column": 26,
-                                        "program": "from-soft-keyword-1.ets"
+                                        "program": "from-soft-keyword-1.ats"
                                       }
                                     }
                                   },
@@ -365,12 +365,12 @@
                                     "start": {
                                       "line": 21,
                                       "column": 16,
-                                      "program": "from-soft-keyword-1.ets"
+                                      "program": "from-soft-keyword-1.ats"
                                     },
                                     "end": {
                                       "line": 21,
                                       "column": 26,
-                                      "program": "from-soft-keyword-1.ets"
+                                      "program": "from-soft-keyword-1.ats"
                                     }
                                   }
                                 }
@@ -381,12 +381,12 @@
                                   "start": {
                                     "line": 21,
                                     "column": 31,
-                                    "program": "from-soft-keyword-1.ets"
+                                    "program": "from-soft-keyword-1.ats"
                                   },
                                   "end": {
                                     "line": 21,
                                     "column": 35,
-                                    "program": "from-soft-keyword-1.ets"
+                                    "program": "from-soft-keyword-1.ats"
                                   }
                                 }
                               },
@@ -394,12 +394,12 @@
                                 "start": {
                                   "line": 21,
                                   "column": 15,
-                                  "program": "from-soft-keyword-1.ets"
+                                  "program": "from-soft-keyword-1.ats"
                                 },
                                 "end": {
                                   "line": 21,
                                   "column": 35,
-                                  "program": "from-soft-keyword-1.ets"
+                                  "program": "from-soft-keyword-1.ats"
                                 }
                               }
                             },
@@ -407,12 +407,12 @@
                               "start": {
                                 "line": 21,
                                 "column": 9,
-                                "program": "from-soft-keyword-1.ets"
+                                "program": "from-soft-keyword-1.ats"
                               },
                               "end": {
                                 "line": 21,
                                 "column": 13,
-                                "program": "from-soft-keyword-1.ets"
+                                "program": "from-soft-keyword-1.ats"
                               }
                             }
                           },
@@ -436,12 +436,12 @@
                                         "start": {
                                           "line": 21,
                                           "column": 45,
-                                          "program": "from-soft-keyword-1.ets"
+                                          "program": "from-soft-keyword-1.ats"
                                         },
                                         "end": {
                                           "line": 21,
                                           "column": 49,
-                                          "program": "from-soft-keyword-1.ets"
+                                          "program": "from-soft-keyword-1.ats"
                                         }
                                       }
                                     },
@@ -449,12 +449,12 @@
                                       "start": {
                                         "line": 21,
                                         "column": 39,
-                                        "program": "from-soft-keyword-1.ets"
+                                        "program": "from-soft-keyword-1.ats"
                                       },
                                       "end": {
                                         "line": 21,
                                         "column": 49,
-                                        "program": "from-soft-keyword-1.ets"
+                                        "program": "from-soft-keyword-1.ats"
                                       }
                                     }
                                   },
@@ -462,12 +462,12 @@
                                     "start": {
                                       "line": 21,
                                       "column": 39,
-                                      "program": "from-soft-keyword-1.ets"
+                                      "program": "from-soft-keyword-1.ats"
                                     },
                                     "end": {
                                       "line": 21,
                                       "column": 49,
-                                      "program": "from-soft-keyword-1.ets"
+                                      "program": "from-soft-keyword-1.ats"
                                     }
                                   }
                                 }
@@ -479,12 +479,12 @@
                                   "start": {
                                     "line": 21,
                                     "column": 54,
-                                    "program": "from-soft-keyword-1.ets"
+                                    "program": "from-soft-keyword-1.ats"
                                   },
                                   "end": {
                                     "line": 21,
                                     "column": 56,
-                                    "program": "from-soft-keyword-1.ets"
+                                    "program": "from-soft-keyword-1.ats"
                                   }
                                 }
                               },
@@ -492,12 +492,12 @@
                                 "start": {
                                   "line": 21,
                                   "column": 38,
-                                  "program": "from-soft-keyword-1.ets"
+                                  "program": "from-soft-keyword-1.ats"
                                 },
                                 "end": {
                                   "line": 21,
                                   "column": 56,
-                                  "program": "from-soft-keyword-1.ets"
+                                  "program": "from-soft-keyword-1.ats"
                                 }
                               }
                             },
@@ -505,12 +505,12 @@
                               "start": {
                                 "line": 21,
                                 "column": 38,
-                                "program": "from-soft-keyword-1.ets"
+                                "program": "from-soft-keyword-1.ats"
                               },
                               "end": {
                                 "line": 21,
                                 "column": 56,
-                                "program": "from-soft-keyword-1.ets"
+                                "program": "from-soft-keyword-1.ats"
                               }
                             }
                           },
@@ -518,12 +518,12 @@
                             "start": {
                               "line": 21,
                               "column": 9,
-                              "program": "from-soft-keyword-1.ets"
+                              "program": "from-soft-keyword-1.ats"
                             },
                             "end": {
                               "line": 21,
                               "column": 56,
-                              "program": "from-soft-keyword-1.ets"
+                              "program": "from-soft-keyword-1.ats"
                             }
                           }
                         }
@@ -533,12 +533,12 @@
                         "start": {
                           "line": 21,
                           "column": 5,
-                          "program": "from-soft-keyword-1.ets"
+                          "program": "from-soft-keyword-1.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 57,
-                          "program": "from-soft-keyword-1.ets"
+                          "program": "from-soft-keyword-1.ats"
                         }
                       }
                     }
@@ -547,12 +547,12 @@
                     "start": {
                       "line": 20,
                       "column": 23,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 2,
-                      "program": "from-soft-keyword-1.ets"
+                      "program": "from-soft-keyword-1.ats"
                     }
                   }
                 },
@@ -560,12 +560,12 @@
                   "start": {
                     "line": 20,
                     "column": 10,
-                    "program": "from-soft-keyword-1.ets"
+                    "program": "from-soft-keyword-1.ats"
                   },
                   "end": {
                     "line": 22,
                     "column": 2,
-                    "program": "from-soft-keyword-1.ets"
+                    "program": "from-soft-keyword-1.ats"
                   }
                 }
               },
@@ -573,12 +573,12 @@
                 "start": {
                   "line": 20,
                   "column": 10,
-                  "program": "from-soft-keyword-1.ets"
+                  "program": "from-soft-keyword-1.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 2,
-                  "program": "from-soft-keyword-1.ets"
+                  "program": "from-soft-keyword-1.ats"
                 }
               }
             },
@@ -587,12 +587,12 @@
               "start": {
                 "line": 20,
                 "column": 1,
-                "program": "from-soft-keyword-1.ets"
+                "program": "from-soft-keyword-1.ats"
               },
               "end": {
                 "line": 22,
                 "column": 2,
-                "program": "from-soft-keyword-1.ets"
+                "program": "from-soft-keyword-1.ats"
               }
             }
           }
@@ -601,12 +601,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "from-soft-keyword-1.ets"
+            "program": "from-soft-keyword-1.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "from-soft-keyword-1.ets"
+            "program": "from-soft-keyword-1.ats"
           }
         }
       },
@@ -614,12 +614,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "from-soft-keyword-1.ets"
+          "program": "from-soft-keyword-1.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "from-soft-keyword-1.ets"
+          "program": "from-soft-keyword-1.ats"
         }
       }
     }
@@ -628,12 +628,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "from-soft-keyword-1.ets"
+      "program": "from-soft-keyword-1.ats"
     },
     "end": {
       "line": 23,
       "column": 1,
-      "program": "from-soft-keyword-1.ets"
+      "program": "from-soft-keyword-1.ats"
     }
   }
 }

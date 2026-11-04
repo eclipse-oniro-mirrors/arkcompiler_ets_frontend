@@ -11,12 +11,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "native_toplevel.ets"
+              "program": "native_toplevel.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "native_toplevel.ets"
+              "program": "native_toplevel.ats"
             }
           }
         },
@@ -77,12 +77,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "native_toplevel.ets"
+                      "program": "native_toplevel.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "native_toplevel.ets"
+                      "program": "native_toplevel.ats"
                     }
                   }
                 },
@@ -90,12 +90,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "native_toplevel.ets"
+                    "program": "native_toplevel.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "native_toplevel.ets"
+                    "program": "native_toplevel.ats"
                   }
                 }
               },
@@ -103,12 +103,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "native_toplevel.ets"
+                  "program": "native_toplevel.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "native_toplevel.ets"
+                  "program": "native_toplevel.ats"
                 }
               }
             },
@@ -117,12 +117,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "native_toplevel.ets"
+                "program": "native_toplevel.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "native_toplevel.ets"
+                "program": "native_toplevel.ats"
               }
             }
           },
@@ -135,12 +135,12 @@
                 "start": {
                   "line": 16,
                   "column": 17,
-                  "program": "native_toplevel.ets"
+                  "program": "native_toplevel.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 21,
-                  "program": "native_toplevel.ets"
+                  "program": "native_toplevel.ats"
                 }
               }
             },
@@ -160,12 +160,12 @@
                     "start": {
                       "line": 16,
                       "column": 17,
-                      "program": "native_toplevel.ets"
+                      "program": "native_toplevel.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 21,
-                      "program": "native_toplevel.ets"
+                      "program": "native_toplevel.ats"
                     }
                   }
                 },
@@ -189,12 +189,12 @@
                               "start": {
                                 "line": 16,
                                 "column": 28,
-                                "program": "native_toplevel.ets"
+                                "program": "native_toplevel.ats"
                               },
                               "end": {
                                 "line": 16,
                                 "column": 34,
-                                "program": "native_toplevel.ets"
+                                "program": "native_toplevel.ats"
                               }
                             }
                           },
@@ -202,12 +202,12 @@
                             "start": {
                               "line": 16,
                               "column": 28,
-                              "program": "native_toplevel.ets"
+                              "program": "native_toplevel.ats"
                             },
                             "end": {
                               "line": 16,
                               "column": 34,
-                              "program": "native_toplevel.ets"
+                              "program": "native_toplevel.ats"
                             }
                           }
                         },
@@ -215,12 +215,12 @@
                           "start": {
                             "line": 16,
                             "column": 28,
-                            "program": "native_toplevel.ets"
+                            "program": "native_toplevel.ats"
                           },
                           "end": {
                             "line": 16,
                             "column": 34,
-                            "program": "native_toplevel.ets"
+                            "program": "native_toplevel.ats"
                           }
                         }
                       },
@@ -228,12 +228,12 @@
                         "start": {
                           "line": 16,
                           "column": 22,
-                          "program": "native_toplevel.ets"
+                          "program": "native_toplevel.ats"
                         },
                         "end": {
                           "line": 16,
                           "column": 34,
-                          "program": "native_toplevel.ets"
+                          "program": "native_toplevel.ats"
                         }
                       }
                     },
@@ -241,12 +241,12 @@
                       "start": {
                         "line": 16,
                         "column": 22,
-                        "program": "native_toplevel.ets"
+                        "program": "native_toplevel.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 34,
-                        "program": "native_toplevel.ets"
+                        "program": "native_toplevel.ats"
                       }
                     }
                   }
@@ -262,12 +262,12 @@
                         "start": {
                           "line": 16,
                           "column": 37,
-                          "program": "native_toplevel.ets"
+                          "program": "native_toplevel.ats"
                         },
                         "end": {
                           "line": 16,
                           "column": 43,
-                          "program": "native_toplevel.ets"
+                          "program": "native_toplevel.ats"
                         }
                       }
                     },
@@ -275,12 +275,12 @@
                       "start": {
                         "line": 16,
                         "column": 37,
-                        "program": "native_toplevel.ets"
+                        "program": "native_toplevel.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 43,
-                        "program": "native_toplevel.ets"
+                        "program": "native_toplevel.ats"
                       }
                     }
                   },
@@ -288,12 +288,12 @@
                     "start": {
                       "line": 16,
                       "column": 37,
-                      "program": "native_toplevel.ets"
+                      "program": "native_toplevel.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 43,
-                      "program": "native_toplevel.ets"
+                      "program": "native_toplevel.ats"
                     }
                   }
                 },
@@ -301,12 +301,12 @@
                   "start": {
                     "line": 16,
                     "column": 17,
-                    "program": "native_toplevel.ets"
+                    "program": "native_toplevel.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 43,
-                    "program": "native_toplevel.ets"
+                    "program": "native_toplevel.ats"
                   }
                 }
               },
@@ -314,12 +314,12 @@
                 "start": {
                   "line": 16,
                   "column": 17,
-                  "program": "native_toplevel.ets"
+                  "program": "native_toplevel.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 43,
-                  "program": "native_toplevel.ets"
+                  "program": "native_toplevel.ats"
                 }
               }
             },
@@ -328,12 +328,12 @@
               "start": {
                 "line": 16,
                 "column": 1,
-                "program": "native_toplevel.ets"
+                "program": "native_toplevel.ats"
               },
               "end": {
                 "line": 16,
                 "column": 43,
-                "program": "native_toplevel.ets"
+                "program": "native_toplevel.ats"
               }
             }
           }
@@ -342,12 +342,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "native_toplevel.ets"
+            "program": "native_toplevel.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "native_toplevel.ets"
+            "program": "native_toplevel.ats"
           }
         }
       },
@@ -355,12 +355,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "native_toplevel.ets"
+          "program": "native_toplevel.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "native_toplevel.ets"
+          "program": "native_toplevel.ats"
         }
       }
     }
@@ -369,12 +369,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "native_toplevel.ets"
+      "program": "native_toplevel.ats"
     },
     "end": {
       "line": 17,
       "column": 1,
-      "program": "native_toplevel.ets"
+      "program": "native_toplevel.ats"
     }
   }
 }

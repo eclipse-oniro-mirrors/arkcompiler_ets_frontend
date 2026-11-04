@@ -1,5 +1,5 @@
 {
     "returncode": 1,
-    "stdout": "TypeError: Class D shouldn't extend dynamic class. [main.ets:18:19]\n",
+    "stdout": "TypeError: Class D shouldn't extend dynamic class. [main.ats:18:19]\n",
     "stderr": ""
 }

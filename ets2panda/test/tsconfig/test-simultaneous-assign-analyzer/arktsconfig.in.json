@@ -5,7 +5,7 @@
     "cacheDir": "@CMAKE_CURRENT_BINARY_DIR@/decls"
   },
   "files": [
-    "@CMAKE_CURRENT_SOURCE_DIR@/main.ets",
-    "@CMAKE_CURRENT_SOURCE_DIR@/dep.ets"
+    "@CMAKE_CURRENT_SOURCE_DIR@/main.ats",
+    "@CMAKE_CURRENT_SOURCE_DIR@/dep.ats"
   ]
 }

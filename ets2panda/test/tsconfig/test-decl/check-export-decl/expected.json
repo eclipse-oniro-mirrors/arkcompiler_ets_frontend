@@ -1,5 +1,5 @@
 {
     "returncode": 1,
-    "stdout": "SyntaxError: Export keyword without declare shouldn't be used in declaration module. [index.ets:16:8]\n",
+    "stdout": "SyntaxError: Export keyword without declare shouldn't be used in declaration module. [index.ats:16:8]\n",
     "stderr": ""
 }

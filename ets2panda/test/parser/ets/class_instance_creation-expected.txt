@@ -11,12 +11,12 @@
             "start": {
               "line": 16,
               "column": 7,
-              "program": "class_instance_creation.ets"
+              "program": "class_instance_creation.ats"
             },
             "end": {
               "line": 16,
               "column": 30,
-              "program": "class_instance_creation.ets"
+              "program": "class_instance_creation.ats"
             }
           }
         },
@@ -32,12 +32,12 @@
                 "start": {
                   "line": 17,
                   "column": 5,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 17,
                   "column": 16,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -57,12 +57,12 @@
                     "start": {
                       "line": 17,
                       "column": 5,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 17,
                       "column": 16,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -81,12 +81,12 @@
                           "start": {
                             "line": 17,
                             "column": 21,
-                            "program": "class_instance_creation.ets"
+                            "program": "class_instance_creation.ats"
                           },
                           "end": {
                             "line": 17,
                             "column": 24,
-                            "program": "class_instance_creation.ets"
+                            "program": "class_instance_creation.ats"
                           }
                         }
                       },
@@ -94,12 +94,12 @@
                         "start": {
                           "line": 17,
                           "column": 17,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         },
                         "end": {
                           "line": 17,
                           "column": 24,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         }
                       }
                     },
@@ -107,12 +107,12 @@
                       "start": {
                         "line": 17,
                         "column": 17,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       },
                       "end": {
                         "line": 17,
                         "column": 24,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       }
                     }
                   }
@@ -124,12 +124,12 @@
                     "start": {
                       "line": 17,
                       "column": 26,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 6,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -137,12 +137,12 @@
                   "start": {
                     "line": 17,
                     "column": 16,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 18,
                     "column": 6,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -150,12 +150,12 @@
                 "start": {
                   "line": 17,
                   "column": 16,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 6,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -169,12 +169,12 @@
                     "start": {
                       "line": 20,
                       "column": 5,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 16,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -194,12 +194,12 @@
                         "start": {
                           "line": 20,
                           "column": 5,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         },
                         "end": {
                           "line": 20,
                           "column": 16,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         }
                       }
                     },
@@ -214,12 +214,12 @@
                         "start": {
                           "line": 20,
                           "column": 19,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         },
                         "end": {
                           "line": 21,
                           "column": 6,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         }
                       }
                     },
@@ -227,12 +227,12 @@
                       "start": {
                         "line": 20,
                         "column": 16,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       },
                       "end": {
                         "line": 21,
                         "column": 6,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       }
                     }
                   },
@@ -240,12 +240,12 @@
                     "start": {
                       "line": 20,
                       "column": 16,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 21,
                       "column": 6,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -254,12 +254,12 @@
                   "start": {
                     "line": 20,
                     "column": 5,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 21,
                     "column": 6,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -272,12 +272,12 @@
                     "start": {
                       "line": 23,
                       "column": 5,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 23,
                       "column": 16,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -297,12 +297,12 @@
                         "start": {
                           "line": 23,
                           "column": 5,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 16,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         }
                       }
                     },
@@ -326,12 +326,12 @@
                                   "start": {
                                     "line": 23,
                                     "column": 21,
-                                    "program": "class_instance_creation.ets"
+                                    "program": "class_instance_creation.ats"
                                   },
                                   "end": {
                                     "line": 23,
                                     "column": 27,
-                                    "program": "class_instance_creation.ets"
+                                    "program": "class_instance_creation.ats"
                                   }
                                 }
                               },
@@ -339,12 +339,12 @@
                                 "start": {
                                   "line": 23,
                                   "column": 21,
-                                  "program": "class_instance_creation.ets"
+                                  "program": "class_instance_creation.ats"
                                 },
                                 "end": {
                                   "line": 23,
                                   "column": 27,
-                                  "program": "class_instance_creation.ets"
+                                  "program": "class_instance_creation.ats"
                                 }
                               }
                             },
@@ -352,12 +352,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 21,
-                                "program": "class_instance_creation.ets"
+                                "program": "class_instance_creation.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 27,
-                                "program": "class_instance_creation.ets"
+                                "program": "class_instance_creation.ats"
                               }
                             }
                           },
@@ -365,12 +365,12 @@
                             "start": {
                               "line": 23,
                               "column": 17,
-                              "program": "class_instance_creation.ets"
+                              "program": "class_instance_creation.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 27,
-                              "program": "class_instance_creation.ets"
+                              "program": "class_instance_creation.ats"
                             }
                           }
                         },
@@ -378,12 +378,12 @@
                           "start": {
                             "line": 23,
                             "column": 17,
-                            "program": "class_instance_creation.ets"
+                            "program": "class_instance_creation.ats"
                           },
                           "end": {
                             "line": 23,
                             "column": 27,
-                            "program": "class_instance_creation.ets"
+                            "program": "class_instance_creation.ats"
                           }
                         }
                       },
@@ -398,12 +398,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 33,
-                                "program": "class_instance_creation.ets"
+                                "program": "class_instance_creation.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 39,
-                                "program": "class_instance_creation.ets"
+                                "program": "class_instance_creation.ats"
                               }
                             }
                           },
@@ -411,12 +411,12 @@
                             "start": {
                               "line": 23,
                               "column": 29,
-                              "program": "class_instance_creation.ets"
+                              "program": "class_instance_creation.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 39,
-                              "program": "class_instance_creation.ets"
+                              "program": "class_instance_creation.ats"
                             }
                           }
                         },
@@ -424,12 +424,12 @@
                           "start": {
                             "line": 23,
                             "column": 29,
-                            "program": "class_instance_creation.ets"
+                            "program": "class_instance_creation.ats"
                           },
                           "end": {
                             "line": 23,
                             "column": 39,
-                            "program": "class_instance_creation.ets"
+                            "program": "class_instance_creation.ats"
                           }
                         }
                       }
@@ -441,12 +441,12 @@
                         "start": {
                           "line": 23,
                           "column": 41,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 6,
-                          "program": "class_instance_creation.ets"
+                          "program": "class_instance_creation.ats"
                         }
                       }
                     },
@@ -454,12 +454,12 @@
                       "start": {
                         "line": 23,
                         "column": 16,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       },
                       "end": {
                         "line": 24,
                         "column": 6,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       }
                     }
                   },
@@ -467,12 +467,12 @@
                     "start": {
                       "line": 23,
                       "column": 16,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 24,
                       "column": 6,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -481,12 +481,12 @@
                   "start": {
                     "line": 23,
                     "column": 5,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 24,
                     "column": 6,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               }
@@ -495,12 +495,12 @@
               "start": {
                 "line": 17,
                 "column": 5,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               },
               "end": {
                 "line": 18,
                 "column": 6,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               }
             }
           },
@@ -513,12 +513,12 @@
                 "start": {
                   "line": 26,
                   "column": 12,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 17,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -535,12 +535,12 @@
                       "start": {
                         "line": 26,
                         "column": 50,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       },
                       "end": {
                         "line": 26,
                         "column": 73,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       }
                     }
                   },
@@ -548,12 +548,12 @@
                     "start": {
                       "line": 26,
                       "column": 50,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 73,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -561,12 +561,12 @@
                   "start": {
                     "line": 26,
                     "column": 50,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 26,
                     "column": 73,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -575,12 +575,12 @@
                 "start": {
                   "line": 26,
                   "column": 46,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 76,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -601,12 +601,12 @@
                     "start": {
                       "line": 26,
                       "column": 20,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 26,
                       "column": 43,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -614,12 +614,12 @@
                   "start": {
                     "line": 26,
                     "column": 20,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 26,
                     "column": 43,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -627,12 +627,12 @@
                 "start": {
                   "line": 26,
                   "column": 20,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 26,
                   "column": 43,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -641,12 +641,12 @@
               "start": {
                 "line": 26,
                 "column": 12,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               },
               "end": {
                 "line": 26,
                 "column": 76,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               }
             }
           },
@@ -659,12 +659,12 @@
                 "start": {
                   "line": 27,
                   "column": 12,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 17,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -681,12 +681,12 @@
                       "start": {
                         "line": 27,
                         "column": 50,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       },
                       "end": {
                         "line": 27,
                         "column": 73,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       }
                     }
                   },
@@ -694,12 +694,12 @@
                     "start": {
                       "line": 27,
                       "column": 50,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 73,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -707,12 +707,12 @@
                   "start": {
                     "line": 27,
                     "column": 50,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 73,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -724,12 +724,12 @@
                     "start": {
                       "line": 27,
                       "column": 74,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 75,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 }
@@ -738,12 +738,12 @@
                 "start": {
                   "line": 27,
                   "column": 46,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 77,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -764,12 +764,12 @@
                     "start": {
                       "line": 27,
                       "column": 20,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 27,
                       "column": 43,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -777,12 +777,12 @@
                   "start": {
                     "line": 27,
                     "column": 20,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 27,
                     "column": 43,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -790,12 +790,12 @@
                 "start": {
                   "line": 27,
                   "column": 20,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 27,
                   "column": 43,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -804,12 +804,12 @@
               "start": {
                 "line": 27,
                 "column": 12,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               },
               "end": {
                 "line": 27,
                 "column": 77,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               }
             }
           },
@@ -822,12 +822,12 @@
                 "start": {
                   "line": 28,
                   "column": 12,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 28,
                   "column": 17,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -844,12 +844,12 @@
                       "start": {
                         "line": 28,
                         "column": 50,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       },
                       "end": {
                         "line": 28,
                         "column": 73,
-                        "program": "class_instance_creation.ets"
+                        "program": "class_instance_creation.ats"
                       }
                     }
                   },
@@ -857,12 +857,12 @@
                     "start": {
                       "line": 28,
                       "column": 50,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 28,
                       "column": 73,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -870,12 +870,12 @@
                   "start": {
                     "line": 28,
                     "column": 50,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 28,
                     "column": 73,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -887,12 +887,12 @@
                     "start": {
                       "line": 28,
                       "column": 74,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 28,
                       "column": 78,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -903,12 +903,12 @@
                     "start": {
                       "line": 28,
                       "column": 80,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 28,
                       "column": 83,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 }
@@ -917,12 +917,12 @@
                 "start": {
                   "line": 28,
                   "column": 46,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 28,
                   "column": 85,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -943,12 +943,12 @@
                     "start": {
                       "line": 28,
                       "column": 20,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 28,
                       "column": 43,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -956,12 +956,12 @@
                   "start": {
                     "line": 28,
                     "column": 20,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 28,
                     "column": 43,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -969,12 +969,12 @@
                 "start": {
                   "line": 28,
                   "column": 20,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 28,
                   "column": 43,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -983,12 +983,12 @@
               "start": {
                 "line": 28,
                 "column": 12,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               },
               "end": {
                 "line": 28,
                 "column": 85,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               }
             }
           }
@@ -997,12 +997,12 @@
           "start": {
             "line": 16,
             "column": 32,
-            "program": "class_instance_creation.ets"
+            "program": "class_instance_creation.ats"
           },
           "end": {
             "line": 29,
             "column": 2,
-            "program": "class_instance_creation.ets"
+            "program": "class_instance_creation.ats"
           }
         }
       },
@@ -1010,12 +1010,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "class_instance_creation.ets"
+          "program": "class_instance_creation.ats"
         },
         "end": {
           "line": 29,
           "column": 2,
-          "program": "class_instance_creation.ets"
+          "program": "class_instance_creation.ats"
         }
       }
     },
@@ -1029,12 +1029,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "class_instance_creation.ets"
+              "program": "class_instance_creation.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "class_instance_creation.ets"
+              "program": "class_instance_creation.ats"
             }
           }
         },
@@ -1095,12 +1095,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "class_instance_creation.ets"
+                      "program": "class_instance_creation.ats"
                     }
                   }
                 },
@@ -1108,12 +1108,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "class_instance_creation.ets"
+                    "program": "class_instance_creation.ats"
                   }
                 }
               },
@@ -1121,12 +1121,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "class_instance_creation.ets"
+                  "program": "class_instance_creation.ats"
                 }
               }
             },
@@ -1135,12 +1135,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "class_instance_creation.ets"
+                "program": "class_instance_creation.ats"
               }
             }
           }
@@ -1149,12 +1149,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "class_instance_creation.ets"
+            "program": "class_instance_creation.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "class_instance_creation.ets"
+            "program": "class_instance_creation.ats"
           }
         }
       },
@@ -1162,12 +1162,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "class_instance_creation.ets"
+          "program": "class_instance_creation.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "class_instance_creation.ets"
+          "program": "class_instance_creation.ats"
         }
       }
     }
@@ -1176,12 +1176,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "class_instance_creation.ets"
+      "program": "class_instance_creation.ats"
     },
     "end": {
       "line": 30,
       "column": 1,
-      "program": "class_instance_creation.ets"
+      "program": "class_instance_creation.ats"
     }
   }
 }

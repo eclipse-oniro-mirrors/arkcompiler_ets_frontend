@@ -1,32 +1,32 @@
 # The package keyword is not used anylonger
 # Issue: https://gitcode.com/openharmony/arkcompiler_ets_frontend/issues/8924
-mypackage/implicit_package_import_1.ets
-mypackage/implicit_package_import_2.ets
+mypackage/implicit_package_import_1.ats
+mypackage/implicit_package_import_2.ats
 
 # Deprecated operations on char #27402
-ArrayLiteral.ets
-MaxBoundInt.ets
-StringBase64.ets
-UpdateExpression.ets
-boxingConversions3.ets
-boxingConversions4.ets
-castSequence.ets
-char-type.ets
-explicit_cast_boxed_expressions.ets
-fieldImplicitCasting.ets
-implicit_cast_boxed_expressions.ets
-non-const-capture.ets
-string-builder.ets
+ArrayLiteral.ats
+MaxBoundInt.ats
+StringBase64.ats
+UpdateExpression.ats
+boxingConversions3.ats
+boxingConversions4.ats
+castSequence.ats
+char-type.ats
+explicit_cast_boxed_expressions.ats
+fieldImplicitCasting.ats
+implicit_cast_boxed_expressions.ats
+non-const-capture.ats
+string-builder.ats
 
 # TODO(dkofanov): deprecated package import
-mypackage/implicit_package_import_1.ets
-mypackage/implicit_package_import_2.ets
+mypackage/implicit_package_import_1.ats
+mypackage/implicit_package_import_2.ats
 
 #33867
-array_test2.ets
-first_match/array.ets
-first_match/generics.ets
-multi-array.ets
-newArrayCreationArrayType.ets
-notNullMultidimensionalArray.ets
-nullishTypeCodesamples.ets
+array_test2.ats
+first_match/array.ats
+first_match/generics.ats
+multi-array.ats
+newArrayCreationArrayType.ats
+notNullMultidimensionalArray.ats
+nullishTypeCodesamples.ats

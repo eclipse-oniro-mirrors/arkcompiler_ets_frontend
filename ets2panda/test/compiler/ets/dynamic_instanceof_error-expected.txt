@@ -10,12 +10,12 @@
           "start": {
             "line": 20,
             "column": 19,
-            "program": "dynamic_instanceof_error.ets"
+            "program": "dynamic_instanceof_error.ats"
           },
           "end": {
             "line": 20,
             "column": 41,
-            "program": "dynamic_instanceof_error.ets"
+            "program": "dynamic_instanceof_error.ats"
           }
         }
       },
@@ -29,12 +29,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamic_instanceof_error.ets"
+                "program": "dynamic_instanceof_error.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamic_instanceof_error.ets"
+                "program": "dynamic_instanceof_error.ats"
               }
             }
           },
@@ -45,12 +45,12 @@
               "start": {
                 "line": 20,
                 "column": 10,
-                "program": "dynamic_instanceof_error.ets"
+                "program": "dynamic_instanceof_error.ats"
               },
               "end": {
                 "line": 20,
                 "column": 11,
-                "program": "dynamic_instanceof_error.ets"
+                "program": "dynamic_instanceof_error.ats"
               }
             }
           },
@@ -58,12 +58,12 @@
             "start": {
               "line": 20,
               "column": 10,
-              "program": "dynamic_instanceof_error.ets"
+              "program": "dynamic_instanceof_error.ats"
             },
             "end": {
               "line": 20,
               "column": 11,
-              "program": "dynamic_instanceof_error.ets"
+              "program": "dynamic_instanceof_error.ats"
             }
           }
         }
@@ -72,12 +72,12 @@
         "start": {
           "line": 20,
           "column": 1,
-          "program": "dynamic_instanceof_error.ets"
+          "program": "dynamic_instanceof_error.ats"
         },
         "end": {
           "line": 20,
           "column": 41,
-          "program": "dynamic_instanceof_error.ets"
+          "program": "dynamic_instanceof_error.ats"
         }
       }
     },
@@ -91,12 +91,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "dynamic_instanceof_error.ets"
+              "program": "dynamic_instanceof_error.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "dynamic_instanceof_error.ets"
+              "program": "dynamic_instanceof_error.ats"
             }
           }
         },
@@ -157,12 +157,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "dynamic_instanceof_error.ets"
+                      "program": "dynamic_instanceof_error.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "dynamic_instanceof_error.ets"
+                      "program": "dynamic_instanceof_error.ats"
                     }
                   }
                 },
@@ -170,12 +170,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "dynamic_instanceof_error.ets"
+                    "program": "dynamic_instanceof_error.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "dynamic_instanceof_error.ets"
+                    "program": "dynamic_instanceof_error.ats"
                   }
                 }
               },
@@ -183,12 +183,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "dynamic_instanceof_error.ets"
+                  "program": "dynamic_instanceof_error.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "dynamic_instanceof_error.ets"
+                  "program": "dynamic_instanceof_error.ats"
                 }
               }
             },
@@ -197,12 +197,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "dynamic_instanceof_error.ets"
+                "program": "dynamic_instanceof_error.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "dynamic_instanceof_error.ets"
+                "program": "dynamic_instanceof_error.ats"
               }
             }
           },
@@ -215,12 +215,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "dynamic_instanceof_error.ets"
+                  "program": "dynamic_instanceof_error.ats"
                 },
                 "end": {
                   "line": 22,
                   "column": 13,
-                  "program": "dynamic_instanceof_error.ets"
+                  "program": "dynamic_instanceof_error.ats"
                 }
               }
             },
@@ -240,12 +240,12 @@
                     "start": {
                       "line": 22,
                       "column": 10,
-                      "program": "dynamic_instanceof_error.ets"
+                      "program": "dynamic_instanceof_error.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 13,
-                      "program": "dynamic_instanceof_error.ets"
+                      "program": "dynamic_instanceof_error.ats"
                     }
                   }
                 },
@@ -259,12 +259,12 @@
                     "start": {
                       "line": 22,
                       "column": 17,
-                      "program": "dynamic_instanceof_error.ets"
+                      "program": "dynamic_instanceof_error.ats"
                     },
                     "end": {
                       "line": 22,
                       "column": 21,
-                      "program": "dynamic_instanceof_error.ets"
+                      "program": "dynamic_instanceof_error.ats"
                     }
                   }
                 },
@@ -283,12 +283,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 7,
-                                "program": "dynamic_instanceof_error.ets"
+                                "program": "dynamic_instanceof_error.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 8,
-                                "program": "dynamic_instanceof_error.ets"
+                                "program": "dynamic_instanceof_error.ats"
                               }
                             }
                           },
@@ -299,12 +299,12 @@
                               "start": {
                                 "line": 23,
                                 "column": 11,
-                                "program": "dynamic_instanceof_error.ets"
+                                "program": "dynamic_instanceof_error.ats"
                               },
                               "end": {
                                 "line": 23,
                                 "column": 13,
-                                "program": "dynamic_instanceof_error.ets"
+                                "program": "dynamic_instanceof_error.ats"
                               }
                             }
                           },
@@ -312,12 +312,12 @@
                             "start": {
                               "line": 23,
                               "column": 7,
-                              "program": "dynamic_instanceof_error.ets"
+                              "program": "dynamic_instanceof_error.ats"
                             },
                             "end": {
                               "line": 23,
                               "column": 13,
-                              "program": "dynamic_instanceof_error.ets"
+                              "program": "dynamic_instanceof_error.ats"
                             }
                           }
                         }
@@ -327,12 +327,12 @@
                         "start": {
                           "line": 23,
                           "column": 3,
-                          "program": "dynamic_instanceof_error.ets"
+                          "program": "dynamic_instanceof_error.ats"
                         },
                         "end": {
                           "line": 23,
                           "column": 14,
-                          "program": "dynamic_instanceof_error.ets"
+                          "program": "dynamic_instanceof_error.ats"
                         }
                       }
                     },
@@ -348,12 +348,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 7,
-                                "program": "dynamic_instanceof_error.ets"
+                                "program": "dynamic_instanceof_error.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 8,
-                                "program": "dynamic_instanceof_error.ets"
+                                "program": "dynamic_instanceof_error.ats"
                               }
                             }
                           },
@@ -367,12 +367,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 11,
-                                  "program": "dynamic_instanceof_error.ets"
+                                  "program": "dynamic_instanceof_error.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 12,
-                                  "program": "dynamic_instanceof_error.ets"
+                                  "program": "dynamic_instanceof_error.ats"
                                 }
                               }
                             },
@@ -387,12 +387,12 @@
                                     "start": {
                                       "line": 24,
                                       "column": 24,
-                                      "program": "dynamic_instanceof_error.ets"
+                                      "program": "dynamic_instanceof_error.ats"
                                     },
                                     "end": {
                                       "line": 24,
                                       "column": 25,
-                                      "program": "dynamic_instanceof_error.ets"
+                                      "program": "dynamic_instanceof_error.ats"
                                     }
                                   }
                                 },
@@ -400,12 +400,12 @@
                                   "start": {
                                     "line": 24,
                                     "column": 24,
-                                    "program": "dynamic_instanceof_error.ets"
+                                    "program": "dynamic_instanceof_error.ats"
                                   },
                                   "end": {
                                     "line": 24,
                                     "column": 25,
-                                    "program": "dynamic_instanceof_error.ets"
+                                    "program": "dynamic_instanceof_error.ats"
                                   }
                                 }
                               },
@@ -413,12 +413,12 @@
                                 "start": {
                                   "line": 24,
                                   "column": 24,
-                                  "program": "dynamic_instanceof_error.ets"
+                                  "program": "dynamic_instanceof_error.ats"
                                 },
                                 "end": {
                                   "line": 24,
                                   "column": 25,
-                                  "program": "dynamic_instanceof_error.ets"
+                                  "program": "dynamic_instanceof_error.ats"
                                 }
                               }
                             },
@@ -426,12 +426,12 @@
                               "start": {
                                 "line": 24,
                                 "column": 11,
-                                "program": "dynamic_instanceof_error.ets"
+                                "program": "dynamic_instanceof_error.ats"
                               },
                               "end": {
                                 "line": 24,
                                 "column": 25,
-                                "program": "dynamic_instanceof_error.ets"
+                                "program": "dynamic_instanceof_error.ats"
                               }
                             }
                           },
@@ -439,12 +439,12 @@
                             "start": {
                               "line": 24,
                               "column": 7,
-                              "program": "dynamic_instanceof_error.ets"
+                              "program": "dynamic_instanceof_error.ats"
                             },
                             "end": {
                               "line": 24,
                               "column": 25,
-                              "program": "dynamic_instanceof_error.ets"
+                              "program": "dynamic_instanceof_error.ats"
                             }
                           }
                         }
@@ -454,12 +454,12 @@
                         "start": {
                           "line": 24,
                           "column": 3,
-                          "program": "dynamic_instanceof_error.ets"
+                          "program": "dynamic_instanceof_error.ats"
                         },
                         "end": {
                           "line": 24,
                           "column": 26,
-                          "program": "dynamic_instanceof_error.ets"
+                          "program": "dynamic_instanceof_error.ats"
                         }
                       }
                     }
@@ -468,12 +468,12 @@
                     "start": {
                       "line": 22,
                       "column": 22,
-                      "program": "dynamic_instanceof_error.ets"
+                      "program": "dynamic_instanceof_error.ats"
                     },
                     "end": {
                       "line": 25,
                       "column": 2,
-                      "program": "dynamic_instanceof_error.ets"
+                      "program": "dynamic_instanceof_error.ats"
                     }
                   }
                 },
@@ -481,12 +481,12 @@
                   "start": {
                     "line": 22,
                     "column": 10,
-                    "program": "dynamic_instanceof_error.ets"
+                    "program": "dynamic_instanceof_error.ats"
                   },
                   "end": {
                     "line": 25,
                     "column": 2,
-                    "program": "dynamic_instanceof_error.ets"
+                    "program": "dynamic_instanceof_error.ats"
                   }
                 }
               },
@@ -494,12 +494,12 @@
                 "start": {
                   "line": 22,
                   "column": 10,
-                  "program": "dynamic_instanceof_error.ets"
+                  "program": "dynamic_instanceof_error.ats"
                 },
                 "end": {
                   "line": 25,
                   "column": 2,
-                  "program": "dynamic_instanceof_error.ets"
+                  "program": "dynamic_instanceof_error.ats"
                 }
               }
             },
@@ -508,12 +508,12 @@
               "start": {
                 "line": 22,
                 "column": 1,
-                "program": "dynamic_instanceof_error.ets"
+                "program": "dynamic_instanceof_error.ats"
               },
               "end": {
                 "line": 25,
                 "column": 2,
-                "program": "dynamic_instanceof_error.ets"
+                "program": "dynamic_instanceof_error.ats"
               }
             }
           }
@@ -522,12 +522,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "dynamic_instanceof_error.ets"
+            "program": "dynamic_instanceof_error.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "dynamic_instanceof_error.ets"
+            "program": "dynamic_instanceof_error.ats"
           }
         }
       },
@@ -535,12 +535,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "dynamic_instanceof_error.ets"
+          "program": "dynamic_instanceof_error.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "dynamic_instanceof_error.ets"
+          "program": "dynamic_instanceof_error.ats"
         }
       }
     }
@@ -549,13 +549,13 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "dynamic_instanceof_error.ets"
+      "program": "dynamic_instanceof_error.ats"
     },
     "end": {
       "line": 26,
       "column": 1,
-      "program": "dynamic_instanceof_error.ets"
+      "program": "dynamic_instanceof_error.ats"
     }
   }
 }
-[dynamic_instanceof_error.ets:24:24] Semantic error ESE0371: Cannot find type 'A'.
+[dynamic_instanceof_error.ats:24:24] Semantic error ESE0371: Cannot find type 'A'.

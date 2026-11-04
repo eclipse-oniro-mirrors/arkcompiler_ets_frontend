@@ -45,12 +45,31 @@ import tempfile
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+def _first_existing(case_dir, *names):
+    """Return the first existing candidate path in case_dir, or None."""
+    for name in names:
+        candidate = os.path.join(case_dir, name)
+        if os.path.isfile(candidate):
+            return candidate
+    return None
+
+
+def _glob_test_sources(directory):
+    """Yield test source files: legacy '.ets' and renamed '.ats' alike."""
+    seen = set()
+    for pattern in ('*.ets', '*.ats'):
+        for path in glob.glob(os.path.join(directory, pattern)):
+            if path not in seen:
+                seen.add(path)
+                yield path
+
+
 def find_test_cases(mode):
     """Find all test case directories under coldreload/ or hotreload/.
 
-    Requires base.ets and base_mod.ets. If expected.txt exists, it defines the
-    expected reload stderr (fail test). If absent, the test is positive (no errors
-    expected).
+    Requires base.ats (formerly base.ets) and base_mod.ats. If expected.txt exists,
+    it defines the expected reload stderr (fail test). If absent, the test is
+    positive (no errors expected).
     """
     mode_dir = os.path.join(SCRIPT_DIR, mode)
     if not os.path.isdir(mode_dir):
@@ -59,9 +78,9 @@ def find_test_cases(mode):
     for name in sorted(os.listdir(mode_dir)):
         case_dir = os.path.join(mode_dir, name)
         if os.path.isdir(case_dir):
-            base = os.path.join(case_dir, 'base.ets')
-            mod = os.path.join(case_dir, 'base_mod.ets')
-            if not os.path.isfile(base) or not os.path.isfile(mod):
+            base = _first_existing(case_dir, 'base.ats', 'base.ets')
+            mod = _first_existing(case_dir, 'base_mod.ats', 'base_mod.ets')
+            if base is None or mod is None:
                 continue
             expected = os.path.join(case_dir, 'expected.txt')
             expected = expected if os.path.isfile(expected) else None
@@ -160,7 +179,7 @@ def _simult_asm_arktsconfig(es2panda, tmpdir):
     for dep in opts.get('dependencies', {}).values():
         if isinstance(dep, dict) and 'path' in dep and not os.path.isabs(dep['path']):
             dep['path'] = os.path.normpath(os.path.join(abs_base, dep['path']))
-    cfg['files'] = sorted(glob.glob(os.path.join(tmpdir, '*.ets')))
+    cfg['files'] = sorted(_glob_test_sources(tmpdir))
     cfg_path = os.path.join(tmpdir, 'arktsconfig.json')
     with open(cfg_path, 'w') as f:
         json.dump(cfg, f, indent=1)
@@ -178,7 +197,7 @@ def _asm_check(es2panda, opt_level, tmpdir, work_name, mod, case_dir):
 
     shutil.copy(mod, os.path.join(tmpdir, work_name))
     asm_abc = os.path.join(tmpdir, 'asm_check.abc')
-    sources = sorted(glob.glob(os.path.join(tmpdir, '*.ets')))
+    sources = sorted(_glob_test_sources(tmpdir))
     if len(sources) > 1:
         cfg = _simult_asm_arktsconfig(es2panda, tmpdir)
         if cfg is None:
@@ -204,9 +223,9 @@ def run_test(es2panda, opt_level, mode, case_dir, base, mod, expected_path):
     with tempfile.TemporaryDirectory() as tmpdir:
         st_file = os.path.join(tmpdir, 'base.st')
         out_abc = os.path.join(tmpdir, 'out.abc')
-        work_name = name + '.ets'
+        work_name = name + os.path.splitext(base)[1]
 
-        for extra in glob.glob(os.path.join(case_dir, '*.ets')):
+        for extra in _glob_test_sources(case_dir):
             extra_name = os.path.basename(extra)
             if extra_name not in (os.path.basename(base), os.path.basename(mod)):
                 shutil.copy(extra, os.path.join(tmpdir, extra_name))

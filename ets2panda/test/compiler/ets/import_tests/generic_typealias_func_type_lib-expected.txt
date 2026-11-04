@@ -10,12 +10,12 @@
           "start": {
             "line": 16,
             "column": 13,
-            "program": "generic_typealias_func_type_lib.ets"
+            "program": "generic_typealias_func_type_lib.ats"
           },
           "end": {
             "line": 16,
             "column": 17,
-            "program": "generic_typealias_func_type_lib.ets"
+            "program": "generic_typealias_func_type_lib.ats"
           }
         }
       },
@@ -38,12 +38,12 @@
                       "start": {
                         "line": 16,
                         "column": 36,
-                        "program": "generic_typealias_func_type_lib.ets"
+                        "program": "generic_typealias_func_type_lib.ats"
                       },
                       "end": {
                         "line": 16,
                         "column": 37,
-                        "program": "generic_typealias_func_type_lib.ets"
+                        "program": "generic_typealias_func_type_lib.ats"
                       }
                     }
                   },
@@ -51,12 +51,12 @@
                     "start": {
                       "line": 16,
                       "column": 36,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     },
                     "end": {
                       "line": 16,
                       "column": 37,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     }
                   }
                 },
@@ -64,12 +64,12 @@
                   "start": {
                     "line": 16,
                     "column": 36,
-                    "program": "generic_typealias_func_type_lib.ets"
+                    "program": "generic_typealias_func_type_lib.ats"
                   },
                   "end": {
                     "line": 16,
                     "column": 37,
-                    "program": "generic_typealias_func_type_lib.ets"
+                    "program": "generic_typealias_func_type_lib.ats"
                   }
                 }
               },
@@ -77,12 +77,12 @@
                 "start": {
                   "line": 16,
                   "column": 27,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 37,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 }
               }
             },
@@ -90,12 +90,12 @@
               "start": {
                 "line": 16,
                 "column": 27,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               },
               "end": {
                 "line": 16,
                 "column": 37,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               }
             }
           }
@@ -111,12 +111,12 @@
                 "start": {
                   "line": 16,
                   "column": 42,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 43,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 }
               }
             },
@@ -124,12 +124,12 @@
               "start": {
                 "line": 16,
                 "column": 42,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               },
               "end": {
                 "line": 16,
                 "column": 43,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               }
             }
           },
@@ -137,12 +137,12 @@
             "start": {
               "line": 16,
               "column": 42,
-              "program": "generic_typealias_func_type_lib.ets"
+              "program": "generic_typealias_func_type_lib.ats"
             },
             "end": {
               "line": 16,
               "column": 43,
-              "program": "generic_typealias_func_type_lib.ets"
+              "program": "generic_typealias_func_type_lib.ats"
             }
           }
         },
@@ -150,12 +150,12 @@
           "start": {
             "line": 16,
             "column": 26,
-            "program": "generic_typealias_func_type_lib.ets"
+            "program": "generic_typealias_func_type_lib.ats"
           },
           "end": {
             "line": 16,
             "column": 43,
-            "program": "generic_typealias_func_type_lib.ets"
+            "program": "generic_typealias_func_type_lib.ats"
           }
         }
       },
@@ -171,12 +171,12 @@
                 "start": {
                   "line": 16,
                   "column": 18,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 19,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 }
               }
             },
@@ -184,12 +184,12 @@
               "start": {
                 "line": 16,
                 "column": 18,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               },
               "end": {
                 "line": 16,
                 "column": 20,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               }
             }
           },
@@ -202,12 +202,12 @@
                 "start": {
                   "line": 16,
                   "column": 21,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 },
                 "end": {
                   "line": 16,
                   "column": 22,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 }
               }
             },
@@ -215,12 +215,12 @@
               "start": {
                 "line": 16,
                 "column": 21,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               },
               "end": {
                 "line": 16,
                 "column": 23,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               }
             }
           }
@@ -229,12 +229,12 @@
           "start": {
             "line": 16,
             "column": 17,
-            "program": "generic_typealias_func_type_lib.ets"
+            "program": "generic_typealias_func_type_lib.ats"
           },
           "end": {
             "line": 16,
             "column": 23,
-            "program": "generic_typealias_func_type_lib.ets"
+            "program": "generic_typealias_func_type_lib.ats"
           }
         }
       },
@@ -242,12 +242,12 @@
         "start": {
           "line": 16,
           "column": 1,
-          "program": "generic_typealias_func_type_lib.ets"
+          "program": "generic_typealias_func_type_lib.ats"
         },
         "end": {
           "line": 16,
           "column": 43,
-          "program": "generic_typealias_func_type_lib.ets"
+          "program": "generic_typealias_func_type_lib.ats"
         }
       }
     },
@@ -261,12 +261,12 @@
             "start": {
               "line": 1,
               "column": 1,
-              "program": "generic_typealias_func_type_lib.ets"
+              "program": "generic_typealias_func_type_lib.ats"
             },
             "end": {
               "line": 1,
               "column": 1,
-              "program": "generic_typealias_func_type_lib.ets"
+              "program": "generic_typealias_func_type_lib.ats"
             }
           }
         },
@@ -327,12 +327,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     }
                   }
                 },
@@ -340,12 +340,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": "generic_typealias_func_type_lib.ets"
+                    "program": "generic_typealias_func_type_lib.ats"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": "generic_typealias_func_type_lib.ets"
+                    "program": "generic_typealias_func_type_lib.ats"
                   }
                 }
               },
@@ -353,12 +353,12 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 }
               }
             },
@@ -367,12 +367,12 @@
               "start": {
                 "line": 1,
                 "column": 1,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               },
               "end": {
                 "line": 1,
                 "column": 1,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               }
             }
           },
@@ -385,12 +385,12 @@
                 "start": {
                   "line": 18,
                   "column": 17,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 },
                 "end": {
                   "line": 18,
                   "column": 20,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 }
               }
             },
@@ -410,12 +410,12 @@
                     "start": {
                       "line": 18,
                       "column": 17,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 20,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     }
                   }
                 },
@@ -439,12 +439,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 30,
-                                "program": "generic_typealias_func_type_lib.ets"
+                                "program": "generic_typealias_func_type_lib.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 34,
-                                "program": "generic_typealias_func_type_lib.ets"
+                                "program": "generic_typealias_func_type_lib.ats"
                               }
                             }
                           },
@@ -462,12 +462,12 @@
                                       "start": {
                                         "line": 18,
                                         "column": 35,
-                                        "program": "generic_typealias_func_type_lib.ets"
+                                        "program": "generic_typealias_func_type_lib.ats"
                                       },
                                       "end": {
                                         "line": 18,
                                         "column": 41,
-                                        "program": "generic_typealias_func_type_lib.ets"
+                                        "program": "generic_typealias_func_type_lib.ats"
                                       }
                                     }
                                   },
@@ -475,12 +475,12 @@
                                     "start": {
                                       "line": 18,
                                       "column": 35,
-                                      "program": "generic_typealias_func_type_lib.ets"
+                                      "program": "generic_typealias_func_type_lib.ats"
                                     },
                                     "end": {
                                       "line": 18,
                                       "column": 41,
-                                      "program": "generic_typealias_func_type_lib.ets"
+                                      "program": "generic_typealias_func_type_lib.ats"
                                     }
                                   }
                                 },
@@ -488,12 +488,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 35,
-                                    "program": "generic_typealias_func_type_lib.ets"
+                                    "program": "generic_typealias_func_type_lib.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 41,
-                                    "program": "generic_typealias_func_type_lib.ets"
+                                    "program": "generic_typealias_func_type_lib.ats"
                                   }
                                 }
                               },
@@ -508,12 +508,12 @@
                                       "start": {
                                         "line": 18,
                                         "column": 43,
-                                        "program": "generic_typealias_func_type_lib.ets"
+                                        "program": "generic_typealias_func_type_lib.ats"
                                       },
                                       "end": {
                                         "line": 18,
                                         "column": 44,
-                                        "program": "generic_typealias_func_type_lib.ets"
+                                        "program": "generic_typealias_func_type_lib.ats"
                                       }
                                     }
                                   },
@@ -521,12 +521,12 @@
                                     "start": {
                                       "line": 18,
                                       "column": 43,
-                                      "program": "generic_typealias_func_type_lib.ets"
+                                      "program": "generic_typealias_func_type_lib.ats"
                                     },
                                     "end": {
                                       "line": 18,
                                       "column": 44,
-                                      "program": "generic_typealias_func_type_lib.ets"
+                                      "program": "generic_typealias_func_type_lib.ats"
                                     }
                                   }
                                 },
@@ -534,12 +534,12 @@
                                   "start": {
                                     "line": 18,
                                     "column": 43,
-                                    "program": "generic_typealias_func_type_lib.ets"
+                                    "program": "generic_typealias_func_type_lib.ats"
                                   },
                                   "end": {
                                     "line": 18,
                                     "column": 44,
-                                    "program": "generic_typealias_func_type_lib.ets"
+                                    "program": "generic_typealias_func_type_lib.ats"
                                   }
                                 }
                               }
@@ -548,12 +548,12 @@
                               "start": {
                                 "line": 18,
                                 "column": 34,
-                                "program": "generic_typealias_func_type_lib.ets"
+                                "program": "generic_typealias_func_type_lib.ats"
                               },
                               "end": {
                                 "line": 18,
                                 "column": 45,
-                                "program": "generic_typealias_func_type_lib.ets"
+                                "program": "generic_typealias_func_type_lib.ats"
                               }
                             }
                           },
@@ -561,12 +561,12 @@
                             "start": {
                               "line": 18,
                               "column": 30,
-                              "program": "generic_typealias_func_type_lib.ets"
+                              "program": "generic_typealias_func_type_lib.ats"
                             },
                             "end": {
                               "line": 18,
                               "column": 45,
-                              "program": "generic_typealias_func_type_lib.ets"
+                              "program": "generic_typealias_func_type_lib.ats"
                             }
                           }
                         },
@@ -574,12 +574,12 @@
                           "start": {
                             "line": 18,
                             "column": 30,
-                            "program": "generic_typealias_func_type_lib.ets"
+                            "program": "generic_typealias_func_type_lib.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 45,
-                            "program": "generic_typealias_func_type_lib.ets"
+                            "program": "generic_typealias_func_type_lib.ats"
                           }
                         }
                       },
@@ -587,12 +587,12 @@
                         "start": {
                           "line": 18,
                           "column": 24,
-                          "program": "generic_typealias_func_type_lib.ets"
+                          "program": "generic_typealias_func_type_lib.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 45,
-                          "program": "generic_typealias_func_type_lib.ets"
+                          "program": "generic_typealias_func_type_lib.ats"
                         }
                       }
                     },
@@ -600,12 +600,12 @@
                       "start": {
                         "line": 18,
                         "column": 24,
-                        "program": "generic_typealias_func_type_lib.ets"
+                        "program": "generic_typealias_func_type_lib.ats"
                       },
                       "end": {
                         "line": 18,
                         "column": 45,
-                        "program": "generic_typealias_func_type_lib.ets"
+                        "program": "generic_typealias_func_type_lib.ats"
                       }
                     }
                   }
@@ -621,12 +621,12 @@
                         "start": {
                           "line": 18,
                           "column": 48,
-                          "program": "generic_typealias_func_type_lib.ets"
+                          "program": "generic_typealias_func_type_lib.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 49,
-                          "program": "generic_typealias_func_type_lib.ets"
+                          "program": "generic_typealias_func_type_lib.ats"
                         }
                       }
                     },
@@ -634,12 +634,12 @@
                       "start": {
                         "line": 18,
                         "column": 48,
-                        "program": "generic_typealias_func_type_lib.ets"
+                        "program": "generic_typealias_func_type_lib.ats"
                       },
                       "end": {
                         "line": 18,
                         "column": 49,
-                        "program": "generic_typealias_func_type_lib.ets"
+                        "program": "generic_typealias_func_type_lib.ats"
                       }
                     }
                   },
@@ -647,12 +647,12 @@
                     "start": {
                       "line": 18,
                       "column": 48,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 49,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     }
                   }
                 },
@@ -668,12 +668,12 @@
                           "start": {
                             "line": 18,
                             "column": 21,
-                            "program": "generic_typealias_func_type_lib.ets"
+                            "program": "generic_typealias_func_type_lib.ats"
                           },
                           "end": {
                             "line": 18,
                             "column": 22,
-                            "program": "generic_typealias_func_type_lib.ets"
+                            "program": "generic_typealias_func_type_lib.ats"
                           }
                         }
                       },
@@ -681,12 +681,12 @@
                         "start": {
                           "line": 18,
                           "column": 21,
-                          "program": "generic_typealias_func_type_lib.ets"
+                          "program": "generic_typealias_func_type_lib.ats"
                         },
                         "end": {
                           "line": 18,
                           "column": 23,
-                          "program": "generic_typealias_func_type_lib.ets"
+                          "program": "generic_typealias_func_type_lib.ats"
                         }
                       }
                     }
@@ -695,12 +695,12 @@
                     "start": {
                       "line": 18,
                       "column": 20,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     },
                     "end": {
                       "line": 18,
                       "column": 23,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     }
                   }
                 },
@@ -718,12 +718,12 @@
                             "start": {
                               "line": 19,
                               "column": 12,
-                              "program": "generic_typealias_func_type_lib.ets"
+                              "program": "generic_typealias_func_type_lib.ats"
                             },
                             "end": {
                               "line": 19,
                               "column": 16,
-                              "program": "generic_typealias_func_type_lib.ets"
+                              "program": "generic_typealias_func_type_lib.ats"
                             }
                           }
                         },
@@ -735,12 +735,12 @@
                               "start": {
                                 "line": 19,
                                 "column": 17,
-                                "program": "generic_typealias_func_type_lib.ets"
+                                "program": "generic_typealias_func_type_lib.ats"
                               },
                               "end": {
                                 "line": 19,
                                 "column": 18,
-                                "program": "generic_typealias_func_type_lib.ets"
+                                "program": "generic_typealias_func_type_lib.ats"
                               }
                             }
                           }
@@ -750,12 +750,12 @@
                           "start": {
                             "line": 19,
                             "column": 12,
-                            "program": "generic_typealias_func_type_lib.ets"
+                            "program": "generic_typealias_func_type_lib.ats"
                           },
                           "end": {
                             "line": 19,
                             "column": 19,
-                            "program": "generic_typealias_func_type_lib.ets"
+                            "program": "generic_typealias_func_type_lib.ats"
                           }
                         }
                       },
@@ -763,12 +763,12 @@
                         "start": {
                           "line": 19,
                           "column": 5,
-                          "program": "generic_typealias_func_type_lib.ets"
+                          "program": "generic_typealias_func_type_lib.ats"
                         },
                         "end": {
                           "line": 19,
                           "column": 20,
-                          "program": "generic_typealias_func_type_lib.ets"
+                          "program": "generic_typealias_func_type_lib.ats"
                         }
                       }
                     }
@@ -777,12 +777,12 @@
                     "start": {
                       "line": 18,
                       "column": 50,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     },
                     "end": {
                       "line": 20,
                       "column": 2,
-                      "program": "generic_typealias_func_type_lib.ets"
+                      "program": "generic_typealias_func_type_lib.ats"
                     }
                   }
                 },
@@ -790,12 +790,12 @@
                   "start": {
                     "line": 18,
                     "column": 17,
-                    "program": "generic_typealias_func_type_lib.ets"
+                    "program": "generic_typealias_func_type_lib.ats"
                   },
                   "end": {
                     "line": 20,
                     "column": 2,
-                    "program": "generic_typealias_func_type_lib.ets"
+                    "program": "generic_typealias_func_type_lib.ats"
                   }
                 }
               },
@@ -803,12 +803,12 @@
                 "start": {
                   "line": 18,
                   "column": 17,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 },
                 "end": {
                   "line": 20,
                   "column": 2,
-                  "program": "generic_typealias_func_type_lib.ets"
+                  "program": "generic_typealias_func_type_lib.ats"
                 }
               }
             },
@@ -817,12 +817,12 @@
               "start": {
                 "line": 18,
                 "column": 1,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               },
               "end": {
                 "line": 20,
                 "column": 2,
-                "program": "generic_typealias_func_type_lib.ets"
+                "program": "generic_typealias_func_type_lib.ats"
               }
             }
           }
@@ -831,12 +831,12 @@
           "start": {
             "line": 1,
             "column": 1,
-            "program": "generic_typealias_func_type_lib.ets"
+            "program": "generic_typealias_func_type_lib.ats"
           },
           "end": {
             "line": 1,
             "column": 1,
-            "program": "generic_typealias_func_type_lib.ets"
+            "program": "generic_typealias_func_type_lib.ats"
           }
         }
       },
@@ -844,12 +844,12 @@
         "start": {
           "line": 1,
           "column": 1,
-          "program": "generic_typealias_func_type_lib.ets"
+          "program": "generic_typealias_func_type_lib.ats"
         },
         "end": {
           "line": 1,
           "column": 1,
-          "program": "generic_typealias_func_type_lib.ets"
+          "program": "generic_typealias_func_type_lib.ats"
         }
       }
     }
@@ -858,12 +858,12 @@
     "start": {
       "line": 1,
       "column": 1,
-      "program": "generic_typealias_func_type_lib.ets"
+      "program": "generic_typealias_func_type_lib.ats"
     },
     "end": {
       "line": 21,
       "column": 1,
-      "program": "generic_typealias_func_type_lib.ets"
+      "program": "generic_typealias_func_type_lib.ats"
     }
   }
 }

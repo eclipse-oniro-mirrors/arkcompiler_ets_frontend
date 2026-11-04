@@ -159,7 +159,7 @@ bool ArkTsConfig::Pattern::Match(const std::string &path) const
     }
     if (!value.has_extension()) {
         // default extensions to match
-        pattern += R"(.*(\.ts|\.ets|\.sts)$)";
+        pattern += R"(.*(\.ts|\.ets|\.sts|\.ats)$)";
     }
     std::smatch m;
     auto res = std::regex_match(path, m, std::regex(pattern));
