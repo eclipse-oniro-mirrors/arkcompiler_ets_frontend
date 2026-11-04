@@ -777,6 +777,23 @@ KInt impl_clearSymbolReferenceIndex()
 }
 TS_INTEROP_0(clearSymbolReferenceIndex, KInt)
 
+KInt impl_resetEHeap()
+{
+    static int canReset = -1;
+    if (canReset == -1) {
+        canReset = ProbeLspCapability("resetEHeap") ? 1 : 0;
+    }
+
+    if (canReset == 1) {
+        LSPAPI const *ctx = GetLspApiImpl();
+        if (ctx != nullptr && ctx->resetEHeap != nullptr) {
+            ctx->resetEHeap();
+        }
+    }
+    return 0;
+}
+TS_INTEROP_0(resetEHeap, KInt)
+
 KBoolean impl_buildSymbolReferenceIndexForContext(KNativePointer context)
 {
     LSPAPI const *ctx = GetLspApiImpl();

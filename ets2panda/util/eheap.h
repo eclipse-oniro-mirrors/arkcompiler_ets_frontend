@@ -86,6 +86,7 @@ public:
 
     static size_t AllocatedSize();
     static size_t FreedSize();
+    static void ResetEHeapSpace();
 
     class Scope {
     public:
@@ -191,6 +192,7 @@ private:
         NO_MOVE_SEMANTIC(EHeapSpace);
 
         [[nodiscard]] __attribute__((returns_nonnull)) void *Alloc(size_t sz);
+        void Reset();
 
         ALWAYS_INLINE void Free([[maybe_unused]] void *ptr, size_t sz)
         {

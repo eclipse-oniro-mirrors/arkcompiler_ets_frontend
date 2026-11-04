@@ -14,7 +14,9 @@
  */
 
 #include "api.h"
+#include "util/eheap.h"
 #include <cstddef>
+#include <cstring>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -206,6 +208,11 @@ void InitSymbolReferenceIndexWrapper()
 void ClearSymbolReferenceIndexWrapper()
 {
     ClearSymbolReferenceIndex();
+}
+
+void ResetEHeapWrapper()
+{
+    ark::es2panda::EHeap::ResetEHeapSpace();
 }
 
 bool BuildSymbolReferenceIndexForContextWrapper(es2panda_Context *context)
@@ -1254,11 +1261,27 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetIndexedFileSourceWrapper,
                     DeleteProgramForFile,
                     DeleteDependantProgramsForFiles,
-                    CollectApiInfoWrapper};
+                    CollectApiInfoWrapper,
+                    ResetEHeapWrapper};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()
 {
     return &ark::es2panda::lsp::g_lspImpl;
+}
+
+// NOTE: Capability detection symbol exported for dynamic loader (dlsym).
+// When bindings dynamically load this library, they query HasLspCapability("resetEHeap")
+// before accessing extended slots in struct LSPAPI.
+// Capability names and new LSPAPI struct fields must be released in the same version.
+CAPI_EXPORT bool HasLspCapability(const char *capabilityName)
+{
+    if (capabilityName == nullptr) {
+        return false;
+    }
+    if (std::strcmp(capabilityName, "resetEHeap") == 0) {
+        return true;
+    }
+    return false;
 }
 }

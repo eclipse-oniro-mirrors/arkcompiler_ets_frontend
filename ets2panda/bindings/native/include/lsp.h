@@ -39,4 +39,18 @@ inline const LSPAPI *GetLspApiImpl()
     return g_lspImpl;
 }
 
+// CC-OFFNXT(G.FUD.06) perf critical, ODR
+inline bool ProbeLspCapability(const char *capabilityName)
+{
+    auto library = FindLibrary();
+    if (library == nullptr) {
+        return false;
+    }
+    auto symbol = FindSymbol(library, "HasLspCapability");
+    if (symbol != nullptr) {
+        return reinterpret_cast<bool (*)(const char *)>(symbol)(capabilityName);
+    }
+    return false;
+}
+
 #endif  // LSP_H

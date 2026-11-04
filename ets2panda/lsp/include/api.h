@@ -435,8 +435,10 @@ typedef struct LSPAPI {
     int (*DeleteProgramForFile)(es2panda_Context *context, const char *fileName);
     int (*DeleteDependantProgramsForFiles)(es2panda_Context *context, const char *fileName);
     bool (*collectApiInfo)(es2panda_Context *context);
+    void (*resetEHeap)();
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
+CAPI_EXPORT bool HasLspCapability(const char *capabilityName);
 // NOLINTEND
 #ifdef __cplusplus
 }

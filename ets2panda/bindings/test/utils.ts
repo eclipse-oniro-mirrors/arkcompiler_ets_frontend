@@ -143,14 +143,40 @@ function initLspEnv(pathConfig: PathConfig): void {
   process.env.PANDA_BIN_PATH = pandaBinPath;
 }
 
+const activeLspInstances: Lsp[] = [];
+
+if (typeof afterEach === 'function') {
+  afterEach(() => {
+    while (activeLspInstances.length > 0) {
+      const lsp = activeLspInstances.pop();
+      if (lsp) {
+        lsp.clearIdleRecycleTimer();
+      }
+    }
+  });
+}
+
+if (typeof afterAll === 'function') {
+  afterAll(() => {
+    while (activeLspInstances.length > 0) {
+      const lsp = activeLspInstances.pop();
+      if (lsp) {
+        lsp.dispose();
+      }
+    }
+  });
+}
+
 export function getLsp(moduleName: string, plugins: string[] = DEFAULT_PLUGIN_LIST): Lsp {
   initLspEnv(DEFAULT_PATH_CONFIG);
-  return new Lsp(
+  const lsp = new Lsp(
     DEFAULT_PATH_CONFIG,
     undefined,
     [{ name: moduleName, moduleType: 'har', srcPath: path.resolve('test/testcases/', moduleName) }],
     plugins
   );
+  activeLspInstances.push(lsp);
+  return lsp;
 }
 
 export function getLspWithUi(moduleName: string): Lsp {
@@ -177,6 +203,7 @@ export function getMultiModuleLsp(
   }));
 
   const lsp = new Lsp(pathConfig, undefined, resolvedModules, plugins);
+  activeLspInstances.push(lsp);
   patchGeneratedArkTsConfigsForTest(lsp);
   return lsp;
 }
