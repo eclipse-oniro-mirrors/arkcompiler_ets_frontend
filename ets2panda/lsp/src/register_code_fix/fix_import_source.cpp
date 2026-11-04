@@ -24,7 +24,7 @@
 #include "generated/diagnostic.h"
 #include "lsp/include/code_fix_provider.h"
 #include "lsp/include/internal_api.h"
-#include "lsp/include/services/import_utils.h"
+#include "services/import_utils.h"
 #include "lsp/include/symbol_reference_index.h"
 #include "public/es2panda_lib.h"
 
@@ -112,9 +112,8 @@ struct ActionBuildContext {
 };
 
 std::optional<CodeFixAction> BuildActionForDefinition(const ActionBuildContext &buildCtx,
-                                                      const SymbolDefSearchResult &def)
+                                                      const SymbolDefSearchResult &def, const std::string &modulePath)
 {
-    auto modulePath = ComputeRelativeImportPath(buildCtx.ctx->sourceFileName, def.fileName);
     if (modulePath.empty()) {
         return std::nullopt;
     }
@@ -343,18 +342,25 @@ std::vector<CodeFixAction> FixImportSource::GetCodeActions(const CodeFixContext 
     insertPos = AdjustInsertPositionForUseStaticDirective(insertPos, sourceCode);
 
     ActionBuildContext buildCtx {context, ctx, unresolvedName, sourceCode, insertPos};
+    const ArkTsConfig *arkTsConfig = GetArkTsConfigOrNull(ctx);
 
     std::vector<CodeFixAction> actions;
     std::unordered_set<std::string> seenModules;
-    for (const auto &def : definitions) {
-        auto modulePath = ComputeRelativeImportPath(ctx->sourceFileName, def.fileName);
+    auto addActionForModule = [&](const SymbolDefSearchResult &def, const std::string &modulePath) {
         if (modulePath.empty() || !seenModules.insert(modulePath).second) {
-            continue;
+            return;
         }
-        auto action = BuildActionForDefinition(buildCtx, def);
+        auto action = BuildActionForDefinition(buildCtx, def, modulePath);
         if (action.has_value()) {
             actions.push_back(std::move(action.value()));
         }
+    };
+    for (const auto &def : definitions) {
+        // Keep both the module alias form and the file-level form (see ImportFixes).
+        if (IsSymbolExportedByModuleEntry(def.fileName, unresolvedName, arkTsConfig)) {
+            addActionForModule(def, ComputeModuleImportPath(def.fileName, arkTsConfig));
+        }
+        addActionForModule(def, ComputeRelativeImportPath(ctx->sourceFileName, def.fileName, arkTsConfig));
     }
 
     return actions;

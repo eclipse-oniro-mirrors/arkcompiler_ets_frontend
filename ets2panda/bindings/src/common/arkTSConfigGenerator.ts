@@ -22,9 +22,14 @@ import { AliasConfig, BuildConfig, ModuleInfo } from './types';
 import { EXTERNAL_API_PATH_FROM_SDK, LANGUAGE_VERSION, PANDA_SDK_PATH_FROM_SDK, SYSTEM_SDK_PATH_FROM_SDK } from './preDefine';
 import { logger } from '../lsp/logger';
 
+// The source root of an ArkTS module, by hvigor convention (see driver/build_system
+// generate_arktsconfig.ts handleAddSourceRootPath: 'hvigor now use src/main as sourceRoot').
+const MODULE_SOURCE_ROOT = 'src/main';
+
 interface DependencyItem {
   language: string;
   path: string;
+  sourceFilePath?: string;
   ohmUrl?: string;
   alias?: string[];
 }
@@ -102,7 +107,8 @@ export class ArkTSConfigGenerator {
     relativePath: string = '',
     isExcludedDir: boolean = false,
     allowedExtensions: string[] = ['.d.ets'],
-    collectKitsFile: boolean = false
+    collectKitsFile: boolean = false,
+    onlyApiFiles: boolean = false
   ): void {
     const items = fs.readdirSync(currentDir);
     for (const item of items) {
@@ -111,6 +117,13 @@ export class ArkTSConfigGenerator {
       const isAllowedFile = allowedExtensions.some((ext) => item.endsWith(ext));
       const separator = isInteropSdk ? '/' : '.';
       if (stat.isFile() && !isAllowedFile) {
+        continue;
+      }
+      // The SDK api directory mixes legacy category subdirectories (ability/,
+      // application/, ...) with the importable '@' prefixed declarations; only the
+      // latter are addressable through the module syntax ('@ohos.xxx' /
+      // 'dynamic@ohos.xxx'), the rest must not be collected.
+      if (onlyApiFiles && !item.startsWith('@')) {
         continue;
       }
 
@@ -122,12 +135,12 @@ export class ArkTSConfigGenerator {
             language: 'js',
             path: itemPath,
             ohmUrl: '',
-            alias: aliasConfigObj ? this.processAlias(basename, aliasConfigObj) : undefined
+            alias: this.buildInteropSdkAlias(key, basename, aliasConfigObj)
           }
           : [changeFileExtension(itemPath, '', '.d.ets')];
-          if (collectKitsFile && isAllowedFile) {
-            this.kitsDirectoryFiles.push(itemPath);
-          }
+        if (collectKitsFile && isAllowedFile) {
+          this.kitsDirectoryFiles.push(itemPath);
+        }
       }
       if (stat.isDirectory()) {
         // For files under api dir excluding arkui/runtime-api dir,
@@ -143,10 +156,28 @@ export class ArkTSConfigGenerator {
           prefix,
           isInteropSdk,
           newRelativePath,
-          isCurrentDirExcluded || isExcludedDir
+          isCurrentDirExcluded || isExcludedDir,
+          allowedExtensions,
+          collectKitsFile,
+          onlyApiFiles
         );
       }
     }
+  }
+
+  // Mirrors the build system (driver/build_system generate_arktsconfig.ts processDynamicFile):
+  // every interop SDK dependency carries itself as an alias ('<name>' and 'dynamic<name>'),
+  // so the dynamic-side declarations' own bare imports (e.g. "@ohos.lang.interop") resolve
+  // through the arktsconfig dependency-alias lookup instead of failing with
+  // IMPORT_CANT_FIND_PREFIX.
+  private buildInteropSdkAlias(
+    key: string,
+    basename: string,
+    aliasConfigObj: Record<string, AliasConfig> | undefined
+  ): string[] {
+    const alias = [key, `dynamic${key}`];
+    const sdkAliases = aliasConfigObj ? this.processAlias(basename, aliasConfigObj) : undefined;
+    return Array.from(new Set(sdkAliases ? [...alias, ...sdkAliases] : alias));
   }
 
   private generateSystemSdkPathSection(pathSection: Record<string, string[]>): void {
@@ -156,6 +187,10 @@ export class ArkTSConfigGenerator {
         logger.debug(`sdk path ${sdkPath} not exist.`);
         return;
       }
+      // The SDK api directory mixes importable '@' prefixed declarations with legacy
+      // category subdirectories (arkui/, application/, ...). The category files are
+      // imported by the '@' declarations themselves (e.g. 'arkui.SymbolGlyphModifier'),
+      // so they must stay in the path section; no '@' filtering is applied here.
       if (dir === 'kits') {
         this.traverse(pathSection, sdkPath, undefined, '', false, '', false, ['.d.ets'], true);
         return;
@@ -200,6 +235,10 @@ export class ArkTSConfigGenerator {
       if (depModuleInfo.language === LANGUAGE_VERSION.ARKTS_1_2) {
         this.pathSection[depModuleInfo.packageName] = [path.resolve(depModuleInfo.moduleRootPath)];
       } else if (depModuleInfo.language === LANGUAGE_VERSION.ARKTS_HYBRID) {
+        // Mirrors the build system: a hybrid module also carries the module-root mapping
+        // ('addPathSection' registers every non-1.1 module root and the consumer merges
+        // the dependency config in), in addition to its per-file static aliases.
+        this.pathSection[depModuleInfo.packageName] = [path.resolve(depModuleInfo.moduleRootPath)];
         depModuleInfo.compileFiles.forEach((file) => {
           const firstLine = fs.readFileSync(file, 'utf-8').split('\n')[0];
           if (firstLine.includes('use static')) {
@@ -225,31 +264,77 @@ export class ArkTSConfigGenerator {
     return this.pathSection;
   }
 
-  private getOhmurl(file: string, moduleInfo: ModuleInfo): string {
-    let unixFilePath: string = file.replace(/\\/g, '/');
-    let ohmurl: string = moduleInfo.packageName + '/' + unixFilePath;
-    return changeFileExtension(ohmurl, '');
+  // Mirrors the build system (driver/build_system generate_arktsconfig.ts): dependency keys
+  // keep the module relative file path ('dynlib/src/main/ets/Index') and are additionally
+  // registered with the source root prefix stripped ('src/main' by hvigor convention), e.g.
+  // 'dynlib/ets/Index'.
+  private getDependencyKey(file: string, moduleInfo: ModuleInfo): string {
+    const unixFilePath = file.replace(/\\/g, '/');
+    return `${moduleInfo.packageName}/${unixFilePath}`;
   }
 
-  private parseDeclFile(moduleInfo: ModuleInfo, dependencySection: Record<string, DependencyItem>): void {
+  private getTransformedDependencyKey(file: string, moduleInfo: ModuleInfo): string {
+    const prefix = MODULE_SOURCE_ROOT.endsWith('/') ? MODULE_SOURCE_ROOT : `${MODULE_SOURCE_ROOT}/`;
+    const unixFilePath = file.replace(/\\/g, '/');
+    if (!unixFilePath.startsWith(prefix)) {
+      return this.getDependencyKey(file, moduleInfo);
+    }
+    return `${moduleInfo.packageName}/${unixFilePath.substring(prefix.length)}`;
+  }
+
+  private isPackageEntryFile(file: string, moduleInfo: ModuleInfo): boolean {
+    if (!moduleInfo.entryFile) {
+      return false;
+    }
+    const entryRelPath = changeFileExtension(path.relative(moduleInfo.moduleRootPath, moduleInfo.entryFile), '')
+      .replace(/\\/g, '/')
+      .toLowerCase();
+    const fileRelPath = changeFileExtension(file, '').replace(/\\/g, '/').toLowerCase();
+    return fileRelPath === entryRelPath;
+  }
+
+  private parseDeclFile(
+    consumerName: string,
+    moduleInfo: ModuleInfo,
+    dependencySection: Record<string, DependencyItem>
+  ): void {
     if (!moduleInfo.declFilesPath || !fs.existsSync(moduleInfo.declFilesPath)) {
-      logger.debug(`Module ${moduleInfo.packageName} depends on dynamic module ${moduleInfo.packageName}, but
-          decl file not found on path ${moduleInfo.declFilesPath}`);
+      // A static module without a declgen manifest is the common case; only the dynamic
+      // and hybrid modules are expected to carry one. The self lookup (a 1.1 module
+      // without interop declarations) is equally common and stays silent.
+      if (moduleInfo.language !== LANGUAGE_VERSION.ARKTS_1_2 && consumerName !== moduleInfo.packageName) {
+        logger.warn(
+          `Module ${consumerName} depends on dynamic module ${moduleInfo.packageName}, ` +
+          `but decl file not found on path ${moduleInfo.declFilesPath}`
+        );
+      }
       return;
     }
     let declFilesObject = JSON.parse(fs.readFileSync(moduleInfo.declFilesPath, 'utf-8'));
     Object.keys(declFilesObject.files).forEach((file: string) => {
-      let ohmurl: string = this.getOhmurl(file, moduleInfo);
-      dependencySection[ohmurl] = {
+      const fileEntry = declFilesObject.files[file];
+      // Follows the build system: 'filePath' records the module source file behind the
+      // declaration; older decl files only carry the module relative key.
+      const sourceFilePath: string = fileEntry.filePath
+        ? fileEntry.filePath
+        : path.resolve(moduleInfo.moduleRootPath, `${file}.ets`);
+      const dependencyItem: DependencyItem = {
         language: 'js',
-        path: declFilesObject.files[file].declPath,
-        ohmUrl: declFilesObject.files[file].ohmUrl
+        path: fileEntry.declPath,
+        // Auto import maps definitions found in the source file back onto the module name.
+        sourceFilePath,
+        ohmUrl: fileEntry.ohmUrl
       };
 
-      let absFilePath: string = path.resolve(moduleInfo.moduleRootPath, file);
-      let entryFileWithoutExtension: string = changeFileExtension(moduleInfo.entryFile, '');
-      if (absFilePath === entryFileWithoutExtension) {
-        dependencySection[moduleInfo.packageName] = dependencySection[ohmurl];
+      const legacyKey = this.getDependencyKey(file, moduleInfo);
+      dependencySection[legacyKey] = dependencyItem;
+      const transformedKey = this.getTransformedDependencyKey(file, moduleInfo);
+      if (transformedKey !== legacyKey) {
+        dependencySection[transformedKey] = dependencyItem;
+      }
+
+      if (this.isPackageEntryFile(file, moduleInfo)) {
+        dependencySection[moduleInfo.packageName] = dependencyItem;
       }
     });
   }
@@ -298,22 +383,28 @@ export class ArkTSConfigGenerator {
       if (dirName === 'component') {
         this.traverse(dependencySection, basePath, aliasConfigObj, 'component/', true);
       } else {
-        this.traverse(dependencySection, basePath, aliasConfigObj, 'dynamic', true);
+        this.traverse(dependencySection, basePath, aliasConfigObj, 'dynamic', true, '', false, ['.d.ets'], true, true);
       }
     });
   }
 
   private getDependenciesSection(moduleInfo: ModuleInfo, dependencySection: Record<string, DependencyItem>): void {
     this.generateSystemSdkDependenciesSection(dependencySection, moduleInfo);
-    let depModules: string[] = moduleInfo.dynamicDepModuleInfos;
+    // Every dependency module contributes its declaration aliases when a decl-fileInfo
+    // exists - a hybrid module appears in both lists, hence the deduplication.
+    const depModules = Array.from(new Set([...moduleInfo.dynamicDepModuleInfos, ...moduleInfo.staticDepModuleInfos]));
     depModules.forEach((depModuleName: string) => {
       let depModuleInfo = this.moduleInfos[depModuleName];
-      this.parseDeclFile(depModuleInfo, dependencySection);
+      this.parseDeclFile(moduleInfo.packageName, depModuleInfo, dependencySection);
     });
 
-    if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_HYBRID) {
-      this.parseDeclFile(moduleInfo, dependencySection);
-    }
+    // The module's own decl-fileInfo is the materialized interop-declaration dynamic
+    // entry list: hvigor generates it only for modules owning dynamic files and passes
+    // those modules to the build system as 1.1/hybrid, whose own '<package>/<file>'
+    // dependencies are then emitted. The locally computed language must not gate this:
+    // the descriptor 'arktsversion' and the '.ets'-only file scan can both report '1.2'
+    // for a module whose dynamic entries are declared through interop-declaration.json.
+    this.parseDeclFile(moduleInfo.packageName, moduleInfo, dependencySection);
   }
 
   public writeArkTSConfigFile(moduleInfo: ModuleInfo): void {

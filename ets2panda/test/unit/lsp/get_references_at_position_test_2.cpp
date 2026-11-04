@@ -48,8 +48,7 @@ public:
     }
 
     // Non-index path: resolve the declaration of the identifier at `position` in `fileName`,
-    // then collect references from every file in `filePaths`. The declaration occurrence
-    // itself is excluded by implementation policy (see GetReferencesAtPositionImpl).
+    // then collect references from every file in `filePaths` (see GetReferencesAtPositionImpl).
     References MockGetReferencesAtPosition(char const *fileName, size_t position,
                                            const std::vector<std::string> &filePaths)
     {
@@ -541,9 +540,9 @@ stable = stable + 1;)"};
     AssertRefs(first, expected);
 }
 
-// Scenario: index path and non-index path return the same reference set for the same
-// position; the index path additionally reports the definition in definitionInfo and
-// still excludes the definition occurrence from referenceInfos.
+// Scenario: the non-index path returns the usage set; the index path returns the same
+// set with the definition occurrence listed first and reports the definition in
+// definitionInfo as well.
 TEST_F(LSPGetReferencesAtPositionTests2, IndexPathAndNonIndexPathAreConsistent)
 {
     std::vector<std::string> files = {"index_path_refs.ets"};
@@ -570,7 +569,7 @@ console.log(idx);)"};
     References indexed = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(context, defPos);
     initializer.DestroyContext(context);
 
-    // Both paths return exactly the same occurrences: the read in useIdx, the
+    // The non-index path returns exactly the usage occurrences: the read in useIdx, the
     // assignment, the read after the assignment, and the console.log read.
     const size_t readInFn = texts[0].find("idx;");
     const size_t writePos = texts[0].rfind("idx = idx");
@@ -579,20 +578,25 @@ console.log(idx);)"};
     ASSERT_NE(readInFn, std::string::npos);
     ASSERT_NE(writePos, std::string::npos);
     ASSERT_NE(logPos, std::string::npos);
-    std::vector<ReferenceInfo> expected {{filePaths[0], readInFn, 3},
-                                         {filePaths[0], writePos, 3},
-                                         {filePaths[0], readAfterWrite, 3},
-                                         {filePaths[0], logPos, 3}};
-    AssertRefs(nonIndex, expected);
-    AssertRefs(indexed, expected);
+    std::vector<ReferenceInfo> expectedNonIndex {{filePaths[0], readInFn, 3},
+                                                 {filePaths[0], writePos, 3},
+                                                 {filePaths[0], readAfterWrite, 3},
+                                                 {filePaths[0], logPos, 3}};
+    AssertRefs(nonIndex, expectedNonIndex);
 
-    // The index path additionally pins the definition.
+    // The index path lists the definition occurrence first and resolves the definition.
+    std::vector<ReferenceInfo> expectedIndexed {{filePaths[0], defPos, 3},
+                                                {filePaths[0], readInFn, 3},
+                                                {filePaths[0], writePos, 3},
+                                                {filePaths[0], readAfterWrite, 3},
+                                                {filePaths[0], logPos, 3}};
+    AssertRefs(indexed, expectedIndexed);
     EXPECT_EQ(indexed.definitionInfo.fileName, filePaths[0]);
     EXPECT_EQ(indexed.definitionInfo.start, defPos);
     EXPECT_EQ(indexed.definitionInfo.length, std::string("idx").size());
-    // The definition occurrence stays excluded from referenceInfos in both paths.
+    // The non-index path keeps the definition out of its result shape.
     EXPECT_TRUE(nonIndex.definitionInfo.fileName.empty());
-    EXPECT_FALSE(ContainsRef(indexed, filePaths[0], defPos, std::string("idx").size()));
+    EXPECT_TRUE(ContainsRef(indexed, filePaths[0], defPos, std::string("idx").size()));
 }
 
 // Wrapper-level test: GetDeclInfo resolves the declaration of the identifier at

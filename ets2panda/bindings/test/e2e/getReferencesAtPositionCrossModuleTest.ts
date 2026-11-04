@@ -42,6 +42,7 @@ describe('getReferencesAtPositionCrossModuleTest', () => {
     { fileName: 'EntryReferences2.ets', start: 684, length: 3 },
     { fileName: 'EntryReferences2.ets', start: 694, length: 3 },
     { fileName: 'Index.ets', start: 632, length: 3 },
+    { fileName: 'Symbols.ets', start: 636, length: 3 },
     { fileName: 'Symbols.ets', start: 716, length: 3 },
     { fileName: 'Symbols.ets', start: 735, length: 3 }
   ];
@@ -51,6 +52,7 @@ describe('getReferencesAtPositionCrossModuleTest', () => {
     { fileName: 'EntryReferences2.ets', start: 637, length: 6 },
     { fileName: 'EntryReferences2.ets', start: 721, length: 6 },
     { fileName: 'Index.ets', start: 637, length: 6 },
+    { fileName: 'Symbols.ets', start: 758, length: 6 },
     { fileName: 'Symbols.ets', start: 814, length: 6 }
   ];
   const modules: ModuleDescriptor[] = [
@@ -73,7 +75,7 @@ describe('getReferencesAtPositionCrossModuleTest', () => {
 
     const classOffset = getMarkerOffset(entryFile1, '/*classTarget*/');
     const classReferences = lsp.getReferencesAtPosition(entryFile1, classOffset);
-    expect(classReferences?.length).toBe(8);
+    expect(classReferences?.length).toBe(9);
     const classReferenceCount = classReferences ? classReferences.length : 0;
     for (let i = 0; i < classReferenceCount; i++) {
       expectReferences(classReferences ? classReferences[i] : undefined, REFERENCES_001[i]);
@@ -81,7 +83,7 @@ describe('getReferencesAtPositionCrossModuleTest', () => {
 
     const constOffset = getMarkerOffset(entryFile1, '/*constTarget*/');
     const constReferences = lsp.getReferencesAtPosition(entryFile1, constOffset);
-    expect(constReferences?.length).toBe(6);
+    expect(constReferences?.length).toBe(7);
     const constReferenceCount = constReferences ? constReferences.length : 0;
     for (let i = 0; i < constReferenceCount; i++) {
       expectReferences(constReferences ? constReferences[i] : undefined, REFERENCES_002[i]);

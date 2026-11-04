@@ -1175,11 +1175,15 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _getParamNumberByNodeInfo(nodeInfo: KPtr): KInt {
+    throw new Error('Not implemented');
+  }
+
   _getNodeInfosByDefinitionData(context: KPtr, fileName: String, position: KInt): KPtr {
     throw new Error('Not implemented');
   }
 
-  _CreateNodeInfoPtr(nodeName: String, nodeKind: KInt): KPtr {
+  _CreateNodeInfoPtr(nodeName: String, nodeKind: KInt, paramNumber: KInt): KPtr {
     throw new Error('Not implemented');
   }
 
@@ -1199,7 +1203,7 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _findRenameLocationsFromIndex(context: KNativePointer, position: KInt): KPtr {
+  _findRenameLocationsFromIndex(context: KPtr, position: KInt): KPtr {
     throw new Error('Not implemented');
   }
 

@@ -24,9 +24,9 @@
 #include "lsp/include/completions.h"
 #include "lsp/include/internal_api.h"
 #include "lsp/include/register_code_fix/import_fixes.h"
-#include "lsp/include/services/import_utils.h"
 #include "lsp/include/symbol_reference_index.h"
 #include "public/es2panda_lib.h"
+#include "services/import_utils.h"
 
 namespace ark::es2panda::lsp {
 using codefixes::ADD_LOCAL_VARIABLE;
@@ -99,7 +99,10 @@ bool TryBuildImportCodeActionForCollectInfo(const ExternalApiCollectInfo &info, 
     codeAction->description = info.isDefault
                                   ? ("Add import " + buildContext.unresolvedName + " from '" + moduleName + "'")
                                   : ("Add import {" + buildContext.unresolvedName + "} from '" + moduleName + "'");
-    codeAction->additionalMessage = info.importDeclaration;
+    // The declaration file path, not the import specifier: importDeclaration may carry the
+    // importable module form ('dynamic@xxx'), while additionalMessage reports where the
+    // symbol is declared.
+    codeAction->additionalMessage = info.sourceFile;
     codeAction->changes = std::move(changes);
     return true;
 }
@@ -179,21 +182,33 @@ std::vector<CodeFixAction> ImportFixes::GetCodeActions(const CodeFixContext &con
         return actions;
     }
 
+    const auto *arkTsConfig = GetArkTsConfigOrNull(ctx);
+    std::unordered_set<std::string> seenModules;
+    auto addActionForModule = [&](const SymbolDefSearchResult &def, const std::string &moduleName) {
+        if (moduleName.empty() || !seenModules.insert(moduleName).second) {
+            return;
+        }
+        CodeFixAction codeAction;
+        ExternalApiCollectInfo info {def.fileName, CompletionEntryKind::VARIABLE, unresolvedName, def.isDefaultExport,
+                                     def.fileName};
+        if (TryBuildImportCodeActionForCollectInfo(info, moduleName, buildContext, &codeAction)) {
+            actions.push_back(std::move(codeAction));
+        }
+    };
+
     for (const auto &def : FindExportSymbolDefinitionsByPrefix(unresolvedName, ctx->sourceFileName)) {
         if (def.symbolName != unresolvedName) {
             continue;
         }
 
-        auto moduleName = ComputeRelativeImportPath(ctx->sourceFileName, def.fileName);
-        if (moduleName.empty()) {
-            continue;
+        // Keep both import forms: the entry/module alias form ('library', 'dynlib') and the
+        // file-level form ('library/utils/Foo', 'dynlib/Utils'). The file-level form keeps
+        // inner-file exports importable; the module alias is the form users expect when the
+        // module entry exports the symbol.
+        if (IsSymbolExportedByModuleEntry(def.fileName, unresolvedName, arkTsConfig)) {
+            addActionForModule(def, ComputeModuleImportPath(def.fileName, arkTsConfig));
         }
-
-        CodeFixAction codeAction;
-        ExternalApiCollectInfo info {def.fileName, CompletionEntryKind::VARIABLE, unresolvedName, def.isDefaultExport};
-        if (TryBuildImportCodeActionForCollectInfo(info, moduleName, buildContext, &codeAction)) {
-            actions.push_back(std::move(codeAction));
-        }
+        addActionForModule(def, ComputeRelativeImportPath(ctx->sourceFileName, def.fileName, arkTsConfig));
     }
     return actions;
 }

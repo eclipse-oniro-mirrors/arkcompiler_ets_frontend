@@ -143,14 +143,15 @@ public:
                                              const std::vector<std::string> &texts)
     {
         // Named specifier: queried from the defining file the definition resolves with exact
-        // offsets, and the importing-file references are the specifier plus the console.log usage.
+        // offsets, and the importing-file references are the specifier plus the console.log usage;
+        // the definition occurrence itself stays listed in the reference list.
         const auto namedDefPos = texts[SPEC_NAMED_LIB_IDX].find("namedVal: number");
         ASSERT_NE(namedDefPos, std::string::npos);
         auto namedRefs = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(namedCtx, namedDefPos);
         ASSERT_EQ(namedRefs.definitionInfo.fileName, paths[SPEC_NAMED_LIB_IDX]);
         ASSERT_EQ(namedRefs.definitionInfo.start, namedDefPos);
         ASSERT_EQ(namedRefs.definitionInfo.length, std::string("namedVal").size());
-        ASSERT_EQ(CountReferencesInFile(namedRefs, paths[SPEC_NAMED_LIB_IDX]), 0U);
+        ASSERT_EQ(CountReferencesInFile(namedRefs, paths[SPEC_NAMED_LIB_IDX]), 1U);
         ASSERT_EQ(CountReferencesInFile(namedRefs, paths[SPEC_MAIN_FILE_IDX]), SPEC_MAIN_REF_COUNT);
     }
 
@@ -275,8 +276,8 @@ public:
         ASSERT_EQ(methodRefs.definitionInfo.fileName, paths[0]);
         ASSERT_EQ(methodRefs.definitionInfo.start, methodDefPos);
         ASSERT_EQ(methodRefs.definitionInfo.length, std::string("staticMethod").size());
-        // The definition is stripped from the list; the qualified call-site usage remains.
-        ASSERT_EQ(CountReferencesInFile(methodRefs, paths[0]), 1U);
+        // The definition occurrence stays in the list next to the qualified call-site usage.
+        ASSERT_EQ(CountReferencesInFile(methodRefs, paths[0]), 2U);
 
         // The call-site usage resolves to the same symbol: same reference count, same definition.
         const auto methodUsePos = source.find(".staticMethod(3)") + 1;
@@ -290,14 +291,16 @@ public:
     {
         const std::string &source = texts[0];
 
-        // Static field: definition only (no usage), still resolved with exact offsets; with no
-        // other occurrence the displayed reference list is empty.
+        // Static field: definition only (no usage), still resolved with exact offsets; the
+        // definition occurrence itself is the single listed reference.
         const auto fieldDefPos = source.find("staticField: number");
         ASSERT_NE(fieldDefPos, std::string::npos);
         auto fieldRefs = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(context, fieldDefPos);
         ASSERT_EQ(fieldRefs.definitionInfo.start, fieldDefPos);
         ASSERT_EQ(fieldRefs.definitionInfo.length, std::string("staticField").size());
-        ASSERT_TRUE(fieldRefs.referenceInfos.empty());
+        ASSERT_EQ(fieldRefs.referenceInfos.size(), 1U);
+        ASSERT_EQ(fieldRefs.referenceInfos[0].start, fieldDefPos);
+        ASSERT_EQ(fieldRefs.referenceInfos[0].length, std::string("staticField").size());
     }
 
     static void ExpectNestedShapeQueriesUnresolved(es2panda_Context *context, const std::vector<std::string> &texts)
@@ -350,12 +353,14 @@ public:
     static void ExpectDeepDefinitionShape(es2panda_Context *deepCtx, const std::vector<std::string> &paths,
                                           const std::vector<std::string> &texts)
     {
-        // Deep definition queried from its own file: definition exact, displayed references empty
-        // (the definition is stripped and no other deep-file occurrence exists).
+        // Deep definition queried from its own file: definition exact; with no other deep-file
+        // occurrence the definition itself is the single listed reference.
         const auto deepDefPos = texts[TRANSITIVE_DEEP_LIB_IDX].find("deepVal: number");
         ASSERT_NE(deepDefPos, std::string::npos);
         auto deepRefs = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(deepCtx, deepDefPos);
-        ASSERT_TRUE(deepRefs.referenceInfos.empty());
+        ASSERT_EQ(deepRefs.referenceInfos.size(), 1U);
+        ASSERT_EQ(deepRefs.referenceInfos[0].start, deepDefPos);
+        ASSERT_EQ(deepRefs.referenceInfos[0].length, std::string("deepVal").size());
         ASSERT_EQ(deepRefs.definitionInfo.fileName, paths[TRANSITIVE_DEEP_LIB_IDX]);
         ASSERT_EQ(deepRefs.definitionInfo.start, deepDefPos);
         ASSERT_EQ(deepRefs.definitionInfo.length, std::string("deepVal").size());
@@ -733,15 +738,17 @@ console.log(lifeVal);)"};
     const auto defPos = texts[0].find("lifeVal: number");
     ASSERT_NE(defPos, std::string::npos);
     auto before = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(defCtx, defPos);
-    // The definition is reported via definitionInfo only: both references are the import
-    // specifier and the console.log usage inside the importing file.
-    ASSERT_EQ(before.referenceInfos.size(), 2U);
+    // The definition occurrence stays listed next to both importing-file references (the
+    // import specifier and the console.log usage).
+    ASSERT_EQ(before.referenceInfos.size(), 3U);
     ASSERT_EQ(CountReferencesInFile(before, filePaths[1]), 2U);
 
-    // Removing the importing file removes both references but keeps the definition entry.
+    // Removing the importing file removes both importing-file references but keeps the
+    // definition entry: the definition itself remains the single listed reference.
     ASSERT_TRUE(ark::es2panda::lsp::RemoveSymbolReferenceIndexForFile(filePaths[1]));
     auto afterUseRemoved = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(defCtx, defPos);
-    ASSERT_TRUE(afterUseRemoved.referenceInfos.empty());
+    ASSERT_EQ(afterUseRemoved.referenceInfos.size(), 1U);
+    ASSERT_EQ(afterUseRemoved.referenceInfos[0].start, defPos);
     ASSERT_EQ(afterUseRemoved.definitionInfo.fileName, filePaths[0]);
     ASSERT_EQ(afterUseRemoved.definitionInfo.start, defPos);
 
@@ -760,9 +767,11 @@ console.log(lifeVal);)"};
     ASSERT_NE(rebuiltCtx, nullptr);
     ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(rebuiltCtx));
     auto restored = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(rebuiltCtx, defPos);
-    // The rebuilt file contributes exactly the definition occurrence; it is stripped from the
-    // displayed references and resurfaces as definitionInfo.
-    ASSERT_TRUE(restored.referenceInfos.empty());
+    // The rebuilt file contributes exactly the definition occurrence: it is the single listed
+    // reference and resurfaces as definitionInfo.
+    ASSERT_EQ(restored.referenceInfos.size(), 1U);
+    ASSERT_EQ(restored.referenceInfos[0].start, defPos);
+    ASSERT_EQ(restored.referenceInfos[0].length, std::string("lifeVal").size());
     ASSERT_EQ(restored.definitionInfo.fileName, filePaths[0]);
     ASSERT_EQ(restored.definitionInfo.start, defPos);
     ASSERT_EQ(restored.definitionInfo.length, std::string("lifeVal").size());
@@ -794,9 +803,9 @@ console.log(onlyLocal);)"};
     const auto defPos = texts[0].find("onlyLocal = 1");
     ASSERT_NE(defPos, std::string::npos);
     auto before = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(context, defPos);
-    // The definition is stripped from the list; the two assignment targets and the
-    // console.log usage remain.
-    ASSERT_EQ(before.referenceInfos.size(), 3U);
+    // The definition occurrence stays in the list next to the two assignment targets and the
+    // console.log usage.
+    ASSERT_EQ(before.referenceInfos.size(), 4U);
     for (const auto &ref : before.referenceInfos) {
         ASSERT_EQ(ref.fileName, filePaths[0]);
         ASSERT_EQ(ref.length, std::string("onlyLocal").size());
@@ -928,10 +937,9 @@ console.log(posTarget);)"};
     const auto usePos = source.find("console.log(posTarget)") + std::string("console.log(").size();
     ASSERT_NE(usePos, std::string::npos);
 
-    // Inside the definition identifier: hit with the usage reference; the definition is
-    // reported through definitionInfo only.
+    // Inside the definition identifier: hit with the definition and the usage reference.
     auto hit = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(context, defPos);
-    ASSERT_EQ(hit.referenceInfos.size(), 1U);
+    ASSERT_EQ(hit.referenceInfos.size(), 2U);
     ASSERT_EQ(hit.definitionInfo.start, defPos);
     ASSERT_EQ(hit.definitionInfo.length, nameLen);
 
@@ -956,7 +964,7 @@ console.log(posTarget);)"};
 
     // The usage position resolves to the same symbol with the exact usage span listed.
     auto usageHit = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(context, usePos);
-    ASSERT_EQ(usageHit.referenceInfos.size(), 1U);
+    ASSERT_EQ(usageHit.referenceInfos.size(), 2U);
     ASSERT_EQ(usageHit.definitionInfo.start, defPos);
     bool usageListed = false;
     for (const auto &ref : usageHit.referenceInfos) {

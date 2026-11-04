@@ -22,6 +22,7 @@
 
 #include <stddef.h>
 #include <cstddef>
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
@@ -69,6 +70,11 @@ typedef struct ReferenceInfo {
     size_t start;
     size_t length;
 } ReferenceInfo;
+
+// Bindings decode getDefinitionDataFromNode anchors through ReferenceInfo accessors on the
+// reference query path, so the two layouts must stay compatible.
+static_assert(sizeof(DefinitionInfo) == sizeof(ReferenceInfo),
+              "DefinitionInfo and ReferenceInfo must remain layout-compatible");
 
 typedef struct References {
     std::vector<ReferenceInfo> referenceInfos;
@@ -329,9 +335,12 @@ struct CodeFixOptions {
 };
 
 struct NodeInfo {
-    NodeInfo(std::string n, ark::es2panda::ir::AstNodeType k) : name(n), kind(k) {}
+    NodeInfo(std::string n, ark::es2panda::ir::AstNodeType k) : name(std::move(n)), kind(k) {}
     std::string name;
     ark::es2panda::ir::AstNodeType kind;
+    // Overload disambiguation: the parameter count of the method definition this info was
+    // extracted from; unset for kinds without parameters or legacy callers.
+    std::optional<std::size_t> paramNumber {};
 };
 
 struct TokenTypeInfo {

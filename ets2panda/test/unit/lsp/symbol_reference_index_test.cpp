@@ -13,7 +13,10 @@
  * limitations under the License.
  */
 
+#include <array>
 #include <cstddef>
+#include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 #include "lsp_api_test.h"
@@ -280,6 +283,103 @@ console.log(instance.value);)"};
     for (const auto &ref : result.referenceInfos) {
         ASSERT_TRUE(ref.fileName == filePaths[0] || ref.fileName == filePaths[1]);
     }
+}
+
+// The build folder location: the compile-time macro wins without the environment override.
+static std::string ResolveBuildFolder()
+{
+#ifdef BUILD_FOLDER
+    std::string buildDir = BUILD_FOLDER;
+#else
+    std::string buildDir;
+#endif
+    if (const char *env = std::getenv("BUILD_FOLDER"); env != nullptr) {
+        buildDir = env;
+    }
+    return buildDir;
+}
+
+// The 'dependencies' stdlib entries of the generated build arktsconfig, so the context of a
+// test config reaches the checked state.
+static std::string BuildStdlibDependencyEntries(const std::string &buildDir)
+{
+    constexpr std::array STDLIB_PACKAGE_NAMES = {
+        "std/core",        "std/math",        "std/math/consts",       "std/containers", "std/interop/js",
+        "std/time",        "std/debug",       "std/debug/concurrency", "std/dfx",        "std/testing",
+        "std/concurrency", "std/annotations", "std/interop",           "escompat",       "arkruntime"};
+    const auto stdlibAbc = buildDir + "/plugins/ets/etsstdlib.abc";
+    std::string entries;
+    for (const auto *name : STDLIB_PACKAGE_NAMES) {
+        if (!entries.empty()) {
+            entries += ", ";
+        }
+        entries += R"(")" + std::string(name) + R"(": {"path": ")" + stdlibAbc + R"("})";
+    }
+    return entries;
+}
+
+// The module-root mapping of a hybrid dependency is a 'paths' prefix match, so an import of a
+// file whose 'dependencies' key is missing resolves to the dynamic source, which is then
+// parsed as a static MODULE external. The 'dependencies' record is the authoritative dynamic
+// classification, so the statically parsed copy must not enter the index - the declaration
+// programs provide the module's symbols.
+TEST_F(LSPSymbolReferenceIndexTests, StaticallyParsedDynamicDependencySourceIsNotIndexed)
+{
+    const auto buildDir = ResolveBuildFolder();
+    ASSERT_FALSE(buildDir.empty());
+
+    const auto tempDir = std::filesystem::path(testing::TempDir()).append(GetExecutableName());
+    const auto dynlibRoot = tempDir / "stale_dynlib";
+    std::filesystem::create_directories(dynlibRoot);
+    tempFiles_.push_back(dynlibRoot.string());
+    const auto dynlibSource = (dynlibRoot / "Index.ets").string();
+    {
+        std::ofstream outStream(dynlibSource);
+        outStream << "export let dynVal: number = 1;\n";
+    }
+
+    std::vector<std::string> files = {"stale_dynlib_index.d.ets", "stale_dynlib_use.ets",
+                                      "stale_dynlib_arktsconfig.json"};
+    const auto dynlibDecl = (tempDir / files[0]).string();
+    // 'paths' carries the module-root mapping, 'dependencies' the dynamic record of the same
+    // module: the import 'dynlib/Index' misses the dependency key and falls through to the
+    // module root, resolving to the dynamic source instead of the declaration.
+    const auto configText = R"({"compilerOptions": {"baseUrl": ")" + tempDir.string() + R"(", "cacheDir": ")" +
+                            buildDir + R"(/plugins/ets/stdlib/decls",)" + R"("paths": {"dynlib": [")" +
+                            dynlibRoot.string() + R"("]}, "dependencies": {"dynlib": {"language": "js", "path": ")" +
+                            dynlibDecl + R"(", "sourceFilePath": ")" + dynlibSource + R"(", "ohmUrl": ""},)" +
+                            BuildStdlibDependencyEntries(buildDir) + R"(}}})";
+    std::vector<std::string> texts = {R"(export declare let dynVal: number;)",
+                                      R"(import { dynVal } from 'dynlib/Index';
+export let consumerVal: number = dynVal;)",
+                                      configText};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+    const auto &consumerPath = filePaths[1];
+    const auto &configPath = filePaths[2];
+
+    const auto configOption = "--arktsconfig=" + configPath;
+    std::array<const char *, 2U> args = {consumerPath.c_str(), configOption.c_str()};
+    auto *compilerImpl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    ASSERT_NE(compilerImpl, nullptr);
+    auto configDeleter = [compilerImpl](es2panda_Config *config) { compilerImpl->DestroyConfigWithoutLog(config); };
+    std::unique_ptr<es2panda_Config, decltype(configDeleter)> config(
+        compilerImpl->CreateConfig(args.size(), args.data()), configDeleter);
+    ASSERT_NE(config, nullptr);
+    auto contextDeleter = [compilerImpl](es2panda_Context *context) { compilerImpl->DestroyContext(context); };
+    std::unique_ptr<es2panda_Context, decltype(contextDeleter)> context(
+        compilerImpl->CreateContextFromFile(config.get(), consumerPath.c_str()), contextDeleter);
+    ASSERT_NE(context, nullptr);
+    compilerImpl->ProceedToState(context.get(), ES2PANDA_STATE_CHECKED);
+    // The checked state proves the import resolved and bound through the 'paths' module root:
+    // an unresolved import would leave the consumer unchecked.
+    ASSERT_EQ(compilerImpl->ContextState(context.get()), ES2PANDA_STATE_CHECKED);
+
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(context.get()));
+
+    // The consumer is indexed; the statically parsed dynamic dependency source is not.
+    ASSERT_FALSE(ark::es2panda::lsp::GetIndexedFileSource(consumerPath).empty());
+    ASSERT_TRUE(ark::es2panda::lsp::GetIndexedFileSource(dynlibSource).empty());
 }
 
 // Test: GetIndexedFileSource returns empty for non-indexed file and correct source for indexed file

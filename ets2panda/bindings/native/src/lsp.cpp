@@ -2371,11 +2371,25 @@ KNativePointer impl_getKindByNodeInfo(KNativePointer nodeInfo)
 }
 TS_INTEROP_1(getKindByNodeInfo, KNativePointer, KNativePointer)
 
-KNativePointer impl_CreateNodeInfoPtr(KStringPtr &nodeName, KInt nodeKind)
+KInt impl_getParamNumberByNodeInfo(KNativePointer nodeInfo)
 {
-    return new NodeInfo(nodeName.Data(), ark::es2panda::ir::AstNodeType(nodeKind));
+    auto *info = reinterpret_cast<NodeInfo *>(nodeInfo);
+    if (info == nullptr || !info->paramNumber.has_value()) {
+        return -1;
+    }
+    return static_cast<KInt>(*info->paramNumber);
 }
-TS_INTEROP_2(CreateNodeInfoPtr, KNativePointer, KStringPtr, KInt)
+TS_INTEROP_1(getParamNumberByNodeInfo, KInt, KNativePointer)
+
+KNativePointer impl_CreateNodeInfoPtr(KStringPtr &nodeName, KInt nodeKind, KInt paramNumber)
+{
+    auto *info = new NodeInfo(nodeName.Data(), ark::es2panda::ir::AstNodeType(nodeKind));
+    if (paramNumber >= 0) {
+        info->paramNumber = static_cast<std::size_t>(paramNumber);
+    }
+    return info;
+}
+TS_INTEROP_3(CreateNodeInfoPtr, KNativePointer, KStringPtr, KInt, KInt)
 
 KNativePointer impl_getDefinitionDataFromNode(KNativePointer context, KStringArray pointerArrayPtr, KInt arraySize)
 {

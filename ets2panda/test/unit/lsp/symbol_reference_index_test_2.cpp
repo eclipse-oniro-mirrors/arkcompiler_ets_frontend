@@ -173,7 +173,7 @@ console.log(localOnly);)"};
     // Local symbols unaffected by the unresolved import stay fully queryable.
     const auto defPos = texts[0].find("localOnly: number");
     auto localRefs = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(ctx, defPos);
-    ASSERT_EQ(localRefs.referenceInfos.size(), 1U);
+    ASSERT_EQ(localRefs.referenceInfos.size(), 2U);
     EXPECT_EQ(localRefs.definitionInfo.fileName, filePaths[0]);
     EXPECT_EQ(localRefs.definitionInfo.start, defPos);
 
@@ -436,7 +436,7 @@ console.log(rrValue);)"};
 
     const auto defPos = texts[0].find("rrValue: number");
     auto before = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(baseCtx, defPos);
-    ASSERT_EQ(before.referenceInfos.size(), 3U);
+    ASSERT_EQ(before.referenceInfos.size(), 4U);
 
     // Removing both files empties the query results completely.
     ASSERT_TRUE(ark::es2panda::lsp::RemoveSymbolReferenceIndexForFile(filePaths[0]));

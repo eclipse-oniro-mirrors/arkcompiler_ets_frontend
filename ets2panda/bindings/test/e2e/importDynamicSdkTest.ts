@@ -16,7 +16,7 @@
 import fs from 'fs';
 import path from 'path';
 import { AstNodeType, LspCompletionInfo, LspDiagsNode } from '../../src';
-import { getLspWithUi, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('importDynamicSdkTest', () => {
   const moduleName: string = 'importDynamicSdk';
@@ -46,130 +46,82 @@ describe('importDynamicSdkTest', () => {
   ];
   const COMPLETIONS_002 = [
     {
-      name: 'setBatteryConfig(sceneName: string, sceneValue: string): number',
-      sortText: '17',
-      insertText: 'setBatteryConfig()',
-      kind: 2,
+      name: 'batterySOC: number',
+      sortText: '14',
+      insertText: 'batterySOC',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'getBatteryConfig(sceneName: string): string',
-      sortText: '17',
-      insertText: 'getBatteryConfig()',
-      kind: 2,
+      name: 'chargingStatus: BatteryChargeState',
+      sortText: '14',
+      insertText: 'chargingStatus',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'isBatteryConfigSupported(sceneName: string): boolean',
-      sortText: '17',
-      insertText: 'isBatteryConfigSupported()',
-      kind: 2,
+      name: 'healthStatus: BatteryHealthState',
+      sortText: '14',
+      insertText: 'healthStatus',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'batterySOC(): number',
-      sortText: '17',
-      insertText: 'batterySOC()',
-      kind: 2,
+      name: 'pluggedType: BatteryPluggedType',
+      sortText: '14',
+      insertText: 'pluggedType',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'chargingStatus(): BatteryChargeState',
-      sortText: '17',
-      insertText: 'chargingStatus()',
-      kind: 2,
+      name: 'voltage: number',
+      sortText: '14',
+      insertText: 'voltage',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'healthStatus(): BatteryHealthState',
-      sortText: '17',
-      insertText: 'healthStatus()',
-      kind: 2,
+      name: 'technology: string',
+      sortText: '14',
+      insertText: 'technology',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'pluggedType(): BatteryPluggedType',
-      sortText: '17',
-      insertText: 'pluggedType()',
-      kind: 2,
+      name: 'batteryTemperature: number',
+      sortText: '14',
+      insertText: 'batteryTemperature',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'voltage(): number',
-      sortText: '17',
-      insertText: 'voltage()',
-      kind: 2,
+      name: 'isBatteryPresent: boolean',
+      sortText: '14',
+      insertText: 'isBatteryPresent',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'technology(): string',
-      sortText: '17',
-      insertText: 'technology()',
-      kind: 2,
+      name: 'batteryCapacityLevel: BatteryCapacityLevel',
+      sortText: '14',
+      insertText: 'batteryCapacityLevel',
+      kind: 10,
       data: null,
       hasAction: false
     },
     {
-      name: 'batteryTemperature(): number',
-      sortText: '17',
-      insertText: 'batteryTemperature()',
-      kind: 2,
-      data: null,
-      hasAction: false
-    },
-    {
-      name: 'isBatteryPresent(): boolean',
-      sortText: '17',
-      insertText: 'isBatteryPresent()',
-      kind: 2,
-      data: null,
-      hasAction: false
-    },
-    {
-      name: 'batteryCapacityLevel(): BatteryCapacityLevel',
-      sortText: '17',
-      insertText: 'batteryCapacityLevel()',
-      kind: 2,
-      data: null,
-      hasAction: false
-    },
-    {
-      name: 'estimatedRemainingChargeTime(): number',
-      sortText: '17',
-      insertText: 'estimatedRemainingChargeTime()',
-      kind: 2,
-      data: null,
-      hasAction: false
-    },
-    {
-      name: 'totalEnergy(): number',
-      sortText: '17',
-      insertText: 'totalEnergy()',
-      kind: 2,
-      data: null,
-      hasAction: false
-    },
-    {
-      name: 'nowCurrent(): number',
-      sortText: '17',
-      insertText: 'nowCurrent()',
-      kind: 2,
-      data: null,
-      hasAction: false
-    },
-    {
-      name: 'remainingEnergy(): number',
-      sortText: '17',
-      insertText: 'remainingEnergy()',
-      kind: 2,
+      name: 'nowCurrent: number',
+      sortText: '14',
+      insertText: 'nowCurrent',
+      kind: 10,
       data: null,
       hasAction: false
     },
@@ -250,16 +202,152 @@ describe('importDynamicSdkTest', () => {
   function expectEntriesContainUnorderedWithCompletions(realValue: LspCompletionInfo | undefined, expected: any[]) {
     expect(realValue).toBeDefined();
     expected.forEach((item) => {
-      expect(toMatchCompletions(realValue, item, realValue!.entries.length)).toBe(true);
+      const entries = realValue?.entries ?? [];
+      if (toMatchCompletions(realValue, item, entries.length)) {
+        return;
+      }
+      const expectedFields = {
+        name: item.name,
+        sortText: item.sortText,
+        insertText: item.insertText,
+        kind: item.kind
+      };
+      const sameNameEntries = entries.filter((entry) => entry?.name === item.name);
+      if (sameNameEntries.length === 0) {
+        // The expected entry is missing entirely: show every received name.
+        expect(entries.map((entry) => entry?.name)).toContain(item.name);
+        return;
+      }
+      // The name exists but some field differs: diff against the closest candidate so the
+      // mismatching fields are visible.
+      const matchedFieldCount = (entry: any) =>
+        [
+          entry?.name === item.name,
+          entry?.sortText === item.sortText,
+          entry?.insertText === item.insertText,
+          entry?.kind === item.kind
+        ].filter(Boolean).length;
+      const closest = sameNameEntries.reduce((best, entry) =>
+        matchedFieldCount(entry) > matchedFieldCount(best) ? entry : best);
+      expect(closest).toMatchObject(expectedFields);
     });
   }
 
   function expectEntriesContainUnorderedWithDiagnostics(expected: any[], realValue: LspDiagsNode | undefined) {
     expect(realValue).toBeDefined();
     expected.forEach((item) => {
-      expect(toMatchDiagnostics(item, realValue, realValue!.diagnostics.length)).toBe(true);
+      const diagnostics = realValue?.diagnostics ?? [];
+      if (toMatchDiagnostics(item, realValue, diagnostics.length)) {
+        return;
+      }
+      const sameMessageDiagnostics = diagnostics.filter((diagnostic) => diagnostic?.message === item.message);
+      if (sameMessageDiagnostics.length === 0) {
+        // The expected diagnostic is missing entirely: show every received message.
+        expect(diagnostics.map((diagnostic) => diagnostic?.message)).toContain(item.message);
+        return;
+      }
+      // The message exists but the range differs: diff against the closest candidate so the
+      // mismatching range fields are visible.
+      const matchedFieldCount = (diagnostic: any) =>
+        [
+          diagnostic?.range?.start?.line === item.range.start.line,
+          diagnostic?.range?.start?.character === item.range.start.character,
+          diagnostic?.range?.end?.line === item.range.end.line,
+          diagnostic?.range?.end?.character === item.range.end.character
+        ].filter(Boolean).length;
+      const closest = sameMessageDiagnostics.reduce((best, diagnostic) =>
+        matchedFieldCount(diagnostic) > matchedFieldCount(best) ? diagnostic : best);
+      expect(closest).toMatchObject({ message: item.message, range: item.range });
     });
   }
+
+  describe('No UI Plugins', () => {
+    // These cases build the AST cache (initAstCache), which resolves the fixture's
+    // dynamic SDK declarations. Environments whose ets/dynamic fixture cannot be
+    // parsed (gate fixture builds) run with SKIP_UI_PLUGINS and skip them.
+    let lsp: ReturnType<typeof getLsp> | undefined;
+    const getSdkLsp = (): ReturnType<typeof getLsp> => {
+      if (lsp === undefined) {
+        lsp = getLsp(moduleName);
+        lsp.initAstCache();
+      }
+      return lsp;
+    };
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_007', () => {
+      const res = getSdkLsp().getCompletionAtPosition(getRealPath(moduleName, 'importDynamicSdkDynamicAutoImport.ets'), 627);
+      const entries = (res?.entries ?? []).filter((entry) => entry.name === 'hilog');
+      const importDeclarations = entries.map((entry) => String(entry.data?.importDeclaration ?? ''));
+      // hilog is suggested once per import form: the dynamic and static canonical roots
+      // plus the kit re-export of each root. The array comparison keeps the failure
+      // output listing every actually received import declaration when the forms drift.
+      expect([...importDeclarations].sort()).toEqual(
+        ['@kit.PerformanceAnalysisKit', '@ohos.hilog', 'dynamic@kit.PerformanceAnalysisKit', 'dynamic@ohos.hilog']
+      );
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_008', () => {
+      const fileName = getRealPath(moduleName, 'importDynamicSdkAdditionalMessage.ets');
+      const source = fs.readFileSync(path.resolve(fileName.valueOf()), 'utf-8');
+      const offset = source.indexOf('hilog');
+      const res = getSdkLsp().getCodeFixesAtPosition(fileName, offset, offset + 'hilog'.length, [1005]);
+      expect(res).toBeDefined();
+      const actions = res ?? [];
+      // The import specifier keeps the module form (dynamic@ohos.hilog / @ohos.hilog) in the
+      // description, while additionalMessage reports the declaration file path in both cases.
+      const dynamicAction = actions.find((action) => action.description.valueOf().includes("from 'dynamic@ohos.hilog'"));
+      const staticAction = actions.find(
+        (action) => action.description.valueOf().includes("from '@ohos.hilog'") &&
+          !action.description.valueOf().includes('dynamic@')
+      );
+      expect(dynamicAction).toBeDefined();
+      expect(staticAction).toBeDefined();
+      // The dynamic declaration comes from the dynamic SDK root
+      // (<sdk>/../dynamic/build-tools/interop/<category>/@x.d.ets), not the legacy static
+      // root's interop/declaration directory.
+      expect(String(dynamicAction!.additionalMessage_).endsWith('@ohos.hilog.d.ets')).toBe(true);
+      expect(String(dynamicAction!.additionalMessage_).includes('interop')).toBe(true);
+      expect(String(dynamicAction!.additionalMessage_).includes('declaration')).toBe(false);
+      expect(String(staticAction!.additionalMessage_).endsWith('@ohos.hilog.d.ets')).toBe(true);
+      expect(String(staticAction!.additionalMessage_).includes(`${path.sep}static${path.sep}api${path.sep}`)).toBe(true);
+    });
+
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_009', () => {
+      const fileName = getRealPath(moduleName, 'importDynamicSdkAdditionalMessage.ets');
+      const source = fs.readFileSync(path.resolve(fileName.valueOf()), 'utf8');
+      const offset = source.indexOf('hilog');
+      const res = getSdkLsp().getCodeFixesAtPosition(fileName, offset, offset + 'hilog'.length, [1005]);
+      expect(res).toBeDefined();
+      // hilog is default-exported by both canonical roots (default import form) and
+      // re-exported as a named export by the kit: one suggestion per import form. The
+      // array comparison keeps the failure output listing every actually received
+      // suggestion when the forms drift.
+      const descriptions = (res ?? []).map((action) => String(action.description.valueOf())).sort();
+      expect(descriptions).toEqual([
+        "Add import hilog from '@ohos.hilog'",
+        "Add import hilog from 'dynamic@ohos.hilog'",
+        "Add import {hilog} from '@kit.PerformanceAnalysisKit'",
+        "Add import {hilog} from 'dynamic@kit.PerformanceAnalysisKit'"
+      ]);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_dynamic_sdk_decl_in_rename_locations', () => {
+      const fileName = getRealPath(moduleName, 'importDynamicSdkDefinitions.ets');
+      const source = fs.readFileSync(path.resolve(fileName.valueOf()), 'utf8');
+      const offset = source.indexOf('hilog.info') + 2;
+      // The interop declaration of 'dynamic@ohos.hilog' is indexed under the importers'
+      // module key (the module context externals resolve the dynamic import), so the
+      // rename locations cover its declaration site; every remaining location lives in
+      // a project file.
+      const locs = getSdkLsp().findRenameLocations(fileName, offset);
+      const interopDeclLocs = (locs ?? []).filter(
+        (l) =>
+          String(l.fileName).includes(`dynamic${path.sep}build-tools${path.sep}interop`) &&
+          String(l.fileName).endsWith('@ohos.hilog.d.ets')
+      );
+      expect(interopDeclLocs.length).toBe(1);
+      const projectLocs = (locs ?? []).filter((l) => String(l.fileName).includes('testcases'));
+      expect(projectLocs.length).toBeGreaterThan(0);
+      expect((locs ?? []).length).toBe(interopDeclLocs.length + projectLocs.length);
+    });
+  });
 
   describe('With UI Plugins', () => {
     const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
@@ -286,7 +374,7 @@ describe('importDynamicSdkTest', () => {
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_002', () => {
       const res = getUiLsp().getDefinitionAtPosition(getRealPath(moduleName, 'importDynamicSdkDefinitions.ets'), 856);
       expect(res?.fileName.valueOf().endsWith('@ohos.batteryInfo.d.ets')).toBe(true);
-      expect(res?.start).toBe(55);
+      expect(res?.start).toBe(986);
       expect(res?.length).toBe(11);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_003', () => {
@@ -311,7 +399,7 @@ describe('importDynamicSdkTest', () => {
         677
       );
       expect(res?.fileName.valueOf().endsWith('@ohos.hilog.d.ets')).toBe(true);
-      expect(res?.start).toBe(1032);
+      expect(res?.start).toBe(13905);
       expect(res?.length).toBe(12);
       expect(res?.nodeInfos?.map(({ name, kind }) => ({ name, kind }))).toEqual(NODE_INFOS_INTEROP_DEFINITION);
     });

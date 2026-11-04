@@ -118,7 +118,9 @@ public:
         EXPECT_TRUE(entry.GetHasAction()) << "auto-import action missing for entry: " << name;
         ASSERT_TRUE(entry.GetCompletionEntryData().has_value()) << "auto-import data missing for entry: " << name;
         EXPECT_EQ(entry.GetCompletionEntryData()->GetNamedExport(), name);
-        EXPECT_NE(entry.GetCompletionEntryData()->GetImportDeclaration().find(source), std::string::npos);
+        // The import declaration stores the module specifier of the import statement
+        // (the 'xxx' in from 'xxx'), aligned with the IDE contract.
+        EXPECT_EQ(entry.GetCompletionEntryData()->GetImportDeclaration(), source);
 
         for (auto candidate : entries) {
             if (candidate.GetInsertText() == insertText) {
@@ -501,7 +503,7 @@ bb
     EXPECT_TRUE(entry.GetHasAction());
     ASSERT_TRUE(entry.GetCompletionEntryData().has_value());
     EXPECT_EQ(entry.GetCompletionEntryData()->GetNamedExport(), "bbb");
-    EXPECT_NE(entry.GetCompletionEntryData()->GetImportDeclaration().find("a.ets"), std::string::npos);
+    EXPECT_EQ(entry.GetCompletionEntryData()->GetImportDeclaration(), "./a");
 
     initializer.DestroyContext(ctx);
 }
@@ -541,7 +543,7 @@ Task
     size_t const offset = markerPos + marker.size();
     auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
 
-    const std::string source = "@ohos.file.fs.d.ets";
+    const std::string source = "@ohos.file.fs";
     ExpectAutoImportEntry(entries, "TaskSignal", CompletionEntryKind::INTERFACE, "TaskSignal", source);
     ExpectAutoImportEntry(entries, "TaskController", CompletionEntryKind::CLASS, "TaskController", source);
     ExpectAutoImportEntry(entries, "TaskAlias", CompletionEntryKind::ALIAS_TYPE, "TaskAlias", source);
@@ -587,8 +589,7 @@ let value: ImportedBbb
     EXPECT_TRUE(entry.GetHasAction());
     ASSERT_TRUE(entry.GetCompletionEntryData().has_value());
     EXPECT_EQ(entry.GetCompletionEntryData()->GetNamedExport(), "ImportedBbbInterface");
-    EXPECT_NE(entry.GetCompletionEntryData()->GetImportDeclaration().find("auto_import_interface_source.ets"),
-              std::string::npos);
+    EXPECT_EQ(entry.GetCompletionEntryData()->GetImportDeclaration(), "./auto_import_interface_source");
 
     initializer.DestroyContext(sourceCtx);
     initializer.DestroyContext(queryCtx);
@@ -712,7 +713,7 @@ let value: ReviewCollision
     ASSERT_NE(markerPos, std::string::npos);
     auto entries = lspApi->getCompletionsAtPosition(queryCtx, markerPos + marker.size()).GetEntries();
     ExpectAutoImportEntry(entries, "ReviewCollisionSignal", CompletionEntryKind::INTERFACE, "ReviewCollisionSignal",
-                          "collision_auto_import_source.ets");
+                          "./collision_auto_import_source");
 
     initializer.DestroyContext(sourceCtx);
     initializer.DestroyContext(queryCtx);
@@ -752,7 +753,7 @@ let value: NestedCollision
     ASSERT_NE(markerPos, std::string::npos);
     auto entries = lspApi->getCompletionsAtPosition(queryCtx, markerPos + marker.size()).GetEntries();
     ExpectAutoImportEntry(entries, "NestedCollisionSignal", CompletionEntryKind::INTERFACE, "NestedCollisionSignal",
-                          "nested_collision_source.ets");
+                          "./nested_collision_source");
 
     initializer.DestroyContext(sourceCtx);
     initializer.DestroyContext(queryCtx);
@@ -891,15 +892,15 @@ TEST_F(LSPCompletions2Tests, StdLibNamespaceMemberDoesNotSuppressProjectAutoImpo
     ASSERT_NE(markerPos, std::string::npos);
     auto entries = lspApi->getCompletionsAtPosition(queryCtx, markerPos + marker.size()).GetEntries();
     ExpectAutoImportEntry(entries, "ConcurrentHashMap", CompletionEntryKind::CLASS, "ConcurrentHashMap",
-                          "stdlib_collision_source.ets");
+                          "./stdlib_collision_source");
 
     initializer.DestroyContext(sourceCtx);
     initializer.DestroyContext(queryCtx);
 }
 
-// Simulate a client consuming completion data. The native completion API exposes
-// an export name and source, not import TextChanges; the import below is a client
-// simulation, while syntax, semantics and the resulting definition are checked by LSP.
+// Simulate a client consuming completion data. The import declaration of the completion
+// entry data is the module specifier of the import statement (the 'xxx' in from 'xxx'):
+// the client inserts it verbatim; no client-side path computation is needed.
 TEST_F(LSPCompletions2Tests, AutoImportDataProducesResolvableSourceWithoutDamagingExistingImport)
 {
     constexpr size_t sourceFileIndex = 0;
@@ -928,13 +929,11 @@ TEST_F(LSPCompletions2Tests, AutoImportDataProducesResolvableSourceWithoutDamagi
     ASSERT_TRUE(entry.GetHasAction());
     auto data = entry.GetCompletionEntryData();
     ASSERT_TRUE(data.has_value());
-    EXPECT_EQ(data->GetImportDeclaration(), paths[sourceFileIndex]);
+    EXPECT_EQ(data->GetImportDeclaration(), "./accept_signal");
     EXPECT_EQ(data->GetNamedExport(), "AcceptedSignal");
     auto completed = texts[queryFileIndex];
     completed.replace(position, marker.size(), entry.GetInsertText());
-    auto modulePath =
-        ark::es2panda::lsp::ComputeRelativeImportPath(paths[queryFileIndex], data->GetImportDeclaration());
-    completed.insert(0, "import { " + data->GetNamedExport() + " } from '" + modulePath + "'\n");
+    completed.insert(0, "import { " + data->GetNamedExport() + " } from '" + data->GetImportDeclaration() + "'\n");
     EXPECT_EQ(completed,
               "import { AcceptedSignal } from './accept_signal'\n"
               "import { anchor } from './accept_sdk.d.ets'\n"
@@ -978,7 +977,7 @@ TEST_F(LSPCompletions2Tests, SameNamedProjectExportsKeepBothAutoImportSources)
         ASSERT_TRUE(entry.GetCompletionEntryData().has_value());
         sources.insert(entry.GetCompletionEntryData()->GetImportDeclaration());
     }
-    EXPECT_EQ(sources, (std::unordered_set<std::string> {paths[0], paths[1]}));
+    EXPECT_EQ(sources, (std::unordered_set<std::string> {"./signal_first", "./signal_second"}));
 
     initializer.DestroyContext(firstCtx);
     initializer.DestroyContext(secondCtx);
@@ -1026,8 +1025,7 @@ let value: SameSource
     EXPECT_TRUE(entry.GetHasAction());
     ASSERT_TRUE(entry.GetCompletionEntryData().has_value());
     EXPECT_EQ(entry.GetCompletionEntryData()->GetNamedExport(), "SameSourceSignal");
-    EXPECT_NE(entry.GetCompletionEntryData()->GetImportDeclaration().find("same_source_alias.d.ets"),
-              std::string::npos);
+    EXPECT_EQ(entry.GetCompletionEntryData()->GetImportDeclaration(), "./same_source_alias");
 
     initializer.DestroyContext(sourceCtx);
     initializer.DestroyContext(queryCtx);

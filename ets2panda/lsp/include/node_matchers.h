@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +44,7 @@ bool MatchTSEnumMember(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchTSInterfaceDeclaration(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchTSTypeAliasDeclaration(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchExportSpecifier(ir::AstNode *childNode, const NodeInfo *info);
+bool MatchExportDefaultDeclaration(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchMemberExpression(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchTSClassImplements(ir::AstNode *childNode, const NodeInfo *info);
 bool MatchEtsStringLiteralType(ir::AstNode *childNode, const NodeInfo *info);
@@ -77,6 +78,11 @@ void HandleTSEnumMember(ir::AstNode *node, std::vector<NodeInfo> &result);
 void HandleCallExpression(ir::AstNode *node, std::vector<NodeInfo> &result);
 
 ir::AstNode *ExtractExportSpecifierIdentifier(ir::AstNode *node, const NodeInfo *info);
+
+// Resolves the declaration identifier for the common top-level declaration kinds
+// (class / interface / enum / type alias / function / struct / variable).
+const ir::Identifier *GetDeclarationIdent(const ir::AstNode *node);
+ir::AstNode *ExtractExportDefaultIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractTSClassImplementsIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractETSStringLiteralTypeIdentifier(ir::AstNode *node, const NodeInfo *info);
 ir::AstNode *ExtractETSKeyofTypeIdentifier(ir::AstNode *node, const NodeInfo *info);

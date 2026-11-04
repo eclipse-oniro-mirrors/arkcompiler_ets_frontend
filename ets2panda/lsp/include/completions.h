@@ -71,17 +71,17 @@ constexpr std::string_view CLASS_MEMBER_SNIPPETS = "17";
 enum class ResolutionStatus { RESOLVED, UNRESOLVED };
 struct CompletionEntryData {
 private:
-    const char *fileName_;
+    std::string fileName_;
     std::string namedExport_;
     std::string importDeclaration_;
     std::string completionName_;
     ResolutionStatus status_;
 
 public:
-    explicit CompletionEntryData(const char *fileName = "", std::string namedExport = "",
+    explicit CompletionEntryData(std::string fileName = "", std::string namedExport = "",
                                  std::string importDeclaration = "", std::string completionName = "",
                                  ResolutionStatus status = ResolutionStatus::UNRESOLVED)
-        : fileName_(fileName),
+        : fileName_(std::move(fileName)),
           namedExport_(std::move(namedExport)),
           importDeclaration_(std::move(importDeclaration)),
           completionName_(std::move(completionName)),
@@ -89,7 +89,7 @@ public:
     {
     }
 
-    const char *GetFileName()
+    const std::string &GetFileName()
     {
         return fileName_;
     }
@@ -208,6 +208,8 @@ struct ExternalApiCollectInfo {
     CompletionEntryKind kind = CompletionEntryKind::VARIABLE;
     std::string insertText;
     bool isDefault = false;
+    // Absolute path of the declaration file the collected symbol originates from.
+    std::string sourceFile;
 };
 
 bool CollectApiCompletionInfo(es2panda_Context *context);

@@ -113,8 +113,15 @@ static void AssertReferencesAfterFileRemoved(const References &after, const std:
     constexpr size_t fileCIndex = 2;
     // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t refsPerImportingFile = 2;
-    // Only the two references from the removed file disappear; definition and file C stay intact.
-    ASSERT_EQ(after.referenceInfos.size(), refsPerImportingFile);
+    // Indices of the two surviving file-C references in the sorted result: the definition
+    // of the exporting file comes first, then the file-C import specifier and its usage.
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    constexpr size_t fileCFirstRefIndex = 1;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    constexpr size_t fileCSecondRefIndex = 2;
+    // Only the two references from the removed file disappear; the definition occurrence
+    // and the file C references stay intact.
+    ASSERT_EQ(after.referenceInfos.size(), refsPerImportingFile + 1U);
     ASSERT_EQ(LSPSymbolReferenceIndexGapTests::CountReferencesInFile(after, filePaths[1]), 0U);
     ASSERT_EQ(LSPSymbolReferenceIndexGapTests::CountReferencesInFile(after, filePaths[fileCIndex]),
               refsPerImportingFile);
@@ -122,18 +129,22 @@ static void AssertReferencesAfterFileRemoved(const References &after, const std:
     ASSERT_EQ(after.definitionInfo.start, 11U);
     ASSERT_EQ(after.definitionInfo.length, 9U);
     for (const auto &ref : after.referenceInfos) {
-        ASSERT_EQ(ref.fileName, filePaths[fileCIndex]);
         ASSERT_EQ(ref.length, 9U);
     }
-    ASSERT_EQ(after.referenceInfos[0].start, 9U);
-    ASSERT_EQ(after.referenceInfos[1].start, 59U);
+    // Sorted by (fileName, start): the definition of the exporting file comes first.
+    ASSERT_EQ(after.referenceInfos[0].fileName, filePaths[0]);
+    ASSERT_EQ(after.referenceInfos[0].start, 11U);
+    ASSERT_EQ(after.referenceInfos[fileCFirstRefIndex].fileName, filePaths[fileCIndex]);
+    ASSERT_EQ(after.referenceInfos[fileCFirstRefIndex].start, 9U);
+    ASSERT_EQ(after.referenceInfos[fileCSecondRefIndex].fileName, filePaths[fileCIndex]);
+    ASSERT_EQ(after.referenceInfos[fileCSecondRefIndex].start, 59U);
     // Querying inside the removed file now returns empty, other files still resolve.
     const auto posInB = texts[1].find("console.log(gapShared)") + std::string("console.log(").size();
     auto fromRemoved = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(ctxB, posInB);
     ASSERT_TRUE(fromRemoved.referenceInfos.empty());
     const auto posInC = texts[fileCIndex].find("console.log(gapShared)") + std::string("console.log(").size();
     auto fromC = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(ctxC, posInC);
-    ASSERT_EQ(fromC.referenceInfos.size(), refsPerImportingFile);
+    ASSERT_EQ(fromC.referenceInfos.size(), refsPerImportingFile + 1U);
     ASSERT_EQ(fromC.definitionInfo.fileName, filePaths[0]);
 }
 
@@ -165,8 +176,10 @@ console.log(gapVar);)"};
     auto indexed = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(context, queryPos);
     initializer.DestroyContext(context);
 
-    // The index returns the same usage list, and resolves the definition through definitionInfo.
-    AssertReferencesEqual(indexed.referenceInfos, plain.referenceInfos);
+    // The index returns the usage list with the definition occurrence listed first
+    // (sorted by start), and resolves the definition through definitionInfo as well.
+    std::vector<ReferenceInfo> expectedIndexed {{filePaths[0], 11, 6}, {filePaths[0], 73, 6}, {filePaths[0], 95, 6}};
+    AssertReferencesEqual(indexed.referenceInfos, expectedIndexed);
     ASSERT_EQ(indexed.definitionInfo.fileName, filePaths[0]);
     ASSERT_EQ(indexed.definitionInfo.start, 11U);
     ASSERT_EQ(indexed.definitionInfo.length, 6U);
@@ -203,12 +216,15 @@ console.log(gapShared);)"};
     initializer.DestroyContext(exportCtx);
     initializer.DestroyContext(importCtx);
 
-    // The index returns the same cross-file usage list plus the resolved definition.
-    AssertReferencesEqual(indexed.referenceInfos, plain.referenceInfos);
+    // The index returns the cross-file usage list with the definition occurrence
+    // listed first, and resolves the definition through definitionInfo as well.
+    std::vector<ReferenceInfo> expectedIndexed {
+        {filePaths[0], 11, 9}, {filePaths[0], 49, 9}, {filePaths[1], 9, 9}, {filePaths[1], 54, 9}};
+    AssertReferencesEqual(indexed.referenceInfos, expectedIndexed);
     ASSERT_EQ(indexed.definitionInfo.fileName, filePaths[0]);
     ASSERT_EQ(indexed.definitionInfo.start, 11U);
     ASSERT_EQ(indexed.definitionInfo.length, 9U);
-    ASSERT_EQ(CountReferencesInFile(indexed, filePaths[0]), 1U);
+    ASSERT_EQ(CountReferencesInFile(indexed, filePaths[0]), 2U);
     ASSERT_EQ(CountReferencesInFile(indexed, filePaths[1]), 2U);
 }
 
@@ -243,7 +259,7 @@ console.log(gapShared);)"};
 
     const auto defPos = texts[0].find("gapShared: number");
     auto before = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(baseCtx, defPos);
-    ASSERT_EQ(before.referenceInfos.size(), 4U);
+    ASSERT_EQ(before.referenceInfos.size(), 5U);
     ASSERT_EQ(CountReferencesInFile(before, filePaths[1]), refsPerImportingFile);
     ASSERT_EQ(CountReferencesInFile(before, filePaths[fileCIndex]), refsPerImportingFile);
 
@@ -276,7 +292,7 @@ console.log(gapVar);)"};
 
     const auto defPos = texts[0].find("gapVar: number");
     auto before = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(ctxA, defPos);
-    ASSERT_EQ(before.referenceInfos.size(), 2U);
+    ASSERT_EQ(before.referenceInfos.size(), 3U);
 
     ark::es2panda::lsp::ClearSymbolReferenceIndex();
 
@@ -319,9 +335,11 @@ console.log(gapOld);)"};
 
     const auto oldDefPos = texts[0].find("gapOld: number");
     auto oldResult = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(oldCtx, oldDefPos);
-    ASSERT_EQ(oldResult.referenceInfos.size(), 1U);
-    ASSERT_EQ(oldResult.referenceInfos[0].start, 36U);
+    ASSERT_EQ(oldResult.referenceInfos.size(), 2U);
+    ASSERT_EQ(oldResult.referenceInfos[0].start, 4U);
     ASSERT_EQ(oldResult.referenceInfos[0].length, 6U);
+    ASSERT_EQ(oldResult.referenceInfos[1].start, 36U);
+    ASSERT_EQ(oldResult.referenceInfos[1].length, 6U);
     initializer.DestroyContext(oldCtx);
 
     // Overwrite the file with a structurally different content, then rebuild from a fresh context.
@@ -350,10 +368,13 @@ console.log(gapNew);)"};
     // The new symbol resolves with exact new offsets.
     const auto newDefPos = newTexts[0].find("gapNew: number");
     auto newResult = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(newCtx, newDefPos);
-    ASSERT_EQ(newResult.referenceInfos.size(), 1U);
+    ASSERT_EQ(newResult.referenceInfos.size(), 2U);
     ASSERT_EQ(newResult.referenceInfos[0].fileName, filePaths[0]);
-    ASSERT_EQ(newResult.referenceInfos[0].start, 106U);
+    ASSERT_EQ(newResult.referenceInfos[0].start, 74U);
     ASSERT_EQ(newResult.referenceInfos[0].length, 6U);
+    ASSERT_EQ(newResult.referenceInfos[1].fileName, filePaths[0]);
+    ASSERT_EQ(newResult.referenceInfos[1].start, 106U);
+    ASSERT_EQ(newResult.referenceInfos[1].length, 6U);
     ASSERT_EQ(newResult.definitionInfo.fileName, filePaths[0]);
     ASSERT_EQ(newResult.definitionInfo.start, 74U);
     ASSERT_EQ(newResult.definitionInfo.length, 6U);
@@ -410,7 +431,7 @@ TEST_F(LSPSymbolReferenceIndexGapTests, CacheFileIndexingPolicy)
     ASSERT_NE(pos, std::string::npos);
     const auto refs = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(ctx, pos);
     EXPECT_EQ(refs.definitionInfo.fileName, fileName);
-    EXPECT_EQ(refs.referenceInfos.size(), 1U);
+    EXPECT_EQ(refs.referenceInfos.size(), 2U);
 
     initializer.DestroyContext(ctx);
 }
@@ -437,10 +458,13 @@ console.log(gapB);)"};
 
     const auto defPosA = texts[0].find("gapA: number");
     auto resultA = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(ctxA, defPosA);
-    ASSERT_EQ(resultA.referenceInfos.size(), 1U);
+    ASSERT_EQ(resultA.referenceInfos.size(), 2U);
     ASSERT_EQ(resultA.referenceInfos[0].fileName, filePaths[0]);
-    ASSERT_EQ(resultA.referenceInfos[0].start, 34U);
+    ASSERT_EQ(resultA.referenceInfos[0].start, 4U);
     ASSERT_EQ(resultA.referenceInfos[0].length, 4U);
+    ASSERT_EQ(resultA.referenceInfos[1].fileName, filePaths[0]);
+    ASSERT_EQ(resultA.referenceInfos[1].start, 34U);
+    ASSERT_EQ(resultA.referenceInfos[1].length, 4U);
     ASSERT_EQ(resultA.definitionInfo.fileName, filePaths[0]);
     ASSERT_EQ(resultA.definitionInfo.start, 4U);
     ASSERT_EQ(resultA.definitionInfo.length, 4U);
@@ -453,8 +477,9 @@ console.log(gapB);)"};
     // Destroying context B does not disturb queries against context A.
     initializer.DestroyContext(ctxB);
     auto resultAAfterBDestroyed = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(ctxA, defPosA);
-    ASSERT_EQ(resultAAfterBDestroyed.referenceInfos.size(), 1U);
-    ASSERT_EQ(resultAAfterBDestroyed.referenceInfos[0].start, 34U);
+    ASSERT_EQ(resultAAfterBDestroyed.referenceInfos.size(), 2U);
+    ASSERT_EQ(resultAAfterBDestroyed.referenceInfos[0].start, 4U);
+    ASSERT_EQ(resultAAfterBDestroyed.referenceInfos[1].start, 34U);
     ASSERT_EQ(resultAAfterBDestroyed.definitionInfo.start, 4U);
 
     initializer.DestroyContext(ctxA);
@@ -493,19 +518,25 @@ console.log(gapExt);)"};
     // With external sources indexed, the external file participates in the lookup.
     ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(mainCtx));
     auto withExternal = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(mainCtx, posInMain);
-    // Index of the third entry (the second main-file reference) in the sorted reference list.
+    // Indices of the two main-file references in the sorted reference list: the exporting
+    // file's definition and usage come first, then the importing file's specifier and usage.
     // NOLINTNEXTLINE(readability-identifier-naming)
-    constexpr size_t secondMainFileRefIndex = 2;
-    ASSERT_EQ(withExternal.referenceInfos.size(), 3U);
-    ASSERT_EQ(CountReferencesInFile(withExternal, filePaths[0]), 1U);
+    constexpr size_t firstMainFileRefIndex = 2;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    constexpr size_t secondMainFileRefIndex = 3;
+    ASSERT_EQ(withExternal.referenceInfos.size(), 4U);
+    ASSERT_EQ(CountReferencesInFile(withExternal, filePaths[0]), 2U);
     ASSERT_EQ(CountReferencesInFile(withExternal, filePaths[1]), 2U);
     // References are sorted by fileName then start; gap_ext_export.ets sorts before gap_ext_main.ets.
     ASSERT_EQ(withExternal.referenceInfos[0].fileName, filePaths[0]);
-    ASSERT_EQ(withExternal.referenceInfos[0].start, 47U);
+    ASSERT_EQ(withExternal.referenceInfos[0].start, 11U);
     ASSERT_EQ(withExternal.referenceInfos[0].length, 6U);
-    ASSERT_EQ(withExternal.referenceInfos[1].fileName, filePaths[1]);
-    ASSERT_EQ(withExternal.referenceInfos[1].start, 9U);
+    ASSERT_EQ(withExternal.referenceInfos[1].fileName, filePaths[0]);
+    ASSERT_EQ(withExternal.referenceInfos[1].start, 47U);
     ASSERT_EQ(withExternal.referenceInfos[1].length, 6U);
+    ASSERT_EQ(withExternal.referenceInfos[firstMainFileRefIndex].fileName, filePaths[1]);
+    ASSERT_EQ(withExternal.referenceInfos[firstMainFileRefIndex].start, 9U);
+    ASSERT_EQ(withExternal.referenceInfos[firstMainFileRefIndex].length, 6U);
     ASSERT_EQ(withExternal.referenceInfos[secondMainFileRefIndex].fileName, filePaths[1]);
     ASSERT_EQ(withExternal.referenceInfos[secondMainFileRefIndex].start, 55U);
     ASSERT_EQ(withExternal.referenceInfos[secondMainFileRefIndex].length, 6U);
@@ -574,12 +605,15 @@ console.log(gapWrap);)"};
     const auto defPos = texts[0].find("gapWrap: number");
     ASSERT_NE(defPos, std::string::npos);
     auto refs = lspApi->getReferencesAtPositionFromIndex(context, defPos);
-    ASSERT_EQ(refs.referenceInfos.size(), 1U);
+    ASSERT_EQ(refs.referenceInfos.size(), 2U);
     ASSERT_EQ(refs.referenceInfos[0].fileName, filePaths[0]);
+    ASSERT_EQ(refs.referenceInfos[0].start, defPos);
+    ASSERT_EQ(refs.referenceInfos[0].length, 7U);
+    ASSERT_EQ(refs.referenceInfos[1].fileName, filePaths[0]);
     const auto usePos = texts[0].find("gapWrap);");
     ASSERT_NE(usePos, std::string::npos);
-    ASSERT_EQ(refs.referenceInfos[0].start, usePos);
-    ASSERT_EQ(refs.referenceInfos[0].length, 7U);
+    ASSERT_EQ(refs.referenceInfos[1].start, usePos);
+    ASSERT_EQ(refs.referenceInfos[1].length, 7U);
     ASSERT_EQ(refs.definitionInfo.fileName, filePaths[0]);
     ASSERT_EQ(refs.definitionInfo.start, defPos);
     ASSERT_EQ(refs.definitionInfo.length, 7U);
@@ -625,19 +659,24 @@ console.log(gapSort);)"};
     ASSERT_NE(defPos, std::string::npos);
     auto refs = lspApi->getReferencesAtPositionFromIndex(ctxA, defPos);
 
-    // Three references: the local use in file A plus the import specifier and the
-    // console.log usage in file B. The result must be sorted by fileName, then start,
-    // then length, with each (fileName, start, length) triplet unique.
-    // Index 2 addresses the console.log usage recorded inside importing file B.
-    constexpr size_t importingFileUsageIndex = 2;
+    // Four references: the definition and the local use in file A plus the import
+    // specifier and the console.log usage in file B. The result must be sorted by
+    // fileName, then start, then length, with each (fileName, start, length) triplet unique.
+    // Index 2 addresses the import specifier and index 3 the console.log usage recorded
+    // inside importing file B.
+    constexpr size_t importingFileSpecifierIndex = 2;
+    constexpr size_t importingFileUsageIndex = 3;
     // NOLINTBEGIN(readability-magic-numbers)
-    ASSERT_EQ(refs.referenceInfos.size(), 3U);
+    ASSERT_EQ(refs.referenceInfos.size(), 4U);
     ASSERT_EQ(refs.referenceInfos[0].fileName, filePaths[0]);
-    ASSERT_EQ(refs.referenceInfos[0].start, 51U);
+    ASSERT_EQ(refs.referenceInfos[0].start, 11U);
     ASSERT_EQ(refs.referenceInfos[0].length, 7U);
-    ASSERT_EQ(refs.referenceInfos[1].fileName, filePaths[1]);
-    ASSERT_EQ(refs.referenceInfos[1].start, 9U);
+    ASSERT_EQ(refs.referenceInfos[1].fileName, filePaths[0]);
+    ASSERT_EQ(refs.referenceInfos[1].start, 51U);
     ASSERT_EQ(refs.referenceInfos[1].length, 7U);
+    ASSERT_EQ(refs.referenceInfos[importingFileSpecifierIndex].fileName, filePaths[1]);
+    ASSERT_EQ(refs.referenceInfos[importingFileSpecifierIndex].start, 9U);
+    ASSERT_EQ(refs.referenceInfos[importingFileSpecifierIndex].length, 7U);
     ASSERT_EQ(refs.referenceInfos[importingFileUsageIndex].fileName, filePaths[1]);
     ASSERT_EQ(refs.referenceInfos[importingFileUsageIndex].start, 60U);
     ASSERT_EQ(refs.referenceInfos[importingFileUsageIndex].length, 7U);

@@ -16,8 +16,11 @@
 import { ModuleDescriptor } from '../../src';
 import { getMultiModuleLsp, getRealPath } from '../utils';
 
+// The case below builds the AST cache (initAstCache), which resolves the fixture's
+// dynamic SDK declarations; environments whose ets/dynamic fixture cannot be
+// parsed run with SKIP_UI_PLUGINS and skip it.
 describe('crossModuleArkTsConfigTest', () => {
-  test('query miss uses the target module ArkTSConfig', () => {
+  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('query miss uses the target module ArkTSConfig', () => {
     const projectName = 'getQuickInfoAtPositionCrossModule';
     const modules: ModuleDescriptor[] = [
       { name: 'har', moduleType: 'har', srcPath: 'har' },

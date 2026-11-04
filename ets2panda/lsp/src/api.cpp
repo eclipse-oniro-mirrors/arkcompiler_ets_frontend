@@ -15,6 +15,8 @@
 
 #include "api.h"
 #include "util/eheap.h"
+#include <algorithm>
+#include <cctype>
 #include <cstddef>
 #include <cstring>
 #include <string>
@@ -971,46 +973,317 @@ void GetNodeCharOffsets(const ir::AstNode *node, const public_lib::Context *ctx,
     lengthChar = ark::es2panda::lsp::ByteOffsetToCodePointOffset(nodeSource, end) - startCharOffset;
 }
 
-DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::vector<NodeInfo *> &nodeInfos)
+// Matches a single node info element within the given subtree.
+static ir::AstNode *FindNodeMatchingInfo(ir::AstNode *searchRoot, const NodeInfo *infoToMatch)
 {
-    DefinitionInfo result {"", 0, 0};
-    if (context == nullptr || nodeInfos.empty()) {
-        return result;
+    const auto &nodeMatchers = GetNodeMatchers();
+    auto it = nodeMatchers.find(infoToMatch->kind);
+    if (it == nodeMatchers.end()) {
+        return nullptr;
     }
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    return searchRoot->FindChild(
+        [it, infoToMatch](ir::AstNode *childNode) { return it->second(childNode, infoToMatch); });
+}
+
+// Finds the node matching a single node info chain element within the given subtree.
+// The matcher honours the node info's parameter count (overload disambiguation, also
+// separating getter/setter pairs); when no overload matches the arity, the search falls
+// back to the first same-name candidate, preserving the pre-disambiguation behaviour.
+static ir::AstNode *FindNodeByNodeInfo(ir::AstNode *searchRoot, const NodeInfo *info)
+{
+    auto *foundNode = FindNodeMatchingInfo(searchRoot, info);
+    if (foundNode == nullptr && info->paramNumber.has_value()) {
+        NodeInfo relaxed {*info};
+        relaxed.paramNumber.reset();
+        foundNode = FindNodeMatchingInfo(searchRoot, &relaxed);
+    }
+    return foundNode;
+}
+
+// Export wrapper kinds that may appear in a node info chain. The static-language AST has
+// no dedicated node for most export statements: a plain `export { x }` without a source
+// becomes an empty statement, while a default export is the flagged declaration itself
+// and keeps its declaration subtree. These chain elements are therefore advisory rather
+// than structural.
+static bool IsPlainExportWrapperKind(ir::AstNodeType kind)
+{
+    switch (kind) {
+        case ir::AstNodeType::EXPORT_ALL_DECLARATION:
+        case ir::AstNodeType::EXPORT_NAMED_DECLARATION:
+        case ir::AstNodeType::EXPORT_SPECIFIER:
+        case ir::AstNodeType::REEXPORT_STATEMENT:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static bool IsExportWrapperNodeInfo(const NodeInfo *info)
+{
+    return IsPlainExportWrapperKind(info->kind) || info->kind == ir::AstNodeType::EXPORT_DEFAULT_DECLARATION;
+}
+
+static bool IsPlainExportWrapperNodeInfo(const NodeInfo *info)
+{
+    return IsPlainExportWrapperKind(info->kind);
+}
+
+static bool IsIdentifierChar(char c)
+{
+    return std::isalnum(static_cast<unsigned char>(c)) != 0 || c == '_' || c == '$';
+}
+
+// Finds the first whole-word occurrence of `name` in `source` within [from, to) that starts
+// in live code (see BuildLiveCodeMask): commented-out or textually embedded occurrences are
+// skipped, so a commented-out 'export { foo }' is not mistaken for the statement.
+static size_t FindNameInRange(const std::string &source, const std::string &name, size_t from, size_t to,
+                              const std::vector<bool> &live)
+{
+    auto pos = source.find(name, from);
+    while (pos != std::string::npos && pos + name.size() <= to) {
+        const bool leftOk = pos == 0 || !IsIdentifierChar(source[pos - 1]);
+        const bool rightOk = pos + name.size() >= source.size() || !IsIdentifierChar(source[pos + name.size()]);
+        // The match consists of identifier characters only, so it cannot reach across a
+        // comment or string opening (a non-identifier character): checking the start
+        // position against the mask covers the whole match.
+        if (leftOk && rightOk && pos < live.size() && live[pos]) {
+            return pos;
+        }
+        pos = source.find(name, pos + 1);
+    }
+    return std::string::npos;
+}
+
+static std::string GetNodeProgramSource(const ir::AstNode *node, const public_lib::Context *ctx)
+{
+    const auto *program = node != nullptr ? node->Range().start.Program() : nullptr;
+    return std::string(program != nullptr ? program->SourceCode()
+                                          : static_cast<std::string_view>(ctx->parserProgram->SourceCode()));
+}
+
+// A plain `export { x }` without a source collapses into an empty statement in the static
+// language, but the statement range is preserved. The empty statement keeps no specifier
+// children, so the exported name is matched against the statement source text (skipping
+// comments and strings, see BuildLiveCodeMask); degraded ranges (for example a
+// default-exported function) cannot carry a position and never match.
+static bool MatchesPlainExportStatement(const ir::AstNode *node, const std::string &name,
+                                        const public_lib::Context *ctx)
+{
+    if (node == nullptr || !node->IsEmptyStatement()) {
+        return false;
+    }
+    const auto start = node->Start().index;
+    const auto end = node->End().index;
+    if (end <= start) {
+        return false;
+    }
+    const std::string source = GetNodeProgramSource(node, ctx);
+    const auto live = BuildLiveCodeMask(source);
+    return FindNameInRange(source, "export", start, end, live) != std::string::npos &&
+           FindNameInRange(source, name, start, end, live) != std::string::npos;
+}
+
+static ir::AstNode *FindPlainExportStatement(ir::AstNode *searchRoot, const NodeInfo *info,
+                                             const public_lib::Context *ctx)
+{
+    return searchRoot->FindChild(
+        [info, ctx](ir::AstNode *childNode) { return MatchesPlainExportStatement(childNode, info->name, ctx); });
+}
+
+// Skips whitespace and non-code (comments and string literals) starting at 'pos'.
+static size_t SkipTrivia(const std::string &source, size_t pos, const std::vector<bool> &live)
+{
+    while (pos < source.size()) {
+        if (std::isspace(static_cast<unsigned char>(source[pos])) != 0) {
+            ++pos;
+            continue;
+        }
+        if (pos < live.size() && !live[pos]) {
+            ++pos;
+            continue;
+        }
+        break;
+    }
+    return pos;
+}
+
+// The first brace that closes the specifier list in live code; braces inside comments or
+// string literals are not statement structure.
+static size_t FindClosingBrace(const std::string &source, size_t openBrace, const std::vector<bool> &live)
+{
+    for (size_t pos = openBrace + 1U; pos < source.size(); ++pos) {
+        if (pos < live.size() && live[pos] && source[pos] == '}') {
+            return pos;
+        }
+    }
+    return std::string::npos;
+}
+
+// True when the export statement whose braces close at 'closeBrace' is a re-export
+// ('export { x } from "..."'), which does not carry a local exported name.
+static bool IsReExportStatement(const std::string &source, size_t closeBrace, const std::vector<bool> &live)
+{
+    constexpr std::string_view FROM_KEYWORD = "from";
+    const auto afterBrace = SkipTrivia(source, closeBrace + 1U, live);
+    const bool isFrom = source.compare(afterBrace, FROM_KEYWORD.size(), FROM_KEYWORD) == 0;
+    const auto fromEnd = afterBrace + FROM_KEYWORD.size();
+    return isFrom && (fromEnd >= source.size() || !IsIdentifierChar(source[fromEnd])) && afterBrace < live.size() &&
+           live[afterBrace];
+}
+
+// Finds the exported name inside the braces of a plain export statement, or nullopt.
+static std::optional<size_t> FindNameInExportBraces(const std::string &source, const std::string &name,
+                                                    size_t openBrace, const std::vector<bool> &live)
+{
+    const auto closeBrace = FindClosingBrace(source, openBrace, live);
+    if (closeBrace == std::string::npos || IsReExportStatement(source, closeBrace, live)) {
+        return std::nullopt;
+    }
+    const auto namePos = FindNameInRange(source, name, openBrace + 1U, closeBrace, live);
+    if (namePos == std::string::npos) {
+        return std::nullopt;
+    }
+    return namePos;
+}
+
+// Finds the name inside a plain export statement ('export { name }' without a 'from' clause)
+// in the program source. On a clean compile the global-class lowering removes the statement
+// from the AST entirely - only a build with errors keeps a range-preserving empty statement
+// (see MatchesPlainExportStatement) - so when no node matches, the position is recovered
+// from the statement text alone. The scan is lexer-aware through the live-code mask: a
+// commented-out or textually embedded 'export { name }' is not mistaken for the statement.
+static size_t FindNameInPlainExportStatement(const std::string &source, const std::string &name)
+{
+    constexpr std::string_view EXPORT_KEYWORD = "export";
+    const auto live = BuildLiveCodeMask(source);
+    auto exportPos = FindNameInRange(source, std::string(EXPORT_KEYWORD), 0U, source.size(), live);
+    while (exportPos != std::string::npos) {
+        const auto openBrace = SkipTrivia(source, exportPos + EXPORT_KEYWORD.size(), live);
+        if (openBrace < source.size() && source[openBrace] == '{' && live[openBrace]) {
+            if (auto namePos = FindNameInExportBraces(source, name, openBrace, live); namePos.has_value()) {
+                return *namePos;
+            }
+        }
+        exportPos = FindNameInRange(source, std::string(EXPORT_KEYWORD), exportPos + 1U, source.size(), live);
+    }
+    return std::string::npos;
+}
+
+// Resolves the reported (start, length) for the matched node. A plain export statement
+// match (empty statement) has no identifier child, so the position points at the exported
+// name inside the statement, consistent with the re-export specifier results. A null node
+// is the text anchor of a plain export statement that a clean compile removed from the AST;
+// its position is recovered from the source text the same way.
+static void GetReportedSymbolOffsets(ir::AstNode *node, const NodeInfo *info, const public_lib::Context *ctx,
+                                     size_t &startCharOffset, size_t &lengthChar)
+{
+    if (node == nullptr) {
+        const std::string source = GetNodeProgramSource(nullptr, ctx);
+        const auto namePos = FindNameInPlainExportStatement(source, info->name);
+        if (namePos != std::string::npos) {
+            startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, namePos);
+            lengthChar =
+                ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, namePos + info->name.size()) - startCharOffset;
+        }
+        return;
+    }
+    if (node->IsEmptyStatement()) {
+        const std::string source = GetNodeProgramSource(node, ctx);
+        const auto namePos =
+            FindNameInRange(source, info->name, node->Start().index, node->End().index, BuildLiveCodeMask(source));
+        if (namePos != std::string::npos) {
+            startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, namePos);
+            lengthChar =
+                ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, namePos + info->name.size()) - startCharOffset;
+            return;
+        }
+    }
+    ir::AstNode *identifierNode = ExtractIdentifierFromNode(node, info);
+    ir::AstNode *target = identifierNode != nullptr ? identifierNode : node;
+    GetNodeCharOffsets(target, ctx, startCharOffset, lengthChar);
+}
+
+// Resolves a node info chain to the matched node and its info: the entry point shared
+// by the definition and rename queries. The chain is ordered outermost first (the
+// extractor walks up from the definition and reverses); every info is matched within the
+// subtree of the previous match so same-name members of sibling scopes cannot shadow each
+// other. Returns nullopt when a non-export element of the chain matches nothing. A null node
+// with a non-null info is the text anchor of a plain export statement that matched no AST
+// node (removed by a clean compile).
+struct NodeInfoChainMatch {
+    ir::AstNode *node = nullptr;
+    NodeInfo *info = nullptr;
+};
+static std::optional<NodeInfoChainMatch> ResolveNodeInfoChain(es2panda_Context *context,
+                                                              const std::vector<NodeInfo *> &nodeInfos)
+{
+    if (context == nullptr || nodeInfos.empty()) {
+        return std::nullopt;
+    }
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
     SetPhaseManager(ctx->phaseManager);
-    auto rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    auto *rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
     if (rootNode == nullptr) {
-        return result;
+        return std::nullopt;
     }
 
     ir::AstNode *lastFoundNode = nullptr;
     NodeInfo *lastNodeInfo = nullptr;
+    NodeInfo *plainExportAnchor = nullptr;
+    ir::AstNode *searchRoot = rootNode;
     for (auto info : nodeInfos) {
-        auto foundNode = rootNode->FindChild([info](ir::AstNode *childNode) -> bool {
-            const auto &nodeMatchers = GetNodeMatchers();
-            auto it = nodeMatchers.find(info->kind);
-            if (it != nodeMatchers.end()) {
-                return it->second(childNode, info);
-            }
-            return false;
-        });
+        auto foundNode = FindNodeByNodeInfo(searchRoot, info);
+        if (foundNode == nullptr && IsPlainExportWrapperNodeInfo(info)) {
+            foundNode = FindPlainExportStatement(searchRoot, info, ctx);
+        }
         if (foundNode == nullptr) {
-            return {"", 0, 0};
+            // Workaround for the missing export statement nodes in the static language:
+            // an export wrapper element that matches nothing is skipped and the search
+            // continues from the current root, so the chain still resolves through its
+            // declaration elements.
+            if (IsExportWrapperNodeInfo(info)) {
+                // A brace-form export statement that matched no node is remembered as the
+                // anchor of last resort: a clean compile removes the statement from the
+                // AST, and its position is then recovered from the source text.
+                if (info->kind == ir::AstNodeType::EXPORT_NAMED_DECLARATION ||
+                    info->kind == ir::AstNodeType::EXPORT_SPECIFIER) {
+                    plainExportAnchor = info;
+                }
+                continue;
+            }
+            return std::nullopt;
         }
         lastFoundNode = foundNode;
         lastNodeInfo = info;
+        // Export statements are wrappers without a declaration subtree: keep the outer
+        // root so the remaining chain elements resolve their declaration, which then
+        // takes precedence over the statement anchor. A default export is the flagged
+        // declaration itself and keeps the normal scoped descent.
+        if (!IsPlainExportWrapperNodeInfo(info)) {
+            searchRoot = foundNode;
+        }
     }
-
-    if (lastFoundNode != nullptr && lastNodeInfo != nullptr) {
-        ir::AstNode *identifierNode = ExtractIdentifierFromNode(lastFoundNode, lastNodeInfo);
-        size_t startCharOffset = 0;
-        size_t lengthChar = 0;
-        ir::AstNode *target = identifierNode != nullptr ? identifierNode : lastFoundNode;
-        GetNodeCharOffsets(target, ctx, startCharOffset, lengthChar);
-        result = {"", startCharOffset, lengthChar};
+    if (lastFoundNode == nullptr || lastNodeInfo == nullptr) {
+        if (plainExportAnchor != nullptr) {
+            return NodeInfoChainMatch {nullptr, plainExportAnchor};
+        }
+        return std::nullopt;
     }
+    return NodeInfoChainMatch {lastFoundNode, lastNodeInfo};
+}
 
+DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::vector<NodeInfo *> &nodeInfos)
+{
+    DefinitionInfo result {"", 0, 0};
+    auto match = ResolveNodeInfoChain(context, nodeInfos);
+    if (!match.has_value()) {
+        return result;
+    }
+    size_t startCharOffset = 0;
+    size_t lengthChar = 0;
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
+    GetReportedSymbolOffsets(match->node, match->info, ctx, startCharOffset, lengthChar);
+    result = {"", startCharOffset, lengthChar};
     return result;
 }
 
@@ -1018,43 +1291,15 @@ ark::es2panda::lsp::RenameLocation FindRenameLocationsFromNode(es2panda_Context 
                                                                const std::vector<NodeInfo *> &nodeInfos)
 {
     ark::es2panda::lsp::RenameLocation result {"", 0, 0, 0};
-    if (context == nullptr || nodeInfos.empty()) {
+    auto match = ResolveNodeInfoChain(context, nodeInfos);
+    if (!match.has_value()) {
         return result;
     }
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    SetPhaseManager(ctx->phaseManager);
-    auto rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
-    if (rootNode == nullptr) {
-        return result;
-    }
-
-    ir::AstNode *lastFoundNode = nullptr;
-    NodeInfo *lastNodeInfo = nullptr;
-    for (auto info : nodeInfos) {
-        auto foundNode = rootNode->FindChild([info](ir::AstNode *childNode) -> bool {
-            const auto &nodeMatchers = GetNodeMatchers();
-            auto it = nodeMatchers.find(info->kind);
-            if (it != nodeMatchers.end()) {
-                return it->second(childNode, info);
-            }
-            return false;
-        });
-        if (foundNode == nullptr) {
-            return {"", 0, 0, 0};
-        }
-        lastFoundNode = foundNode;
-        lastNodeInfo = info;
-    }
-
-    if (lastFoundNode != nullptr && lastNodeInfo != nullptr) {
-        ir::AstNode *identifierNode = ExtractIdentifierFromNode(lastFoundNode, lastNodeInfo);
-        ir::AstNode *target = identifierNode != nullptr ? identifierNode : lastFoundNode;
-        size_t startCharOffset = 0;
-        size_t lengthChar = 0;
-        GetNodeCharOffsets(target, ctx, startCharOffset, lengthChar);
-        result = {"", startCharOffset, startCharOffset + lengthChar, lengthChar};
-    }
-
+    size_t startCharOffset = 0;
+    size_t lengthChar = 0;
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
+    GetReportedSymbolOffsets(match->node, match->info, ctx, startCharOffset, lengthChar);
+    result = {"", startCharOffset, startCharOffset + lengthChar, lengthChar};
     return result;
 }
 

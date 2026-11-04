@@ -19,6 +19,7 @@
 #include "public/es2panda_lib.h"
 #include "public/public.h"
 #include "ir/ets/etsReExportDeclaration.h"
+#include "ir/module/exportNamedDeclaration.h"
 #include "ir/statements/annotationDeclaration.h"
 #include "ir/statements/annotationUsage.h"
 
@@ -42,7 +43,17 @@ DEFINE_SIMPLE_HANDLER(HandleClassDeclaration, ClassDeclaration, Definition()->Id
 DEFINE_SIMPLE_HANDLER(HanleScriptFunction, ScriptFunction, Id, ir::AstNodeType::SCRIPT_FUNCTION)
 DEFINE_SIMPLE_HANDLER(HandleFunctionDeclaration, FunctionDeclaration, Function()->Id,
                       ir::AstNodeType::FUNCTION_DECLARATION)
-DEFINE_SIMPLE_HANDLER(HandleMethodDefinition, MethodDefinition, Function()->Id, ir::AstNodeType::METHOD_DEFINITION)
+// The method definition handler additionally records the parameter count so that
+// same-name overloads (and getter/setter pairs) can be disambiguated on the query side.
+void HandleMethodDefinition(ir::AstNode *node, std::vector<NodeInfo> &result)
+{
+    auto *methodDefinition = node->AsMethodDefinition();
+    if (auto *ident = methodDefinition->Function()->Id()) {
+        NodeInfo info(std::string(ident->Name()), ir::AstNodeType::METHOD_DEFINITION);
+        info.paramNumber = methodDefinition->Function()->Params().size();
+        result.emplace_back(std::move(info));
+    }
+}
 DEFINE_SIMPLE_HANDLER(HanleTSEnumDeclaration, TSEnumDeclaration, Key, ir::AstNodeType::TS_ENUM_DECLARATION)
 DEFINE_SIMPLE_HANDLER(HandleVariableDeclaration, VariableDeclaration, Declarators()[0]->Id()->AsIdentifier,
                       ir::AstNodeType::VARIABLE_DECLARATION)
@@ -78,8 +89,17 @@ bool MatchProperty(ir::AstNode *childNode, const NodeInfo *info)
 
 bool MatchMethodDefinition(ir::AstNode *childNode, const NodeInfo *info)
 {
-    return childNode->IsMethodDefinition() &&
-           std::string(childNode->AsMethodDefinition()->Function()->Id()->Name()) == info->name;
+    if (!childNode->IsMethodDefinition() ||
+        std::string(childNode->AsMethodDefinition()->Function()->Id()->Name()) != info->name) {
+        return false;
+    }
+    // Overload disambiguation: when the node info carries a parameter count, only the
+    // overloads with that arity match (this also separates getter/setter pairs).
+    if (info->paramNumber.has_value() &&
+        childNode->AsMethodDefinition()->Function()->Params().size() != *info->paramNumber) {
+        return false;
+    }
+    return true;
 }
 
 bool MatchTSEnumDeclaration(ir::AstNode *childNode, const NodeInfo *info)
@@ -105,8 +125,55 @@ bool MatchTSTypeAliasDeclaration(ir::AstNode *childNode, const NodeInfo *info)
            std::string(childNode->AsTSTypeAliasDeclaration()->Id()->Name()) == info->name;
 }
 
+// The static language keeps no dedicated node for a default export statement: the
+// declaration itself carries the default-exported flag and its range spans the whole
+// `export default <decl>` statement. This helper resolves the declaration identifier
+// for the common top-level declaration kinds.
+const ir::Identifier *GetDeclarationIdent(const ir::AstNode *node)
+{
+    if (node->IsClassDeclaration()) {
+        return node->AsClassDeclaration()->Definition()->Ident();
+    }
+    if (node->IsTSInterfaceDeclaration()) {
+        return node->AsTSInterfaceDeclaration()->Id();
+    }
+    if (node->IsTSEnumDeclaration()) {
+        return node->AsTSEnumDeclaration()->Key();
+    }
+    if (node->IsTSTypeAliasDeclaration()) {
+        return node->AsTSTypeAliasDeclaration()->Id();
+    }
+    if (node->IsFunctionDeclaration()) {
+        return node->AsFunctionDeclaration()->Function()->Id();
+    }
+    if (node->IsScriptFunction()) {
+        return node->AsScriptFunction()->Id();
+    }
+    if (node->IsETSStructDeclaration()) {
+        return node->AsETSStructDeclaration()->Definition()->Ident();
+    }
+    if (node->IsVariableDeclaration()) {
+        return node->AsVariableDeclaration()->Declarators()[0]->Id()->AsIdentifier();
+    }
+    return nullptr;
+}
+
 bool MatchExportSpecifier(ir::AstNode *childNode, const NodeInfo *info)
 {
+    if (childNode->IsExportNamedDeclaration()) {
+        auto *exportDecl = childNode->AsExportNamedDeclaration();
+        for (auto *exportSpecifier : exportDecl->Specifiers()) {
+            if (exportSpecifier->Local() != nullptr && exportSpecifier->Local()->Name().Mutf8() == info->name) {
+                return true;
+            }
+            if (exportSpecifier->Exported() != nullptr && exportSpecifier->Exported()->Name().Mutf8() == info->name) {
+                return true;
+            }
+        }
+        // `export declare <decl>` keeps the declaration inline; match its name.
+        auto *declIdent = exportDecl->Decl() != nullptr ? GetDeclarationIdent(exportDecl->Decl()) : nullptr;
+        return declIdent != nullptr && std::string(declIdent->Name()) == info->name;
+    }
     if (!childNode->IsETSReExportDeclaration()) {
         return false;
     }
@@ -125,6 +192,23 @@ bool MatchExportSpecifier(ir::AstNode *childNode, const NodeInfo *info)
         }
     }
     return false;
+}
+
+// The static language keeps no dedicated node for a default export statement: the
+// declaration itself carries the default-exported flag and its range spans the whole
+// `export default <decl>` statement. An anonymous default export is matched by the
+// reserved "default" name.
+bool MatchExportDefaultDeclaration(ir::AstNode *childNode, const NodeInfo *info)
+{
+    if (!childNode->IsDefaultExported()) {
+        return false;
+    }
+    // An anonymous default export is matched by the reserved "default" name.
+    if (info->name == "default") {
+        return true;
+    }
+    auto *ident = GetDeclarationIdent(childNode);
+    return ident != nullptr && std::string(ident->Name()) == info->name;
 }
 
 bool MatchMemberExpression(ir::AstNode *childNode, const NodeInfo *info)
@@ -181,6 +265,19 @@ bool MatchScriptFunction(ir::AstNode *childNode, const NodeInfo *info)
 
 ir::AstNode *ExtractExportSpecifierIdentifier(ir::AstNode *node, const NodeInfo *info)
 {
+    if (node->IsExportNamedDeclaration()) {
+        auto *exportDecl = node->AsExportNamedDeclaration();
+        for (auto *exportSpecifier : exportDecl->Specifiers()) {
+            if (exportSpecifier->Local() != nullptr && exportSpecifier->Local()->Name().Mutf8() == info->name) {
+                return const_cast<ir::Identifier *>(exportSpecifier->Local());
+            }
+            if (exportSpecifier->Exported() != nullptr && exportSpecifier->Exported()->Name().Mutf8() == info->name) {
+                return const_cast<ir::Identifier *>(exportSpecifier->Exported());
+            }
+        }
+        auto *declIdent = exportDecl->Decl() != nullptr ? GetDeclarationIdent(exportDecl->Decl()) : nullptr;
+        return declIdent != nullptr ? const_cast<ir::Identifier *>(declIdent) : node;
+    }
     if (!node->IsETSReExportDeclaration()) {
         return node;
     }
@@ -204,6 +301,16 @@ ir::AstNode *ExtractExportSpecifierIdentifier(ir::AstNode *node, const NodeInfo 
     }
 
     return node;
+}
+
+ir::AstNode *ExtractExportDefaultIdentifier(ir::AstNode *node, const NodeInfo *info)
+{
+    // An anonymous default export reports the statement range itself.
+    if (info->name == "default") {
+        return node;
+    }
+    auto *ident = GetDeclarationIdent(node);
+    return ident != nullptr ? const_cast<ir::Identifier *>(ident) : node;
 }
 
 ir::AstNode *ExtractTSClassImplementsIdentifier(ir::AstNode *node, const NodeInfo *info)
@@ -643,8 +750,12 @@ static std::unordered_map<ir::AstNodeType, NodeExtractor> GetExportExtractors()
 {
     return {{ir::AstNodeType::EXPORT_SPECIFIER,
              [](ir::AstNode *node, const NodeInfo *info) { return ExtractExportSpecifierIdentifier(node, info); }},
+            {ir::AstNodeType::EXPORT_NAMED_DECLARATION,
+             [](ir::AstNode *node, const NodeInfo *info) { return ExtractExportSpecifierIdentifier(node, info); }},
             {ir::AstNodeType::REEXPORT_STATEMENT,
-             [](ir::AstNode *node, const NodeInfo *info) { return ExtractExportSpecifierIdentifier(node, info); }}};
+             [](ir::AstNode *node, const NodeInfo *info) { return ExtractExportSpecifierIdentifier(node, info); }},
+            {ir::AstNodeType::EXPORT_DEFAULT_DECLARATION,
+             [](ir::AstNode *node, const NodeInfo *info) { return ExtractExportDefaultIdentifier(node, info); }}};
 }
 
 static std::unordered_map<ir::AstNodeType, NodeExtractor> GetExpressionExtractors()
@@ -790,6 +901,8 @@ const std::unordered_map<ir::AstNodeType, NodeMatcher> &GetNodeMatchers()
         {ir::AstNodeType::TS_INTERFACE_DECLARATION, MatchTSInterfaceDeclaration},
         {ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION, MatchTSTypeAliasDeclaration},
         {ir::AstNodeType::EXPORT_SPECIFIER, MatchExportSpecifier},
+        {ir::AstNodeType::EXPORT_NAMED_DECLARATION, MatchExportSpecifier},
+        {ir::AstNodeType::EXPORT_DEFAULT_DECLARATION, MatchExportDefaultDeclaration},
         {ir::AstNodeType::MEMBER_EXPRESSION, MatchMemberExpression},
         {ir::AstNodeType::TS_CLASS_IMPLEMENTS, MatchTSClassImplements},
         {ir::AstNodeType::ETS_STRING_LITERAL_TYPE, MatchEtsStringLiteralType},
@@ -821,6 +934,8 @@ const std::unordered_map<ir::AstNodeType, NodeMatcher> &GetNodeMatchers()
     return NODE_MATCHERS;
 }
 
+// Keep in sync with the TS side: NODE_INFO_KIND_CONVERSIONS and UNMATCHABLE_NODE_KINDS in
+// bindings/src/lsp/lsp_helper.ts mirror these handler kinds for the chain round-trip.
 const std::unordered_map<ir::AstNodeType, NodeInfoHandler> &GetNodeInfoHandlers()
 {
     static const std::unordered_map<ir::AstNodeType, NodeInfoHandler> NODE_INFO_HANDLERS = {

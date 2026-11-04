@@ -53,6 +53,9 @@ struct SymbolDefSearchResult {
 std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string &name, const std::string &excludeFile);
 std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std::string &prefix,
                                                                        const std::string &excludeFile);
+// Whether the module entry that owns 'file' exports 'symbolName', either directly or through
+// an 'export { ... }' statement. Used to keep the bare module-alias import candidate valid.
+bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &symbolName, const ArkTsConfig *config);
 
 }  // namespace ark::es2panda::lsp
 
