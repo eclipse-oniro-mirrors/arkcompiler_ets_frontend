@@ -998,31 +998,41 @@ extern "C" __attribute__((unused)) es2panda_Context *ProceedToState(es2panda_Con
                                                                     es2panda_ContextState state)
 {
     auto *ctx = reinterpret_cast<Context *>(context);
-    switch (state) {
-        case ES2PANDA_STATE_NEW:
-            break;
-        case ES2PANDA_STATE_PARSED:
-            ctx = Parse(ctx);
-            break;
-        case ES2PANDA_STATE_BOUND:
-            ctx = Bind(ctx);
-            break;
-        case ES2PANDA_STATE_CHECKED:
-            ctx = Check(ctx);
-            break;
-        case ES2PANDA_STATE_LOWERED:
-            ctx = Lower(ctx);
-            break;
-        case ES2PANDA_STATE_ASM_GENERATED:
-            ctx = GenerateAsm(ctx);
-            break;
-        case ES2PANDA_STATE_BIN_GENERATED:
-            ctx = GenerateBin(ctx);
-            break;
-        default:
-            ctx->errorMessage = "It does not make sense to request stage";
-            ctx->state = ES2PANDA_STATE_ERROR;
-            break;
+    try {
+        switch (state) {
+            case ES2PANDA_STATE_NEW:
+                break;
+            case ES2PANDA_STATE_PARSED:
+                ctx = Parse(ctx);
+                break;
+            case ES2PANDA_STATE_BOUND:
+                ctx = Bind(ctx);
+                break;
+            case ES2PANDA_STATE_CHECKED:
+                ctx = Check(ctx);
+                break;
+            case ES2PANDA_STATE_LOWERED:
+                ctx = Lower(ctx);
+                break;
+            case ES2PANDA_STATE_ASM_GENERATED:
+                ctx = GenerateAsm(ctx);
+                break;
+            case ES2PANDA_STATE_BIN_GENERATED:
+                ctx = GenerateBin(ctx);
+                break;
+            default:
+                ctx->errorMessage = "It does not make sense to request stage";
+                ctx->state = ES2PANDA_STATE_ERROR;
+                break;
+        }
+    } catch (util::ThrowableDiagnostic &e) {
+        ctx->diagnosticEngine->EnsureLocations();
+        e.EnsureLocation();
+        ctx->diagnosticEngine->InsertLog(std::make_shared<util::ThrowableDiagnostic>(e));
+        ctx->state = ES2PANDA_STATE_ERROR;
+    } catch (const std::exception &e) {
+        ctx->errorMessage = e.what();
+        ctx->state = ES2PANDA_STATE_ERROR;
     }
 
     if (ctx->config != nullptr) {

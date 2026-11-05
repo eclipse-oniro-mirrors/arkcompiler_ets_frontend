@@ -132,6 +132,9 @@ static int CompileFromConfig(es2panda::Compiler &compiler, util::Options *option
                                            util::DiagnosticMessageParams {input.filePath, input.dest});
             overallRes |= static_cast<unsigned>(res);
         }
+        if (diagnosticEngine.HasErrorLimitExceeded()) {
+            break;
+        }
     }
     ReleaseInputs(parserInputs);
     return static_cast<int>(overallRes);
