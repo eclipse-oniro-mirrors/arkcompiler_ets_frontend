@@ -35,6 +35,7 @@ import {
 } from '../util/utils';
 import {
     AliasConfig,
+    AtsDependency,
     CompilerOptions,
     ArkTSConfigObject,
     BuildConfig,
@@ -60,7 +61,8 @@ export class ArkTSConfig {
             compilerOptions: {
                 package: moduleInfo.packageName,
                 baseUrl: path.resolve(moduleInfo.moduleRootPath),
-                rootDir: projectRootPath,
+                // Legacy configs omit projectRootPath; the compiler then defaults rootDir to cwd.
+                rootDir: path.resolve(projectRootPath ?? '.'),
                 paths: {},
                 dependencies: {},
                 cacheDir: path.resolve(cacheDir),
@@ -80,8 +82,24 @@ export class ArkTSConfig {
         }
     }
 
+    addAtsDependencies(entries: Record<string, AtsDependency>): void {
+        for (const [name, entry] of Object.entries(entries)) {
+            // Binary dependencies retain their existing metadata/loading route.
+            if (this.dependencies[name]?.path?.endsWith('.abc')) {
+                continue;
+            }
+            this.compilerOptions.atsDependencies = this.compilerOptions.atsDependencies ?? {};
+            this.compilerOptions.atsDependencies[name] = entry;
+        }
+    }
+
     addDependency({ name, item }: { name: string; item: DependencyItem }): void {
         const deps = this.object.compilerOptions.dependencies;
+        if (item.path?.endsWith('.abc') && this.compilerOptions.atsDependencies) {
+            this.compilerOptions.atsDependencies = Object.fromEntries(
+                Object.entries(this.compilerOptions.atsDependencies).filter(([packageName]) => packageName !== name)
+            );
+        }
         const existing = deps[name];
 
         if (existing) {
@@ -150,6 +168,7 @@ export class ArkTSConfig {
         }
         this.addDependencies(source.dependencies);
         this.addPathMappings(source.pathSection);
+        this.addAtsDependencies(source.compilerOptions.atsDependencies ?? {});
 
     }
 
@@ -205,6 +224,7 @@ export class ArkTSConfig {
         // Merge the config
         this.addDependencies(arktsConfig.dependencies);
         this.addPathMappings(arktsConfig.pathSection);
+        this.addAtsDependencies(arktsConfig.compilerOptions.atsDependencies ?? {});
     }
 }
 
@@ -324,6 +344,22 @@ export class ArkTSConfigGenerator {
             return
         }
 
+        if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_2 && moduleInfo.packageName) {
+            const searchPath = [...moduleInfo.sourceRoots].reverse()
+                .map(source => path.resolve(moduleInfo.moduleRootPath, source));
+            searchPath.push(path.resolve(moduleInfo.moduleRootPath));
+            arktsConfig.addAtsDependencies({
+                [moduleInfo.packageName]: {
+                    searchPath: [...new Set(searchPath)],
+                    moduleRoot: path.resolve(moduleInfo.moduleRootPath),
+                    ...(moduleInfo.entryFile ? {
+                        entryFile: path.resolve(moduleInfo.moduleRootPath, moduleInfo.entryFile)
+                    } : {})
+                }
+            });
+            this.handleAddSourceRootPath(moduleInfo, arktsConfig);
+            return;
+        }
         this.getAllFilesToPathSection(moduleInfo, arktsConfig);
         this.getAllModuleFilesToPathSection(moduleInfo, arktsConfig);
         // NOTE: is some test cases somehow packageName can be an empty string

@@ -17,7 +17,7 @@ import * as path from 'path';
 import { BuildConfig, DependencyModuleConfig } from '../types';
 import {
     toUnixPath,
-    isFirstLineUseStatic,
+    isStaticSource,
     isSubPathOf
 } from '../util/utils';
 import { ETS_1_1, ETS_1_1_INTEROP, LANGUAGE_VERSION, PANDA_STDLIB_PATH_FROM_SDK } from '../pre_define';
@@ -88,6 +88,9 @@ export class FileManager {
 
     getLanguageVersionByFilePath(filePath: string): string {
         const path = toUnixPath(filePath);
+        if (path.endsWith('.ats')) {
+            return LANGUAGE_VERSION.ARKTS_1_2;
+        }
         for (const apiPath of FileManager.staticApiPath) {
             if (path.startsWith(apiPath)) {
                 return LANGUAGE_VERSION.ARKTS_1_2;
@@ -107,7 +110,7 @@ export class FileManager {
         if (FileManager.buildConfig.compileFiles.includes(filePath)) {
             return LANGUAGE_VERSION.ARKTS_1_2;
         }
-        for (const [pkgName, moduleInfo] of FileManager.arkTSModuleMap) {
+        for (const moduleInfo of FileManager.arkTSModuleMap.values()) {
             const modulePath = moduleInfo.modulePath;
             // Ensure proper path boundary matching to avoid prefix mismatch (e.g., library1 vs library)
             if (!path.startsWith(modulePath + '/')) {
@@ -116,24 +119,34 @@ export class FileManager {
             if (moduleInfo.language !== LANGUAGE_VERSION.ARKTS_HYBRID) {
                 return moduleInfo.language;
             }
-            const declgenV2OutPath = moduleInfo.declgenV2OutPath ? toUnixPath(moduleInfo.declgenV2OutPath) : undefined;
-            if (declgenV2OutPath && isSubPathOf(path, declgenV2OutPath)) {
-                return LANGUAGE_VERSION.ARKTS_1_1;
-            }
-            if (moduleInfo.declgenV1OutPath && isSubPathOf(path, moduleInfo.declgenV1OutPath)) {
-                return LANGUAGE_VERSION.ARKTS_1_2;
-            }
-            if (moduleInfo.declgenBridgeCodePath && isSubPathOf(path, moduleInfo.declgenBridgeCodePath)) {
-                return LANGUAGE_VERSION.ARKTS_1_2;
-            }
-            /**
-             * when process hybrid hsp or har we can't get info of 1.1,
-             * only by module decl-fileinfo.json or `'use static'`
-             */
-            if (isFirstLineUseStatic(filePath)) {
-                return LANGUAGE_VERSION.ARKTS_1_2;
+            const language = this.getHybridLanguageVersion(filePath, path, moduleInfo);
+            if (language !== undefined) {
+                return language;
             }
         }
         return LANGUAGE_VERSION.ARKTS_1_1;
+    }
+
+    private getHybridLanguageVersion(
+        filePath: string, path: string, moduleInfo: DependencyModuleConfig
+    ): string | undefined {
+        const declgenV2OutPath = moduleInfo.declgenV2OutPath ? toUnixPath(moduleInfo.declgenV2OutPath) : undefined;
+        if (declgenV2OutPath && isSubPathOf(path, declgenV2OutPath)) {
+            return LANGUAGE_VERSION.ARKTS_1_1;
+        }
+        if (moduleInfo.declgenV1OutPath && isSubPathOf(path, moduleInfo.declgenV1OutPath)) {
+            return LANGUAGE_VERSION.ARKTS_1_2;
+        }
+        if (moduleInfo.declgenBridgeCodePath && isSubPathOf(path, moduleInfo.declgenBridgeCodePath)) {
+            return LANGUAGE_VERSION.ARKTS_1_2;
+        }
+        /**
+         * when process hybrid hsp or har we can't get info of 1.1,
+         * only by module decl-fileinfo.json or `'use static'`
+         */
+        if (isStaticSource(filePath)) {
+            return LANGUAGE_VERSION.ARKTS_1_2;
+        }
+        return undefined;
     }
 }

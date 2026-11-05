@@ -22,7 +22,7 @@ import { InteropConfigError, errorMessage } from './errors';
 import { AggregateUserError, InternalError, type ErrorMessage } from './errors';
 import { createInteropConfigHost, type InteropConfigHost } from './host';
 import { parseInteropConfig, type InteropConfigFile, type InteropDependencyEntries } from './schema';
-import { ETS_SUFFIX, TS_SUFFIX, JS_SUFFIX, LANGUAGE_VERSION } from '../pre_define';
+import { ATS_SUFFIX, ETS_SUFFIX, TS_SUFFIX, JS_SUFFIX, LANGUAGE_VERSION } from '../pre_define';
 import type {
   InteropTarget,
   InteropFileEntry,
@@ -80,8 +80,8 @@ interface EntryKind {
 
 const STATIC_ENTRIES: EntryKind = {
   name: 'static',
-  extensions: [ETS_SUFFIX],
-  extensionsLabel: '.ets or .d.ets',
+  extensions: [ETS_SUFFIX, ATS_SUFFIX],
+  extensionsLabel: '.ets, .d.ets, or .ats',
   language: LANGUAGE_VERSION.ARKTS_1_2,
 };
 

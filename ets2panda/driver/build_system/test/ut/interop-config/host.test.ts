@@ -64,6 +64,12 @@ describe('interop config host', () => {
     expect(host.getLanguageFromSourceCode(filePath)).toBe(LANGUAGE_VERSION.ARKTS_1_1);
   });
 
+  it('classifies ATS as static without a directive', () => {
+    const filePath = path.join(tempDir, 'source.ats');
+    fs.writeFileSync(filePath, 'export class C {}');
+    expect(createDefaultInteropConfigHost().getLanguageFromSourceCode(filePath)).toBe(LANGUAGE_VERSION.ARKTS_1_2);
+  });
+
   it('classifies source code through the default host', () => {
     const host = createDefaultInteropConfigHost();
 

@@ -73,8 +73,8 @@ interface EntryKind {
 
 const STATIC_ENTRIES: EntryKind = {
   name: 'static',
-  extensions: [Extension.ETS],
-  extensionsLabel: '.ets or .d.ets',
+  extensions: [Extension.ETS, Extension.ATS],
+  extensionsLabel: '.ets, .d.ets, or .ats',
   language: Language.STATIC,
 };
 

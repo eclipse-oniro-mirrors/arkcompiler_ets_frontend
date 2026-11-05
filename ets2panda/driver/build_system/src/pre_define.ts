@@ -36,6 +36,7 @@ export const DECL_FILE_MAP_NAME: string = 'decl_file_map.json';
 export const DECL_ETS_SUFFIX: string = '.d.ets';
 export const DECL_TS_SUFFIX: string = '.d.ts';
 export const ETS_SUFFIX: string = '.ets';
+export const ATS_SUFFIX: string = '.ats';
 export const TS_SUFFIX: string = '.ts';
 export const JS_SUFFIX: string = '.js';
 export const ABC_SUFFIX: string = '.abc';

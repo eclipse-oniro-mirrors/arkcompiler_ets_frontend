@@ -26,6 +26,7 @@ import {
 describe('static source rules', () => {
   it.each([
     ['Index.ets', true],
+    ['Index.ats', true],
     ['Types.d.ets', true],
     ['Index.ETS', false],
     ['Index.ts', false],
@@ -58,12 +59,15 @@ describe('static source rules', () => {
     it('classifies static mode from the beginning of a source file', async () => {
       const staticFile = path.join(rootPath, 'Static.ets');
       const dynamicFile = path.join(rootPath, 'Dynamic.ets');
+      const atsFile = path.join(rootPath, 'Static.ats');
       await Promise.all([
         fs.writeFile(staticFile, "'use static'\nexport const value = true;\n"),
         fs.writeFile(dynamicFile, 'export const value = true;\n'),
+        fs.writeFile(atsFile, 'export const value = true;\n'),
       ]);
 
       expect(await hasUseStaticDirectiveInFile(staticFile)).toBe(true);
+      expect(await hasUseStaticDirectiveInFile(atsFile)).toBe(true);
       expect(await hasUseStaticDirectiveInFile(dynamicFile)).toBe(false);
     });
 

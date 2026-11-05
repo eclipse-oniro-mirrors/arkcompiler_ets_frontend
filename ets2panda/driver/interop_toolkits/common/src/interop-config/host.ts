@@ -15,7 +15,7 @@
 
 import { promises as fs } from 'node:fs';
 
-import { type Language, getLanguageFromSourceCode } from '../fileUtils';
+import { Language, getLanguageFromSourceCode } from '../fileUtils';
 
 /**
  * Adapter for the build-environment facts needed while resolving interop
@@ -38,6 +38,9 @@ export function createDefaultInteropConfigHost(): InteropConfigHost {
   return {
     async getLanguageFromSourceCode(filePath: string): Promise<Language> {
       const sourceCode = await fs.readFile(filePath, 'utf8');
+      if (filePath.endsWith('.ats')) {
+        return Language.STATIC;
+      }
       return getLanguageFromSourceCode(sourceCode);
     },
   };

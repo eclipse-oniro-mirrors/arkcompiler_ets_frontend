@@ -11,6 +11,7 @@
     "moduleType": "shared",
     "buildType": "build",
     "buildMode": "Debug",
+    "projectRootPath": "${absolute_path_to_build_system}/test/demo_hap",
     "moduleRootPath": "${absolute_path_to_build_system}/test/demo_hap/entry/",
     "sourceRoots": ["./", "src/main1/ets"],
     "es2pandaMode": "sequential",

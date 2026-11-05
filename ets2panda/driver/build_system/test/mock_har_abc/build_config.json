@@ -3,6 +3,7 @@
     "buildMode": "Debug",
     "packageName": "mock_har_abc",
     "moduleType": "har",
+    "projectRootPath": "${absolute_path_to_build_system}/test/mock_har_abc",
     "moduleRootPath": "${absolute_path_to_build_system}/test/mock_har_abc/",
     "sourceRoots": [
         "src/"

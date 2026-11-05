@@ -64,6 +64,12 @@ describe('interop config host', () => {
     await expect(host.getLanguageFromSourceCode(filePath)).resolves.toBe(Language.DYNAMIC);
   });
 
+  it('classifies ATS as static without a directive', async () => {
+    const filePath = path.join(tempDir, 'source.ats');
+    fs.writeFileSync(filePath, 'export class C {}');
+    await expect(createDefaultInteropConfigHost().getLanguageFromSourceCode(filePath)).resolves.toBe(Language.STATIC);
+  });
+
   it('classifies source code through the default host', async () => {
     const host = createDefaultInteropConfigHost();
 

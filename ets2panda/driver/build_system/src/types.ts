@@ -560,12 +560,19 @@ export interface InteropDynamicEntries {
     packageRoots: string[];
 }
 
+export interface AtsDependency {
+    searchPath?: string[];
+    moduleRoot: string;
+    entryFile?: string;
+}
+
 export interface CompilerOptions {
     package: string;
     baseUrl: string;
     rootDir: string;
     paths: Record<string, string[]>;
     dependencies: Record<string, DependencyItem>;
+    atsDependencies?: Record<string, AtsDependency>;
     useEmptyPackage?: boolean;
     cacheDir?: string;
     declgenV2OutPath?: string;

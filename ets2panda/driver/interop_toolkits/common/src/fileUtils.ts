@@ -28,6 +28,7 @@ export const INTERNAL_PREFIX = '?internal';
 
 export enum Extension {
   ETS = '.ets',
+  ATS = '.ats',
   DETS = '.d.ets',
   TS = '.ts',
   DTS = '.d.ts',

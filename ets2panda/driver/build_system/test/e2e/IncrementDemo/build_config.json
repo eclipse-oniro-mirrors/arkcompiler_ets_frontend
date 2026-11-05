@@ -8,6 +8,7 @@
     "moduleType": "shared",
     "buildType": "build",
     "buildMode": "Debug",
+    "projectRootPath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo",
     "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/entry/",
     "sourceRoots": [
         "./"

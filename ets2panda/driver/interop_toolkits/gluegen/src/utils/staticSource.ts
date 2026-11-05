@@ -21,9 +21,9 @@ const USE_STATIC_DIRECTIVE = "'use static'";
 /** Bytes inspected from the start of an ETS source file when classifying it. */
 export const STATIC_SOURCE_PROBE_BYTES = 256;
 
-/** Whether a path uses the lowercase ETS source extension accepted by gluegen. */
+/** Whether a path uses a static source extension accepted by gluegen. */
 export function hasEtsSourceExtension(filePath: string): boolean {
-  return filePath.endsWith(ETS_SOURCE_SUFFIX);
+  return filePath.endsWith(ETS_SOURCE_SUFFIX) || filePath.endsWith('.ats');
 }
 
 /** Whether the first trimmed source line is exactly the ArkTS static directive. */
@@ -32,13 +32,13 @@ export function hasUseStaticDirective(sourcePrefix: string): boolean {
   return firstLine === USE_STATIC_DIRECTIVE;
 }
 
-/** Whether the beginning of an ETS source file declares ArkTS static mode. */
+/** ATS is static by suffix; ETS retains its first-line directive check. */
 export async function hasUseStaticDirectiveInFile(filePath: string): Promise<boolean> {
   const file = await fs.open(filePath, 'r');
   try {
     const buffer = Buffer.allocUnsafe(STATIC_SOURCE_PROBE_BYTES);
     const { bytesRead } = await file.read(buffer, 0, buffer.length, 0);
-    return hasUseStaticDirective(buffer.toString('utf8', 0, bytesRead));
+    return filePath.endsWith('.ats') || hasUseStaticDirective(buffer.toString('utf8', 0, bytesRead));
   } finally {
     await file.close();
   }

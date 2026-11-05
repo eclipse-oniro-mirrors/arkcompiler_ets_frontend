@@ -70,9 +70,11 @@ function getConfigAndPaths(testScriptName: string) {
 }
 
 function getExpectedOutputs(config: BuildConfig): string[] {
+  // Match runBuild: the legacy field takes precedence when both fields are present.
+  const modules = config.dependentModuleList || config.dependencyModuleList || [];
   const allModules = [
     { packageName: config.packageName, modulePath: config.moduleRootPath },
-    ...(config.dependencyModuleList || []).map((m: DependencyModuleConfig) => ({
+    ...modules.map((m: DependencyModuleConfig) => ({
       packageName: m.packageName,
       modulePath: m.modulePath
     }))
@@ -83,7 +85,8 @@ function getExpectedOutputs(config: BuildConfig): string[] {
       return !rel.startsWith('..') && !path.isAbsolute(rel);
     })!;
     const mp = matchedModule.modulePath;
-    const outAbc = changeFileExtension(path.relative(mp, src).replace(/\//, '.'), ABC_SUFFIX);
+    // The compiler converts every path separator of the record name to '.', so mirror that here.
+    const outAbc = changeFileExtension(path.relative(mp, src).replace(/\//g, '.'), ABC_SUFFIX);
     return path.join(
       config.cachePath,
       `${matchedModule.packageName}.${outAbc}`

@@ -4,6 +4,7 @@
 
   "packageName": "entry",
   "moduleType": "entry",
+  "projectRootPath": "${absolute_path_to_build_system}/test/e2e/demo_multi_source_roots",
   "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_multi_source_roots",
   "sourceRoots": [
     "src/",

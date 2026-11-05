@@ -1,0 +1,97 @@
+{
+  "buildType": "build",
+  "buildMode": "Debug",
+  "packageName": "entry",
+  "moduleType": "entry",
+  "projectRootPath": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed",
+  "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/entry",
+  "sourceRoots": [
+    "."
+  ],
+  "compileFiles": [
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/entry/Main.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/Api.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/value.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/nested/relative.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/choice.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/target/choice.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/fallback.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/lower/index.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/upper/Index.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/target/directoryFallback/Child.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/directoryFallback.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/rootValue.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/tools/Utility.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/legacy/src/Api.ets",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/legacy/src/value.ets",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/legacy/src/nested/relative.ets",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/mixed/Bridge.ets",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/mixed/Leaf.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/legacy/src/AtsBridge.ats",
+    "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/Index.ats"
+  ],
+  "loaderOutPath": "./build/demo_ats_ets_mixed/entry",
+  "cachePath": "./build/cache/demo_ats_ets_mixed/entry",
+  "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+  "pandaStdlibPath": "${absolute_path_to_stdlib}",
+  "enableDeclgenEts2Ts": false,
+  "dependentModuleList": [
+    {
+      "language": "1.2",
+      "packageName": "entry",
+      "moduleType": "entry",
+      "moduleName": "entry",
+      "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/entry",
+      "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/entry/Main.ats",
+      "sourceRoots": [
+        "."
+      ],
+      "dependencies": [
+        "library",
+        "@scope/tools",
+        "legacy"
+      ]
+    },
+    {
+      "language": "1.2",
+      "packageName": "library",
+      "moduleType": "har",
+      "moduleName": "library",
+      "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library",
+      "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/library/src/Api.ats",
+      "sourceRoots": [
+        "src/",
+        "src/target/"
+      ],
+      "dependencies": [
+        "@scope/tools"
+      ]
+    },
+    {
+      "language": "1.2",
+      "packageName": "@scope/tools",
+      "moduleType": "har",
+      "moduleName": "tools",
+      "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/tools",
+      "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/tools/Utility.ats",
+      "sourceRoots": [
+        "."
+      ],
+      "dependencies": []
+    },
+    {
+      "language": "1.2",
+      "packageName": "legacy",
+      "moduleType": "har",
+      "moduleName": "legacy",
+      "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/legacy",
+      "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_ats_ets_mixed/legacy/src/Api.ets",
+      "sourceRoots": [
+        "src/"
+      ],
+      "dependencies": [
+        "library"
+      ]
+    }
+  ]
+}

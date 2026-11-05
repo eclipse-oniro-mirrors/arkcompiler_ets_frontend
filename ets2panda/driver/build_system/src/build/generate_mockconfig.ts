@@ -24,10 +24,11 @@ import {
     ErrorCode
 } from '../util/error';
 import {
-    isFirstLineUseStatic
+    isStaticSource
 } from '../util/utils';
 import {
-    ETS_SUFFIX
+    ETS_SUFFIX,
+    ATS_SUFFIX
 } from '../pre_define';
 
 interface MockConfigInfo {
@@ -90,7 +91,7 @@ export class MockConfigGenerator {
             );
         }
 
-        if (!isFirstLineUseStatic(mockFullPath)) {
+        if (!isStaticSource(mockFullPath)) {
             throw new DriverError(
                 LogDataFactory.newInstance(
                     ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
@@ -193,7 +194,7 @@ export class MockConfigGenerator {
     }
 
     private ensureUseStatic(key: string, filePath: string): void {
-        if (!isFirstLineUseStatic(filePath)) {
+        if (!isStaticSource(filePath)) {
             throw new DriverError(
                 LogDataFactory.newInstance(
                     ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
@@ -214,8 +215,11 @@ export class MockConfigGenerator {
         let fullPath = path.resolve(basePath, partialPath);
         let pathExists = fs.existsSync(fullPath);
         if (!pathExists && !path.extname(fullPath)) {
-            fullPath += ETS_SUFFIX;
-            pathExists = fs.existsSync(fullPath);
+            for (const extension of [ETS_SUFFIX, ATS_SUFFIX]) {
+                if (fs.existsSync(fullPath + extension)) {
+                    return fullPath + extension;
+                }
+            }
         }
         return pathExists ? fullPath : null;
     }
