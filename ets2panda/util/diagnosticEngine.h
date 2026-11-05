@@ -128,6 +128,7 @@ public:
         for (auto &it : diagnostics_) {
             it.clear();
         }
+        errorLimitExceeded_ = false;
     }
 
     // NOTE(schernykh): should be removed
@@ -178,6 +179,18 @@ public:
         wError_ = wError;
     }
 
+    void SetMaxErrorCount(size_t maxErrorCount)
+    {
+        maxErrorCount_ = maxErrorCount;
+    }
+
+    [[nodiscard]] size_t GetErrorCount() const noexcept;
+
+    [[nodiscard]] bool HasErrorLimitExceeded() const noexcept
+    {
+        return errorLimitExceeded_;
+    }
+
     void SetBasePath(const std::string &basePath)
     {
         basePath_ = basePath;
@@ -216,7 +229,9 @@ private:
     template <typename DIAGNOSTIC, typename... T>
     DIAGNOSTIC *LogDiagnostic(T &&...args)
     {
-        return CreateDiagnostic<DIAGNOSTIC>(std::forward<T>(args)...);
+        auto *diag = CreateDiagnostic<DIAGNOSTIC>(std::forward<T>(args)...);
+        CheckErrorLimit();
+        return diag;
     }
 
     template <typename... T>
@@ -236,11 +251,14 @@ private:
     DiagnosticStorage GetAllDiagnostic();
     DiagnosticStorage GetErrorDiagnostic();
     void WriteLog(const DiagnosticBase &error);
+    void CheckErrorLimit();
 
 private:
     std::array<DiagnosticStorage, static_cast<size_t>(DiagnosticType::COUNT)> diagnostics_;
     std::unique_ptr<DiagnosticPrinter> printer_;
     bool wError_ {false};
+    size_t maxErrorCount_ {50000};
+    bool errorLimitExceeded_ {false};
     // NOLINTNEXTLINE(readability-redundant-string-init)
     std::string basePath_ {""};
 };

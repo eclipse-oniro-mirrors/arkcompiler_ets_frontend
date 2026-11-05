@@ -15,6 +15,7 @@
 
 #include "diagnosticEngine.h"
 #include <memory>
+#include <string>
 #include "util/diagnostic.h"
 #include "util/helpers.h"
 #include "util/options.h"
@@ -185,6 +186,7 @@ void DiagnosticEngine::FlushDiagnostic()
     for (auto &vec : diagnostics_) {
         vec.clear();
     }
+    errorLimitExceeded_ = false;
 }
 #ifndef FUZZING_EXIT_ON_FAILED_ASSERT
 static void SigSegvHandler([[maybe_unused]] int sig)
@@ -275,6 +277,33 @@ bool DiagnosticEngine::IsError(DiagnosticType type) const
         default:
             ES2PANDA_UNREACHABLE();
     }
+}
+
+[[nodiscard]] size_t DiagnosticEngine::GetErrorCount() const noexcept
+{
+    size_t count = 0;
+    for (size_t i = DiagnosticType::BEGIN; i < DiagnosticType::COUNT; ++i) {
+        if (IsError(static_cast<DiagnosticType>(i))) {
+            count += diagnostics_[i].size();
+        }
+    }
+    return count;
+}
+
+void DiagnosticEngine::CheckErrorLimit()
+{
+    if (maxErrorCount_ == 0 || errorLimitExceeded_) {
+        return;
+    }
+
+    if (GetErrorCount() <= maxErrorCount_) {
+        return;
+    }
+
+    errorLimitExceeded_ = true;
+
+    std::string msg = "Compile Errors exceeded the limit(" + std::to_string(maxErrorCount_) + ")";
+    Throw(ThrowableDiagnostic(DiagnosticType::FATAL, msg));
 }
 
 }  // namespace ark::es2panda::util
