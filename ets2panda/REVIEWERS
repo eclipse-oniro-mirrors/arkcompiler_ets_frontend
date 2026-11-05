@@ -112,4 +112,4 @@
 /ets2panda/compiler/lowering/ets/unionLowering.cpp  ^akmaevaleksey ^vpukhov ^igelhaus ^Prof @fanglou
 /ets2panda/util/diagnostic/warnings-lists/*yaml ^ozerovnikita ^igelhaus ^Prof @fanglou
 /ets2panda/compiler/lowering/ets/topLevelStmts/.* ^lirismankarina ^akmaevaleksey ^vpukhov ^igelhaus ^Prof @tengtengh
-/ets2panda/driver/build_system/src/obfuscation/ @oatuwwutao @Graceunderpressure @xhq1999
+/ets2panda/driver/build_system/src/obfuscation/ @oatuwwutao @Graceunderpressure
