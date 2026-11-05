@@ -14,7 +14,7 @@
  */
 
 import type { BuildConfig, ModuleConfig } from '../../src/contracts';
-import { dependencyModulesOf, reachableModulesOf, type ModuleInfo } from '../../src/stages/configuration';
+import { dependencyModulesOf, missingDependencyNamesOf, reachableModulesOf, type ModuleInfo } from '../../src/stages/configuration';
 import { runConfiguration } from '../helpers/runConfiguration';
 
 /** A main-module descriptor entry (found by `packageName` inside `dependentModuleList`). */
@@ -177,6 +177,13 @@ describe('module dependency table', () => {
   });
 
   it('skips dependency references that are not part of the module table', async () => {
+    const logger = {
+      printInfo: jest.fn(),
+      printWarn: jest.fn(),
+      printDebug: jest.fn(),
+      printError: jest.fn(),
+      printErrorAndExit: jest.fn(),
+    };
     const { moduleTable: table } = await runConfiguration(
       baseBuildConfig({
         dependentModuleList: [
@@ -192,12 +199,35 @@ describe('module dependency table', () => {
           },
         ],
       }),
+      logger,
     );
 
     const library = table.byPackage.get('library') as ModuleInfo;
     expect(library.dependencies).toEqual(['missing-package']);
     expect(dependencyModulesOf(table, library)).toEqual([]);
     expect(reachableModulesOf(table).map((m) => m.packageName)).toEqual(['entry', 'library']);
+    expect(logger.printWarn).toHaveBeenCalledWith(expect.stringContaining('missing-package'));
+  });
+
+  it('collects each missing dependency name once across modules', async () => {
+    const { moduleTable: table } = await runConfiguration(
+      baseBuildConfig({
+        dependentModuleList: [
+          entryModule({ dependencies: ['library', 'missing-package'] }),
+          {
+            packageName: 'library',
+            moduleType: 'har',
+            modulePath: '/workspace/project/library',
+            sourceRoots: ['src'],
+            entryFile: 'Index.ets',
+            dependencies: ['missing-package'],
+            interopConfigPath: '',
+          },
+        ],
+      }),
+    );
+
+    expect(missingDependencyNamesOf(table)).toEqual(['missing-package']);
   });
 
   it('rejects cyclic module dependencies', async () => {

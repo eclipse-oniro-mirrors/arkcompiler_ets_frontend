@@ -45,7 +45,7 @@ export function createConfigurationStage(): ProvidedStage<GlueGenContext, readon
     });
 }
 
-export { dependencyModulesOf, reachableModulesOf } from './moduleTable';
+export { dependencyModulesOf, missingDependencyNamesOf, reachableModulesOf } from './moduleTable';
 export type { ConfigurationResult } from './configurationResult';
 export type InteropTarget = common.interopConfig.InteropTarget;
 export type { MainModuleInfo, ModuleInfo, ModuleTable } from './moduleTable';

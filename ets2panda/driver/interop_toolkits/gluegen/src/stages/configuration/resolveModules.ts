@@ -21,6 +21,7 @@ import { LogData } from '../../logger';
 import type { GlueGenContext } from '../../pipeline/context';
 import type { StageScope } from '../../pipeline';
 import type { MainModuleInfo, ModuleInfo, ModuleTable } from './moduleTable';
+import { missingDependencyNamesOf } from './moduleTable';
 import {
   copyStringMap,
   copyStrings,
@@ -33,7 +34,12 @@ import {
 /** Configuration hook: resolves the validated input into the shared module table. */
 export function resolveModules(scope: StageScope<GlueGenContext, readonly []>): ModuleTable {
   try {
-    return buildModuleTable(scope.context.buildConfig);
+    const table = buildModuleTable(scope.context.buildConfig);
+    for (const packageName of missingDependencyNamesOf(table)) {
+      scope.context.logger.printWarn(
+        `Dependency module "${packageName}" is missing from the module list (excluded or not provided), skip.`);
+    }
+    return table;
   } catch (error) {
     if (error instanceof GlueGenError) {
       throw error;

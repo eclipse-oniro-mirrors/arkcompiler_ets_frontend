@@ -13,8 +13,13 @@
  * limitations under the License.
  */
 
+import * as fs from 'fs';
+
 import { ArkTSConfig, ArkTSConfigGenerator } from '../../../src/build/generate_arktsconfig';
+import { DepAnalyzer } from '../../../src/dep_analyzer/dep_analyzer';
 import { DependencyItem, ModuleInfo } from '../../../src/types';
+
+jest.mock('fs');
 
 /**
  * Mock ArkTSConfigGenerator for testing mergeArktsConfigByDependencies
@@ -367,6 +372,22 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
             expect(Object.keys(mainConfig.pathSection).length).toBe(0);
         });
 
+        test('should merge dependency config when dependenciesSets lacks the dependency key', () => {
+            const dep1 = createMockArkTSConfig('dep1', { '@test/dep1': ['/path/to/dep1'] });
+
+            mockGeneratorInstance.registerConfig('dep1', dep1);
+
+            // 'dep1' has a registered config but no entry in dependenciesSets
+            const dependencies: Set<string> = new Set(['dep1']);
+            const dependenciesSets: Map<string, Set<string>> = new Map([
+                ['entry', new Set(['dep1'])]
+            ]);
+
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
+
+            expect(mainConfig.pathSection['@test/dep1']).toEqual(['/path/to/dep1']);
+        });
+
         test('should handle dependency with no sub-dependencies', () => {
             const dep1 = createMockArkTSConfig('dep1', { '@test/dep1': ['/path/to/dep1'] });
 
@@ -447,6 +468,35 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
             mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.dependencies['@common']).toBeDefined();
+        });
+    });
+
+    describe('generateMergedArktsConfig (DepAnalyzer)', () => {
+        test('merges present modules only when dependencies reference a missing package', () => {
+            const presentDepConfig = createMockArkTSConfig('presentDep', { '@test/present': ['/path/to/present'] });
+
+            mockGeneratorInstance.registerConfig('entry', mainConfig);
+            mockGeneratorInstance.registerConfig('presentDep', presentDepConfig);
+
+            const mainModule = createMockModuleInfo('entry');
+            (mainModule as any).isMainModule = true;
+            (mainModule as any).dependencies = ['presentDep', 'missingDep'];
+            const presentModule = createMockModuleInfo('presentDep');
+
+            const ctx = Object.create(DepAnalyzer.prototype);
+            ctx.generator = mockGeneratorInstance;
+
+            expect(() => {
+                (DepAnalyzer.prototype as any).generateMergedArktsConfig.call(
+                    ctx, [mainModule, presentModule], '/tmp/merged_arktsconfig.json');
+            }).not.toThrow();
+
+            const writeCalls = (fs.writeFileSync as jest.Mock).mock.calls;
+            expect(writeCalls.length).toBe(1);
+            const writtenJson = writeCalls[0][1] as string;
+            const written = JSON.parse(writtenJson);
+            expect(written.compilerOptions.paths['@test/present']).toEqual(['/path/to/present']);
+            expect(writtenJson).not.toContain('missingDep');
         });
     });
 });

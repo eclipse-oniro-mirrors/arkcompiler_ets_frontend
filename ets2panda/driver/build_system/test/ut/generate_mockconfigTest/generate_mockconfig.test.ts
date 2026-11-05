@@ -188,6 +188,11 @@ describe('MockConfigGenerator collectMockConfigInfo - invalid', () => {
             'Key must be a system API');
     });
 
+    test('dependency-like key not present in the dependency list (excluded or misspelled) reports an error', () => {
+        expectMockConfigError(`{ "excluded-lib": { source: "mocks/ohos_mock.ets" } }`,
+            'Key must be a system API');
+    });
+
     test('relative key whose target file does not exist reports an error', () => {
         expectMockConfigError(`{ "./missing": { source: "mocks/ohos_mock.ets" } }`,
             `The key file for "./missing" is invalid`);
