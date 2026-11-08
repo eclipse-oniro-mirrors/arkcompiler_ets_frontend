@@ -1,0 +1,120 @@
+slotNum = 0x2
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@0=#Counter(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x0
+	stobjbyname 0x0, value, a2
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x8
+.language ECMAScript
+.function any .#~@0>#bump(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	lda a2
+	stlexvar 0x0, 0x0
+	definefunc 0x0, .#~@0>@1*#keep, 0x0
+	sta v0
+	ldlexvar 0x0, 0x0
+	sta v1
+	ldobjbyname 0x1, value
+	sta v2
+	lda a3
+	add2 0x3, v2
+	stobjbyname 0x4, value, v1
+	lda v0
+	callarg0 0x6
+	ldlexvar 0x0, 0x0
+	return
+label_2: 
+}
+
+slotNum = 0x5
+.language ECMAScript
+.function any .#~@0>#current(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	lda a2
+	stlexvar 0x0, 0x0
+	definefunc 0x0, .#~@0>@2*#probe, 0x0
+	callarg0 0x1
+	ldlexvar 0x0, 0x0
+	ldobjbyname 0x3, value
+	return
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@0>@1*#keep(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	ldobjbyname 0x0, value
+	return
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@0>@2*#probe(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	ldobjbyname 0x0, value
+	return
+label_2: 
+}
+
+slotNum = 0x19
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#Counter, _1, 0x0, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	lda v0
+	sttoglobalrecord 0x3, Counter
+	tryldglobalbyname 0x4, Counter
+	sta v0
+	newobjrange 0x5, 0x1, v0
+	stconsttoglobalrecord 0x7, counter
+	tryldglobalbyname 0x8, counter
+	sta v0
+	ldobjbyname 0x9, bump
+	sta v1
+	ldai 0x2
+	sta v2
+	lda v1
+	callthis1 0xb, v0, v2
+	sta v0
+	ldobjbyname 0xd, bump
+	sta v1
+	ldai 0x3
+	sta v2
+	lda v1
+	callthis1 0xf, v0, v2
+	tryldglobalbyname 0x11, print
+	sta v0
+	tryldglobalbyname 0x12, counter
+	sta v1
+	ldobjbyname 0x13, current
+	callthis0 0x15, v1
+	sta v1
+	lda v0
+	callarg1 0x17, v1
+	returnundefined
+label_2: 
+}
+
+

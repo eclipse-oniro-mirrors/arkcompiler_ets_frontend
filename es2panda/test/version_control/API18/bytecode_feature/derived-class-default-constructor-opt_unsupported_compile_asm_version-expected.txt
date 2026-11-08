@@ -46,8 +46,7 @@ label_0:
 	sttoglobalrecord 0x8, B
 	tryldglobalbyname 0x9, B
 	sta v0
-	mov v1, v0
-	newobjrange 0xa, 0x1, v1
+	newobjrange 0xa, 0x1, v0
 	returnundefined
 label_2: 
 }

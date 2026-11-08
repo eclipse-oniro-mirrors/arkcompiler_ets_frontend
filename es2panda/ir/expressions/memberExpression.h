@@ -87,6 +87,9 @@ public:
     void Compile(compiler::PandaGen *pg, compiler::VReg objReg) const;
     void CompileObject(compiler::PandaGen *pg, compiler::VReg dest) const;
     compiler::Operand CompileKey(compiler::PandaGen *pg) const;
+    // True when this member access is a by-name access on the current frame `this` that is
+    // safe to fold into a single ldthisbyname/stthisbyname (receiver = GetThis(sp), implicit).
+    bool IsThisByNameOptimizable(compiler::PandaGen *pg) const;
     void UpdateSelf(const NodeUpdater &cb, [[maybe_unused]] binder::Binder *binder) override;
 
 private:

@@ -1,8 +1,8 @@
-slotNum = 0x26
+slotNum = 0x23
 .language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
 	nop
-label_49: 
+label_47: 
 label_0: 
 	createarraywithbuffer 0x0, _1
 	getiterator 0x1
@@ -13,9 +13,9 @@ label_0:
 	sta v2
 	ldfalse
 	sta v3
+label_31: 
+label_23: 
 label_33: 
-label_25: 
-label_35: 
 	mov v6, v3
 	mov v4, v3
 	lda v3
@@ -46,12 +46,12 @@ label_1:
 	mov v4, v3
 	ldundefined
 	sta v8
-label_26: 
-end_label_26: 
+label_24: 
+end_label_24: 
 	jmp label_5
-label_51: 
+label_49: 
 	sta v7
-label_44: 
+label_42: 
 	mov v4, v6
 	ldtrue
 	sta v1
@@ -61,8 +61,8 @@ label_44:
 label_5: 
 	lda v8
 	sttoglobalrecord 0xd, a
-label_27: 
-label_38: 
+label_25: 
+label_36: 
 	lda v3
 	callruntime.istrue 0xe
 	jnez label_6
@@ -91,12 +91,12 @@ label_6:
 	mov v4, v3
 	ldundefined
 	sta v1
-label_28: 
-end_label_28: 
+label_26: 
+end_label_26: 
 	jmp label_10
-label_52: 
+label_50: 
 	sta v7
-label_45: 
+label_43: 
 	mov v4, v6
 	ldtrue
 	sta v1
@@ -106,9 +106,9 @@ label_45:
 label_10: 
 	lda v1
 	sttoglobalrecord 0x16, b
+label_32: 
+end_label_32: 
 label_34: 
-end_label_34: 
-label_36: 
 	lda v3
 	callruntime.istrue 0x17
 	jnez label_11
@@ -121,8 +121,8 @@ label_14:
 	sta v1
 	ldhole
 	sta v2
-label_29: 
-label_40: 
+label_27: 
+label_38: 
 	lda v0
 	ldobjbyname 0x19, return
 	sta v6
@@ -133,14 +133,14 @@ label_15:
 	lda v6
 	callthis0 0x1c, v0
 	sta v0
-label_30: 
-end_label_30: 
-	jmp label_56
-label_53: 
+label_28: 
+end_label_28: 
+	jmp label_54
+label_51: 
 	sta v3
 	mov v2, v3
 	jmp label_16
-label_56: 
+label_54: 
 	mov v1, v0
 label_16: 
 	ldhole
@@ -154,9 +154,9 @@ label_18:
 label_17: 
 	throw.ifnotobject v1
 	jmp label_11
-label_54: 
+label_52: 
 	sta v5
-label_47: 
+label_45: 
 	lda v4
 	callruntime.istrue 0x1f
 	jnez label_19
@@ -164,24 +164,13 @@ label_20:
 	lda v2
 	callruntime.istrue 0x20
 	jnez label_21
-label_31: 
-label_42: 
-	lda v0
-	ldobjbyname 0x21, return
-	sta v1
-	ldundefined
-	eq 0x23, v1
-	jnez label_21
-label_23: 
-	lda v1
-	callthis0 0x24, v0
-label_32: 
-end_label_32: 
-	jmp label_24
-label_55: 
-label_24: 
-	lda v5
-	throw
+label_29: 
+label_40: 
+	closeiterator 0x21, v0
+label_30: 
+end_label_30: 
+	jmp label_21
+label_53: 
 label_21: 
 	lda v5
 	throw
@@ -190,17 +179,17 @@ label_19:
 	throw
 label_11: 
 	returnundefined
-label_50: 
+label_48: 
 }
 
-.catchall label_25, end_label_26, label_51
+.catchall label_23, end_label_24, label_49
 
-.catchall label_27, end_label_28, label_52
+.catchall label_25, end_label_26, label_50
+
+.catchall label_27, end_label_28, label_51
 
 .catchall label_29, end_label_30, label_53
 
-.catchall label_31, end_label_32, label_55
-
-.catchall label_33, end_label_34, label_54
+.catchall label_31, end_label_32, label_52
 
 

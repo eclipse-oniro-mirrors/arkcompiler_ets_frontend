@@ -18,9 +18,9 @@ slotNum = 0x3
 
 ======> literal array buffer <======
 ------------------------------------
-slot &main_hap/main_hap&_894
+slot &main_hap/main_hap&_904
 ------------------------------------
-slot &main_hap/main_hap&_898
+slot &main_hap/main_hap&_908
 {
   index: 0
     tag: 2
@@ -92,9 +92,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &main_hap/main_hap_import_file&_940
+slot &main_hap/main_hap_import_file&_950
 ------------------------------------
-slot &main_hap/main_hap_import_file&_944
+slot &main_hap/main_hap_import_file&_954
 {
   index: 0
     tag: 2
@@ -169,9 +169,9 @@ slotNum = 0x3
 
 ======> literal array buffer <======
 ------------------------------------
-slot &main_hap/sdk_hap&_880
+slot &main_hap/sdk_hap&_890
 ------------------------------------
-slot &main_hap/sdk_hap&_884
+slot &main_hap/sdk_hap&_894
 {
   index: 0
     tag: 2
@@ -243,9 +243,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &main_hap/sdk_hap_import_file&_926
+slot &main_hap/sdk_hap_import_file&_936
 ------------------------------------
-slot &main_hap/sdk_hap_import_file&_930
+slot &main_hap/sdk_hap_import_file&_940
 {
   index: 0
     tag: 2

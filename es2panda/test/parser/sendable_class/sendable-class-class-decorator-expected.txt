@@ -26,7 +26,7 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	ldai 0x1
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	lda a2
 	return
 label_2: 

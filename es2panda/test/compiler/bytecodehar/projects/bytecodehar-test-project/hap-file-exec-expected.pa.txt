@@ -13,11 +13,11 @@ expectedProperty = 0x3
 .language ECMAScript
 .function any &bytecodehar1/bytecodehar1-file1&2.0.0.#*#A(any a0, any a1, any a2, any a3) {
 	lda a3
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	ldai 0x1
-	stobjbyname 0x2, b, a2
+	stthisbyname 0x2, b
 	ldai 0x2
-	stobjbyname 0x4, c, a2
+	stthisbyname 0x4, c
 	returnundefined
 }
 
@@ -47,9 +47,9 @@ slotNum = 0x2
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1411
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1421
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1415
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1425
 {
   index: 0
     tag: 2
@@ -131,7 +131,7 @@ expectedProperty = 0x1
 .language ECMAScript
 .function any &bytecodehar1/bytecodehar1-file2&2.0.0.#~@0=#Example(any a0, any a1, any a2) {
 	ldai 0x0
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	lda a2
 	return
 }
@@ -140,7 +140,7 @@ slotNum = 0x2
 .language ECMAScript
 .function any &bytecodehar1/bytecodehar1-file2&2.0.0.#~@0>#setValue(any a0, any a1, any a2, any a3) {
 	lda a3
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	returnundefined
 }
 
@@ -151,7 +151,7 @@ slotNum = 0x4
 	stmodulevar 0x0
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file2&2.0.0.#~@0=#Example, &bytecodehar1/bytecodehar1-file2&2.0.0_1524, 0x0, v0
+	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file2&2.0.0.#~@0=#Example, &bytecodehar1/bytecodehar1-file2&2.0.0_1534, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -159,7 +159,7 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1465
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1475
 {
   index: 0
     tag: 0
@@ -171,7 +171,7 @@ slot &bytecodehar1/bytecodehar1-file2&2.0.0_1465
     val: Example
 },
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1474
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1484
 {
   index: 0
     tag: 2
@@ -233,7 +233,7 @@ slot &bytecodehar1/bytecodehar1-file2&2.0.0_1474
     val: 0
 },
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1524
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1534
 {
   index: 0
     tag: 0
@@ -311,9 +311,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_977
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_987
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_981
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_991
 {
   index: 0
     tag: 2
@@ -379,9 +379,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1017
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1027
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1021
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1031
 {
   index: 0
     tag: 2
@@ -669,11 +669,11 @@ expectedProperty = 0x3
 .language ECMAScript
 .function any &bytecodehar1/bytecodehar1-file1&2.0.0.#*#A(any a0, any a1, any a2, any a3) {
 	lda a3
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	ldai 0x1
-	stobjbyname 0x2, b, a2
+	stthisbyname 0x2, b
 	ldai 0x2
-	stobjbyname 0x4, c, a2
+	stthisbyname 0x4, c
 	returnundefined
 }
 
@@ -703,9 +703,9 @@ slotNum = 0x2
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1411
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1421
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1415
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1425
 {
   index: 0
     tag: 2
@@ -803,9 +803,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_977
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_987
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_981
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_991
 {
   index: 0
     tag: 2

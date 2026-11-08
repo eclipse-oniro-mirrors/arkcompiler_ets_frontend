@@ -29,7 +29,7 @@ label_2:
 	sta a3
 label_3: 
 	lda a3
-	stobjbyname 0x1, name, a2
+	stthisbyname 0x1, name
 	lda a2
 	return
 label_5: 
@@ -49,8 +49,7 @@ label_2:
 	lda a3
 	add2 0x1, v0
 	sta v0
-	lda a2
-	ldobjbyname 0x2, name
+	ldthisbyname 0x2, name
 	add2 0x4, v0
 	jmp label_3
 label_1: 

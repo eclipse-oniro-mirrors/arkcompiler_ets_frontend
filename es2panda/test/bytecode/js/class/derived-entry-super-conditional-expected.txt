@@ -5,7 +5,7 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	lda a3
-	stobjbyname 0x0, v, a2
+	stthisbyname 0x0, v
 	lda a2
 	return
 label_2: 

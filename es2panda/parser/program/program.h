@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -185,6 +185,26 @@ public:
         targetApiVersion_ = targetApiVersion;
     }
 
+    int TargetApiMinorVersion() const
+    {
+        return targetApiMinorVersion_;
+    }
+
+    void SetTargetApiMinorVersion(int targetApiMinorVersion)
+    {
+        targetApiMinorVersion_ = targetApiMinorVersion;
+    }
+
+    int TargetApiPatchVersion() const
+    {
+        return targetApiPatchVersion_;
+    }
+
+    void SetTargetApiPatchVersion(int targetApiPatchVersion)
+    {
+        targetApiPatchVersion_ = targetApiPatchVersion;
+    }
+
     void SetTargetApiSubVersion(std::string targetApiSubVersion)
     {
         targetApiSubVersion_ = targetApiSubVersion;
@@ -284,6 +304,8 @@ private:
     bool hasTLA_ {false};
     bool isDebug_ {false};
     int targetApiVersion_ {0};
+    int targetApiMinorVersion_ {0};
+    int targetApiPatchVersion_ {0};
     bool useDefineSemantic_ {true};
     bool isShared_ {false};
     bool enableAnnotations_ {false};

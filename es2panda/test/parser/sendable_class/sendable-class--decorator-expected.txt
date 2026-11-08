@@ -40,7 +40,7 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	lda.str 111
-	stobjbyname 0x0, prop, a2
+	stthisbyname 0x0, prop
 	lda a2
 	return
 label_2: 

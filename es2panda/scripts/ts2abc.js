@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,11 +52,22 @@ function callEs2abc(args) {
     let proc = spawn(`${es2abc}`, args);
 
     proc.stderr.on('data', (data) => {
-        throw Error(`${data}`).message;
+        process.stderr.write(`${data}`);
     });
 
     proc.stdout.on('data', (data) => {
         process.stdout.write(`${data}`);
+    });
+
+    proc.on('error', (err) => {
+        process.stderr.write(`${err}\n`);
+        process.exitCode = 1;
+    });
+
+    proc.on('close', (code) => {
+        if (code > 0) {
+            process.exitCode = code;
+        }
     });
 }
 
@@ -69,8 +80,14 @@ if (args.length == 1 && args[0] == "--bc-version") {
 let es2abcArgs = [];
 es2abcArgs.push("--target-bc-version")
 
+let hasDotVersion = args.includes("--target-api-dot-version");
 for (let index = 0 ; index < args.length; index += 2) {
-    if (args[index] == "--target-api-version") {
+    if (args[index] == "--target-api-dot-version") {
+        es2abcArgs.push("--target-api-version", args[index + 1]);
+    } else if (args[index] == "--target-api-version") {
+        if (hasDotVersion) {
+            continue;
+        }
         if (args[index + 1] == "8") {
             process.stdout.write("0.0.0.2");
             return;

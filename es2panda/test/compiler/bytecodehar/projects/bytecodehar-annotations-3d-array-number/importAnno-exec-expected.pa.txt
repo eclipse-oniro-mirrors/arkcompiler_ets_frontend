@@ -10,7 +10,7 @@ slotNum = 0x3
 .function any &importAnnoPgName/exportAnno&2.0.0.func_main_0(any a0, any a1, any a2) {
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x0, &importAnnoPgName/exportAnno&2.0.0.#~A=#A, &importAnnoPgName/exportAnno&2.0.0_1283, 0x0, v0
+	defineclasswithbuffer 0x0, &importAnnoPgName/exportAnno&2.0.0.#~A=#A, &importAnnoPgName/exportAnno&2.0.0_1293, 0x0, v0
 	ldobjbyname 0x1, prototype
 	returnundefined
 }
@@ -18,7 +18,7 @@ slotNum = 0x3
 
 ======> literal array buffer <======
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1194
+slot &importAnnoPgName/exportAnno&2.0.0_1204
 {
   index: 0
     tag: 0
@@ -50,7 +50,7 @@ slot &importAnnoPgName/exportAnno&2.0.0_1194
     val: 3
 },
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1225
+slot &importAnnoPgName/exportAnno&2.0.0_1235
 {
   index: 0
     tag: 0
@@ -59,10 +59,10 @@ slot &importAnnoPgName/exportAnno&2.0.0_1225
 {
   index: 1
     tag: 24
-    val: &importAnnoPgName/exportAnno&2.0.0_1194
+    val: &importAnnoPgName/exportAnno&2.0.0_1204
 },
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1234
+slot &importAnnoPgName/exportAnno&2.0.0_1244
 {
   index: 0
     tag: 0
@@ -71,12 +71,12 @@ slot &importAnnoPgName/exportAnno&2.0.0_1234
 {
   index: 1
     tag: 24
-    val: &importAnnoPgName/exportAnno&2.0.0_1225
+    val: &importAnnoPgName/exportAnno&2.0.0_1235
 },
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1243
+slot &importAnnoPgName/exportAnno&2.0.0_1253
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1247
+slot &importAnnoPgName/exportAnno&2.0.0_1257
 {
   index: 0
     tag: 2
@@ -118,7 +118,7 @@ slot &importAnnoPgName/exportAnno&2.0.0_1247
     val: 0
 },
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1283
+slot &importAnnoPgName/exportAnno&2.0.0_1293
 {
   index: 0
     tag: 0
@@ -159,7 +159,7 @@ slotNum = 0x3
 .function any &importAnnoPgName/importAnno-exec&2.0.0.func_main_0(any a0, any a1, any a2) {
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x0, &importAnnoPgName/importAnno-exec&2.0.0.#~B=#B, &importAnnoPgName/importAnno-exec&2.0.0_1405, 0x0, v0
+	defineclasswithbuffer 0x0, &importAnnoPgName/importAnno-exec&2.0.0.#~B=#B, &importAnnoPgName/importAnno-exec&2.0.0_1415, 0x0, v0
 	sta v0
 	ldobjbyname 0x1, prototype
 	lda v0
@@ -170,7 +170,7 @@ slotNum = 0x3
 
 ======> literal array buffer <======
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1292
+slot &importAnnoPgName/importAnno-exec&2.0.0_1302
 {
   index: 0
     tag: 0
@@ -202,7 +202,7 @@ slot &importAnnoPgName/importAnno-exec&2.0.0_1292
     val: 3
 },
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1323
+slot &importAnnoPgName/importAnno-exec&2.0.0_1333
 {
   index: 0
     tag: 0
@@ -211,10 +211,10 @@ slot &importAnnoPgName/importAnno-exec&2.0.0_1323
 {
   index: 1
     tag: 24
-    val: &importAnnoPgName/importAnno-exec&2.0.0_1292
+    val: &importAnnoPgName/importAnno-exec&2.0.0_1302
 },
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1332
+slot &importAnnoPgName/importAnno-exec&2.0.0_1342
 {
   index: 0
     tag: 0
@@ -223,12 +223,12 @@ slot &importAnnoPgName/importAnno-exec&2.0.0_1332
 {
   index: 1
     tag: 24
-    val: &importAnnoPgName/importAnno-exec&2.0.0_1323
+    val: &importAnnoPgName/importAnno-exec&2.0.0_1333
 },
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1341
+slot &importAnnoPgName/importAnno-exec&2.0.0_1351
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1345
+slot &importAnnoPgName/importAnno-exec&2.0.0_1355
 {
   index: 0
     tag: 2
@@ -305,7 +305,7 @@ slot &importAnnoPgName/importAnno-exec&2.0.0_1345
     val: 0
 },
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1405
+slot &importAnnoPgName/importAnno-exec&2.0.0_1415
 {
   index: 0
     tag: 0

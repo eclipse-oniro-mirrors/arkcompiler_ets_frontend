@@ -8,20 +8,18 @@ label_0:
 label_2: 
 label_4: 
 	ldhole
-	sta v1
-	defineclasswithbuffer 0x0, .TestTypeA, _1, 0x0, v1
-	sta v1
+	sta v0
+	defineclasswithbuffer 0x0, .TestTypeA, _1, 0x0, v0
+	sta v0
 	stlexvar 0x0, 0x0
-	lda v1
+	lda v0
 	ldobjbyname 0x1, prototype
 label_3: 
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv
@@ -41,8 +39,7 @@ label_0:
 	ldlexvar 0x0, 0x0
 	sta v0
 	throw.undefinedifholewithname TestTypeA
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	stobjbyname 0x4, test, a2
 	lda a2
 	return

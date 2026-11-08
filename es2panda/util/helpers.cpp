@@ -1047,4 +1047,15 @@ bool Helpers::IsSupportAnnotationVersion(int apiVersion)
     return !(apiVersion < ANNOTATION_SUPPORTED_API_VERSION);
 }
 
+bool Helpers::IsSupportThisAndIteratorCloseOpt(int apiVersion, int apiMinorVersion, int apiPatchVersion)
+{
+    if (apiVersion != THIS_AND_ITERATOR_CLOSE_MIN_SUPPORTED_API_VERSION) {
+        return apiVersion > THIS_AND_ITERATOR_CLOSE_MIN_SUPPORTED_API_VERSION;
+    }
+    if (apiMinorVersion != THIS_AND_ITERATOR_CLOSE_MIN_SUPPORTED_API_MINOR_VERSION) {
+        return apiMinorVersion > THIS_AND_ITERATOR_CLOSE_MIN_SUPPORTED_API_MINOR_VERSION;
+    }
+    return apiPatchVersion >= THIS_AND_ITERATOR_CLOSE_MIN_SUPPORTED_API_PATCH_VERSION;
+}
+
 }  // namespace panda::es2panda::util

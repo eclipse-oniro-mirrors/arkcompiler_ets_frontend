@@ -41,9 +41,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1200
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1210
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1204
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1214
 {
   index: 0
     tag: 2
@@ -131,9 +131,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1254
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1264
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1258
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1268
 {
   index: 0
     tag: 2
@@ -231,9 +231,7 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_989
-------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_993
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1003
 {
   index: 0
     tag: 2
@@ -274,6 +272,8 @@ slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_993
     tag: 2
     val: 0
 },
+------------------------------------
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_999
 ======> strings <======
 "&@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test"; "bytecodehar2.file1.test"; "print"; 
 slotNum = 0x3
@@ -299,9 +299,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1029
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1039
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1033
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1043
 {
   index: 0
     tag: 2
@@ -692,9 +692,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1200
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1210
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1204
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1214
 {
   index: 0
     tag: 2
@@ -782,9 +782,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1254
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1264
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1258
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1268
 {
   index: 0
     tag: 2
@@ -882,9 +882,7 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_989
-------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_993
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1003
 {
   index: 0
     tag: 2
@@ -925,6 +923,8 @@ slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_993
     tag: 2
     val: 0
 },
+------------------------------------
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_999
 ======> strings <======
 "&@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test"; "bytecodehar2.file1.test"; "print"; 
 slotNum = 0x3
@@ -950,9 +950,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1029
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1039
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1033
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1043
 {
   index: 0
     tag: 2

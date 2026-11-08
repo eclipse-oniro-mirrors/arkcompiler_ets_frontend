@@ -13,7 +13,7 @@ label_0:
 	sta v0
 	ldobjbyname 0x3, prototype
 	lda v0
-	stobjbyname 0x5, B_withoutPrivateField, a2
+	stthisbyname 0x5, B_withoutPrivateField
 	newlexenv 0x4
 label_2: 
 label_4: 
@@ -35,7 +35,7 @@ label_6:
 label_1: 
 	poplexenv
 	lda v0
-	stobjbyname 0xb, B_withPrivateField, a2
+	stthisbyname 0xb, B_withPrivateField
 	lda a2
 	return
 label_8: 

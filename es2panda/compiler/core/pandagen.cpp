@@ -349,7 +349,44 @@ void PandaGen::GetNewTarget(const ir::AstNode *node)
 
 void PandaGen::GetThis(const ir::AstNode *node)
 {
+    if (IsFrameThisStable()) {
+        LdThis(node);
+        return;
+    }
     LoadAccFromLexEnv(node, scope_->Find(binder::Binder::MANDATORY_PARAM_THIS));
+}
+
+bool PandaGen::IsFrameThisStable()
+{
+    // `ldthis` materializes `this` from the frame header (GetThis(sp)). That value is
+    // identical to the lexical `this` slot (ldlexvar 0x0,0x0) everywhere except in a derived
+    // constructor: super() rebinds `this` via SetThis into the lexical slot only, while the
+    // frame header keeps its entry value (undefined). Arrow functions never have an own
+    // `this` binding, so a captured outer `this` resolves at level > 0 and falls back too.
+    // Enabled from target API 26.1.0 on; below that the lexical-slot load is kept.
+    if (!util::Helpers::IsSupportThisAndIteratorCloseOpt(Binder()->Program()->TargetApiVersion(),
+        Binder()->Program()->TargetApiMinorVersion(), Binder()->Program()->TargetApiPatchVersion())) {
+        return false;
+    }
+    if (IsDerivedConstructor()) {
+        return false;
+    }
+    binder::ScopeFindResult res = scope_->Find(binder::Binder::MANDATORY_PARAM_THIS);
+    if (res.variable == nullptr || res.level != 0) {
+        return false;
+    }
+    // Only replace the lexical-slot load (ldlexvar 0x0,0x0, 2 B, never foldable). When
+    // `this` stays a plain parameter (no inner arrow captures it), the fallback emits
+    // `lda <param>` — a register-to-register source that the bytecode optimizer's copy
+    // propagation folds away entirely (receiver aliased to the param reg). Replacing it
+    // with ldthis would defeat that fold and GROW the code by 3 B per site.
+    return res.variable->LexicalBound();
+}
+
+void PandaGen::LdThis(const ir::AstNode *node)
+{
+    // Single-byte materialization of the current frame `this`: acc = GetThis(sp).
+    ra_.Emit<Ldthis>(node);
 }
 
 void PandaGen::SetThis(const ir::AstNode *node)
@@ -610,9 +647,25 @@ void PandaGen::LoadObjByName(const ir::AstNode *node, VReg obj, const util::Stri
     strings_.insert(prop);
 }
 
+void PandaGen::LdThisByName(const ir::AstNode *node, const util::StringView &prop)
+{
+    // Receiver is the current frame `this`, taken implicitly via GetThis(sp) inside the
+    // LDTHISBYNAME handler — no receiver vreg operand and no explicit `this` load.
+    ra_.Emit<Ldthisbyname>(node, 0, prop);
+    strings_.insert(prop);
+}
+
 void PandaGen::StoreObjByName(const ir::AstNode *node, VReg obj, const util::StringView &prop)
 {
     ra_.Emit<Stobjbyname>(node, 0, prop, obj);
+    strings_.insert(prop);
+}
+
+void PandaGen::StThisByName(const ir::AstNode *node, const util::StringView &prop)
+{
+    // Value is in acc; receiver is the current frame `this`, taken implicitly via GetThis(sp)
+    // inside the STTHISBYNAME handler — no receiver vreg operand and no explicit `this` load.
+    ra_.Emit<Stthisbyname>(node, 0, prop);
     strings_.insert(prop);
 }
 
@@ -1324,8 +1377,13 @@ bool PandaGen::CanSkipInitializedSuperCheck()
 
 bool PandaGen::IsDerivedConstructor()
 {
-    return rootNode_->AsScriptFunction()->IsConstructor() &&
-        util::Helpers::GetClassDefiniton(rootNode_->AsScriptFunction())->Super();
+    // Global/module code is compiled with rootNode_ bound to the program's BlockStatement
+    // (see Function::CompileFunctionOrProgram), never to a class method.
+    if (!rootNode_->IsScriptFunction()) {
+        return false;
+    }
+    const auto *func = rootNode_->AsScriptFunction();
+    return func->IsConstructor() && util::Helpers::GetClassDefiniton(func)->Super();
 }
 
 void PandaGen::AddCatchBlockForImplicitSuperCallChecks()

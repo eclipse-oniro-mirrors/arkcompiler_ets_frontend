@@ -56,15 +56,16 @@ void EmitFileQueue::Schedule()
             ScheduleEmitCacheJobs();
         }
     } else {
-        auto targetApi = options_->CompilerOptions().targetApiVersion;
-        auto targetSubApi = options_->CompilerOptions().targetApiSubVersion;
+        panda::pandasm::TargetApiVersion targetApiVersion {options_->CompilerOptions().targetApiVersion,
+            options_->CompilerOptions().targetApiMinorVersion, options_->CompilerOptions().targetApiPatchVersion,
+            options_->CompilerOptions().targetApiSubVersion};
         for (const auto &info: progsInfo_) {
             try {
                 // generate multi abcs
                 auto outputFileName = options_->OutputFiles().empty() ? options_->CompilerOutput() :
                     options_->OutputFiles().at(info.first);
                 auto emitSingleAbcJob = new EmitSingleAbcJob(outputFileName, &(info.second->program), statp_,
-                                                             targetApi, targetSubApi);
+                                                              targetApiVersion);
                 jobs_.push_back(emitSingleAbcJob);
                 jobsCount_++;
             } catch (std::exception &error) {
@@ -82,7 +83,7 @@ void EmitSingleAbcJob::Run()
     ES2ABC_PERF_SCOPE("@EVENT_EMIT_SINGLE_PROGRAM");
     panda::Timer::timerStart(panda::EVENT_EMIT_SINGLE_PROGRAM, outputFileName_);
     if (!panda::pandasm::AsmEmitter::Emit(panda::os::file::File::GetExtendedFilePath(outputFileName_), *prog_, statp_,
-        nullptr, true, nullptr, targetApiVersion_, targetApiSubVersion_)) {
+        nullptr, true, nullptr, targetApiVersion_)) {
         throw Error(ErrorType::GENERIC, "Failed to emit " + outputFileName_ + ", error: " +
             panda::pandasm::AsmEmitter::GetLastError());
     }
@@ -104,8 +105,9 @@ void EmitMergedAbcJob::Run()
         progs.push_back(&(info.second->program));
     }
 
-    panda::pandasm::EmitterConfig emitConfig {targetApiVersion_, targetApiSubVersion_,
-        options_->CompilerOptions().isDebug, options_->CompilerOptions().fileThreadCount};
+    panda::pandasm::EmitterConfig emitConfig {targetApiVersion_, options_->CompilerOptions().targetApiSubVersion,
+        options_->CompilerOptions().isDebug, options_->CompilerOptions().fileThreadCount,
+        targetApiMinorVersion_, targetApiPatchVersion_};
     bool success = panda::pandasm::AsmEmitter::EmitPrograms(
         panda::os::file::File::GetExtendedFilePath(outputFileName_), progs, true,
         emitConfig, statp_);

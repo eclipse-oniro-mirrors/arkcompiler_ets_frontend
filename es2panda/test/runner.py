@@ -1636,7 +1636,7 @@ class BcVersionTest(Test):
         # To avoid problems when api version is upgraded abruptly,
         # the corresponding bytecode version of the api version not written in isa.yaml is alaways the newest version.
         self.bc_version_expect = {
-            8: "24.0.0.0",
+            8: "26.0.1.0",
             9: "9.0.0.0",
             10: "9.0.0.0",
             11: "11.0.2.0",
@@ -2550,7 +2550,9 @@ class TestAbcVersionControl(Test):
         return stderr
 
     def extract_api_versions(self, file_name):
-        pattern = r"(API\d+)(beta\d+)?"
+        # API26.1.0-style dotted keys must be captured as a whole so the
+        # lookup in API_VERSION_MAP succeeds.
+        pattern = r"(API\d+(?:\.\d+)*)(beta\d+)?"
         matches = re.findall(pattern, file_name)
         api_versions = [f"{api}{f'{beta}' if beta else ''}" for api, beta in matches]
         return api_versions
@@ -2677,6 +2679,16 @@ class TestEs2abcVersionControl(TestAbcVersionControl):
             # of this es2abc: recompilation is out of scope for it.
             if self.should_skip_abc_file(input_version_numbers, es2abc_version):
                 continue
+            # Likewise, a target api version newer than everything this
+            # es2abc knows (its release predates the target) is out of scope
+            # for it; the old binaries reject the dotted form outright. Only
+            # the current (default) es2abc tracks the newest targets.
+            target_bc_version = API_VERSION_MAP.get(
+                "API" + target_api_version + (target_api_sub_version or ""), "")
+            if target_bc_version and es2abc_version != "default":
+                max_supported = self.get_max_supported_version(es2abc_version)
+                if self.version_str_to_tuple(target_bc_version) > self.version_str_to_tuple(max_supported):
+                    continue
             target_abc_name = self.build_abc_filename(target_api_version, target_api_sub_version, es2abc_version)
             output_root = path.join(runner.build_dir, "vc_work")
             os.makedirs(output_root, exist_ok=True)
@@ -2727,9 +2739,9 @@ class TestVersionControl(VersionControlPathHelper, Test):
         Test.__init__(self, test_path, flags)
         self.beta_version_default = 3
         self.version_with_sub_version_list = ["12"]
-        self.target_api_version_list = ["9", "10", "11", "12", "18", "20", "24"]
+        self.target_api_version_list = ["9", "10", "11", "12", "18", "20", "24", "26.1.0"]
         self.target_api_sub_version_list = ["beta1", "beta2", "beta3"]
-        self.specific_api_version_list = ["API24", "API18", "API12beta3", "API11"]
+        self.specific_api_version_list = ["API26.1.0", "API24", "API18", "API12beta3", "API11"]
         self.output = None
         self.process = None
         self.test_version = test_version
@@ -2739,10 +2751,19 @@ class TestVersionControl(VersionControlPathHelper, Test):
         self.work_dir = None
 
     def split_version(self, version_str):
+        # "API24" -> (24, 0, 0, 3); "API12beta1" -> (12, 0, 0, 1); dotted
+        # forms such as "API26.1.0" -> (26, 1, 0, 3). All return values share
+        # the 4-tuple shape so that lexicographic comparison in
+        # compare_two_versions stays correct.
         parts = version_str.split("API")[1].split("beta")
-        main_part = int(parts[0])
+        version_parts = parts[0].split(".")
+        while len(version_parts) < 3:
+            version_parts.append("0")
+        major = int(version_parts[0])
+        minor = int(version_parts[1])
+        patch = int(version_parts[2])
         beta_part = int(parts[1]) if len(parts) > 1 else self.beta_version_default
-        return (main_part, beta_part)
+        return (major, minor, patch, beta_part)
 
     def compare_two_versions(self, version1, version2):
         version1_parsed = self.split_version(version1)
@@ -2777,7 +2798,7 @@ class TestVersionControl(VersionControlPathHelper, Test):
         cmd.append(runner.es2panda)
         cmd.append(self.to_es2panda_relpath(runner, module_path))
         cmd.append("--module")
-        main_version, sub_version = self.split_version(target_version)
+        main_version, _, _, sub_version = self.split_version(target_version)
         cmd.append("--target-api-version=%s" % (main_version))
         if main_version == 12:
             cmd.append("--target-api-sub-version=beta%s" % (sub_version))
@@ -2969,6 +2990,13 @@ class TestVersionControl(VersionControlPathHelper, Test):
         for api_version in self.target_api_version_list:
             # The interception capability of API9 version of ark_js_vm has not yet been launched.
             if api_version == "9":
+                continue
+            # No released versioned ark_js_vm carries bytecode version 26.0.1.0
+            # yet; running a 26.1.0-compiled abc on every older VM below (which
+            # must reject it) is still covered, only the reverse direction -
+            # older abcs on a 26.1.0 VM - is skipped until such a VM is
+            # published. Drop this skip once it is.
+            if api_version == "26.1.0":
                 continue
             for api_sub_version in self.target_api_sub_version_list:
                 if not api_version in self.version_with_sub_version_list and api_sub_version != "beta3":
@@ -3287,6 +3315,13 @@ def add_directory_for_version_control(runners, args):
         "js",
         ["--enable-callable-name"],
         "API24",
+        "bytecode_feature",
+    )
+    runner.add_directory(
+        "version_control/API26.1.0/bytecode_feature",
+        "js",
+        [],
+        "API26.1.0",
         "bytecode_feature",
     )
     # building the test list only globs the sources, so it is cheap to do

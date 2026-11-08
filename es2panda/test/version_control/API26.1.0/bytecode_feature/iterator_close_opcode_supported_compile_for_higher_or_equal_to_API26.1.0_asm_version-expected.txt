@@ -1,0 +1,339 @@
+slotNum = 0x6
+.language ECMAScript
+.function any .#*#makeIterable(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	lda a3
+	stlexvar 0x0, 0x0
+	createemptyobject
+	sta v0
+	tryldglobalbyname 0x0, Symbol
+	ldobjbyname 0x1, iterator
+	sta v1
+	lda v0
+	definemethod 0x3, .#*@0*#, 0x0
+	stownbyvaluewithnameset 0x4, v0, v1
+	lda v0
+	return
+label_2: 
+}
+
+slotNum = 0x1
+.language ECMAScript
+.function any .#*@0*#(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	ldai 0x0
+	stlexvar 0x0, 0x0
+	createobjectwithbuffer 0x0, _4
+	return
+label_2: 
+}
+
+slotNum = 0xb
+.language ECMAScript
+.function any .#*@0**#next(any a0, any a1, any a2) {
+label_4: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	sta v0
+	throw.undefinedifholewithname index
+	ldlexvar 0x1, 0x0
+	ldobjbyname 0x0, length
+	less 0x2, v0
+	jeqz label_1
+label_2: 
+	createobjectwithbuffer 0x3, _2
+	sta v0
+	ldlexvar 0x1, 0x0
+	sta v1
+	ldlexvar 0x0, 0x0
+	tonumeric 0x4
+	sta v2
+	inc 0x5
+	stlexvar 0x0, 0x0
+	lda v2
+	ldobjbyvalue 0x6, v1
+	definepropertybyname 0x8, value, v0
+	jmp label_3
+label_1: 
+	createobjectwithbuffer 0xa, _3
+	sta v0
+label_3: 
+	lda v0
+	return
+label_5: 
+}
+
+slotNum = 0x4
+.language ECMAScript
+.function any .#*@0**#return(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str closed
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	createobjectwithbuffer 0x3, _1
+	return
+label_2: 
+}
+
+slotNum = 0x4c
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+	nop
+label_63: 
+label_0: 
+	ldai 0x0
+	sta v0
+	definefunc 0x0, .#*#makeIterable, 0x1
+	stglobalvar 0x1, makeIterable
+	lda v0
+	sttoglobalrecord 0x2, total
+label_36: 
+label_42: 
+	ldai 0x1
+	sta v1
+	ldglobalvar 0x3, makeIterable
+	sta v2
+	createarraywithbuffer 0x4, _5
+	sta v3
+	lda v1
+	neg 0x5
+	stownbyindex 0x6, v3, 0x2
+	ldai 0x4
+	stownbyindex 0x8, v3, 0x3
+	lda v2
+	callarg1 0xa, v3
+	sta v2
+label_37: 
+end_label_37: 
+	jmp label_1
+label_65: 
+label_55: 
+	throw
+label_1: 
+	lda v2
+	getiterator 0xc
+	sta v2
+	ldobjbyname 0xe, next
+	sta v3
+	ldfalse
+	sta v4
+label_15: 
+	lda v3
+	callthis0 0x10, v2
+	sta v5
+	throw.ifnotobject v5
+	ldobjbyname 0x12, done
+	callruntime.istrue 0x14
+	jnez label_40
+label_3: 
+	lda v5
+	ldobjbyname 0x15, value
+	sta v5
+label_38: 
+label_44: 
+	mov v6, v2
+	mov v7, v4
+	lda v0
+	less 0x17, v5
+	jeqz label_4
+label_5: 
+	lda v4
+	callruntime.istrue 0x18
+	jnez label_40
+label_7: 
+	ldtrue
+	sta v5
+	mov v7, v5
+	ldundefined
+	sta v9
+	ldhole
+	sta v10
+label_28: 
+label_46: 
+	lda v2
+	ldobjbyname 0x19, return
+	sta v12
+	ldundefined
+	eq 0x1b, v12
+	jnez label_40
+label_8: 
+	lda v12
+	callthis0 0x1c, v2
+	sta v12
+label_29: 
+end_label_29: 
+	jmp label_73
+label_66: 
+	sta v11
+	mov v10, v11
+	mov v11, v2
+	jmp label_9
+label_73: 
+	mov v11, v2
+	mov v9, v12
+label_9: 
+	mov v6, v11
+	mov v7, v5
+	ldhole
+	sta v5
+	lda v10
+	noteq 0x1e, v5
+	jeqz label_10
+label_11: 
+	lda v10
+	throw
+label_10: 
+	throw.ifnotobject v9
+	jmp label_40
+label_4: 
+	tryldglobalbyname 0x1f, total
+	sta v9
+	lda v5
+	add2 0x20, v9
+	trystglobalbyname 0x21, total
+label_39: 
+end_label_39: 
+	jmp label_15
+label_67: 
+	sta v8
+label_57: 
+	lda v7
+	callruntime.istrue 0x22
+	jnez label_13
+label_30: 
+label_48: 
+	closeiterator 0x23, v6
+label_31: 
+end_label_31: 
+	jmp label_13
+label_68: 
+label_13: 
+	lda v8
+	throw
+label_40: 
+label_32: 
+label_2: 
+	ldglobalvar 0x25, makeIterable
+	sta v3
+	createarraywithbuffer 0x26, _6
+	sta v4
+	lda v1
+	neg 0x27
+	stownbyindex 0x28, v4, 0x2
+	ldai 0x28
+	stownbyindex 0x2a, v4, 0x3
+	lda v3
+	callarg1 0x2c, v4
+	sta v1
+label_33: 
+end_label_33: 
+	jmp label_16
+label_69: 
+label_59: 
+	throw
+label_16: 
+	lda v1
+	getiterator 0x2e
+	sta v1
+	ldobjbyname 0x30, next
+	sta v3
+	ldfalse
+	sta v4
+label_24: 
+	lda v3
+	callthis0 0x32, v1
+	sta v5
+	throw.ifnotobject v5
+	ldobjbyname 0x34, done
+	callruntime.istrue 0x36
+	jnez label_25
+label_18: 
+	lda v5
+	ldobjbyname 0x37, value
+	sta v5
+label_34: 
+label_51: 
+	lda v0
+	less 0x39, v5
+	jeqz label_19
+label_20: 
+	tryldglobalbyname 0x3a, Error
+	sta v7
+	lda.str negative value
+	sta v8
+	newobjrange 0x3b, 0x2, v7
+	throw
+label_19: 
+	tryldglobalbyname 0x3d, total
+	sta v7
+	lda v5
+	add2 0x3e, v7
+	trystglobalbyname 0x3f, total
+label_35: 
+end_label_35: 
+	jmp label_41
+label_70: 
+	sta v6
+label_60: 
+	lda v4
+	callruntime.istrue 0x40
+	jnez label_22
+label_26: 
+label_53: 
+	closeiterator 0x41, v1
+label_27: 
+end_label_27: 
+	jmp label_22
+label_71: 
+label_22: 
+	lda v6
+	throw
+label_41: 
+end_label_41: 
+	jmp label_24
+label_72: 
+	sta v2
+label_62: 
+	tryldglobalbyname 0x43, print
+	sta v0
+	lda v2
+	ldobjbyname 0x44, message
+	sta v1
+	lda v0
+	callarg1 0x46, v1
+label_25: 
+	tryldglobalbyname 0x48, print
+	sta v0
+	tryldglobalbyname 0x49, total
+	sta v1
+	lda v0
+	callarg1 0x4a, v1
+	returnundefined
+label_64: 
+}
+
+.catchall label_26, end_label_27, label_71
+
+.catchall label_28, end_label_29, label_66
+
+.catchall label_30, end_label_31, label_68
+
+.catchall label_32, end_label_33, label_69
+
+.catchall label_34, end_label_35, label_70
+
+.catchall label_36, end_label_37, label_65
+
+.catchall label_38, end_label_39, label_67
+
+.catchall label_40, end_label_41, label_72
+
+

@@ -39,11 +39,10 @@ class Emitter;
 
 class CompilerContext {
 public:
-    CompilerContext(binder::Binder *binder, bool isDebug, bool isDebuggerEvaluateExpressionMode,
-                    bool isMergeAbc, bool isJsonInputFile, bool isRecordDebugSource,
-                    const std::string &sourceFile, const std::string &pkgName, util::StringView recordName,
-                    util::PatchFix *patchFixHelper, bool enableColumn = false,
-                    bool enableCallableName = false);
+    CompilerContext(binder::Binder *binder, bool isDebug, bool isDebuggerEvaluateExpressionMode, bool isMergeAbc,
+                    bool isJsonInputFile, bool isRecordDebugSource, const std::string &sourceFile,
+                    const std::string &pkgName, util::StringView recordName, util::PatchFix *patchFixHelper,
+                    bool enableColumn = false, bool enableCallableName = false);
 
     NO_COPY_SEMANTIC(CompilerContext);
     NO_MOVE_SEMANTIC(CompilerContext);

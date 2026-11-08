@@ -81,7 +81,9 @@ void Compiler::CheckOptionsAndFileForAbcInput(const std::string &fname, const Co
         throw Error(ErrorType::GENERIC, "Open abc file " + fname + " failed.");
     }
     if (!abcToAsmCompiler_->CheckFileVersionIsSupported(util::Helpers::ABC_TO_PROGRAM_MIN_SUPPORTED_BYTECODE_VERSION,
-                                                        options.targetApiVersion, options.targetApiSubVersion)) {
+                                                        options.targetApiVersion, options.targetApiSubVersion,
+                                                        options.targetApiMinorVersion,
+                                                        options.targetApiPatchVersion)) {
         throw Error(ErrorType::GENERIC, "The input abc file '" + fname + "' owns a higher api version or a higher " +
                     "sdkReleaseType compared to current compilation process.");
     }

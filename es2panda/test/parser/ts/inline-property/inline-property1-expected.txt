@@ -5,11 +5,11 @@ expectedProperty = 0x3
 label_1: 
 label_0: 
 	lda a3
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	ldai 0x1
-	stobjbyname 0x2, b, a2
+	stthisbyname 0x2, b
 	ldai 0x2
-	stobjbyname 0x4, c, a2
+	stthisbyname 0x4, c
 	returnundefined
 label_2: 
 }

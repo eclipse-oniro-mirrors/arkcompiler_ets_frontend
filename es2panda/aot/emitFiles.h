@@ -21,15 +21,16 @@
 #include <util/helpers.h>
 #include <util/workerQueue.h>
 
+#include "assembly-emitter.h"
+
 #include <mutex>
 
 namespace panda::es2panda::aot {
 class EmitSingleAbcJob : public util::WorkerJob {
 public:
     explicit EmitSingleAbcJob(const std::string &outputFileName, panda::pandasm::Program *prog,
-                              std::map<std::string, size_t> *statp, uint8_t targetApi, std::string targetSubApi)
-        : outputFileName_(outputFileName), prog_(prog), statp_(statp),
-          targetApiVersion_(targetApi), targetApiSubVersion_(targetSubApi) {};
+                              std::map<std::string, size_t> *statp, panda::pandasm::TargetApiVersion targetApiVersion)
+        : outputFileName_(outputFileName), prog_(prog), statp_(statp), targetApiVersion_(targetApiVersion) {};
     NO_COPY_SEMANTIC(EmitSingleAbcJob);
     NO_MOVE_SEMANTIC(EmitSingleAbcJob);
     ~EmitSingleAbcJob() override = default;
@@ -39,8 +40,7 @@ private:
     std::string outputFileName_;
     panda::pandasm::Program *prog_;
     std::map<std::string, size_t> *statp_;
-    uint8_t targetApiVersion_ = 0;
-    std::string targetApiSubVersion_ { util::Helpers::DEFAULT_SUB_API_VERSION };
+    panda::pandasm::TargetApiVersion targetApiVersion_ {};
 };
 
 class EmitMergedAbcJob : public util::WorkerJob {
@@ -51,6 +51,8 @@ public:
         : options_(options), outputFileName_(options->CompilerOutput()),
         transformLib_(options->CompilerOptions().transformLib),
         progsInfo_(progsInfo), targetApiVersion_(options->CompilerOptions().targetApiVersion),
+        targetApiMinorVersion_(options->CompilerOptions().targetApiMinorVersion),
+        targetApiPatchVersion_(options->CompilerOptions().targetApiPatchVersion),
         targetApiSubVersion_(options->CompilerOptions().targetApiSubVersion), statp_(statp) {};
     NO_COPY_SEMANTIC(EmitMergedAbcJob);
     NO_MOVE_SEMANTIC(EmitMergedAbcJob);
@@ -63,6 +65,8 @@ private:
     std::string transformLib_;
     const std::map<std::string, panda::es2panda::util::ProgramCache*> &progsInfo_;
     uint8_t targetApiVersion_ = 0;
+    uint8_t targetApiMinorVersion_ = 0;
+    uint8_t targetApiPatchVersion_ = 0;
     std::string targetApiSubVersion_ { util::Helpers::DEFAULT_SUB_API_VERSION };
     std::map<std::string, size_t> *statp_;
 };

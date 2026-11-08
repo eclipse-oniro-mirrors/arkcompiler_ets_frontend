@@ -5,9 +5,9 @@ expectedProperty = 0x2
 label_1: 
 label_0: 
 	ldai 0x5
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	definefunc 0x2, .#~A=A*#, 0x0
-	stobjbyname 0x3, b, a2
+	stthisbyname 0x3, b
 	lda a2
 	return
 label_2: 

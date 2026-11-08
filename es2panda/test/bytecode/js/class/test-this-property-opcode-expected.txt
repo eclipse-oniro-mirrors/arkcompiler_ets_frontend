@@ -1,0 +1,327 @@
+slotNum = 0x2
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@0=#Base(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	callruntime.callinit 0x0, a2
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@0>#instance_initializer(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x0
+	definepropertybyname 0x0, x, a2
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x6
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@1=#Derived(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldundefined
+	sta v0
+	supercallthisrange 0x0, 0x0, v0
+	sta v0
+	lda a2
+	throw.ifsupernotcorrectcall 0x1
+	ldlexvar 0x0, 0x0
+	callruntime.callinit 0x2, v0
+	ldai 0x1
+	stobjbyname 0x4, n, v0
+	lda v0
+	return
+label_2: 
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any .#~@1>#arr(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	lda a2
+	stlexvar 0x0, 0x0
+	definefunc 0x0, .#~@1>@2*#f, 0x0
+	callarg0 0x1
+	return
+label_2: 
+}
+
+slotNum = 0x4
+.language ECMAScript
+.function any .#~@1>#call(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	ldobjbyname 0x0, read
+	callthis0 0x2, a2
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@1>#comp(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	ldobjbyvalue 0x0, a2
+	return
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@1>#instance_initializer(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x0
+	definepropertybyname 0x0, n, a2
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x1
+.language ECMAScript
+.function any .#~@1>#mat(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	lda a2
+	stlexvar 0x0, 0x0
+	definefunc 0x0, .#~@1>@3*#f, 0x0
+	ldthis
+	return
+label_2: 
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any .#~@1>#matarg(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	lda a2
+	stlexvar 0x0, 0x0
+	definefunc 0x0, .#~@1>@5*#g, 0x0
+	ldthis
+	sta v0
+	lda a3
+	callarg1 0x1, v0
+	return
+label_2: 
+}
+
+slotNum = 0x5
+.language ECMAScript
+.function any .#~@1>#matcall(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	lda a2
+	stlexvar 0x0, 0x0
+	definefunc 0x0, .#~@1>@4*#f, 0x0
+	ldthis
+	sta v0
+	ldobjbyname 0x1, read
+	callthis0 0x3, v0
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any .#~@1>#matcomp(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	newlexenv 0x1
+	lda a2
+	stlexvar 0x0, 0x0
+	definefunc 0x0, .#~@1>@6*#f, 0x0
+	ldthis
+	sta v0
+	lda a3
+	ldobjbyvalue 0x1, v0
+	return
+label_2: 
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any .#~@1>#opt(any a0, any a1, any a2) {
+label_5: 
+label_0: 
+	ldnull
+	noteq 0x0, a2
+	jnez label_3
+label_1: 
+	ldundefined
+	jmp label_4
+label_3: 
+	lda a2
+	ldobjbyname 0x1, x
+label_4: 
+	return
+label_6: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@1>#pass(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	callarg1 0x0, a2
+	return
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@1>#read(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldthisbyname 0x0, x
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@1>#self(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@1>#write(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	stthisbyname 0x0, x
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~@1>@2*#f(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	ldobjbyname 0x0, x
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@1>@3*#f(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@1>@4*#f(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@1>@5*#g(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@1>@6*#f(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	return
+label_2: 
+}
+
+slotNum = 0xb
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+	nop
+label_13: 
+label_0: 
+	newlexenv 0x1
+label_3: 
+label_7: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#Base, _1, 0x0, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	definemethod 0x3, .#~@0>#instance_initializer, 0x0
+	stlexvar 0x0, 0x0
+label_4: 
+end_label_4: 
+	jmp label_1
+label_15: 
+label_11: 
+	poplexenv
+	throw
+label_1: 
+	poplexenv
+	lda v0
+	sttoglobalrecord 0x4, Base
+	newlexenv 0x1
+label_5: 
+label_9: 
+	tryldglobalbyname 0x5, Base
+	sta v0
+	defineclasswithbuffer 0x6, .#~@1=#Derived, _2, 0x0, v0
+	sta v0
+	ldobjbyname 0x7, prototype
+	definemethod 0x9, .#~@1>#instance_initializer, 0x0
+	stlexvar 0x0, 0x0
+label_6: 
+end_label_6: 
+	jmp label_2
+label_16: 
+label_12: 
+	poplexenv
+	throw
+label_2: 
+	poplexenv
+	lda v0
+	sttoglobalrecord 0xa, Derived
+	returnundefined
+label_14: 
+}
+
+.catchall label_3, end_label_4, label_15
+
+.catchall label_5, end_label_6, label_16
+
+

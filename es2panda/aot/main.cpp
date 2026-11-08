@@ -56,8 +56,10 @@ public:
 static bool GenerateBase64Output(panda::pandasm::Program *prog,
                                  const std::unique_ptr<panda::es2panda::aot::Options> &options)
 {
-    auto pandaFile = panda::pandasm::AsmEmitter::Emit(*prog, nullptr, options->CompilerOptions().targetApiVersion,
-        options->CompilerOptions().targetApiSubVersion);
+    auto pandaFile = panda::pandasm::AsmEmitter::Emit(*prog, nullptr,
+        panda::pandasm::TargetApiVersion{options->CompilerOptions().targetApiVersion,
+            options->CompilerOptions().targetApiMinorVersion, options->CompilerOptions().targetApiPatchVersion,
+            options->CompilerOptions().targetApiSubVersion});
     if (pandaFile == nullptr) {
         std::cerr << "Error: Failed to emit program" << std::endl;
         return false;
@@ -324,6 +326,8 @@ static bool HandleBcVersion(const std::unique_ptr<panda::es2panda::aot::Options>
 {
     if (options->CompilerOptions().targetBcVersion) {
         auto bcVersionByApi = panda::panda_file::GetVersionByApi(options->CompilerOptions().targetApiVersion,
+                                                                 options->CompilerOptions().targetApiMinorVersion,
+                                                                 options->CompilerOptions().targetApiPatchVersion,
                                                                  options->CompilerOptions().targetApiSubVersion);
         std::cout << panda::panda_file::GetVersion(bcVersionByApi.value());
         return true;
