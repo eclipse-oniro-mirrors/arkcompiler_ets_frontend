@@ -27,10 +27,13 @@ const SILENT_LOGGER: ILogger = {
   printErrorAndExit: () => undefined,
 };
 
-export function runConfiguration(buildConfig: BuildConfig): Promise<ConfigurationResult> {
+export function runConfiguration(
+  buildConfig: BuildConfig,
+  logger: ILogger = SILENT_LOGGER,
+): Promise<ConfigurationResult> {
   const context: GlueGenContext = {
     buildConfig,
-    logger: SILENT_LOGGER,
+    logger,
     runtime: { nativeExecutablePath: '' },
   };
   return Pipeline.start<GlueGenContext>().stage(createConfigurationStage()).run(context);

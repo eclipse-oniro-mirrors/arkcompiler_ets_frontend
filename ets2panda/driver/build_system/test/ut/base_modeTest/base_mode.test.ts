@@ -445,6 +445,21 @@ describe('BaseMode', () => {
 
         expect(dynamicDeps.has('noSuchPkg')).toBe(false);
         expect(staticDeps.has('noSuchPkg')).toBe(false);
+        expect((testMode as any).logger.printWarn).toHaveBeenCalledWith(
+            expect.stringContaining('noSuchPkg'));
+    });
+
+    test('getDependencyModules warns only once for the same missing dependency', () => {
+        const moduleA = createMockModuleInfo({ packageName: 'warnA', dependencies: ['dupMissingPkg'] });
+        const moduleB = createMockModuleInfo({ packageName: 'warnB', dependencies: ['dupMissingPkg'] });
+        (testMode as any).moduleInfos = new Map<string, any>([['warnA', moduleA], ['warnB', moduleB]]);
+
+        (testMode as any).getDependencyModules(moduleA);
+        (testMode as any).getDependencyModules(moduleB);
+
+        const warnCalls = ((testMode as any).logger.printWarn as jest.Mock).mock.calls
+            .filter((call: any[]) => typeof call[0] === 'string' && call[0].includes('dupMissingPkg'));
+        expect(warnCalls.length).toBe(1);
     });
 
     test('processDependencyModule sets maps correctly for each language', () => {
@@ -672,6 +687,39 @@ describe('BaseMode', () => {
         // dependency entryFile should be normalized to relative path (index.ets)
         const depModule = (testMode as any).moduleInfos.get('depPkg');
         expect(depModule.entryFile).toBe('index.ets');
+    });
+
+    test('collectModuleInfos keeps missing dependency names in module dependencies', () => {
+        const pre = require('../../../src/pre_define');
+        const { LANGUAGE_VERSION } = pre;
+
+        const dep = {
+            packageName: 'depPkg',
+            moduleName: 'depModule',
+            modulePath: '/mock/depPkg',
+            moduleType: 'hap',
+            sourceRoots: ['src'],
+            entryFile: '/mock/depPkg/index.ets',
+            language: LANGUAGE_VERSION.ARKTS_1_2,
+            dependencies: ['missingDep']
+        };
+
+        const newConfig = createMockBuildConfig({
+            packageName: 'mainPkg',
+            moduleRootPath: '/mock/main',
+            sourceRoots: ['src'],
+            dependencyModuleList: [dep]
+        });
+
+        (testMode as any).buildConfig = newConfig;
+        (testMode as any).moduleInfos = new Map<string, any>();
+
+        (testMode as any).collectModuleInfos();
+
+        // the missing dependency name is passed through, not dropped or materialized
+        const depModule = (testMode as any).moduleInfos.get('depPkg');
+        expect(depModule.dependencies).toContain('missingDep');
+        expect((testMode as any).moduleInfos.has('missingDep')).toBe(false);
     });
 
     test('collectModuleInfos throws when dependency info is not correct', () => {

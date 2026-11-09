@@ -130,6 +130,7 @@ export abstract class BaseMode {
     public declFileMap: Map<string, DeclFileInfo> = new Map<string, DeclFileInfo>();
     public isMockEnabled: boolean = false;
     private mockConfigGenerator?: MockConfigGenerator;
+    private warnedMissingDependencies: Set<string> = new Set<string>();
 
     constructor(buildConfig: BuildConfig) {
         this.buildConfig = buildConfig;
@@ -746,12 +747,22 @@ export abstract class BaseMode {
             moduleInfo.dependencies.forEach((packageName: string) => {
                 let dependency: ModuleInfo | undefined = this.moduleInfos.get(packageName);
                 if (!dependency) {
+                    this.warnMissingDependency(packageName);
                     return;
                 }
                 this.processDependencyModule(packageName, dependency, dynamicDependencyModules, staticDependencyModules);
             });
         }
         return [dynamicDependencyModules, staticDependencyModules];
+    }
+
+    private warnMissingDependency(packageName: string): void {
+        if (this.warnedMissingDependencies.has(packageName)) {
+            return;
+        }
+        this.warnedMissingDependencies.add(packageName);
+        this.logger.printWarn(
+            `Dependency module "${packageName}" is missing from the module list (excluded or not provided), skip.`);
     }
 
     private processDependencyModule(

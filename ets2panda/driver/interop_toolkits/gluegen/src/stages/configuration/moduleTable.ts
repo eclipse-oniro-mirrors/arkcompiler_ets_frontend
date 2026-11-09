@@ -60,6 +60,22 @@ export function dependencyModulesOf(table: ModuleTable, module: ModuleInfo): rea
     .filter((dependency): dependency is ModuleInfo => dependency !== undefined);
 }
 
+/**
+ * Collects dependency names referenced by modules but missing from the table
+ * (excluded from the build or not provided), deduplicated.
+ */
+export function missingDependencyNamesOf(table: ModuleTable): readonly string[] {
+  const missing = new Set<string>();
+  for (const module of table.modules) {
+    for (const packageName of module.dependencies) {
+      if (!table.byPackage.has(packageName)) {
+        missing.add(packageName);
+      }
+    }
+  }
+  return [...missing];
+}
+
 /** Finds a module and all its direct and transitive dependencies once, in traversal order. */
 export function reachableModulesOf(table: ModuleTable, root: ModuleInfo = table.mainModule): readonly ModuleInfo[] {
   const modules: ModuleInfo[] = [];
