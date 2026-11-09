@@ -12,5 +12,5 @@
 # limitations under the License.
 
 ets2panda_add_gtest(es2panda_arktsconfig_parser_test
-    CPP_SOURCES arktsconfig_include.cpp
+    CPP_SOURCES arktsconfig_include.cpp ats_dependencies.cpp
 )

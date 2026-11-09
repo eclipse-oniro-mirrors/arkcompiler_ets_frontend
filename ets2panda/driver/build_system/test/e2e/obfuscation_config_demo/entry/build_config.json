@@ -4,6 +4,7 @@
     "moduleType": "entry",
     "buildType": "build",
     "buildMode": "Release",
+    "projectRootPath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo",
     "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/entry/",
     "sourceRoots": [
         "./"

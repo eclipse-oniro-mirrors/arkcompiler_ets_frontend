@@ -14,6 +14,7 @@
  */
 
 import * as fs from 'fs';
+import * as path from 'path';
 import { ArkTSConfig, ArkTSConfigGenerator } from '../../../src/build/generate_arktsconfig';
 import { Logger } from '../../../src/logger';
 import { BuildConfig, ModuleInfo, AliasConfig } from '../../../src/types';
@@ -1927,5 +1928,92 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             expect(result.dependencies['depModule/src/target2/ets/Foo']).toBeUndefined();
             expect(result.dependencies['depModule/src/target3/ets/Foo']).toBeUndefined();
         });
+    });
+});
+
+
+describe('ArkTSConfigGenerator - ATS source packages', () => {
+    beforeEach(() => setupBasicMocks());
+    afterEach(() => jest.clearAllMocks());
+
+    test.each(['src/main/Custom.ats', '/test/module/src/main/Custom.ats'])(
+        'emits an absolute entryFile for %s without per-file paths', (entryFile) => {
+            const module = createMockModuleInfo({
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                sourceRoots: ['src/main', '/test/module/src/target'],
+                staticFiles: ['/test/module/src/main/Foo.ats'],
+                entryFile
+            });
+            const generator = new ArkTSConfigGenerator(createMockBuildConfig({
+                compileFiles: ['/test/module/src/main/Foo.ats']
+            }));
+            const config = generator.generateArkTSConfigFile(module, false).compilerOptions;
+            expect(config.rootDir).toBe('/mock/project');
+            expect(config.atsDependencies).toEqual({testModule: {
+                searchPath: ['/test/module/src/target', '/test/module/src/main', '/test/module'],
+                moduleRoot: '/test/module',
+                entryFile: '/test/module/src/main/Custom.ats'
+            }});
+            expect(config.paths['testModule/src/main/Foo']).toBeUndefined();
+            expect(config.paths['testModule/Index']).toEqual(['/test/module/src/main/Custom.ats']);
+        }
+    );
+
+    test.each([undefined, ''])(
+        'uses the working directory when legacy projectRootPath is %s', (projectRootPath) => {
+            const generator = new ArkTSConfigGenerator(createMockBuildConfig({projectRootPath}));
+            const module = createMockModuleInfo({language: LANGUAGE_VERSION.ARKTS_1_2});
+            const config = generator.generateArkTSConfigFile(module, false).compilerOptions;
+            expect(config.rootDir).toBe(process.cwd());
+            expect(path.isAbsolute(config.rootDir)).toBe(true);
+            expect(config.atsDependencies?.testModule.moduleRoot).toBe('/test/module');
+        }
+    );
+
+    test('emits absolute paths for relative project and module roots', () => {
+        const module = createMockModuleInfo({
+            language: LANGUAGE_VERSION.ARKTS_1_2,
+            moduleRootPath: 'project/har',
+            sourceRoots: ['src/main'],
+            entryFile: 'Custom.ats'
+        });
+        const generator = new ArkTSConfigGenerator(createMockBuildConfig({projectRootPath: 'project'}));
+        const config = generator.generateArkTSConfigFile(module, false).compilerOptions;
+        expect(config.rootDir).toBe(path.resolve('project'));
+        expect(config.atsDependencies?.testModule).toEqual({
+            moduleRoot: path.resolve('project/har'),
+            searchPath: [path.resolve('project/har/src/main'), path.resolve('project/har')],
+            entryFile: path.resolve('project/har/Custom.ats')
+        });
+    });
+
+    test('omits entryFile when no entry is provided', () => {
+        const module = createMockModuleInfo({language: LANGUAGE_VERSION.ARKTS_1_2, entryFile: ''});
+        const config = new ArkTSConfigGenerator(createMockBuildConfig()).generateArkTSConfigFile(module, false);
+        expect(config.compilerOptions.atsDependencies?.testModule).not.toHaveProperty('entryFile');
+        expect(config.pathSection['testModule/Index']).toBeUndefined();
+    });
+
+    test('retains legacy mappings for hybrid packages', () => {
+        const module = createMockModuleInfo({
+            language: LANGUAGE_VERSION.ARKTS_HYBRID,
+            staticFiles: ['/test/module/src/Foo.ets']
+        });
+        const config = new ArkTSConfigGenerator(createMockBuildConfig()).generateArkTSConfigFile(module, false);
+        expect(config.compilerOptions.atsDependencies).toBeUndefined();
+        expect(config.pathSection['testModule/src/Foo']).toEqual(['/test/module/src/Foo.ets']);
+        expect(config.pathSection['testModule/Index']).toEqual(['/test/module/entry.ts']);
+    });
+
+    test('merges source packages but does not replace a binary dependency', () => {
+        const module = createMockModuleInfo({language: LANGUAGE_VERSION.ARKTS_1_2});
+        const source = new ArkTSConfigGenerator(createMockBuildConfig()).generateArkTSConfigFile(module, false);
+        const consumer = new ArkTSConfig(createMockModuleInfo({packageName: 'app'}), '/cache', '/project', '');
+        consumer.mergeArktsConfig(source);
+        expect(consumer.compilerOptions.atsDependencies?.testModule).toEqual(source.compilerOptions.atsDependencies?.testModule);
+        const binaryConsumer = new ArkTSConfig(createMockModuleInfo({packageName: 'app'}), '/cache', '/project', '');
+        binaryConsumer.addDependency({name: 'testModule', item: {language: 'ets', path: '/lib.abc', ohmUrl: 'testModule'}});
+        binaryConsumer.mergeArktsConfig(source);
+        expect(binaryConsumer.compilerOptions.atsDependencies?.testModule).toBeUndefined();
     });
 });

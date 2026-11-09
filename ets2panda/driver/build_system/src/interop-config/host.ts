@@ -14,7 +14,7 @@
  */
 
 import { LANGUAGE_VERSION } from '../pre_define';
-import { isFirstLineUseStatic } from '../util/utils';
+import { isStaticSource } from '../util/utils';
 
 /**
  * Adapter for the build-environment facts needed while resolving interop
@@ -32,11 +32,11 @@ export interface InteropConfigHost {
   getLanguageFromSourceCode(filePath: string): LANGUAGE_VERSION;
 }
 
-/** Creates the default host that classifies sources via build_system's `'use static'` first-line check. */
+/** Classifies ATS by suffix and retains the legacy ETS first-line directive check. */
 export function createDefaultInteropConfigHost(): InteropConfigHost {
   return {
     getLanguageFromSourceCode(filePath: string): LANGUAGE_VERSION {
-      return isFirstLineUseStatic(filePath) ? LANGUAGE_VERSION.ARKTS_1_2 : LANGUAGE_VERSION.ARKTS_1_1;
+      return isStaticSource(filePath) ? LANGUAGE_VERSION.ARKTS_1_2 : LANGUAGE_VERSION.ARKTS_1_1;
     },
   };
 }

@@ -338,7 +338,7 @@ async function isStaticSourceFile(filePath: string): Promise<boolean> {
       const buffer = Buffer.allocUnsafe(256);
       const { bytesRead } = await file.read(buffer, 0, buffer.length, 0);
       const firstLine = buffer.toString('utf8', 0, bytesRead).split(/\r?\n/, 1)[0]?.trim();
-      return firstLine === "'use static'";
+      return filePath.endsWith('.ats') || firstLine === "'use static'";
     } finally {
       await file.close();
     }

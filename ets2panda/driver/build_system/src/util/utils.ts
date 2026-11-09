@@ -20,6 +20,7 @@ import * as path from 'path';
 
 import {
     ARKTS_MODULE_NAME,
+    ATS_SUFFIX,
     DECL_ETS_SUFFIX,
     ETSCACHE_SUFFIX,
     LANGUAGE_VERSION,
@@ -149,6 +150,10 @@ export function readFirstLineSync(filePath: string): string | null {
     const firstLine = content.split(/\r?\n/, 1)[0].trim();
 
     return firstLine;
+}
+
+export function isStaticSource(filePath: string): boolean {
+    return filePath.endsWith(ATS_SUFFIX) || isFirstLineUseStatic(filePath);
 }
 
 export function isFirstLineUseStatic(filePath: string): boolean {

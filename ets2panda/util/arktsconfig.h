@@ -94,6 +94,22 @@ public:
     };
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
 
+    struct AtsDependency {
+        std::vector<std::string> searchPath;
+        std::string moduleRoot;
+        std::string entryFile;
+    };
+    using AtsDependenciesMap = std::map<std::string, AtsDependency, CompareByLength>;
+    using AtsDependencyLookup = const AtsDependenciesMap::value_type *;
+
+    const AtsDependenciesMap &AtsDependencies() const
+    {
+        return atsDependencies_;
+    }
+    AtsDependencyLookup FindAtsDependency(std::string_view importPath) const;
+    AtsDependencyLookup FindAtsPackageByPath(std::string_view sourcePath) const;
+    std::optional<std::string> ResolveAtsSource(const std::string &path, util::FsQueryCache *fsQueryCache) const;
+
     class ExternalModuleData {
     public:
         explicit ExternalModuleData(Language lang, std::string path, std::string sourceFilePath, std::string ohmUrl,
@@ -247,6 +263,9 @@ private:
     std::optional<std::string> ResolveImportPath(std::string_view path, const std::string &alias,
                                                  const std::vector<std::string> &filePaths,
                                                  util::FsQueryCache *fsQueryCache) const;
+    bool ParseAtsDependencies(const JsonObject::JsonObjPointer *options);
+    bool ParseAtsDependency(const std::string &name, const JsonObject::JsonObjPointer *entry,
+                            const std::string &projectRoot);
     bool ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap &pathsMap, const std::string &baseUrl);
     bool ParseDependencies(const JsonObject::JsonObjPointer *options,
                            std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
@@ -278,7 +297,13 @@ private:
                          std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
     std::optional<std::string> TryResolveWithDependencies(std::string_view path) const;
     std::optional<std::string> TryResolveWithDependencyAliases(std::string_view path) const;
+    std::optional<std::string> TryResolveWithAtsDependencies(std::string_view path,
+                                                             util::FsQueryCache *fsQueryCache) const;
     std::optional<std::string> TryResolveWithPaths(std::string_view path, util::FsQueryCache *fsQueryCache) const;
+    std::optional<std::string> ResolvePathInDynamicContext(std::string_view path,
+                                                           util::FsQueryCache *fsQueryCache) const;
+    std::optional<std::string> ResolvePathInStaticContext(std::string_view path,
+                                                          util::FsQueryCache *fsQueryCache) const;
     std::optional<std::string> ResolvePath(std::string_view path) const;
 
     bool isParsed_ = false;
@@ -292,6 +317,7 @@ private:
     std::string cacheDir_ {};
     std::string declgenV2OutPath_ {};
     PathsMap paths_ {};
+    AtsDependenciesMap atsDependencies_ {};
     std::map<std::string, ExternalModuleData, CompareByLength> dependencies_ {};
     std::map<std::string_view, std::string_view> sourcePathMap_ {};
     std::map<std::string, std::string, std::less<>> mocks_ {};

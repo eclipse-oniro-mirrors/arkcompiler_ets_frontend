@@ -23,11 +23,13 @@
 #include "util/helpers.h"
 #include "util/fsQueryCache.h"
 
+#include <array>
 #include <fstream>
 #include <memory>
 #include <regex>
 #include <sstream>
 #include <system_error>
+#include <vector>
 
 namespace ark::es2panda {
 
@@ -226,6 +228,110 @@ static std::string ValidLanguages()
         builder.Add(l.ToString());
     }
     return std::move(builder).Build();
+}
+
+static std::string ResolveConfigPath(const std::string &path)
+{
+    auto normalized = ark::os::NormalizePath(path);
+    if (auto real = ark::os::GetAbsolutePath(normalized); !real.empty()) {
+        return real;
+    }
+    return normalized;
+}
+
+static std::string NormalizeAtsPath(const std::string &path, const std::string &base)
+{
+    return ResolveConfigPath(MakeAbsolute(path, base));
+}
+
+static bool IsPathWithin(std::string_view path, std::string_view root)
+{
+    return path == root || (path.size() > root.size() && path.substr(0, root.size()) == root &&
+                            (root.back() == util::PATH_DELIMITER || path[root.size()] == util::PATH_DELIMITER));
+}
+
+bool ArkTsConfig::ParseAtsDependency(const std::string &name, const JsonObject::JsonObjPointer *entry,
+                                     const std::string &projectRoot)
+{
+    auto root = entry->get()->GetValue<JsonObject::StringT>("moduleRoot");
+    auto paths = entry->get()->GetValue<JsonObject::ArrayT>("searchPath");
+    if (!Check(root != nullptr && !root->empty(), diagnostic::INVALID_VALUE, {"moduleRoot", name})) {
+        return false;
+    }
+    AtsDependency dependency {{}, NormalizeAtsPath(*root, projectRoot), {}};
+    if (entry->get()->HasKey("entryFile")) {
+        auto entryFile = entry->get()->GetValue<JsonObject::StringT>("entryFile");
+        if (!Check(entryFile != nullptr && !entryFile->empty(), diagnostic::INVALID_VALUE, {"entryFile", name})) {
+            return false;
+        }
+        dependency.entryFile = NormalizeAtsPath(*entryFile, dependency.moduleRoot);
+    }
+    if (!entry->get()->HasKey("searchPath")) {
+        dependency.searchPath.emplace_back(dependency.moduleRoot);
+    } else {
+        if (!Check(paths != nullptr && !paths->empty(), diagnostic::INVALID_VALUE, {"searchPath", name})) {
+            return false;
+        }
+        for (const auto &value : *paths) {
+            auto path = value.Get<JsonObject::StringT>();
+            if (!Check(path != nullptr && !path->empty(), diagnostic::INVALID_VALUE, {"searchPath", name})) {
+                return false;
+            }
+            dependency.searchPath.emplace_back(NormalizeAtsPath(*path, dependency.moduleRoot));
+        }
+    }
+    // An override replaces a complete package record; inherited paths are already absolute.
+    atsDependencies_.insert_or_assign(name, std::move(dependency));
+    return true;
+}
+
+bool ArkTsConfig::ParseAtsDependencies(const JsonObject::JsonObjPointer *options)
+{
+    if (!options->get()->HasKey("atsDependencies")) {
+        return true;
+    }
+    auto entries = options->get()->GetValue<JsonObject::JsonObjPointer>("atsDependencies");
+    const bool validEntries = entries != nullptr && *entries != nullptr;
+    if (!Check(validEntries, diagnostic::INVALID_JSON_TYPE, {"atsDependencies", "object"})) {
+        return false;
+    }
+    const auto projectRoot = MakeAbsolute(rootDir_, ark::os::GetAbsolutePath("."));
+    for (size_t i = 0; i < entries->get()->GetSize(); ++i) {
+        const auto &name = entries->get()->GetKeyByIndex(i);
+        auto entry = entries->get()->GetValue<JsonObject::JsonObjPointer>(name);
+        if (!Check(entry != nullptr && *entry != nullptr && !name.empty() && !IsAbsolute(name) && name.back() != '/',
+                   diagnostic::INVALID_VALUE, {"atsDependencies", name})) {
+            return false;
+        }
+        if (!ParseAtsDependency(name, entry, projectRoot)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+ArkTsConfig::AtsDependencyLookup ArkTsConfig::FindAtsDependency(std::string_view importPath) const
+{
+    for (const auto &entry : atsDependencies_) {
+        const auto &name = entry.first;
+        if (importPath == name || (importPath.size() > name.size() && importPath.substr(0, name.size()) == name &&
+                                   importPath[name.size()] == '/')) {
+            return &entry;
+        }
+    }
+    return nullptr;
+}
+
+ArkTsConfig::AtsDependencyLookup ArkTsConfig::FindAtsPackageByPath(std::string_view sourcePath) const
+{
+    AtsDependencyLookup result = nullptr;
+    for (const auto &entry : atsDependencies_) {
+        if (IsPathWithin(sourcePath, entry.second.moduleRoot) &&
+            (result == nullptr || entry.second.moduleRoot.size() > result->second.moduleRoot.size())) {
+            result = &entry;
+        }
+    }
+    return result;
 }
 
 bool ArkTsConfig::ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap &pathsMap, const std::string &baseUrl)
@@ -468,12 +574,7 @@ void ArkTsConfig::ResolveAllDependenciesInArkTsConfig()
     // 2. They may point to a middle of a file path (to nonexisting file).
     for (auto &dependencyPath : paths_) {
         for (auto &path : dependencyPath.second) {
-            auto normalized = ark::os::NormalizePath(path);
-            if (auto real = ark::os::GetAbsolutePath(normalized); !real.empty()) {
-                path = real;
-            } else {
-                path = normalized;
-            }
+            path = ResolveConfigPath(path);
         }
     }
 }
@@ -519,6 +620,9 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
 
     // Parse "paths"
     if (!ParsePaths(compilerOptions, paths_, baseUrl_)) {
+        return false;
+    }
+    if (!ParseAtsDependencies(compilerOptions)) {
         return false;
     }
     // Parse "dependencies"
@@ -606,6 +710,7 @@ void ArkTsConfig::Inherit(const ArkTsConfig &base)
     rootDir_ = base.rootDir_;
     declgenV2OutPath_ = base.declgenV2OutPath_;
     paths_ = base.paths_;
+    atsDependencies_ = base.atsDependencies_;
     files_ = base.files_;
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     include_ = base.include_;
@@ -631,6 +736,35 @@ static bool IsRegularFile(const std::string &path, util::FsQueryCache *fsQueryCa
 static bool IsDirectory(const std::string &path, util::FsQueryCache *fsQueryCache)
 {
     return fsQueryCache != nullptr ? fsQueryCache->IsDirectory(path) : ark::os::file::File::IsDirectory(path);
+}
+
+std::optional<std::string> ArkTsConfig::ResolveAtsSource(const std::string &path,
+                                                         util::FsQueryCache *fsQueryCache) const
+{
+    // Only static source/declaration files belong to this resolver. Keep legacy ETS precedence.
+    constexpr std::array<std::string_view, 4> extensions {".ets", ".d.ets", ".ats", ".d.ats"};
+    for (auto extension : extensions) {
+        if (util::Helpers::EndsWith(path, extension) && IsRegularFile(path, fsQueryCache)) {
+            return path;
+        }
+    }
+    for (auto extension : extensions) {
+        auto candidate = path + std::string(extension);
+        if (IsRegularFile(candidate, fsQueryCache)) {
+            return candidate;
+        }
+    }
+    if (IsDirectory(path, fsQueryCache)) {
+        for (auto index : {"index.ets", "index.d.ets", "index.ats", "index.d.ats", "Index.ets", "Index.d.ets",
+                           "Index.ats", "Index.d.ats"}) {
+            auto candidate = JoinPaths(path, index);
+            if (IsRegularFile(candidate, fsQueryCache)) {
+                return candidate;
+            }
+        }
+        return path;
+    }
+    return std::nullopt;
 }
 
 static bool CheckFilePath(const std::string &path, util::FsQueryCache *fsQueryCache)
@@ -718,29 +852,94 @@ std::optional<std::string> ArkTsConfig::TryResolveWithDependencyAliases(std::str
     return std::nullopt;
 }
 
-std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool isDynamic,
-                                                    util::FsQueryCache *fsQueryCache) const
+static std::optional<std::string> ResolveAtsPackagePath(const ArkTsConfig &config,
+                                                        ArkTsConfig::AtsDependencyLookup entry, std::string_view path,
+                                                        util::FsQueryCache *fsQueryCache)
 {
-    std::optional<std::string> result = TryResolveWithDependencies(path);
+    if (path == entry->first) {
+        const auto &entryFile = entry->second.entryFile;
+        if (!entryFile.empty()) {
+            // An explicit entry is a file, not a search prototype.
+            if (IsPathWithin(entryFile, entry->second.moduleRoot) && IsRegularFile(entryFile, fsQueryCache)) {
+                return entryFile;
+            }
+            return std::nullopt;
+        }
+    }
+    std::optional<std::string> directory;
+    auto relativePath = std::string(path.substr(entry->first.size()));
+    std::replace(relativePath.begin(), relativePath.end(), '/', util::PATH_DELIMITER);
+    for (const auto &root : entry->second.searchPath) {
+        auto candidate = ResolveConfigPath(root + relativePath);
+        if (!IsPathWithin(candidate, entry->second.moduleRoot)) {
+            continue;
+        }
+        if (auto resolved = config.ResolveAtsSource(candidate, fsQueryCache); resolved) {
+            if (!IsDirectory(*resolved, fsQueryCache)) {
+                return resolved;
+            }
+            if (!directory) {
+                directory = std::move(resolved);
+            }
+        }
+    }
+    return directory;
+}
+
+std::optional<std::string> ArkTsConfig::TryResolveWithAtsDependencies(std::string_view path,
+                                                                      util::FsQueryCache *fsQueryCache) const
+{
+    if (auto entry = FindAtsDependency(path); entry != nullptr) {
+        return ResolveAtsPackagePath(*this, entry, path, fsQueryCache);
+    }
+    return std::nullopt;
+}
+
+std::optional<std::string> ArkTsConfig::ResolvePathInDynamicContext(std::string_view path,
+                                                                    util::FsQueryCache *fsQueryCache) const
+{
+    // dependencies -> aliases -> atsDependencies -> paths
+    auto result = TryResolveWithDependencies(path);
     if (result) {
         return result;
     }
-
-    if (isDynamic) {
-        result = TryResolveWithDependencyAliases(path);
-        if (result) {
-            return result;
-        }
-        result = TryResolveWithPaths(path, fsQueryCache);
-    } else {
-        result = TryResolveWithPaths(path, fsQueryCache);
-        if (result) {
-            return result;
-        }
-        // not sure whether it is needed at all
-        result = TryResolveWithDependencyAliases(path);
+    result = TryResolveWithDependencyAliases(path);
+    if (result) {
+        return result;
     }
-    return result;
+    result = TryResolveWithAtsDependencies(path, fsQueryCache);
+    if (result) {
+        return result;
+    }
+    return TryResolveWithPaths(path, fsQueryCache);
+}
+
+std::optional<std::string> ArkTsConfig::ResolvePathInStaticContext(std::string_view path,
+                                                                   util::FsQueryCache *fsQueryCache) const
+{
+    // dependencies -> atsDependencies -> paths -> aliases
+    auto result = TryResolveWithDependencies(path);
+    if (result) {
+        return result;
+    }
+    result = TryResolveWithAtsDependencies(path, fsQueryCache);
+    if (result) {
+        return result;
+    }
+    result = TryResolveWithPaths(path, fsQueryCache);
+    if (result) {
+        return result;
+    }
+    return TryResolveWithDependencyAliases(path);
+}
+
+std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool isDynamic,
+                                                    util::FsQueryCache *fsQueryCache) const
+{
+    if (isDynamic) {
+        return ResolvePathInDynamicContext(path, fsQueryCache);
+    }
+    return ResolvePathInStaticContext(path, fsQueryCache);
 }
 
 std::vector<std::string> ArkTsConfig::ParseStringArray(const std::unique_ptr<ark::JsonObject> *alias,

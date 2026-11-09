@@ -4,6 +4,7 @@
 
     "packageName": "entry",
     "moduleType": "shared",
+    "projectRootPath": "${absolute_path_to_build_system}/test/two_files",
     "moduleRootPath": "${absolute_path_to_build_system}/test/two_files/",
     "sourceRoots": ["src/"],
     "compileFiles": [

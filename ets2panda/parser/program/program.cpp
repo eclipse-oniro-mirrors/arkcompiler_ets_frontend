@@ -138,6 +138,24 @@ bool ShouldUseEtsRelativePath(const util::ImportInfo &importInfo)
            util::Helpers::EndsWith(importInfo.TextSource(), util::ImportPathManager::ETS_SUFFIX);
 }
 
+std::optional<std::string> TryRelativeFilePathFromMapping(const std::string &normAbsPath, const std::string &key,
+                                                          std::string normValue)
+{
+    std::replace(normValue.begin(), normValue.end(), '\\', '/');
+    if (normAbsPath == normValue) {
+        auto dotPos = normAbsPath.rfind('.');
+        auto ext = (dotPos != std::string::npos) ? normAbsPath.substr(dotPos) : std::string();
+        return key + ext;
+    }
+    if (normValue.back() != '/') {
+        normValue += '/';
+    }
+    if (util::Helpers::StartsWith(normAbsPath, normValue)) {
+        return key + "/" + normAbsPath.substr(normValue.size());
+    }
+    return std::nullopt;
+}
+
 }  // namespace
 
 Program::Program(const util::ImportInfo &importInfo, ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
@@ -188,23 +206,19 @@ std::optional<std::string> Program::TryRelativeFilePathViaArkTsPaths(const publi
         return std::nullopt;
     }
 
-    auto normAbsPath = AbsoluteName().Mutf8();
+    const auto absPath = AbsoluteName().Mutf8();
+    auto normAbsPath = absPath;
     std::replace(normAbsPath.begin(), normAbsPath.end(), '\\', '/');
-    const auto &path = context->config->options->ArkTSConfig().Paths();
+    const auto &config = context->config->options->ArkTSConfig();
+    if (auto owner = config.FindAtsPackageByPath(absPath); owner != nullptr) {
+        return TryRelativeFilePathFromMapping(normAbsPath, owner->first, owner->second.moduleRoot);
+    }
+    const auto &path = config.Paths();
     for (const auto &[key, values] : path) {
+        // path will be deprecated soon
         for (const auto &value : values) {
-            auto normValue = value;
-            std::replace(normValue.begin(), normValue.end(), '\\', '/');
-            if (normAbsPath == normValue) {
-                auto dotPos = normAbsPath.rfind('.');
-                auto ext = (dotPos != std::string::npos) ? normAbsPath.substr(dotPos) : std::string();
-                return key + ext;
-            }
-            if (normValue.back() != '/') {
-                normValue += '/';
-            }
-            if (util::Helpers::StartsWith(normAbsPath, normValue)) {
-                return key + "/" + normAbsPath.substr(normValue.size());
+            if (auto relative = TryRelativeFilePathFromMapping(normAbsPath, key, value)) {
+                return relative;
             }
         }
     }

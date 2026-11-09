@@ -7,6 +7,7 @@
     "moduleType": "shared",
     "buildType": "build",
     "buildMode": "Debug",
+    "projectRootPath": "${absolute_path_to_build_system}/test/e2e/demo_hsp1_2",
     "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_hsp1_2/",
     "sourceRoots": [
         "./"

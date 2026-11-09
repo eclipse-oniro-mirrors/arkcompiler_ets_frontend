@@ -104,7 +104,7 @@ describe('class FileManager', () => {
         fm = FileManager.getInstance();
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(true);
+        jest.spyOn(utils, 'isStaticSource').mockReturnValue(true);
         expect(fm.getLanguageVersionByFilePath('/mock/hybrid/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
         FileManager.init({
             dependencyModuleList: [
@@ -121,7 +121,7 @@ describe('class FileManager', () => {
         fm = FileManager.getInstance();
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(false);
+        jest.spyOn(utils, 'isStaticSource').mockReturnValue(false);
         expect(fm.getLanguageVersionByFilePath('/mock/hybrid/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
 
         FileManager.cleanFileManagerObject();
@@ -253,7 +253,7 @@ describe('class FileManager', () => {
         // A V2 (dynamic) product is 1.1 even when the first line falsely says 'use static'.
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        const useStaticSpy = jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(true);
+        const useStaticSpy = jest.spyOn(utils, 'isStaticSource').mockReturnValue(true);
         expect(fm.getLanguageVersionByFilePath('/mock/hybrid/declgenV2/modH/file.d.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
 
         // A V1 (static) product is 1.2 even when the first line is NOT 'use static'.
@@ -267,11 +267,11 @@ describe('class FileManager', () => {
         // Source files under modulePath are still governed by the 'use static' marker.
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(true);
+        jest.spyOn(utils, 'isStaticSource').mockReturnValue(true);
         expect(fm.getLanguageVersionByFilePath('/mock/hybrid/src/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(false);
+        jest.spyOn(utils, 'isStaticSource').mockReturnValue(false);
         expect(fm.getLanguageVersionByFilePath('/mock/hybrid/src/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
     });
 

@@ -1894,56 +1894,67 @@ static ArenaString CreatePackageModuleName(const ImportPathManager &ipm, std::st
     return OhmurlToMname(RebasePathOhmurl(resolvedSource, unitPath, unitName));
 }
 
+static std::optional<ArenaString> MatchModuleNameWithCacheDir(const ArkTsConfig &cfg, std::string_view resolvedSource,
+                                                              [[maybe_unused]] const ImportPathManager &ipm)
+{
+    if (cfg.CacheDir().empty() || !Helpers::StartsWith(resolvedSource, cfg.CacheDir())) {
+        return std::nullopt;
+    }
+    // don't append package name, since cacheDir already have it
+    std::optional<ArenaString> mName = OhmurlToMname(CheckAndRebaseOhmurl(ipm, resolvedSource, cfg.CacheDir(), ""));
+    ES2PANDA_ASSERT(mName->at(0) != '.');
+    return mName;
+}
+
+static std::optional<ArenaString> MatchModuleNameWithDependencies(const ArkTsConfig &cfg,
+                                                                  std::string_view resolvedSource,
+                                                                  [[maybe_unused]] const ImportPathManager &ipm)
+{
+    std::optional<ArenaString> res {};
+    if (cfg.FindInDependencies(resolvedSource) != std::nullopt) {
+        res = OhmurlToMname(resolvedSource);
+    }
+    return res;
+}
+
+// Static source identity depends on the owning module root, never on the selected search root.
+static std::optional<ArenaString> MatchModuleNameWithAtsDependencies(const ArkTsConfig &cfg, std::string_view source,
+                                                                     [[maybe_unused]] const ImportPathManager &ipm)
+{
+    if (auto entry = cfg.FindAtsPackageByPath(source); entry != nullptr) {
+        return OhmurlToMname(RebasePathOhmurl(source, entry->second.moduleRoot, entry->first));
+    }
+    return std::nullopt;
+}
+
+static std::optional<ArenaString> MatchModuleNameWithPaths(const ArkTsConfig &cfg, std::string_view resolvedSource,
+                                                           const ImportPathManager &ipm)
+{
+    for (auto const &[unitName, unitPaths] : cfg.Paths()) {
+        auto it = std::find_if(unitPaths.begin(), unitPaths.end(), [resolvedSource](const auto &unitPath) {
+            ES2PANDA_ASSERT(!unitPath.empty());
+            // NOTE(33661) should be Helpers::StartsWith(resolvedSource, unitName)
+            return Helpers::StartsWith(resolvedSource, unitPath);
+        });
+        if (it != unitPaths.end()) {
+            return CreatePackageModuleName(ipm, resolvedSource, *it, unitName);
+        }
+    }
+    return std::nullopt;
+}
+
 static std::optional<ArenaString> DeduceModuleNameByMatchingWithArktsconfig(const ImportPathManager &importPathManager,
                                                                             const ImportInfo &imd)
 {
-    // ES2PANDA_ASSERT(( == '/') || (imd.ResolvedSource().find('\\') == std::string::npos));
     using MatcherT = std::optional<ArenaString> (*)(const ArkTsConfig &, std::string_view, const ImportPathManager &);
-    std::vector<MatcherT> matchers {};
-
-    // 1. Try 'cacheDir` field:
-    auto cacheDirMatcher = [](const ArkTsConfig &cfg, std::string_view resolvedSource,
-                              [[maybe_unused]] const ImportPathManager &ipm) -> std::optional<ArenaString> {
-        if (cfg.CacheDir().empty() || !Helpers::StartsWith(resolvedSource, cfg.CacheDir())) {
-            return std::nullopt;
-        }
-        // don't append package name, since cacheDir already have it
-        std::optional<ArenaString> mName = OhmurlToMname(CheckAndRebaseOhmurl(ipm, resolvedSource, cfg.CacheDir(), ""));
-        ES2PANDA_ASSERT(mName->at(0) != '.');
-        return mName;
+    const std::vector<MatcherT> matchers {
+        MatchModuleNameWithCacheDir,
+        MatchModuleNameWithDependencies,
+        MatchModuleNameWithAtsDependencies,
+        MatchModuleNameWithPaths,
     };
-    matchers.emplace_back(cacheDirMatcher);
-
-    // 2. Try 'dynamicPaths' (aka 'dependencies') field:
-    auto dynamicPathMatcher = [](const ArkTsConfig &cfg, std::string_view resolvedSource,
-                                 [[maybe_unused]] const ImportPathManager &ipm) {
-        std::optional<ArenaString> res {};
-        if (cfg.FindInDependencies(resolvedSource) != std::nullopt) {
-            res = OhmurlToMname(resolvedSource);
-        }
-        return res;
-    };
-    matchers.emplace_back(dynamicPathMatcher);
-
-    // 3. Try 'paths' field:
-    auto pathsMatcher = [](const ArkTsConfig &cfg, std::string_view resolvedSource,
-                           const ImportPathManager &ipm) -> std::optional<ArenaString> {
-        for (auto const &[unitName, unitPaths] : cfg.Paths()) {
-            auto it = std::find_if(unitPaths.begin(), unitPaths.end(), [resolvedSource](const auto &unitPath) {
-                ES2PANDA_ASSERT(!unitPath.empty());
-                // NOTE(33661) should be Helpers::StartsWith(resolvedSource, unitName)
-                return Helpers::StartsWith(resolvedSource, unitPath);
-            });
-            if (it != unitPaths.end()) {
-                return CreatePackageModuleName(ipm, resolvedSource, *it, unitName);
-            }
-        }
-        return std::nullopt;
-    };
-    matchers.emplace_back(pathsMatcher);
-
     for (auto matcher : matchers) {
-        if (auto res = (*matcher)(importPathManager.ArkTSConfig(), imd.ResolvedSource(), importPathManager); res) {
+        if (auto res = matcher(importPathManager.ArkTSConfig(), imd.ResolvedSource(), importPathManager); res) {
             return res;
         }
     }
