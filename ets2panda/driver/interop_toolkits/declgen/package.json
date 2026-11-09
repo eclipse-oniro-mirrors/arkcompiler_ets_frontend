@@ -37,7 +37,13 @@
     "test:dynamic:ut": "jest test/dynamic/ut",
     "test:dynamic:cookbook": "npm run build:cookbook && node build/cookbook/test/dynamic/framework/cookbookRunner.js --test-dir test/dynamic/cookbook_tests -t ts_source -t dts_declarations -t package_source",
     "test:static": "npm run test:static:ut",
-    "test:static:ut": "jest test/static/ut"
+    "test:static:ut": "jest test/static/ut",
+    "build:spec-kit": "tsc -p test/spec/framework/tsconfig.json",
+    "test:spec-kit": "jest test/spec/ut",
+    "test:spec": "npm run build && npm run build:spec-kit && jest test/spec",
+    "spec:lint": "npm run build:spec-kit && node test/spec/framework/dist/cli.js lint",
+    "spec:render": "npm run build:spec-kit && node test/spec/framework/dist/cli.js render --all",
+    "spec:new": "npm run build:spec-kit && node test/spec/framework/dist/cli.js new"
   },
   "dependencies": {
     "json5": "2.2.3",

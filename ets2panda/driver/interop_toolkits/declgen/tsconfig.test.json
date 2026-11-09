@@ -12,7 +12,9 @@
     "./test/ut/**/*.ts",
     "./test/dynamic/framework/**/*.ts",
     "./test/dynamic/ut/**/*.ts",
-    "./test/static/ut/**/*.ts"
+    "./test/static/ut/**/*.ts",
+    "./test/spec/**/*.ts",
+    "./test/spec/framework/src/**/*.ts"
   ],
   "exclude": ["dist", "node_modules"]
 }

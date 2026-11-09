@@ -243,13 +243,45 @@ export class IncreDepAnalyzer extends DepAnalyzer {
                 modifiedFiles.push(filePath);
             }
         }
-
-        if (modifiedFiles.length > 0) {
-            const increInputFile: string = path.join(this.outputDir, INCRE_DEP_ANALYZER_INPUT_FILE);
-            const fileContent: string = modifiedFiles.join(os.EOL);
-            fs.writeFileSync(increInputFile, fileContent);
-        }
         return modifiedFiles;
+    }
+
+    /**
+     * Finds static entry files that import a dynamic module (an arktsconfig
+     * dependency with language 'js') whose source or decl file has changed.
+     * Such files must be recompiled even when their own content is unchanged:
+     * their compilation consumes the dynamic module's decl, which is derived
+     * from the changed dynamic source.
+     */
+    private findImportersAffectedByDynamicInputs(
+        modules: ModuleInfo[],
+        prevDepMap: DependencyFileMap,
+        entryFiles: Set<string>
+    ): string[] {
+        const affectedImporters: Set<string> = new Set<string>();
+        const keyToInputs: Map<string, string[]> = this.collectDynamicDependencyInputs(modules);
+        for (const [key, inputs] of keyToInputs) {
+            const importers: string[] = prevDepMap.dependants[key] ?? [];
+            for (const importer of importers) {
+                if (!entryFiles.has(importer) || affectedImporters.has(importer)) {
+                    continue;
+                }
+                const output: string | undefined = prevDepMap.outputMatching[importer];
+                if (output === undefined) {
+                    continue;
+                }
+                const inputChanged: boolean = inputs.some((input: string) => shouldBeUpdated(input, output));
+                if (!inputChanged) {
+                    continue;
+                }
+                // Force recompilation in filterGraph: the importer itself is
+                // fresh by hash/mtime, but one of its dynamic inputs is stale
+                this.getOrInitFileChangeStatus(importer);
+                this.setAbcOutdatedChanged(importer, true);
+                affectedImporters.add(importer);
+            }
+        }
+        return Array.from(affectedImporters);
     }
 
     private updateDependencyItem(
@@ -356,7 +388,15 @@ export class IncreDepAnalyzer extends DepAnalyzer {
 
         // 2. find all the added and modified source files and update prevDepMap
         this.statsRecorder.record(formEvent(IncreDepAnalyzerEvent.INCRE_FIND_MODIFIED_FILES));
-        let modifiedSourceFiles: string[] = this.findModifiedSourceFiles(entryFiles, fileToModule, prevDepMap);
+        const modifiedEntryFiles: string[] = this.findModifiedSourceFiles(entryFiles, fileToModule, prevDepMap);
+        const dynamicAffectedFiles: string[] = this.findImportersAffectedByDynamicInputs(modules, prevDepMap, entryFiles);
+        const modifiedSourceFiles: string[] =
+            Array.from(new Set<string>([...modifiedEntryFiles, ...dynamicAffectedFiles]));
+        if (modifiedSourceFiles.length > 0) {
+            const increInputFile: string = path.join(this.outputDir, INCRE_DEP_ANALYZER_INPUT_FILE);
+            const fileContent: string = modifiedSourceFiles.join(os.EOL);
+            fs.writeFileSync(increInputFile, fileContent);
+        }
         this.hasModified = modifiedSourceFiles.length > 0;
         this.updateFullDependency(prevDepMap, modules, modifiedSourceFiles);
 
