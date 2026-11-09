@@ -196,6 +196,11 @@ def main():
 
     if src_consistent and hdr_consistent and yaml_consistent:
         print("all file types are consistent beetween CMake and GN")
+        if len(sys.argv) > 2:
+            stamp = sys.argv[2]
+            os.makedirs(os.path.dirname(os.path.abspath(stamp)), exist_ok=True)
+            with open(stamp, "w", encoding="utf-8"):
+                pass
         return 0
     print("Warning! inconsistent file found beetween CMake and GN")
     return 1
