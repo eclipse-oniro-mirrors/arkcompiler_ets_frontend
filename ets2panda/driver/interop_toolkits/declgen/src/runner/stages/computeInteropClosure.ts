@@ -64,6 +64,7 @@ function validateSentinels(
   dependencyGraph: dependencyResolver.DependencyGraph,
 ): void {
   const unconfiguredEntries: { fileName: string; error: SentinelNotConfiguredError }[] = [];
+  const bytecodePackages = collectBytecodePackages(context.buildConfig);
   for (const sentinel of dependencyGraph.getSentinels()) {
     if (
       !context.fileManager.isSourceFile(sentinel.fileName) ||
@@ -84,6 +85,12 @@ function validateSentinels(
     const importerLanguage = language === 'Dynamic' ? 'static' : 'dynamic';
     const relativePath = path.relative(moduleInfo.modulePath, sentinel.fileName);
     const importers = collectImporters(context, sentinel, importerLanguage);
+    if (
+      bytecodePackages.has(moduleInfo.packageName) &&
+      importers.every((importer) => isFileInBytecodeModule(context, bytecodePackages, importer))
+    ) {
+      continue;
+    }
     unconfiguredEntries.push({
       fileName: sentinel.fileName,
       error: new SentinelNotConfiguredError({
@@ -112,6 +119,31 @@ function collectImporters(
   importerLanguage: 'static' | 'dynamic',
 ): string[] {
   return sentinel.dependants.filter((dependant) => isOfLanguage(context, dependant, importerLanguage)).sort();
+}
+
+/**
+ * Packages of bytecode modules: bytecode HARs (byteCodeHar === true) and
+ * bytecode HSPs (byteCodeHar === false with module type 'shared'), whose code
+ * compiles to bytecode. The main module is classified through its own entry in
+ * dependentModuleList. Interop confined to bytecode modules needs no interop
+ * configuration.
+ */
+function collectBytecodePackages(buildConfig: Context['buildConfig']): Set<string> {
+  return new Set(buildConfig.dependentModuleList.filter(isBytecodeModule).map((module) => module.packageName));
+}
+
+/** A bytecode HAR is flagged by byteCodeHar; a bytecode HSP is a 'shared' module with byteCodeHar explicitly false. */
+function isBytecodeModule(module: { byteCodeHar?: boolean; moduleType?: string }): boolean {
+  if (module.byteCodeHar === true) {
+    return true;
+  }
+  return module.byteCodeHar === false && module.moduleType === 'shared';
+}
+
+/** Whether the file belongs to a prebuilt bytecode module (bytecode HAR or HSP). */
+function isFileInBytecodeModule(context: Context, bytecodePackages: ReadonlySet<string>, fileName: string): boolean {
+  const packageName = context.fileManager.queryFileMeta(fileName)?.module?.packageName;
+  return packageName !== undefined && bytecodePackages.has(packageName);
 }
 
 /**

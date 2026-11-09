@@ -31,6 +31,7 @@ import {
 type ComputeInteropClosureScope = Parameters<ReturnType<typeof createComputeInteropClosureStage>['run']>[0];
 
 const PACKAGE_NAME = 'test-package';
+const DEPENDENCY_PACKAGE_NAME = 'dependency-library';
 
 describe('computeInteropClosure stage', () => {
   let projectRoot: string;
@@ -38,6 +39,9 @@ describe('computeInteropClosure stage', () => {
   let staticFile: string;
   let dynamicFile: string;
   let secondStaticFile: string;
+  let dependencyModulePath: string;
+  let dependencyStaticFile: string;
+  let dependencyDynamicFile: string;
   let context: Context;
 
   beforeEach(() => {
@@ -46,6 +50,13 @@ describe('computeInteropClosure stage', () => {
     staticFile = common.fileUtils.normalizePath(path.join(modulePath, 'src', 'main', 'ets', 'static.ets'));
     dynamicFile = common.fileUtils.normalizePath(path.join(modulePath, 'src', 'main', 'ets', 'dynamic.ts'));
     secondStaticFile = common.fileUtils.normalizePath(path.join(modulePath, 'src', 'main', 'ets', 'b.ets'));
+    dependencyModulePath = common.fileUtils.normalizePath(path.join(projectRoot, DEPENDENCY_PACKAGE_NAME));
+    dependencyStaticFile = common.fileUtils.normalizePath(
+      path.join(dependencyModulePath, 'src', 'main', 'ets', 'static.ets'),
+    );
+    dependencyDynamicFile = common.fileUtils.normalizePath(
+      path.join(dependencyModulePath, 'src', 'main', 'ets', 'dynamic.ts'),
+    );
     context = {
       buildConfig: createBuildConfig(projectRoot, modulePath),
       fileManager: createFileManager(),
@@ -131,6 +142,109 @@ describe('computeInteropClosure stage', () => {
     expect([...closures.staticClosure]).toEqual([]);
   });
 
+  it('skips a bytecode-HAR-module sentinel whose opposite-language importers are all in bytecode modules', async () => {
+    setupDependencyModuleContext({ byteCodeHar: true });
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([
+      [dependencyDynamicFile, dependencyResolver.NodeType.DYNAMIC, [dependencyStaticFile]],
+    ]);
+
+    const closures = await runStage(context, entryFiles, graph);
+
+    expect([...closures.staticClosure]).toEqual([]);
+    expect([...closures.dynamicClosure]).toEqual([]);
+  });
+
+  it('skips an HSP-module sentinel whose opposite-language importers are all in HSP modules', async () => {
+    setupDependencyModuleContext({ moduleType: 'shared', byteCodeHar: false });
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([
+      [dependencyDynamicFile, dependencyResolver.NodeType.DYNAMIC, [dependencyStaticFile]],
+    ]);
+
+    const closures = await runStage(context, entryFiles, graph);
+
+    expect([...closures.staticClosure]).toEqual([]);
+    expect([...closures.dynamicClosure]).toEqual([]);
+  });
+
+  it('reports a source-HAR-module sentinel whose opposite-language importers are all in that module', async () => {
+    setupDependencyModuleContext({ moduleType: 'har' });
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([
+      [dependencyDynamicFile, dependencyResolver.NodeType.DYNAMIC, [dependencyStaticFile]],
+    ]);
+
+    const error = await captureStageError(entryFiles, graph);
+
+    expect(error.errors).toHaveLength(1);
+    expect(error.errors[0].errorMessage.cause).toBe(
+      `Dynamic file '${path.relative(dependencyModulePath, dependencyDynamicFile)}' of package ${DEPENDENCY_PACKAGE_NAME} ` +
+        'is imported by some static files. But it is not configured as an interop entry.',
+    );
+  });
+
+  it('reports a source-HSP-module sentinel when the byteCodeHar field is absent', async () => {
+    setupDependencyModuleContext({ moduleType: 'shared' });
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([
+      [dependencyDynamicFile, dependencyResolver.NodeType.DYNAMIC, [dependencyStaticFile]],
+    ]);
+
+    const error = await captureStageError(entryFiles, graph);
+
+    expect(error.errors).toHaveLength(1);
+    expect(error.errors[0].errorMessage.cause).toBe(
+      `Dynamic file '${path.relative(dependencyModulePath, dependencyDynamicFile)}' of package ${DEPENDENCY_PACKAGE_NAME} ` +
+        'is imported by some static files. But it is not configured as an interop entry.',
+    );
+  });
+
+  it('reports a bytecode-module sentinel when an importer comes from a source module', async () => {
+    setupDependencyModuleContext({ byteCodeHar: true });
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([
+      [dependencyDynamicFile, dependencyResolver.NodeType.DYNAMIC, [dependencyStaticFile, staticFile]],
+    ]);
+
+    const error = await captureStageError(entryFiles, graph);
+
+    expect(error.errors).toHaveLength(1);
+    expect(error.errors[0].errorMessage.cause).toBe(
+      `Dynamic file '${path.relative(dependencyModulePath, dependencyDynamicFile)}' of package ${DEPENDENCY_PACKAGE_NAME} ` +
+        'is imported by some static files. But it is not configured as an interop entry.',
+    );
+    const expectedImporters = [dependencyStaticFile, staticFile].sort();
+    expect(error.errors[0].errorMessage.moreInfo).toEqual({
+      'imported by': `\n${expectedImporters.map((importer) => `      ${importer}`).join('\n')}`,
+    });
+  });
+
+  it('skips a bytecode-module sentinel that has no opposite-language importers', async () => {
+    setupDependencyModuleContext({ byteCodeHar: true });
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([[dependencyDynamicFile, dependencyResolver.NodeType.DYNAMIC]]);
+
+    const closures = await runStage(context, entryFiles, graph);
+
+    expect([...closures.staticClosure]).toEqual([]);
+    expect([...closures.dynamicClosure]).toEqual([]);
+  });
+
+  it('reports a source-module sentinel whose importers are all in bytecode modules', async () => {
+    setupDependencyModuleContext({ byteCodeHar: true });
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([[dynamicFile, dependencyResolver.NodeType.DYNAMIC, [dependencyStaticFile]]]);
+
+    const error = await captureStageError(entryFiles, graph);
+
+    expect(error.errors).toHaveLength(1);
+    expect(error.errors[0].errorMessage.cause).toBe(
+      `Dynamic file '${path.relative(modulePath, dynamicFile)}' of package ${PACKAGE_NAME} ` +
+        'is imported by some static files. But it is not configured as an interop entry.',
+    );
+  });
+
   function createFileManager(): common.fileManager.FileManager {
     return new common.fileManager.FileManagerBuilder()
       .addModuleList([
@@ -142,6 +256,41 @@ describe('computeInteropClosure stage', () => {
         },
       ])
       .build();
+  }
+
+  /** Registers an extra dependency module with the given module flags next to the default source module. */
+  function setupDependencyModuleContext(moduleConfig: { moduleType?: string; byteCodeHar?: boolean }): void {
+    context = {
+      ...context,
+      buildConfig: createBuildConfig(projectRoot, modulePath, [
+        {
+          packageName: DEPENDENCY_PACKAGE_NAME,
+          modulePath: dependencyModulePath,
+          sourceRoots: [dependencyModulePath],
+          entryFile: '',
+          ...(moduleConfig.moduleType === undefined ? {} : { moduleType: moduleConfig.moduleType }),
+          ...(moduleConfig.byteCodeHar === undefined ? {} : { byteCodeHar: moduleConfig.byteCodeHar }),
+          staticFiles: [dependencyStaticFile],
+          dynamicFiles: [dependencyDynamicFile],
+        },
+      ]),
+      fileManager: new common.fileManager.FileManagerBuilder()
+        .addModuleList([
+          {
+            packageName: PACKAGE_NAME,
+            modulePath,
+            staticFiles: [staticFile, secondStaticFile],
+            dynamicFiles: [dynamicFile],
+          },
+          {
+            packageName: DEPENDENCY_PACKAGE_NAME,
+            modulePath: dependencyModulePath,
+            staticFiles: [dependencyStaticFile],
+            dynamicFiles: [dependencyDynamicFile],
+          },
+        ])
+        .build(),
+    };
   }
 
   function createEntryFiles(...configuredSentinels: readonly string[]): InteropEntryFiles {
@@ -280,7 +429,11 @@ describe('computeInteropClosure stage', () => {
   }
 });
 
-function createBuildConfig(projectRootPath: string, modulePath: string): BuildConfig {
+function createBuildConfig(
+  projectRootPath: string,
+  modulePath: string,
+  dependentModules: BuildConfig['dependentModuleList'] = [],
+): BuildConfig {
   return {
     plugins: {},
     buildSdkPath: '',
@@ -304,6 +457,7 @@ function createBuildConfig(projectRootPath: string, modulePath: string): BuildCo
         staticFiles: [],
         dynamicFiles: [],
       },
+      ...dependentModules,
     ],
     sdkAliasMap: {},
     hasMainModule: true,
