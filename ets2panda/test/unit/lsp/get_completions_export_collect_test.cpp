@@ -366,12 +366,10 @@ EcAutoFn
         EXPECT_EQ(entry.GetInsertText(), "ecAutoFn()");
         EXPECT_EQ(entry.GetCompletionKind(), CompletionEntryKind::FUNCTION);
         ASSERT_TRUE(entry.GetCompletionEntryData().has_value()) << "auto-import entry lacks data";
-        // NOTE: CompletionEntryData::GetFileName() stores a raw const char* into the
-        // context's transient sourceFileName and reads back garbage after the API call
-        // returns (production lifetime defect, reported separately); only the copied
-        // std::string fields are asserted here.
-        EXPECT_NE(entry.GetCompletionEntryData()->GetImportDeclaration().find("@ec_auto.d.ets"), std::string::npos)
-            << "auto-import entry lacks module path: " << entry.GetCompletionEntryData()->GetImportDeclaration();
+        // The entry carries the absolute path of the declaration file the symbol comes from
+        // and the alias used by the import statement.
+        EXPECT_EQ(entry.GetCompletionEntryData()->GetFileName(), filePaths[0U]);
+        EXPECT_EQ(entry.GetCompletionEntryData()->GetImportDeclaration(), "@ec_auto");
     }
     ASSERT_TRUE(foundFnSuggestion) << "collected-API auto-import suggestion missing";
 }

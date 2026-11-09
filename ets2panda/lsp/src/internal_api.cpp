@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -37,6 +38,7 @@
 #include "generated/code_fix_register.h"
 #include "quick_info.h"
 #include "symbol_reference_index.h"
+#include "util/arktsconfig.h"
 #include "util/eheap.h"
 #include "util/helpers.h"
 
@@ -67,10 +69,339 @@ std::string StripExtension(const std::string &path)
     return result;
 }
 
+std::string NormalizeModuleSeparators(std::string path)
+{
+    std::replace(path.begin(), path.end(), '\\', '/');
+    return path;
+}
+
+std::string TrimTrailingSeparators(std::string path)
+{
+    while (!path.empty() && path.back() == '/') {
+        path.pop_back();
+    }
+    return path;
+}
+
+// The entry segment of an ArkTS module, without file extension.
+constexpr std::string_view MODULE_ENTRY_SEGMENT = "Index";
+
+// The source root of an ArkTS module, by hvigor convention: build-system dependency keys
+// carry it, the canonical importable form strips it ('dynlib/src/main/ets/A' and
+// 'dynlib/ets/A' name the same file).
+constexpr std::string_view MODULE_SOURCE_ROOT_PREFIX = "src/main/";
+
+// Both dependency entries describe the same module file: declaration ('path') and source
+// file ('sourceFilePath') match after normalization. The several keys of one file (legacy
+// full form, transformed form and the bare package name of the module entry) share them.
+bool IsSameDependencyFile(const ArkTsConfig::ExternalModuleData &left, const ArkTsConfig::ExternalModuleData &right)
+{
+    const auto sameDeclaration = StripExtension(NormalizeModuleSeparators(left.Path())) ==
+                                 StripExtension(NormalizeModuleSeparators(right.Path()));
+    const auto sameSource = StripExtension(NormalizeModuleSeparators(std::string(left.SourceFilePath()))) ==
+                            StripExtension(NormalizeModuleSeparators(std::string(right.SourceFilePath())));
+    return sameDeclaration && sameSource;
+}
+
+// A module entry file is imported through the bare module alias: 'library/Index' and
+// 'library' resolve to the same file because directory imports fall back to 'Index.ets'.
+std::string TrimIndexSegment(std::string moduleSpecifier)
+{
+    if (moduleSpecifier.size() < MODULE_ENTRY_SEGMENT.size() + 2U) {
+        return moduleSpecifier;
+    }
+    const auto segmentPos = moduleSpecifier.size() - MODULE_ENTRY_SEGMENT.size();
+    if (moduleSpecifier[segmentPos - 1U] != '/' ||
+        moduleSpecifier.compare(segmentPos, MODULE_ENTRY_SEGMENT.size(), MODULE_ENTRY_SEGMENT) != 0) {
+        return moduleSpecifier;
+    }
+    moduleSpecifier.resize(segmentPos - 1U);
+    return moduleSpecifier;
+}
+
+std::string FirstModuleSegment(const std::string &moduleSpecifier)
+{
+    const auto separatorPos = moduleSpecifier.find('/');
+    return separatorPos == std::string::npos ? moduleSpecifier : moduleSpecifier.substr(0U, separatorPos);
+}
+
+struct PathsMatch {
+    std::string alias;  // CC-OFF(G.NAM.03-CPP) project code style
+    std::string target;
+};
+
+// Finds the arktsconfig 'paths' entry covering the file: either a per-file alias whose target
+// is the file itself, or a module-directory alias whose target contains the file. Longer
+// aliases are preferred because 'Paths()' is ordered by descending key length.
+std::optional<PathsMatch> FindPathsMatch(const std::string &file, const ArkTsConfig &config)
+{
+    const auto normalizedFile = NormalizeModuleSeparators(file);
+    if (normalizedFile.empty()) {
+        return std::nullopt;
+    }
+    const auto fileWithoutExtension = StripExtension(normalizedFile);
+    for (const auto &[alias, targets] : config.Paths()) {
+        for (const auto &target : targets) {
+            const auto normalizedTarget = TrimTrailingSeparators(NormalizeModuleSeparators(target));
+            if (normalizedTarget.empty()) {
+                continue;
+            }
+            // The file either is the target itself (a per-file alias), or lives inside a
+            // directory target (a module root mapped to its package name).
+            const bool isTargetFile = fileWithoutExtension == StripExtension(normalizedTarget);
+            const bool isUnderTargetDirectory = normalizedFile.size() > normalizedTarget.size() &&
+                                                normalizedFile[normalizedTarget.size()] == '/' &&
+                                                util::Helpers::StartsWith(normalizedFile, normalizedTarget);
+            if (isTargetFile || isUnderTargetDirectory) {
+                return PathsMatch {StripExtension(alias), normalizedTarget};
+            }
+        }
+    }
+    return std::nullopt;
+}
+
+// The import specifier of a 'paths' match: a per-file alias (or the alias target file
+// itself) is imported through its key unchanged - its file name alone (e.g. 'Index') does
+// not prove that the parent alias names the same file, since a custom entry may be mapped
+// separately; a module-directory alias keeps the file's path under the module root
+// ('library/utils/Foo'), and a trailing entry segment is dropped because directory imports
+// fall back to 'Index.ets'. The resolver maps the bare alias onto the entry file only and
+// does not aggregate the inner files' exports, so a symbol exported only by an inner file
+// needs the sub-path form to stay importable.
+std::string ImportSpecifierForPathsMatch(const std::string &toFile, const PathsMatch &match)
+{
+    const auto normalizedFile = StripExtension(NormalizeModuleSeparators(toFile));
+    if (normalizedFile == StripExtension(match.target)) {
+        return std::move(match.alias);
+    }
+    // A directory target: append the file's path relative to the module root.
+    return TrimIndexSegment(match.alias + normalizedFile.substr(match.target.size()));
+}
+
+// Finds the dynamic module name that owns the file through the arktsconfig 'dependencies'
+// section: the file is either the module source recorded as 'sourceFilePath', or the module
+// declaration recorded as 'path'. Dependencies without a source file (interop SDK
+// declarations) are skipped.
+std::optional<std::string> FindDynamicDependencyModuleName(const std::string &file, const ArkTsConfig &config)
+{
+    const auto normalizedFile = NormalizeModuleSeparators(file);
+    if (normalizedFile.empty()) {
+        return std::nullopt;
+    }
+    const auto fileWithoutExtension = StripExtension(normalizedFile);
+    for (const auto &[dependencyKey, moduleData] : config.Dependencies()) {
+        if (moduleData.SourceFilePath().empty()) {
+            continue;
+        }
+        const auto sourcePath = NormalizeModuleSeparators(std::string(moduleData.SourceFilePath()));
+        if (StripExtension(sourcePath) == fileWithoutExtension) {
+            return GetDependencyImportSpecifier(dependencyKey, moduleData);
+        }
+        const auto declPath = NormalizeModuleSeparators(moduleData.Path());
+        if (!declPath.empty() && StripExtension(declPath) == fileWithoutExtension) {
+            return GetDependencyImportSpecifier(dependencyKey, moduleData);
+        }
+    }
+    return std::nullopt;
+}
+
+// The dependency entry whose source file ('sourceFilePath') or declaration ('path') is the
+// given file, if any. Unlike FindDynamicDependencyModuleName this also matches entries
+// without a source file, so interop SDK declarations resolve to their dependency too.
+std::pair<const std::string *, const ArkTsConfig::ExternalModuleData *> FindDependencyEntryForFile(
+    const std::string &file, const ArkTsConfig &config)
+{
+    const auto normalizedFile = NormalizeModuleSeparators(file);
+    if (normalizedFile.empty()) {
+        return {nullptr, nullptr};
+    }
+    const auto fileWithoutExtension = StripExtension(normalizedFile);
+    for (const auto &[dependencyKey, moduleData] : config.Dependencies()) {
+        if (!moduleData.SourceFilePath().empty()) {
+            const auto sourcePath = StripExtension(NormalizeModuleSeparators(std::string(moduleData.SourceFilePath())));
+            if (sourcePath == fileWithoutExtension) {
+                return {&dependencyKey, &moduleData};
+            }
+        }
+        const auto declPath = NormalizeModuleSeparators(moduleData.Path());
+        if (!declPath.empty() && StripExtension(declPath) == fileWithoutExtension) {
+            return {&dependencyKey, &moduleData};
+        }
+    }
+    return {nullptr, nullptr};
+}
+
+// The module a file belongs to: dynamic dependency declarations resolve to their dynamic
+// module first (the 'dependencies' entry is the authoritative dynamic classification, and
+// the same declaration file can also be aliased by a 'paths' entry; the module name is the
+// first segment of the file-level key, so sibling files of one dynamic package stay in the
+// same module), static files (including the per-file aliases of hybrid modules) resolve
+// through the 'paths' section, and dynamic files of hybrid modules through the
+// 'dependencies' section.
+std::optional<std::string> FindModuleName(const std::string &file, const ArkTsConfig &config)
+{
+    if (auto dynamicKey = FindDynamicDeclModuleKey(file, config)) {
+        return FirstModuleSegment(*dynamicKey);
+    }
+    auto pathsMatch = FindPathsMatch(file, config);
+    if (pathsMatch.has_value()) {
+        return FirstModuleSegment(pathsMatch->alias);
+    }
+    return FindDynamicDependencyModuleName(file, config);
+}
+
+// Both files belong to the same module, no matter which section maps them. A static file of a
+// hybrid module and a dynamic sibling both resolve to the module name.
+bool IsSameModule(const std::string &fromFile, const std::string &toFile, const ArkTsConfig &config)
+{
+    auto fromModule = FindModuleName(fromFile, config);
+    if (!fromModule.has_value()) {
+        return false;
+    }
+    auto toModule = FindModuleName(toFile, config);
+    return toModule.has_value() && *fromModule == *toModule;
+}
+
 }  // namespace
 
-std::string ComputeRelativeImportPath(const std::string &fromFile, const std::string &toFile)
+// The dynamic import form of a dependency key (see internal_api.h for the format rules);
+// completions.cpp and the module-name resolution share this single implementation.
+std::optional<std::string> GetDynamicImportSpecifierOrNull(std::string_view dependencyKey,
+                                                           const ArkTsConfig::ExternalModuleData &moduleData)
 {
+    if (dependencyKey.rfind("dynamic@", 0) == 0) {
+        return std::string(dependencyKey);
+    }
+    if (dependencyKey.rfind("dynamic/", 0) == 0) {
+        for (const auto &alias : moduleData.Alias()) {
+            if (alias.rfind("dynamic@", 0) == 0) {
+                return alias;
+            }
+        }
+    }
+    return std::nullopt;
+}
+
+std::string GetDependencyImportSpecifier(std::string_view dependencyKey,
+                                         const ArkTsConfig::ExternalModuleData &moduleData)
+{
+    auto dynamicSpecifier = GetDynamicImportSpecifierOrNull(dependencyKey, moduleData);
+    if (dynamicSpecifier.has_value()) {
+        return std::move(*dynamicSpecifier);
+    }
+    return FirstModuleSegment(std::string(dependencyKey));
+}
+
+// The canonical file-level import form of a dynamic dependency key. The SDK dynamic form
+// ('dynamic@xxx', see GetDynamicImportSpecifierOrNull) is canonical already. Build-system
+// keys ('<package>/<file>') keep the module relative file path and are also registered with
+// the hvigor source root stripped ('dynlib/src/main/ets/A' and 'dynlib/ets/A' name the same
+// file); the canonical form is the stripped one. A file normalizes to the bare package name
+// only when the 'dependencies' section records the bare package as an alias of that same
+// entry file - an independent 'Index.ets' is not the entry when a custom entry ('Main.ets')
+// exists, so the file name alone must not normalize it. Every other file of the package
+// keeps its file-level identity, so same-name exports of sibling files ('dynlib/A',
+// 'dynlib/B') stay separate symbols instead of being merged under the package name.
+std::string CanonicalizeDynamicDependencyKey(std::string_view dependencyKey,
+                                             const ArkTsConfig::ExternalModuleData &moduleData,
+                                             const ArkTsConfig &config)
+{
+    auto dynamicSpecifier = GetDynamicImportSpecifierOrNull(dependencyKey, moduleData);
+    if (dynamicSpecifier.has_value()) {
+        return std::move(*dynamicSpecifier);
+    }
+    std::string key {dependencyKey};
+    const auto package = FirstModuleSegment(key);
+    if (key == package) {
+        return key;
+    }
+    auto filePart = key.substr(package.size() + 1U);
+    // The legacy full form carries the hvigor source root; the canonical form strips it.
+    if (filePart.rfind(MODULE_SOURCE_ROOT_PREFIX, 0U) == 0U) {
+        filePart = filePart.substr(MODULE_SOURCE_ROOT_PREFIX.size());
+    }
+    // The module entry is additionally registered under the bare package name; an entry
+    // key normalizes to the package name only when it names the same entry file.
+    const auto &dependencies = config.Dependencies();
+    const auto entryIt = dependencies.find(package);
+    if (entryIt != dependencies.cend() && IsSameDependencyFile(entryIt->second, moduleData)) {
+        return package;
+    }
+    return package + "/" + filePart;
+}
+
+// The dynamic module key ('dynamic@xxx', see GetDynamicImportSpecifierOrNull) when the file
+// is the declaration ('path') or source file ('sourceFilePath') of a dynamic dependency;
+// nullopt for files of static dependencies and files no dependency records. The
+// 'dependencies' section is the single source of truth for the dynamic classification, as
+// the build system records it - SDK directory layouts are not consulted here. The key keeps
+// the canonical file-level import form (see CanonicalizeDynamicDependencyKey): the module
+// entry normalizes to the package name, sibling files keep their file identity.
+std::optional<std::string> FindDynamicDeclModuleKey(const std::string &file, const ArkTsConfig &config)
+{
+    const auto entry = FindDependencyEntryForFile(file, config);
+    if (entry.first == nullptr) {
+        return std::nullopt;
+    }
+    if (entry.second->GetLanguage().IsDynamic()) {
+        return CanonicalizeDynamicDependencyKey(*entry.first, *entry.second, config);
+    }
+    return std::nullopt;
+}
+
+// See internal_api.h. The language of the dependency entry decides: the generated arktsconfig
+// records dynamic dependencies (and every declaration of a hybrid module) with a dynamic
+// language, while static modules either carry no entry or a static one.
+bool IsDynamicDependencyFile(const std::string &file, const ArkTsConfig &config)
+{
+    const auto entry = FindDependencyEntryForFile(file, config);
+    return entry.first != nullptr && entry.second->GetLanguage().IsDynamic();
+}
+
+// The canonical file-level import form (see CanonicalizeDynamicDependencyKey) of a resolved
+// import source: a dependency key of a dynamic module canonicalizes like the declaration
+// side, so both sides of a module symbol key match regardless of the key form written - the
+// legacy full form ('dynlib/src/main/ets/A') resolves to the transformed form, and an entry
+// alias ('dynlib/ets/Index') to the bare package name. Sources that are no dependency keys
+// (relative paths, unresolved specifiers) stay as they are.
+std::string CanonicalizeDynamicImportSource(const std::string &source, const ArkTsConfig &config)
+{
+    const auto &dependencies = config.Dependencies();
+    const auto entryIt = dependencies.find(source);
+    if (entryIt == dependencies.cend()) {
+        return source;
+    }
+    if (!GetDynamicImportSpecifierOrNull(entryIt->first, entryIt->second).has_value() &&
+        !entryIt->second.GetLanguage().IsDynamic()) {
+        return source;
+    }
+    return CanonicalizeDynamicDependencyKey(entryIt->first, entryIt->second, config);
+}
+
+// Computes the import module path between two files. When an arktsconfig is provided and the
+// definition file belongs to another module mapped by its 'paths' or 'dependencies' section,
+// the module import form is returned instead of a relative file path; declaration files of
+// dynamic dependencies (interop SDK declarations included) resolve to their canonical
+// file-level dynamic module key even when a 'paths' entry aliases the same file, and a
+// module-directory alias of the 'paths' section keeps the file's path under the module root
+// so symbols exported only by inner files stay importable. Definitions from the module of
+// the importing file keep the relative form.
+std::string ComputeRelativeImportPath(const std::string &fromFile, const std::string &toFile, const ArkTsConfig *config)
+{
+    if (config != nullptr) {
+        auto dynamicDeclModule = FindDynamicDeclModuleKey(toFile, *config);
+        if (dynamicDeclModule.has_value() && !IsSameModule(fromFile, toFile, *config)) {
+            return std::move(*dynamicDeclModule);
+        }
+        auto match = FindPathsMatch(toFile, *config);
+        if (match.has_value() && !IsSameModule(fromFile, toFile, *config)) {
+            return ImportSpecifierForPathsMatch(toFile, *match);
+        }
+        auto dynamicModule = FindDynamicDependencyModuleName(toFile, *config);
+        if (dynamicModule.has_value() && !IsSameModule(fromFile, toFile, *config)) {
+            return std::move(*dynamicModule);
+        }
+    }
     auto fromDirGen = fs::path(fromFile).parent_path().generic_string();
     auto toParentGen = fs::path(toFile).parent_path().generic_string();
     auto fileName = fs::path(toFile).filename().generic_string();
@@ -113,6 +444,106 @@ std::string ComputeRelativeImportPath(const std::string &fromFile, const std::st
     }
 
     return StripExtension(relative);
+}
+
+// See internal_api.h: the entry-level import form of a module file. Dynamic modules use the
+// canonical dependency key's package segment, 'paths' modules use the alias key (the
+// directory alias for a module root, the per-file key otherwise).
+std::string ComputeModuleImportPath(const std::string &toFile, const ArkTsConfig *config)
+{
+    if (config == nullptr || toFile.empty()) {
+        return "";
+    }
+    if (auto dynamicKey = FindDynamicDeclModuleKey(toFile, *config)) {
+        return FirstModuleSegment(*dynamicKey);
+    }
+    auto match = FindPathsMatch(toFile, *config);
+    if (!match.has_value()) {
+        return "";
+    }
+    return TrimIndexSegment(match->alias);
+}
+
+// See internal_api.h: the entry file of the module that owns 'file'.
+std::string FindModuleEntryFile(const std::string &file, const ArkTsConfig &config)
+{
+    if (auto dynamicKey = FindDynamicDeclModuleKey(file, config)) {
+        if (dynamicKey->find('/') == std::string::npos) {
+            return StripExtension(NormalizeModuleSeparators(file));
+        }
+        const auto package = FirstModuleSegment(*dynamicKey);
+        const auto &dependencies = config.Dependencies();
+        const auto entryIt = dependencies.find(package);
+        if (entryIt == dependencies.cend()) {
+            return "";
+        }
+        const auto &moduleData = entryIt->second;
+        const auto entryFile = !moduleData.SourceFilePath().empty() ? std::string(moduleData.SourceFilePath())
+                                                                    : std::string(moduleData.Path());
+        if (entryFile.empty()) {
+            return "";
+        }
+        return StripExtension(NormalizeModuleSeparators(entryFile));
+    }
+    auto match = FindPathsMatch(file, config);
+    if (!match.has_value()) {
+        return "";
+    }
+    const auto normalizedFile = StripExtension(NormalizeModuleSeparators(file));
+    const auto normalizedTarget = StripExtension(NormalizeModuleSeparators(match->target));
+    if (normalizedFile == normalizedTarget) {
+        return normalizedTarget;
+    }
+    return normalizedTarget + "/" + std::string(MODULE_ENTRY_SEGMENT);
+}
+
+const ArkTsConfig *GetArkTsConfigOrNull(const public_lib::Context *ctx)
+{
+    if (ctx == nullptr || ctx->config == nullptr || ctx->config->options == nullptr) {
+        return nullptr;
+    }
+    return &ctx->config->options->ArkTSConfig();
+}
+
+// The live-code mask of a source: true where the byte belongs to code, false inside line
+// comments, block comments and string literals. Template literals count as strings in full.
+// Regex literals are not distinguished from division: '/'-delimited patterns are
+// indistinguishable without parsing context (an accepted limitation of a text scan).
+std::vector<bool> BuildLiveCodeMask(const std::string &source)
+{
+    std::vector<bool> live(source.size(), true);
+    const auto markDead = [&live, &source](size_t from, size_t to) {
+        std::fill(live.begin() + static_cast<std::ptrdiff_t>(from),
+                  live.begin() + static_cast<std::ptrdiff_t>(std::min(to, source.size())), false);
+    };
+    size_t pos = 0;
+    while (pos < source.size()) {
+        const char c = source[pos];
+        if (c == '/' && pos + 1 < source.size() && source[pos + 1] == '/') {
+            const auto newline = source.find('\n', pos);
+            const auto end = newline == std::string::npos ? source.size() : newline;
+            markDead(pos, end);
+            pos = end;
+        } else if (c == '/' && pos + 1 < source.size() && source[pos + 1] == '*') {
+            const auto close = source.find("*/", pos + 2);
+            const auto end = close == std::string::npos ? source.size() : close + 2;
+            markDead(pos, end);
+            pos = end;
+        } else if (c == '\'' || c == '"' || c == '`') {
+            // Single- and double-quoted strings end at their quote or the line end
+            // (an unterminated literal recovers at the newline); templates span lines.
+            const bool endsAtLine = c != '`';
+            size_t end = pos + 1;
+            while (end < source.size() && source[end] != c && (!endsAtLine || source[end] != '\n')) {
+                end += source[end] == '\\' ? 2U : 1U;
+            }
+            markDead(pos, std::min(end + 1U, source.size()));
+            pos = std::min(end + 1U, source.size());
+        } else {
+            ++pos;
+        }
+    }
+    return live;
 }
 
 static bool IsBetterTouchingToken(const ir::AstNode *candidate, const ir::AstNode *current)
@@ -1574,11 +2005,19 @@ static std::vector<HighlightSpan> MakeHighlightSpansFromIndexedReferences(const 
         highlightSpans.emplace_back(fileName, false, textSpan, contextSpan, kind);
     };
 
-    if (!references.definitionInfo.fileName.empty()) {
+    bool hasDefinition = !references.definitionInfo.fileName.empty();
+    if (hasDefinition) {
         appendSpan(references.definitionInfo.fileName, references.definitionInfo.start,
                    references.definitionInfo.length, HighlightSpanKind::WRITTEN_REFERENCE);
     }
     for (const auto &refInfo : references.referenceInfos) {
+        // The definition occurrence also stays in the reference list; the written-
+        // reference span above already covers it, so the plain reference duplicate is
+        // skipped.
+        if (hasDefinition && refInfo.fileName == references.definitionInfo.fileName &&
+            refInfo.start == references.definitionInfo.start && refInfo.length == references.definitionInfo.length) {
+            continue;
+        }
         appendSpan(refInfo.fileName, refInfo.start, refInfo.length, HighlightSpanKind::REFERENCE);
     }
 

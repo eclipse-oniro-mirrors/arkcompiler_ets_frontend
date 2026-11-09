@@ -20,7 +20,7 @@ import { BuildConfig, PathConfig } from '../common/types';
 import {
   DEFAULT_CACHE_DIR,
   EXTERNAL_API_PATH_FROM_SDK,
-  INTEROP_STATIC_API_PATH_FROM_SDK,
+  INTEROP_DYNAMIC_API_PATH_FROM_SDK,
   LANGUAGE_VERSION
 } from '../common/preDefine';
 import { getFileLanguageVersion } from '../common/utils';
@@ -31,6 +31,7 @@ export interface ModuleDescriptor {
   moduleType: string;
   srcPath: string;
   arktsversion?: string;
+  entryFile?: string;
   aceModuleJsonPath?: string;
   sdkAliasConfigPath?: string;
   permissions?: string[];
@@ -134,11 +135,40 @@ function getModuleDependencies(modulePath: string, visited = new Set<string>()):
   };
 
   const dependencies = extractDependencies();
-  return Array.from(new Set([...dependencies]));
+  // Transitive closure, mirroring the build system's flattened dependency graph: every
+  // dependency module contributes its own oh-package 'file:' dependencies as well.
+  const transitive = dependencies.flatMap((depPath) => getModuleDependencies(depPath, visited));
+  return Array.from(new Set([...dependencies, ...transitive]));
 }
 
 function createMapEntryForPlugin(buildSdkPath: string, pluginName: string): string {
   return path.join(buildSdkPath, 'build-tools', 'ui-plugins', 'lib', pluginName, 'index');
+}
+
+// The decl file info of a dynamic module is looked up in the LSP declgen cache first, then in
+// the module build outputs produced by hvigor (declgen default layout and the etsFortgz
+// loader output layout).
+function resolveDeclFilesPath(declgenOutDir: string, moduleName: string, moduleRootPath: string): string {
+  const candidates = [
+    path.join(declgenOutDir, moduleName, 'declgen', 'dynamic', 'decl-fileInfo.json'),
+    path.join(moduleRootPath, 'build', 'default', 'intermediates', 'declgen', 'default', 'decl-fileInfo.json'),
+    path.join(
+      moduleRootPath,
+      'build',
+      'default',
+      'intermediates',
+      'loader_out',
+      'default',
+      'etsFortgz',
+      'decl-fileInfo.json'
+    )
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return candidates[0];
 }
 
 const DEFAULT_PLUGIN_LIST = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
@@ -178,6 +208,16 @@ function getModuleLanguageVersion(compileFiles: Set<string>): string {
   return found1_2 ? LANGUAGE_VERSION.ARKTS_1_2 : found1_1 ? LANGUAGE_VERSION.ARKTS_1_1 : '';
 }
 
+// Mirrors the build system: the module language is an input provided by the caller
+// (hvigor passes it per dependency module); the per-file 'use static' scan is only a
+// fallback for callers that do not declare it.
+function resolveModuleLanguageVersion(module: ModuleDescriptor, compileFiles: Set<string>): string {
+  if (module.arktsversion === LANGUAGE_VERSION.ARKTS_1_2 || module.arktsversion === LANGUAGE_VERSION.ARKTS_1_1) {
+    return module.arktsversion;
+  }
+  return getModuleLanguageVersion(compileFiles);
+}
+
 export function generateBuildConfigs(
   pathConfig: PathConfig,
   modules: ModuleDescriptor[],
@@ -197,7 +237,7 @@ export function generateBuildConfigs(
     for (const depPath of dependencies) {
       getEtsFiles(depPath).forEach((file) => depModuleCompileFiles.add(file));
     }
-    let languageVersion = getModuleLanguageVersion(compileFiles);
+    let languageVersion = resolveModuleLanguageVersion(module, compileFiles);
     allBuildConfigs[module.name] = {
       plugins: pluginMap,
       compileFiles: Array.from(compileFiles),
@@ -212,21 +252,23 @@ export function generateBuildConfigs(
       externalApiPath: pathConfig.externalApiPath
         ? pathConfig.externalApiPath
         : path.resolve(pathConfig.buildSdkPath, EXTERNAL_API_PATH_FROM_SDK),
+      // Dynamic SDK declarations live under the dynamic SDK root ('<sdk>/../dynamic/build-tools/interop',
+      // no 'declaration' level) - the same base the build system uses (process_build_config.ts
+      // initInteropSDKInfo); pointing at the static root's interop/declaration directory would
+      // load condensed interop stubs instead of the dynamic API declarations.
       interopApiPath: pathConfig.interopApiPath
         ? pathConfig.interopApiPath
-        : path.resolve(pathConfig.buildSdkPath, INTEROP_STATIC_API_PATH_FROM_SDK),
+        : path.resolve(pathConfig.buildSdkPath, INTEROP_DYNAMIC_API_PATH_FROM_SDK),
       cacheDir:
         pathConfig.cacheDir !== undefined ? pathConfig.cacheDir : path.join(pathConfig.projectPath, DEFAULT_CACHE_DIR),
-      declFilesPath:
-        languageVersion !== LANGUAGE_VERSION.ARKTS_1_2
-          ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'dynamic', 'decl-fileInfo.json')
-          : undefined,
+      declFilesPath: resolveDeclFilesPath(pathConfig.declgenOutDir, module.name, modulePath),
       declgenV1OutPath:
         languageVersion !== LANGUAGE_VERSION.ARKTS_1_1
           ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'static')
           : undefined,
       dependencies: processDependencies(module.name, dependencies, definedModules),
       sdkAliasConfigPath: module.sdkAliasConfigPath ? module.sdkAliasConfigPath : undefined,
+      entryFile: module.entryFile,
       permissions: module.permissions,
       deviceTypes: module.deviceTypes,
       compatibleVersion: module.compatibleVersion

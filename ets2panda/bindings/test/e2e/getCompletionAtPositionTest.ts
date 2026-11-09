@@ -309,7 +309,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 9,
       data: {
         namedExport: 'ability',
-        importDeclaration: '@ohos.ability.ability.d.ets'
+        importDeclaration: '@ohos.ability.ability'
       },
       hasAction: true
     },
@@ -320,7 +320,7 @@ describe('getCompletionAtPositionTest', () => {
     kind: 9,
       data: {
         namedExport: 'abilityManager',
-        importDeclaration: '@ohos.app.ability.abilityManager.d.ets'
+        importDeclaration: '@ohos.app.ability.abilityManager'
       },
       hasAction: true
     },
@@ -331,7 +331,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 7,
       data: {
         namedExport: 'Ability',
-        importDeclaration: '@ohos.app.ability.Ability.d.ets'
+        importDeclaration: '@ohos.app.ability.Ability'
       },
       hasAction: true
     },
@@ -342,7 +342,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 7,
       data: {
         namedExport: 'AbilityLifecycleCallback',
-        importDeclaration: '@ohos.app.ability.AbilityLifecycleCallback.d.ets'
+        importDeclaration: '@ohos.app.ability.AbilityLifecycleCallback'
       },
       hasAction: true
     }
@@ -355,7 +355,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 9,
       data: {
         namedExport: 'accessibility',
-        importDeclaration: '@ohos.accessibility.d.ets'
+        importDeclaration: '@ohos.accessibility'
       },
       hasAction: true
     },
@@ -366,7 +366,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 7,
       data: {
         namedExport: 'AccessibilityExtensionAbility',
-        importDeclaration: '@ohos.application.AccessibilityExtensionAbility.d.ets'
+        importDeclaration: '@ohos.application.AccessibilityExtensionAbility'
       },
       hasAction: true
     },
@@ -377,7 +377,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 9,
       data: {
         namedExport: 'access',
-        importDeclaration: '@ohos.bluetooth.access.d.ets'
+        importDeclaration: '@ohos.bluetooth.access'
       },
       hasAction: true
     }
@@ -390,7 +390,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 7,
       data: {
         namedExport: 'StartOptions',
-        importDeclaration: '@ohos.app.ability.StartOptions.d.ets'
+        importDeclaration: '@ohos.app.ability.StartOptions'
       },
       hasAction: true
     },
@@ -401,7 +401,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 8,
       data: {
         namedExport: 'StartupConfig',
-        importDeclaration: '@ohos.app.appstartup.StartupConfig.d.ets'
+        importDeclaration: '@ohos.app.appstartup.StartupConfig'
       },
       hasAction: true
     },
@@ -412,7 +412,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 7,
       data: {
         namedExport: 'StartupListener',
-        importDeclaration: '@ohos.app.appstartup.StartupListener.d.ets'
+        importDeclaration: '@ohos.app.appstartup.StartupListener'
       },
       hasAction: true
     },
@@ -423,7 +423,7 @@ describe('getCompletionAtPositionTest', () => {
       kind: 9,
       data: {
         namedExport: 'startupManager',
-        importDeclaration: '@ohos.app.appstartup.startupManager.d.ets'
+        importDeclaration: '@ohos.app.appstartup.startupManager'
       },
       hasAction: true
     }

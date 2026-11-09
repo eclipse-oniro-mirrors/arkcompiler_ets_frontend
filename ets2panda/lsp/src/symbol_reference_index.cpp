@@ -24,6 +24,7 @@
 #include "ir/module/importNamespaceSpecifier.h"
 #include "ir/module/importSpecifier.h"
 #include "lsp/include/internal_api.h"
+#include "node_matchers.h"
 #include "parser/program/program.h"
 #include "public/public.h"
 #include "checker/types/ets/etsObjectType.h"
@@ -70,6 +71,10 @@ struct ExportSymbolInfo {
 std::unordered_map<std::string, FileIndexData> g_fileIndices {};
 std::unordered_map<SymbolId, std::vector<ReferenceInfo>> g_symbolReferences {};
 std::unordered_map<SymbolId, ReferenceInfo> g_symbolDefinitions {};
+// The symbols whose reference lists changed during the program registration in flight;
+// the post-registration deduplication only visits them, keeping the cost proportional
+// to the registered program instead of the whole index.
+std::unordered_set<SymbolId> g_registrationTouchedSymbols {};
 std::unordered_map<SymbolId, ExportSymbolInfo> g_symbolExportInfos {};
 
 bool HasExportFlag(SymbolId symbolId, ExportFlag flag)
@@ -242,7 +247,7 @@ bool IsImportOwnerIdentifier(const ir::Identifier *declIdentifier)
     return parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() || parent->IsImportNamespaceSpecifier();
 }
 
-std::string GetImportSourcePath(const ir::Identifier *declIdentifier)
+std::string GetImportSourcePath(const ir::Identifier *declIdentifier, const ArkTsConfig *config)
 {
     if (!IsImportOwnerIdentifier(declIdentifier)) {
         return "";
@@ -256,51 +261,150 @@ std::string GetImportSourcePath(const ir::Identifier *declIdentifier)
     if (sourcePath.empty() && importDecl->Source() != nullptr) {
         sourcePath = std::string(importDecl->Source()->Str());
     }
+    if (sourcePath.empty()) {
+        return "";
+    }
+    // A resolved dependency key canonicalizes to its file-level form, matching the
+    // declaration side of the module symbol key regardless of the key form written.
+    if (config != nullptr) {
+        return CanonicalizeDynamicImportSource(sourcePath, *config);
+    }
     return sourcePath;
 }
 
-std::string BuildModuleSymbolKey(const ir::Identifier *declIdentifier, const public_lib::Context *ctx)
+// Dynamic SDK declaration files are imported through the dynamic module name
+// (`dynamic@ohos.xxx`), which is also the import source recorded for dynamic imports, so the
+// declaration file name is normalized to the same module name to make both sides of the
+// module symbol key match. The arktsconfig 'dependencies' entry for the file is
+// authoritative and covers every SDK layout; the path fallback covers legacy configs whose
+// generated dependencies predate the dynamic SDK root layout.
+std::string NormalizeDynamicDeclModuleKey(std::string fileName, const ArkTsConfig *config)
 {
-    if (declIdentifier == nullptr || declIdentifier->Parent() == nullptr) {
+    if (config != nullptr) {
+        if (auto dynamicKey = FindDynamicDeclModuleKey(fileName, *config)) {
+            return std::move(*dynamicKey);
+        }
+    }
+    constexpr std::string_view INTEROP_DECL_SEGMENT = "build-tools/interop/declaration/";
+    constexpr std::string_view DECL_SUFFIX = ".d.ets";
+    std::replace(fileName.begin(), fileName.end(), '\\', '/');
+    auto segmentPos = fileName.find(INTEROP_DECL_SEGMENT);
+    if (segmentPos == std::string::npos) {
+        return fileName;
+    }
+    auto moduleName = fileName.substr(segmentPos + INTEROP_DECL_SEGMENT.size());
+    // Strip the SDK category directory (api/, arkts/, kits/): it is not part of the
+    // dynamic module name.
+    const auto slashPos = moduleName.find('/');
+    if (slashPos != std::string::npos) {
+        moduleName = moduleName.substr(slashPos + 1);
+    }
+    if (moduleName.size() > DECL_SUFFIX.size() &&
+        moduleName.compare(moduleName.size() - DECL_SUFFIX.size(), DECL_SUFFIX.size(), DECL_SUFFIX) == 0) {
+        moduleName = moduleName.substr(0, moduleName.size() - DECL_SUFFIX.size());
+    }
+    // Declaration file names carry an '@' prefix for API modules; the dynamic module
+    // name referenced by imports (`dynamic@ohos.xxx`) does not.
+    if (!moduleName.empty() && moduleName.front() == '@') {
+        moduleName = moduleName.substr(1);
+    }
+    return "dynamic@" + moduleName;
+}
+
+// Export statements (`export default <decl>`, `export type X = ...`) flag the enclosing
+// statement, not the declaration identifier. Accept an identifier whose direct parent
+// chain (identifier -> declaration -> statement) reaches a statement carrying export
+// flags and whose name matches the statement's declaration name: the merged
+// default-export wrapper carries the exported declaration, and only the declaration's
+// own name identifies the exported symbol; sibling members stay excluded.
+std::string GetExportOwnerName(const ir::AstNode *node)
+{
+    if (node->IsClassDefinition()) {
+        auto *ident = node->AsClassDefinition()->Ident();
+        return ident != nullptr ? std::string(ident->Name()) : "";
+    }
+    // The remaining declaration kinds share the node_matchers helper: the mapping must
+    // stay in sync with the node info extractors.
+    auto *ident = GetDeclarationIdent(node);
+    return ident != nullptr ? std::string(ident->Name()) : "";
+}
+
+bool IsExportedViaParentStatement(const ir::Identifier *declIdentifier)
+{
+    constexpr std::size_t MAX_PARENT_DEPTH = 2U;  // CC-OFF(G.NAM.03-CPP) project code style
+    auto *current = declIdentifier->Parent();
+    for (std::size_t depth = 0; current != nullptr && depth < MAX_PARENT_DEPTH; ++depth) {
+        if (current->IsDefaultExported() || current->IsExported() || current->IsExportedType()) {
+            return GetExportOwnerName(current) == std::string(declIdentifier->Name());
+        }
+        current = current->Parent();
+    }
+    return false;
+}
+
+bool IsInsideDefaultExportStatement(const ir::Identifier *declIdentifier)
+{
+    if (declIdentifier->IsDefaultExported()) {
+        return true;
+    }
+    constexpr std::size_t MAX_PARENT_DEPTH = 2U;
+    auto *current = declIdentifier->Parent();
+    for (std::size_t depth = 0; current != nullptr && depth < MAX_PARENT_DEPTH; ++depth) {
+        if (current->IsDefaultExported()) {
+            return GetExportOwnerName(current) == std::string(declIdentifier->Name());
+        }
+        current = current->Parent();
+    }
+    return false;
+}
+
+// The module key of an import binding ('module:<resolved source>:<imported name>'): the
+// specifier kind decides the exported-name form (named, 'default' or '*').
+std::string BuildImportBindingModuleKey(const ir::Identifier *declIdentifier, const ArkTsConfig *config)
+{
+    const auto sourcePath = GetImportSourcePath(declIdentifier, config);
+    if (sourcePath.empty()) {
         return "";
     }
 
     auto *parent = declIdentifier->Parent();
-    if (IsImportOwnerIdentifier(declIdentifier)) {
-        const auto sourcePath = GetImportSourcePath(declIdentifier);
-        if (sourcePath.empty()) {
-            return "";
+    std::string exportedName;
+    if (parent->IsImportSpecifier()) {
+        auto *specifier = parent->AsImportSpecifier();
+        if (specifier->Imported() != nullptr) {
+            exportedName = std::string(specifier->Imported()->Name());
         }
-
-        std::string exportedName;
-        if (parent->IsImportSpecifier()) {
-            auto *specifier = parent->AsImportSpecifier();
-            if (specifier->Imported() != nullptr) {
-                exportedName = std::string(specifier->Imported()->Name());
-            }
-        } else if (parent->IsImportDefaultSpecifier()) {
-            exportedName = "default";
-        } else if (parent->IsImportNamespaceSpecifier()) {
-            exportedName = "*";
-        }
-
-        if (exportedName.empty()) {
-            return "";
-        }
-        return "module:" + sourcePath + ":" + exportedName;
+    } else if (parent->IsImportDefaultSpecifier()) {
+        exportedName = "default";
+    } else if (parent->IsImportNamespaceSpecifier()) {
+        exportedName = "*";
     }
 
-    if (!declIdentifier->IsExported() && !declIdentifier->IsDefaultExported() && !declIdentifier->HasExportAlias()) {
+    if (exportedName.empty()) {
+        return "";
+    }
+    return "module:" + sourcePath + ":" + exportedName;
+}
+
+// The module key of an exported declaration ('module:<declaring file>:<exported name>').
+std::string BuildExportedDeclModuleKey(const ir::Identifier *declIdentifier, const public_lib::Context *ctx)
+{
+    auto *parent = declIdentifier->Parent();
+    // Single evaluation: both the export gate and the exported-name branch need it, and
+    // each call walks the parent chain and builds the owner name string.
+    const bool insideDefaultExport = IsInsideDefaultExportStatement(declIdentifier);
+    if (!declIdentifier->IsExported() && !declIdentifier->IsDefaultExported() && !declIdentifier->HasExportAlias() &&
+        !declIdentifier->IsExportedType() && !insideDefaultExport && !IsExportedViaParentStatement(declIdentifier)) {
         return "";
     }
 
-    const auto moduleFileName = GetNodeFileName(declIdentifier, ctx);
+    auto moduleFileName = GetNodeFileName(declIdentifier, ctx);
     if (moduleFileName.empty()) {
         return "";
     }
-
+    moduleFileName = NormalizeDynamicDeclModuleKey(moduleFileName, GetArkTsConfigOrNull(ctx));
     std::string exportedName;
-    if (declIdentifier->IsDefaultExported()) {
+    if (declIdentifier->IsDefaultExported() || insideDefaultExport) {
         exportedName = "default";
     } else if (parent->IsExportSpecifier() && parent->AsExportSpecifier()->Exported() != nullptr) {
         exportedName = std::string(parent->AsExportSpecifier()->Exported()->Name());
@@ -314,6 +418,65 @@ std::string BuildModuleSymbolKey(const ir::Identifier *declIdentifier, const pub
     return "module:" + moduleFileName + ":" + exportedName;
 }
 
+std::string BuildModuleSymbolKey(const ir::Identifier *declIdentifier, const public_lib::Context *ctx)
+{
+    if (declIdentifier == nullptr || declIdentifier->Parent() == nullptr) {
+        return "";
+    }
+    if (IsImportOwnerIdentifier(declIdentifier)) {
+        return BuildImportBindingModuleKey(declIdentifier, GetArkTsConfigOrNull(ctx));
+    }
+    return BuildExportedDeclModuleKey(declIdentifier, ctx);
+}
+
+// The key of a named import alias binding ('import { value as valueA }'): the alias
+// spellings keep their own symbol, so the references of an alias stay inside the importing
+// file and neither the exporting module nor same-named exports of other modules leak in.
+// The default-export alias form ('import { default as stack }') keeps aggregating with its
+// declaration and yields nullopt here.
+std::optional<std::string> FindNamedImportAliasKey(const ir::Identifier *identifier, const public_lib::Context *ctx)
+{
+    const auto *program = identifier->Range().start.Program();
+    if (program == nullptr || program->Ast() == nullptr) {
+        return std::nullopt;
+    }
+    for (const auto *statement : program->Ast()->Statements()) {
+        if (statement == nullptr || !statement->IsETSImportDeclaration()) {
+            continue;
+        }
+        for (const auto *spec : statement->AsETSImportDeclaration()->Specifiers()) {
+            if (spec == nullptr || !spec->IsImportSpecifier()) {
+                continue;
+            }
+            const auto *specifier = spec->AsImportSpecifier();
+            const auto *local = specifier->Local();
+            const auto *imported = specifier->Imported();
+            if (local == nullptr || local->Name() != identifier->Name() || imported == nullptr ||
+                imported->Name() == local->Name() || imported->Name().Is("default")) {
+                continue;
+            }
+            return "import-alias:" + GetNodeFileName(identifier, ctx) + ":" + std::string(local->Name());
+        }
+    }
+    return std::nullopt;
+}
+
+// The symbol id of a named import alias occurrence: the alias spellings bind to the
+// exporting declaration, but are keyed to the alias binding instead (see
+// FindNamedImportAliasKey), so the exporting side keeps its own identity.
+std::optional<SymbolId> FindNamedImportAliasSymbolId(const ir::AstNode *declNode, const ir::Identifier *identifier,
+                                                     const public_lib::Context *ctx)
+{
+    if (!declNode->IsIdentifier() || identifier->Name() == declNode->AsIdentifier()->Name()) {
+        return std::nullopt;
+    }
+    auto aliasKey = FindNamedImportAliasKey(identifier, ctx);
+    if (!aliasKey.has_value()) {
+        return std::nullopt;
+    }
+    return static_cast<SymbolId>(std::hash<std::string> {}(*aliasKey));
+}
+
 SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identifier, const public_lib::Context *ctx)
 {
     if (declNode == nullptr || identifier == nullptr) {
@@ -325,6 +488,9 @@ SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identi
         key = BuildModuleSymbolKey(declNode->AsIdentifier(), ctx);
     }
     if (key.empty()) {
+        if (auto aliasSymbol = FindNamedImportAliasSymbolId(declNode, identifier, ctx); aliasSymbol.has_value()) {
+            return *aliasSymbol;
+        }
         const auto declFileName = GetNodeFileName(declNode, ctx);
         auto start = declNode->Start().index;
         auto end = declNode->End().index;
@@ -332,10 +498,14 @@ SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identi
         if (start == 0 && end == 0 && !declFileName.empty()) {
             return 0;
         }
-        key = declFileName + ":" + std::to_string(start) + ":" + std::to_string(end) + ":" +
-              std::string(identifier->Name()) + ":" + std::to_string(static_cast<int>(declNode->Type()));
+        // The key uses the declaration name, not the reference name: an aliased import
+        // (`import { default as stack }`) and the declaration itself must produce the
+        // same key so their references are aggregated into one symbol.
+        const auto &symbolName =
+            declNode->IsIdentifier() ? std::string(declNode->AsIdentifier()->Name()) : std::string(identifier->Name());
+        key = declFileName + ":" + std::to_string(start) + ":" + std::to_string(end) + ":" + symbolName + ":" +
+              std::to_string(static_cast<int>(declNode->Type()));
     }
-
     return static_cast<SymbolId>(std::hash<std::string> {}(key));
 }
 
@@ -409,6 +579,7 @@ void RemoveFileContributions(const std::string &fileName)
     for (const auto &entry : it->second.references) {
         const auto symbolId = entry.first;
         const auto refInfo = entry.second;
+        g_registrationTouchedSymbols.insert(symbolId);
         auto refsIt = g_symbolReferences.find(symbolId);
         if (refsIt == g_symbolReferences.end()) {
             continue;
@@ -449,9 +620,131 @@ void DeduplicateAndSortReferences(std::vector<ReferenceInfo> &refs)
                refs.end());
 }
 
+// A member of an exported class/interface/namespace/enum/struct is not itself a module
+// export: it is reachable only through its container and cannot be imported on its own.
+bool IsNestedExportMember(const ir::AstNode *owner)
+{
+    for (auto *parent = owner != nullptr ? owner->Parent() : nullptr; parent != nullptr; parent = parent->Parent()) {
+        if (parent->IsETSModule()) {
+            return false;
+        }
+        if (parent->IsClassDefinition()) {
+            auto *def = parent->AsClassDefinition();
+            // The class's own name is not a member; top-level declarations are also lowered
+            // into a global class. Only a non-global class definition contains nested members.
+            if (def->Ident() != owner && !def->IsGlobal() && !def->IsNamespaceTransformed()) {
+                return true;
+            }
+        } else if (parent->IsTSInterfaceBody() || parent->IsTSModuleBlock() || parent->IsETSStructDeclaration() ||
+                   parent->IsTSEnumDeclaration()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string NormalizeModuleFilePath(std::string path)
+{
+    std::replace(path.begin(), path.end(), '\\', '/');
+    return path;
+}
+
+std::string StripModuleFileExtension(std::string path)
+{
+    path = NormalizeModuleFilePath(std::move(path));
+    static constexpr std::string_view SUFFIXES[] = {".d.ets", ".d.ats", ".ets", ".ats", ".ts"};
+    for (const auto suffix : SUFFIXES) {
+        if (path.size() >= suffix.size() && path.compare(path.size() - suffix.size(), suffix.size(), suffix) == 0) {
+            path.resize(path.size() - suffix.size());
+            break;
+        }
+    }
+    return path;
+}
+
+// True when one specifier of an 'export { ... }' clause exports 'name': the bare
+// specifier itself or the exported alias after a trailing ' as '.
+static bool ExportSpecifierMatchesName(const std::string &part, const std::string &name)
+{
+    auto trim = [](std::string &value) {
+        value.erase(value.begin(),
+                    std::find_if(value.begin(), value.end(), [](unsigned char c) { return std::isspace(c) == 0; }));
+        value.erase(
+            std::find_if(value.rbegin(), value.rend(), [](unsigned char c) { return std::isspace(c) == 0; }).base(),
+            value.end());
+    };
+    auto trimmedPart = part;
+    trim(trimmedPart);
+    if (trimmedPart == name) {
+        return true;
+    }
+    const auto asPos = trimmedPart.rfind(" as ");
+    if (asPos == std::string::npos) {
+        return false;
+    }
+    auto exportedName = trimmedPart.substr(asPos + 4U);
+    trim(exportedName);
+    return exportedName == name;
+}
+
+// True when the '{ a, b as c }' body of one 'export' clause contains a specifier
+// exporting 'name'.
+static bool ExportClauseBodyHasName(const std::string &body, const std::string &name)
+{
+    size_t partStart = 0;
+    while (partStart < body.size()) {
+        const auto comma = body.find(',', partStart);
+        const auto partEnd = comma == std::string::npos ? body.size() : comma;
+        if (ExportSpecifierMatchesName(body.substr(partStart, partEnd - partStart), name)) {
+            return true;
+        }
+        if (comma == std::string::npos) {
+            break;
+        }
+        partStart = comma + 1U;
+    }
+    return false;
+}
+
+bool HasReExportOfName(const std::string &source, const std::string &name)
+{
+    const auto live = ark::es2panda::lsp::BuildLiveCodeMask(source);
+    constexpr std::string_view EXPORT_KEYWORD = "export";
+    auto exportPos = source.find(EXPORT_KEYWORD);
+    while (exportPos != std::string::npos) {
+        if (exportPos >= live.size() || !live[exportPos]) {
+            exportPos = source.find(EXPORT_KEYWORD, exportPos + 1U);
+            continue;
+        }
+        auto openBrace = exportPos + EXPORT_KEYWORD.size();
+        while (openBrace < source.size() && (std::isspace(static_cast<unsigned char>(source[openBrace])) != 0 ||
+                                             (openBrace < live.size() && !live[openBrace]))) {
+            ++openBrace;
+        }
+        if (openBrace >= source.size() || source[openBrace] != '{' || openBrace >= live.size() || !live[openBrace]) {
+            exportPos = source.find(EXPORT_KEYWORD, exportPos + 1U);
+            continue;
+        }
+        size_t closeBrace = openBrace + 1U;
+        while (closeBrace < source.size() &&
+               (closeBrace >= live.size() || !live[closeBrace] || source[closeBrace] != '}')) {
+            ++closeBrace;
+        }
+        if (closeBrace >= source.size()) {
+            return false;
+        }
+        const auto body = source.substr(openBrace + 1U, closeBrace - openBrace - 1U);
+        if (ExportClauseBodyHasName(body, name)) {
+            return true;
+        }
+        exportPos = source.find(EXPORT_KEYWORD, closeBrace + 1U);
+    }
+    return false;
+}
+
 bool IsExportedDefinition(const ir::Identifier *identifier, const ir::AstNode *owner)
 {
-    if (identifier == nullptr || owner == nullptr) {
+    if (identifier == nullptr || owner == nullptr || IsNestedExportMember(owner)) {
         return false;
     }
     if (identifier->IsExported() || identifier->IsDefaultExported() || identifier->HasExportAlias() ||
@@ -465,7 +758,7 @@ bool IsExportedDefinition(const ir::Identifier *identifier, const ir::AstNode *o
 
 bool IsDefaultExportDefinition(const ir::Identifier *identifier, const ir::AstNode *owner)
 {
-    if (identifier == nullptr || owner == nullptr) {
+    if (identifier == nullptr || owner == nullptr || IsNestedExportMember(owner)) {
         return false;
     }
     if (identifier->IsDefaultExported() || owner->IsDefaultExported()) {
@@ -536,6 +829,7 @@ bool RegisterReference(SymbolId symbolId, const ReferenceInfo &ref, size_t end,
     fileIndex.symbolOccurrences.push_back(SymbolOccurrence {ref.start, end, symbolId});
     fileIndex.references.emplace_back(symbolId, ref);
     g_symbolReferences[symbolId].push_back(ref);
+    g_registrationTouchedSymbols.insert(symbolId);
     return true;
 }
 
@@ -567,7 +861,7 @@ void AddDefinitionAndExportInfo(SymbolId symbolId, const ReferenceInfo &ref, con
     if (isExported) {
         exportFlags |= static_cast<uint8_t>(EXPORT_NAMED);
     }
-    if (identifier->IsDefaultExported() || (owner->Parent() != nullptr && owner->Parent()->IsDefaultExported())) {
+    if (IsDefaultExportDefinition(identifier, owner)) {
         exportFlags |= static_cast<uint8_t>(EXPORT_DEFAULT);
     }
     if (exportFlags == EXPORT_NONE) {
@@ -674,6 +968,7 @@ void AddFileReferenceFromImportDecl(const public_lib::Context *ctx, const ir::ET
 
     fileIndex.references.emplace_back(symbolId, refInfo);
     g_symbolReferences[symbolId].push_back(refInfo);
+    g_registrationTouchedSymbols.insert(symbolId);
 }
 
 void BuildImportFileReferencesForProgram(const public_lib::Context *ctx, parser::Program *program,
@@ -836,9 +1131,56 @@ void BuildReExportReferencesForProgram(const ReExportIndexState &state)
     }
 }
 
+// Dynamic SDK declaration files are immutable: once indexed, re-indexing them (for
+// example from another context's externals) is skipped so that the contributions of the
+// explicit declaration indexing - in particular the dynamic module symbol keys - are
+// preserved. User files keep the remove-and-rebuild behaviour for content updates.
+// The '/api/' + '@'-file heuristic is shared with isSdkInternalModule in completions.cpp
+// (module specifier suggestions) - update both together.
+// SDK declaration files (both the interop declarations and the static api declarations)
+// are immutable: once indexed, re-indexing them (for example from another context's
+// externals on every reference query) is skipped, so repeated queries neither redo the
+// work nor drop the contributions of the explicit declaration indexing - in particular
+// the dynamic module symbol keys. User files keep the remove-and-rebuild behaviour for
+// content updates.
+// The path segments match the SDK layouts the arktsconfig generator walks: 'ets/static/api'
+// and the interop declaration directories of either SDK root - the dynamic root
+// ('<sdk>/../dynamic/build-tools/interop/<category>/@x.d.ets') and the legacy static root
+// ('<sdk>/../static/build-tools/interop/declaration/<category>/@x.d.ets').
+bool IsImmutableSdkDeclFile(const std::string &fileName)
+{
+    static constexpr std::string_view INTEROP_DECL_SEGMENT = "build-tools/interop/";
+    static constexpr std::string_view DECL_SUFFIX = ".d.ets";
+    std::string normalized;
+    normalized.reserve(fileName.size());
+    std::transform(fileName.begin(), fileName.end(), std::back_inserter(normalized),
+                   [](char c) { return c == '\\' ? '/' : c; });
+    // Only the declaration files are immutable; the sibling bridge/*.ts sources under the
+    // same interop directories are not part of the indexed content.
+    if (normalized.find(INTEROP_DECL_SEGMENT) != std::string::npos && normalized.size() >= DECL_SUFFIX.size() &&
+        normalized.compare(normalized.size() - DECL_SUFFIX.size(), DECL_SUFFIX.size(), DECL_SUFFIX) == 0) {
+        return true;
+    }
+    static constexpr std::string_view STATIC_API_SEGMENT = "/api/";
+    // Only the '@'-prefixed SDK declarations under the api directory are immutable; the
+    // legacy category subdirectories (api/arkui/...) belong to the same immutable SDK
+    // content, but a project may legitimately own an 'api' directory, so the '@' file
+    // name prefix keeps the check conservative.
+    if (normalized.find(STATIC_API_SEGMENT) == std::string::npos || normalized.size() < DECL_SUFFIX.size() ||
+        normalized.compare(normalized.size() - DECL_SUFFIX.size(), DECL_SUFFIX.size(), DECL_SUFFIX) != 0) {
+        return false;
+    }
+    const auto fileNameStart = normalized.find_last_of('/') + 1;
+    return fileNameStart < normalized.size() && normalized[fileNameStart] == '@';
+}
+
 bool BuildSymbolReferenceIndexForProgram(const public_lib::Context *ctx, parser::Program *program)
 {
     const std::string fileName = std::string(program->SourceFilePath());
+    if (IsImmutableSdkDeclFile(fileName) && g_fileIndices.find(fileName) != g_fileIndices.end()) {
+        return true;
+    }
+    g_registrationTouchedSymbols.clear();
     RemoveFileContributions(fileName);
 
     FileIndexData fileIndex {};
@@ -863,9 +1205,13 @@ bool BuildSymbolReferenceIndexForProgram(const public_lib::Context *ctx, parser:
                   return lhs.end < rhs.end;  // CC-OFF(G.FMT.02-CPP) project code style
               });
 
-    for (auto &[symbolId, refs] : g_symbolReferences) {
-        DeduplicateAndSortReferences(refs);
+    for (const auto symbolId : g_registrationTouchedSymbols) {
+        auto refsIt = g_symbolReferences.find(symbolId);
+        if (refsIt != g_symbolReferences.end()) {
+            DeduplicateAndSortReferences(refsIt->second);
+        }
     }
+    g_registrationTouchedSymbols.clear();
 
     g_fileIndices[fileName] = std::move(fileIndex);
     return true;
@@ -879,6 +1225,7 @@ void InitSymbolReferenceIndex()
     g_symbolReferences.clear();
     g_symbolDefinitions.clear();
     g_symbolExportInfos.clear();
+    g_registrationTouchedSymbols.clear();
 }
 
 void ClearSymbolReferenceIndex()
@@ -913,6 +1260,23 @@ bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context)
         buildSuccess = BuildSymbolReferenceIndexForProgram(ctx, program) && buildSuccess;
     };
 
+    // An external MODULE-kind program whose file the arktsconfig records as a dynamic
+    // dependency was resolved through a 'paths' mapping instead of its 'dependencies' entry
+    // (e.g. the module-root mapping of a hybrid dependency catching a file whose declaration
+    // key is missing) and has been parsed with static semantics. Its symbols are provided by
+    // the indexed declaration programs, so the statically parsed copy is skipped. The main
+    // program keeps its index: the queried file is always indexed as compiled, also when a
+    // dynamic source is opened directly for editing.
+    const auto *arkTsConfig = GetArkTsConfigOrNull(ctx);
+    auto buildExternalIfNeeded = [&buildIfNeeded, arkTsConfig](parser::Program *program) {
+        if (arkTsConfig != nullptr && program != nullptr &&
+            program->GetModuleKind() == parser::Program::ModuleKind::MODULE &&
+            IsDynamicDependencyFile(std::string(program->AbsoluteName()), *arkTsConfig)) {
+            return;
+        }
+        buildIfNeeded(program);
+    };
+
     buildIfNeeded(ctx->parserProgram);
 
     auto *externalSources = ctx->parserProgram->GetExternalPrograms();
@@ -921,12 +1285,12 @@ bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context)
     }
 
     for (const auto &[_, program] : externalSources->Direct()) {
-        buildIfNeeded(program);
+        buildExternalIfNeeded(program);
     }
 
     // Traverse transitive externals across all module kinds:
     // MODULE, SOURCE_DECL, PACKAGE, ETSCACHE_DECL.
-    externalSources->template Visit<false>([&buildIfNeeded](auto *program) { buildIfNeeded(program); });
+    externalSources->template Visit<false>([&buildExternalIfNeeded](auto *program) { buildExternalIfNeeded(program); });
     return buildSuccess;
 }
 
@@ -978,15 +1342,13 @@ References GetReferencesAtPositionFromIndex(es2panda_Context *context, size_t po
     if (defIt != g_symbolDefinitions.end()) {
         const auto &defRef = defIt->second;
         result.definitionInfo = DefinitionInfo(defRef.fileName, defRef.start, defRef.length);
-        refs.erase(std::remove_if(refs.begin(), refs.end(),
-                                  // CC-OFFNXT(G.FMT.06-CPP) project code style
-                                  [defRef](const ReferenceInfo &ref) {
-                                      return ref.fileName == defRef.fileName && ref.start == defRef.start &&
-                                             ref.length == defRef.length;
-                                  }),  // CC-OFF(G.FMT.02-CPP) project code style
-                   refs.end());
     }
 
+    // The definition occurrence stays in the reference list: a symbol whose only
+    // declaration-side occurrence is the definition (for example a single SDK
+    // declaration) must still report that location as a reference. The rename
+    // locations consumer merges the two fields through a location set and keeps
+    // reporting the declaration exactly once.
     DeduplicateAndSortReferences(refs);
     result.referenceInfos = std::move(refs);
     return result;
@@ -1227,6 +1589,96 @@ std::vector<std::string> FindSimilarSymbolNames(const std::string &query, const 
     return result;
 }
 
+// True when the source contains the reference form of a default export ('export default
+// <name>'; the name must be a whole word): the referenced declaration node carries no
+// default-export flag, so the definition text is the authoritative signal. The scan skips
+// comments and strings (see BuildLiveCodeMask), so a commented-out default export does not
+// turn a named-only export into a default one.
+bool HasDefaultExportReference(const std::string &source, const std::string &name)
+{
+    constexpr std::string_view KEYWORD = "export default ";
+    const auto live = ark::es2panda::lsp::BuildLiveCodeMask(source);
+    auto pos = source.find(KEYWORD);
+    while (pos != std::string::npos) {
+        const auto namePos = pos + KEYWORD.size();
+        const bool startsInCode = pos < live.size() && live[pos] && namePos < live.size() && live[namePos];
+        if (startsInCode && source.compare(namePos, name.size(), name) == 0) {
+            const auto after = namePos + name.size();
+            if (after >= source.size() ||
+                (std::isalnum(static_cast<unsigned char>(source[after])) == 0 && source[after] != '_')) {
+                return true;
+            }
+        }
+        pos = source.find(KEYWORD, pos + 1U);
+    }
+    return false;
+}
+
+// The declaration side of the module entry owning 'file': the package entry dependency's
+// 'path'. Dynamic modules record the entry re-exports in this declaration while the entry
+// source stays the navigation target, and it is the side the symbol index holds for a
+// dynamic module. Empty for entry files themselves, files outside a dynamic module and
+// entries without a declaration.
+static std::string FindModuleEntryDeclFile(const std::string &file, const ArkTsConfig &config)
+{
+    const auto dynamicKey = ark::es2panda::lsp::FindDynamicDeclModuleKey(file, config);
+    if (!dynamicKey.has_value()) {
+        return "";
+    }
+    const auto separatorPos = dynamicKey->find('/');
+    if (separatorPos == std::string::npos) {
+        return "";
+    }
+    const auto &dependencies = config.Dependencies();
+    const auto entryIt = dependencies.find(dynamicKey->substr(0U, separatorPos));
+    if (entryIt == dependencies.cend()) {
+        return "";
+    }
+    const auto &declPath = entryIt->second.Path();
+    if (declPath.empty()) {
+        return "";
+    }
+    return StripModuleFileExtension(std::string(declPath));
+}
+
+bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &symbolName, const ArkTsConfig *config)
+{
+    if (config == nullptr || file.empty() || symbolName.empty()) {
+        return false;
+    }
+    const auto entryFile = ark::es2panda::lsp::FindModuleEntryFile(file, *config);
+    if (entryFile.empty()) {
+        return false;
+    }
+    const auto entryDeclFile = FindModuleEntryDeclFile(file, *config);
+    for (const auto &[symbolId, info] : g_symbolExportInfos) {
+        static_cast<void>(symbolId);
+        if ((info.flags & (EXPORT_NAMED | EXPORT_DEFAULT)) == 0U || info.symbolName != symbolName) {
+            continue;
+        }
+        // The export must be declared by the entry file itself (source or declaration),
+        // not by an inner file that merely belongs to the same module.
+        if (StripModuleFileExtension(info.fileName) == entryFile ||
+            (!entryDeclFile.empty() && StripModuleFileExtension(info.fileName) == entryDeclFile)) {
+            return true;
+        }
+        if (auto dynamicKey = ark::es2panda::lsp::FindDynamicDeclModuleKey(info.fileName, *config);
+            dynamicKey.has_value() && dynamicKey->find('/') == std::string::npos) {
+            return true;
+        }
+    }
+    for (const auto &[indexedFile, fileData] : g_fileIndices) {
+        const auto strippedIndexedFile = StripModuleFileExtension(indexedFile);
+        if (strippedIndexedFile != entryFile && strippedIndexedFile != entryDeclFile) {
+            continue;
+        }
+        if (HasReExportOfName(fileData.source, symbolName)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string &name, const std::string &excludeFile)
 {
     std::vector<SymbolDefSearchResult> results;
@@ -1234,6 +1686,12 @@ std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string
 
     for (const auto &[symbolId, defRef] : g_symbolDefinitions) {
         if (defRef.fileName == excludeFile) {
+            continue;
+        }
+        // Only module exports are importable: nested members (class/interface/namespace/
+        // enum/struct members) are not recorded in the export info and must not be offered.
+        auto exportIt = g_symbolExportInfos.find(symbolId);
+        if (exportIt == g_symbolExportInfos.end() || (exportIt->second.flags & (EXPORT_NAMED | EXPORT_DEFAULT)) == 0U) {
             continue;
         }
 
@@ -1262,6 +1720,9 @@ std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string
         }
 
         bool isDefault = HasExportFlag(symbolId, EXPORT_DEFAULT);
+        if (!isDefault && HasDefaultExportReference(source, symbolName)) {
+            isDefault = true;
+        }
 
         results.push_back(SymbolDefSearchResult {defRef.fileName, symbolName, isDefault});
     }
@@ -1309,6 +1770,11 @@ std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std
         }
 
         bool isDefault = HasExportFlag(symbolId, EXPORT_DEFAULT);
+        auto fileIt = g_fileIndices.find(defRef.fileName);
+        if (!isDefault && fileIt != g_fileIndices.end() &&
+            HasDefaultExportReference(fileIt->second.source, symbolName)) {
+            isDefault = true;
+        }
         results.push_back(
             SymbolDefSearchResult {defRef.fileName, symbolName, isDefault, info.declType, info.returnType});
     }

@@ -322,11 +322,13 @@ TEST_F(LspNodeMatchersTests, GetNodeMatchers_ReturnsNonEmptyMap)
     EXPECT_NE(matchers.find(AstNodeType::TS_ENUM_DECLARATION), matchers.end());
     EXPECT_NE(matchers.find(AstNodeType::TS_INTERFACE_DECLARATION), matchers.end());
     EXPECT_NE(matchers.find(AstNodeType::EXPORT_SPECIFIER), matchers.end());
+    EXPECT_NE(matchers.find(AstNodeType::EXPORT_NAMED_DECLARATION), matchers.end());
+    EXPECT_NE(matchers.find(AstNodeType::EXPORT_DEFAULT_DECLARATION), matchers.end());
     EXPECT_NE(matchers.find(AstNodeType::MEMBER_EXPRESSION), matchers.end());
     EXPECT_NE(matchers.find(AstNodeType::STRUCT_DECLARATION), matchers.end());
     EXPECT_NE(matchers.find(AstNodeType::CALL_EXPRESSION), matchers.end());
     EXPECT_NE(matchers.find(AstNodeType::IMPORT_SPECIFIER), matchers.end());
-    EXPECT_EQ(matchers.size(), 38U);
+    EXPECT_EQ(matchers.size(), 40U);
 }
 
 TEST_F(LspNodeMatchersTests, GetNodeExtractors_ReturnsNonEmptyMap)
@@ -346,6 +348,8 @@ TEST_F(LspNodeMatchersTests, GetNodeExtractors_ReturnsNonEmptyMap)
     EXPECT_NE(extractors.find(AstNodeType::TS_TYPE_ALIAS_DECLARATION), extractors.end());
     EXPECT_NE(extractors.find(AstNodeType::EXPORT_SPECIFIER), extractors.end());
     EXPECT_NE(extractors.find(AstNodeType::REEXPORT_STATEMENT), extractors.end());
+    EXPECT_NE(extractors.find(AstNodeType::EXPORT_NAMED_DECLARATION), extractors.end());
+    EXPECT_NE(extractors.find(AstNodeType::EXPORT_DEFAULT_DECLARATION), extractors.end());
     EXPECT_NE(extractors.find(AstNodeType::MEMBER_EXPRESSION), extractors.end());
     EXPECT_NE(extractors.find(AstNodeType::CALL_EXPRESSION), extractors.end());
     EXPECT_NE(extractors.find(AstNodeType::SUPER_EXPRESSION), extractors.end());
@@ -364,7 +368,7 @@ TEST_F(LspNodeMatchersTests, GetNodeExtractors_ReturnsNonEmptyMap)
     EXPECT_NE(extractors.find(AstNodeType::IMPORT_DEFAULT_SPECIFIER), extractors.end());
     EXPECT_NE(extractors.find(AstNodeType::IMPORT_NAMESPACE_SPECIFIER), extractors.end());
     EXPECT_NE(extractors.find(AstNodeType::TS_TYPE_PARAMETER), extractors.end());
-    EXPECT_EQ(extractors.size(), 30U);
+    EXPECT_EQ(extractors.size(), 32U);
 }
 
 TEST_F(LspNodeMatchersTests, GetNodeInfoHandlers_ReturnsNonEmptyMap)

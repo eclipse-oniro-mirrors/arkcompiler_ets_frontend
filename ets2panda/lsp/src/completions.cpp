@@ -19,6 +19,7 @@
 #include "checker/types/ets/etsObjectType.h"
 #include "internal_api.h"
 #include "quick_info.h"
+#include "services/import_utils.h"
 #include "symbol_reference_index.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
@@ -58,6 +59,10 @@ static std::vector<CompletionEntry> GetPropertyCompletionsImpl(ir::AstNode *preN
 static std::string NormalizeCompletionMatchPrefix(const std::string &prefix);
 
 static std::unordered_map<std::string, std::vector<ExternalApiCollectInfo>> g_externalApiCollects {};
+
+// The source file of the program currently being walked by the API collection; entries
+// collected from it carry it as the origin of their nodes.
+static std::string g_currentCollectSourceFile;
 
 inline fs::path NormalizePath(const fs::path &p)
 {
@@ -115,7 +120,21 @@ static void AddCollectApiEntry(const std::string &name, const std::string &path,
     }
 
     auto resolvedInsertText = insertText.empty() ? name : insertText;
-    g_externalApiCollects[name].push_back({path, kind, resolvedInsertText, isDefault});
+    auto &entries = g_externalApiCollects[name];
+    for (auto &entry : entries) {
+        if (entry.importDeclaration != path) {
+            continue;
+        }
+        // The same symbol of the same module keeps a single importable form: 'export default'
+        // and the local-export binding of the referenced declaration can both record it, and
+        // the default-export record wins so one module never yields both import forms.
+        if (entry.isDefault || !isDefault) {
+            return;
+        }
+        entry.isDefault = true;
+        return;
+    }
+    entries.push_back({path, kind, resolvedInsertText, isDefault, g_currentCollectSourceFile});
 }
 
 static bool AddCollectApiEntryByDecl(const std::string &name, const std::string &path, const ir::AstNode *decl,
@@ -185,6 +204,19 @@ static bool IsAtPrefixedFileName(const std::string &path)
     return !fileName.empty() && fileName.front() == '@';
 }
 
+// The importable module form of a declaration file path: dynamic dependency
+// declarations import through their dynamic module name ('dynamic@xxx'), every other
+// file keeps its own path.
+static std::string ResolveImportDeclaration(
+    const std::string &path, const std::unordered_map<std::string, std::string> &dynamicImportDeclarations)
+{
+    auto dynamicIt = dynamicImportDeclarations.find(NormalizePath(fs::path(path)).string());
+    if (dynamicIt != dynamicImportDeclarations.end()) {
+        return dynamicIt->second;
+    }
+    return path;
+}
+
 static void CollectFromKitImportSpecifier(const ir::AstNode *specifier, const std::string &importPath)
 {
     if (specifier == nullptr || importPath.empty()) {
@@ -217,15 +249,18 @@ static void CollectFromKitImportSpecifier(const ir::AstNode *specifier, const st
     }
 }
 
-static void CollectExportsFromKitImports(parser::Program *program)
+static void CollectExportsFromKitImports(parser::Program *program,
+                                         const std::unordered_map<std::string, std::string> &dynamicImportDeclarations)
 {
     if (program == nullptr || program->Ast() == nullptr) {
         return;
     }
-    auto importPath = std::string(program->SourceFilePath());
-    if (importPath.empty()) {
+    auto kitPath = std::string(program->SourceFilePath());
+    if (kitPath.empty()) {
         return;
     }
+    g_currentCollectSourceFile = kitPath;
+    auto importDeclaration = ResolveImportDeclaration(kitPath, dynamicImportDeclarations);
 
     for (auto *statement : program->Ast()->Statements()) {
         if (statement == nullptr || !statement->IsETSImportDeclaration()) {
@@ -233,7 +268,7 @@ static void CollectExportsFromKitImports(parser::Program *program)
         }
 
         for (auto *specifier : statement->AsETSImportDeclaration()->Specifiers()) {
-            CollectFromKitImportSpecifier(specifier, importPath);
+            CollectFromKitImportSpecifier(specifier, importDeclaration);
         }
     }
 }
@@ -245,7 +280,10 @@ static bool TryCollectClassExport(const ir::AstNode *node, const std::string &pa
     }
 
     auto *definition = node->AsClassDeclaration()->Definition();
-    auto *ident = definition == nullptr ? nullptr : definition->Ident();
+    if (definition == nullptr) {
+        return true;
+    }
+    auto *ident = definition->Ident();
     auto kind = CompletionEntryKind::CLASS;
     if (definition->IsEnumTransformed()) {
         kind = CompletionEntryKind::ENUM;
@@ -382,6 +420,7 @@ static void CollectExportsFromProgram(parser::Program *program, const std::strin
     if (program == nullptr || program->Ast() == nullptr) {
         return;
     }
+    g_currentCollectSourceFile = std::string(program->SourceFilePath());
 
     for (auto *statement : program->Ast()->Statements()) {
         if (statement == nullptr) {
@@ -410,6 +449,25 @@ static void CollectExportsFromProgram(parser::Program *program, const std::strin
     }
 }
 
+// Map dynamic sdk declaration files to their importable module names ("dynamic@xxx")
+// so that auto import completions use the module name instead of the file path; the
+// dynamic specifier rules live in internal_api (GetDynamicImportSpecifierOrNull).
+static std::unordered_map<std::string, std::string> BuildDynamicImportDeclarations(public_lib::Context *ctx)
+{
+    std::unordered_map<std::string, std::string> importDeclarations;
+    if (ctx->config == nullptr || ctx->config->options == nullptr) {
+        return importDeclarations;
+    }
+    for (const auto &[moduleName, moduleData] : ctx->config->options->ArkTSConfig().Dependencies()) {
+        auto importSpecifier = GetDynamicImportSpecifierOrNull(moduleName, moduleData);
+        if (!importSpecifier.has_value() || moduleData.Path().empty()) {
+            continue;
+        }
+        importDeclarations.emplace(NormalizePath(fs::path(moduleData.Path())).string(), std::move(*importSpecifier));
+    }
+    return importDeclarations;
+}
+
 // Collect all the exported API in the SDK
 bool CollectApiCompletionInfo(es2panda_Context *context)
 {
@@ -423,6 +481,7 @@ bool CollectApiCompletionInfo(es2panda_Context *context)
 
     g_externalApiCollects.clear();
 
+    const auto dynamicImportDeclarations = BuildDynamicImportDeclarations(ctx);
     const auto &externalSourceDecls = ctx->parserProgram->GetExternalPrograms()->Get<util::ModuleKind::SOURCE_DECL>();
     for (const auto &extProg : externalSourceDecls) {
         if (extProg == nullptr) {
@@ -432,7 +491,7 @@ bool CollectApiCompletionInfo(es2panda_Context *context)
         if (!IsAtPrefixedFileName(path)) {
             continue;
         }
-        CollectExportsFromProgram(extProg, path);
+        CollectExportsFromProgram(extProg, ResolveImportDeclaration(path, dynamicImportDeclarations));
     }
 
     const auto &externalModules = ctx->parserProgram->GetExternalPrograms()->Get<util::ModuleKind::MODULE>();
@@ -440,8 +499,25 @@ bool CollectApiCompletionInfo(es2panda_Context *context)
         if (extProg == nullptr) {
             continue;
         }
-        CollectExportsFromKitImports(extProg);
+        CollectExportsFromKitImports(extProg, dynamicImportDeclarations);
     }
+
+    // Simultaneous-mode contexts (compileKits) register every parsed source file in the
+    // direct external map instead of the transitive ones: the SDK kit files live there,
+    // and their import specifiers are the kit's re-export surface. Only kit files are
+    // processed, so ordinary project sources of other simultaneous contexts stay out.
+    for (const auto &entry : ctx->parserProgram->GetExternalPrograms()->Direct()) {
+        auto *kitProg = entry.second;
+        if (kitProg == nullptr) {
+            continue;
+        }
+        auto kitPath = std::string(kitProg->SourceFilePath());
+        if (fs::path(kitPath).filename().string().rfind("@kit.", 0) != 0) {
+            continue;
+        }
+        CollectExportsFromKitImports(kitProg, dynamicImportDeclarations);
+    }
+    g_currentCollectSourceFile.clear();
     return true;
 }
 
@@ -2392,7 +2468,36 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
 
 bool IsAnnotationBeginning(std::string sourceCode, size_t pos)
 {
-    return sourceCode.at(pos - 1) == '@';
+    return pos > 0 && pos <= sourceCode.size() && sourceCode.at(pos - 1) == '@';
+}
+
+// True when the position sits inside an import module specifier string, where a
+// trailing '@' belongs to the module name (e.g. typing 'dynamic@' or '@') instead of
+// starting an annotation.
+bool IsInsideImportStringLiteral(std::string_view sourceCode, size_t pos)
+{
+    const auto lastNewline = sourceCode.rfind('\n', pos == 0 ? 0 : pos - 1);
+    const auto lineStart = lastNewline == std::string_view::npos ? 0 : lastNewline + 1;
+    // The line is examined through its end: the closing quote at or after the cursor must
+    // stay visible, otherwise "inside the specifier" cannot be told from "at its end".
+    const auto nextNewline = sourceCode.find('\n', pos);
+    const auto lineEnd = nextNewline == std::string_view::npos ? sourceCode.size() : nextNewline;
+    const auto line = sourceCode.substr(lineStart, lineEnd - lineStart);
+    const auto cursor = pos - lineStart;
+    if (cursor == 0) {
+        return false;
+    }
+    // The quote opening the specifier must precede the cursor.
+    const auto quote = line.rfind('\'', cursor - 1);
+    if (quote == std::string_view::npos) {
+        return false;
+    }
+    // The cursor must sit inside the string: before its closing quote, when there is one.
+    const auto closingQuote = line.find('\'', quote + 1);
+    if (closingQuote != std::string_view::npos && closingQuote <= cursor) {
+        return false;
+    }
+    return line.find("from '") != std::string_view::npos || line.find("from \"") != std::string_view::npos;
 }
 
 std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, std::vector<CompletionEntry> &completions,
@@ -2443,6 +2548,9 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
 
 static bool IsSelectiveImportPosition(es2panda_Context *context, const ir::ETSImportDeclaration *importDecl, size_t pos)
 {
+    if (context == nullptr || importDecl == nullptr) {
+        return false;
+    }
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     std::string sourceCode(ctx->parserProgram->SourceCode());
     auto start = importDecl->Start().index;
@@ -2502,6 +2610,62 @@ bool TryCompleteMissingFromKeyword(std::vector<CompletionEntry> &completions, ir
     return true;
 }
 
+// Module specifier suggestions inside an import statement string literal: module aliases
+// registered by the arktsconfig 'paths' section and dependency specifiers from the
+// 'dependencies' section are offered (e.g. 'library', '@ohos.hilog', 'dynamic@ohos.hilog').
+// Relative path segments are completed by the IDE itself and are not covered here.
+static std::vector<CompletionEntry> GetImportModuleSpecifierCompletions(const std::string &importText,
+                                                                        const public_lib::Context *ctx)
+{
+    std::vector<CompletionEntry> completions;
+    const auto *arkTsConfig = GetArkTsConfigOrNull(ctx);
+    if (arkTsConfig == nullptr) {
+        return completions;
+    }
+    auto lowerPrefix = ToLowerCase(importText);
+    std::unordered_set<std::string> seenSpecifiers;
+    auto tryEmplace = [&completions, &seenSpecifiers, &lowerPrefix](std::string_view specifier) {
+        auto text = std::string(specifier);
+        if (ToLowerCase(text).find(lowerPrefix) == std::string::npos || !seenSpecifiers.insert(text).second) {
+            return;
+        }
+        completions.emplace_back(text, CompletionEntryKind::MODULE, std::string(sort_text::GLOBALS_OR_KEYWORDS), text);
+    };
+    // SDK category modules (e.g. 'arkui.SymbolGlyphModifier') live under the SDK api
+    // directory and are imported only by the SDK's own '@'-prefixed declarations; they
+    // are not part of the user-facing module syntax and stay out of the suggestions.
+    // The standard library aliases and project modules resolve outside the api
+    // directory and remain visible. The '/api/' + '@'-file heuristic is shared with
+    // IsImmutableSdkDeclFile in symbol_reference_index.cpp - update both together.
+    auto isSdkInternalModule = [](std::string_view alias, const std::vector<std::string> &targets) {
+        if (alias.empty() || alias.front() == '@' || targets.empty()) {
+            return false;
+        }
+        auto target = targets.front();
+        std::replace(target.begin(), target.end(), '\\', '/');
+        if (target.find("/api/") == std::string::npos) {
+            return false;
+        }
+        auto fileName = target.substr(target.find_last_of('/') + 1);
+        return !fileName.empty() && fileName.front() != '@';
+    };
+    for (const auto &[alias, targets] : arkTsConfig->Paths()) {
+        if (isSdkInternalModule(alias, targets)) {
+            continue;
+        }
+        tryEmplace(alias);
+    }
+    for (const auto &[dependencyKey, moduleData] : arkTsConfig->Dependencies()) {
+        tryEmplace(dependencyKey);
+        // Build-system-format dependency items carry the import aliases ('@ohos.x' and
+        // 'dynamic@ohos.x') alongside the 'dynamic/'-prefixed key.
+        for (const auto &alias : moduleData.Alias()) {
+            tryEmplace(alias);
+        }
+    }
+    return completions;
+}
+
 std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *context, ir::AstNode *node, size_t pos)
 {
     std::vector<CompletionEntry> completions;
@@ -2542,7 +2706,10 @@ std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *con
             searchDir = normalized;
             prefix.clear();
         }
-        return GetImportStatementPathCompletions(completions, searchDir, prefix);
+        GetImportStatementPathCompletions(completions, searchDir, prefix);
+        auto moduleSpecifiers = GetImportModuleSpecifierCompletions(importText, ctx);
+        completions.insert(completions.end(), moduleSpecifiers.begin(), moduleSpecifiers.end());
+        return completions;
     } else if (node->IsIdentifier()) {
         // Get completion of export var from import path
         auto parent = node->Parent();
@@ -2660,11 +2827,15 @@ std::vector<CompletionEntry> SortCompletionEntries(std::vector<CompletionEntry> 
     return completions;
 }
 
-static std::vector<CompletionEntry> GetCollectedApiCompletions(const std::string &prefix, const char *fileName,
+static std::vector<CompletionEntry> GetCollectedApiCompletions(const std::string &prefix,
                                                                const std::unordered_set<std::string> &existingNames)
 {
     std::vector<CompletionEntry> completions;
     auto lowerPrefix = ToLowerCase(prefix);
+    // The same SDK symbol may be collected from several declarations (e.g. the interop
+    // declaration visited more than once); entries sharing the module specifier produce the
+    // same import statement, so only the first of each is kept.
+    std::unordered_set<std::string> seenModuleSpecifiers;
 
     for (const auto &[name, infos] : g_externalApiCollects) {
         if (ToLowerCase(name).find(lowerPrefix) == std::string::npos ||
@@ -2673,8 +2844,14 @@ static std::vector<CompletionEntry> GetCollectedApiCompletions(const std::string
         }
 
         for (const auto &info : infos) {
+            // The import declaration mirrors the module specifier of the import statement:
+            // an alias for SDK components, e.g. '@ohos.hilog' or 'dynamic@ohos.hilog'.
+            auto importDeclaration = NormalizeImportModulePath(info.importDeclaration);
+            if (!seenModuleSpecifiers.insert(name + '\0' + importDeclaration).second) {
+                continue;
+            }
             completions.emplace_back(name, info.kind, std::string(sort_text::AUTO_IMPORT_SUGGESTIONS), info.insertText,
-                                     CompletionEntryData(fileName, name, info.importDeclaration, info.insertText), "",
+                                     CompletionEntryData(info.sourceFile, name, importDeclaration, info.insertText), "",
                                      true);
         }
     }
@@ -2682,38 +2859,44 @@ static std::vector<CompletionEntry> GetCollectedApiCompletions(const std::string
     return completions;
 }
 
-static std::vector<CompletionEntry> GetSymbolIndexedApiCompletions(const std::string &prefix, const char *fileName,
-                                                                   const std::unordered_set<std::string> &existingNames)
+static CompletionEntryKind InferCompletionKindFromDeclType(ir::AstNodeType declType)
 {
-    auto inferCompletionKindFromDeclType = [](ir::AstNodeType declType) -> CompletionEntryKind {
-        switch (declType) {
-            case ir::AstNodeType::FUNCTION_DECLARATION:
-                return CompletionEntryKind::METHOD;
-            case ir::AstNodeType::CLASS_DECLARATION:
-                return CompletionEntryKind::CLASS;
-            case ir::AstNodeType::TS_INTERFACE_DECLARATION:
-                return CompletionEntryKind::INTERFACE;
-            case ir::AstNodeType::TS_ENUM_DECLARATION:
-                return CompletionEntryKind::ENUM;
-            case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
-                return CompletionEntryKind::ALIAS_TYPE;
-            case ir::AstNodeType::TS_MODULE_DECLARATION:
-                return CompletionEntryKind::MODULE;
-            case ir::AstNodeType::VARIABLE_DECLARATION:
-                return CompletionEntryKind::VARIABLE;
-            default:
-                return CompletionEntryKind::VARIABLE;
-        }
-    };
+    switch (declType) {
+        case ir::AstNodeType::FUNCTION_DECLARATION:
+            return CompletionEntryKind::METHOD;
+        case ir::AstNodeType::CLASS_DECLARATION:
+            return CompletionEntryKind::CLASS;
+        case ir::AstNodeType::TS_INTERFACE_DECLARATION:
+            return CompletionEntryKind::INTERFACE;
+        case ir::AstNodeType::TS_ENUM_DECLARATION:
+            return CompletionEntryKind::ENUM;
+        case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
+            return CompletionEntryKind::ALIAS_TYPE;
+        case ir::AstNodeType::TS_MODULE_DECLARATION:
+            return CompletionEntryKind::MODULE;
+        case ir::AstNodeType::VARIABLE_DECLARATION:
+            return CompletionEntryKind::VARIABLE;
+        default:
+            return CompletionEntryKind::VARIABLE;
+    }
+}
 
+static std::vector<CompletionEntry> GetSymbolIndexedApiCompletions(const std::string &prefix, const char *fileName,
+                                                                   const std::unordered_set<std::string> &existingNames,
+                                                                   const ArkTsConfig *arkTsConfig)
+{
     std::vector<CompletionEntry> completions;
+    // A symbol exported from both the module source and its declaration file resolves to the
+    // same module specifier; both definitions would produce identical import statements, so
+    // only the first definition per (name, module specifier) pair is kept.
+    std::unordered_set<std::string> seenModuleSpecifiers;
     auto defs = FindExportSymbolDefinitionsByPrefix(prefix, fileName);
     for (const auto &def : defs) {
-        auto modulePath = ComputeRelativeImportPath(fileName, def.fileName);
+        auto modulePath = ComputeRelativeImportPath(fileName, def.fileName, arkTsConfig);
         if (modulePath.empty()) {
             continue;
         }
-        auto kind = inferCompletionKindFromDeclType(def.declType);
+        auto kind = InferCompletionKindFromDeclType(def.declType);
         auto displayName = def.symbolName;
         if (kind == CompletionEntryKind::METHOD) {
             auto returnType = def.returnType.empty() ? std::string("void") : def.returnType;
@@ -2724,9 +2907,21 @@ static std::vector<CompletionEntry> GetSymbolIndexedApiCompletions(const std::st
             existingNames.find(def.symbolName + "()") != existingNames.end()) {
             continue;
         }
+        std::vector<std::string> modulePaths {modulePath};
+        if (IsSymbolExportedByModuleEntry(def.fileName, def.symbolName, arkTsConfig)) {
+            auto moduleAlias = ComputeModuleImportPath(def.fileName, arkTsConfig);
+            if (!moduleAlias.empty() && moduleAlias != modulePath) {
+                modulePaths.push_back(std::move(moduleAlias));
+            }
+        }
         auto insertText = kind == CompletionEntryKind::METHOD ? def.symbolName + "()" : def.symbolName;
-        completions.emplace_back(displayName, kind, std::string(sort_text::AUTO_IMPORT_SUGGESTIONS), insertText,
-                                 CompletionEntryData(fileName, def.symbolName, def.fileName, def.symbolName), "", true);
+        for (const auto &path : modulePaths) {
+            if (!seenModuleSpecifiers.insert(displayName + '\0' + path).second) {
+                continue;
+            }
+            completions.emplace_back(displayName, kind, std::string(sort_text::AUTO_IMPORT_SUGGESTIONS), insertText,
+                                     CompletionEntryData(def.fileName, def.symbolName, path, def.symbolName), "", true);
+        }
     }
     return completions;
 }
@@ -2873,18 +3068,18 @@ static std::unordered_set<std::string> GetExistingCompletionNames(const std::vec
     return existingCompletionNames;
 }
 
-static void AppendAutoImportCompletions(const std::string &prefix, const char *fileName,
+static void AppendAutoImportCompletions(const std::string &prefix, const char *fileName, const ArkTsConfig *arkTsConfig,
                                         std::vector<CompletionEntry> *completions)
 {
     ES2PANDA_ASSERT(completions != nullptr);
     auto existingCompletionNames = GetExistingCompletionNames(*completions);
-    auto collectedApiCompletions = GetCollectedApiCompletions(prefix, fileName, existingCompletionNames);
+    auto collectedApiCompletions = GetCollectedApiCompletions(prefix, existingCompletionNames);
     completions->insert(completions->end(), collectedApiCompletions.begin(), collectedApiCompletions.end());
     for (const auto &entry : collectedApiCompletions) {
         existingCompletionNames.insert(entry.GetName());
     }
 
-    auto indexedApiCompletions = GetSymbolIndexedApiCompletions(prefix, fileName, existingCompletionNames);
+    auto indexedApiCompletions = GetSymbolIndexedApiCompletions(prefix, fileName, existingCompletionNames, arkTsConfig);
     completions->insert(completions->end(), indexedApiCompletions.begin(), indexedApiCompletions.end());
 }
 
@@ -2993,7 +3188,7 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
     auto keywordCompletions = GetKeywordCompletions(prefix);
     completions.insert(completions.end(), keywordCompletions.begin(), keywordCompletions.end());
 
-    AppendAutoImportCompletions(prefix, ctx->sourceFileName.c_str(), &completions);
+    AppendAutoImportCompletions(prefix, ctx->sourceFileName.c_str(), GetArkTsConfigOrNull(ctx), &completions);
 
     auto systemInterfaceCompletions = GetSystemInterfaceCompletions(prefix, ctx->parserProgram);
     MergeSystemAndAutoImportCompletions(std::move(systemInterfaceCompletions), ctx->parserProgram,
@@ -3042,7 +3237,7 @@ CompletionEntry ProcessAutoImportForEntry(CompletionEntry &entry)
         return entry;
     }
 
-    ScopedContext ctx {dataOpt->GetFileName()};
+    ScopedContext ctx {dataOpt->GetFileName().c_str()};
     const auto &config = ctx.GetArkTsConfig();
 
     auto autoImportData = GetAutoImportCompletionEntry(&dataOpt.value(), &config, entry.GetName());
@@ -3208,7 +3403,7 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
         return {};
     }
     std::string sourceCode(ctx->parserProgram->SourceCode());
-    if (IsAnnotationBeginning(sourceCode, pos)) {
+    if (IsAnnotationBeginning(sourceCode, pos) && !IsInsideImportStringLiteral(sourceCode, pos)) {
         return GetAnnotationCompletions(context, pos);  // need to filter annotation
     }
     // Current GetPrecedingPosition cannot get token of "obj." with position.
@@ -3248,8 +3443,7 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
 std::optional<CompletionEntryData> GetAutoImportCompletionEntry(ark::es2panda::lsp::CompletionEntryData *data,
                                                                 const ArkTsConfig *config, const std::string &name)
 {
-    const char *fileName = data->GetFileName();
-    if (fileName == nullptr || std::strlen(fileName) == 0) {
+    if (data->GetFileName().empty()) {
         return std::nullopt;
     }
     if (config == nullptr) {

@@ -344,6 +344,10 @@ ets2panda_add_gtest(lsp_api_import_fixes_test CPP_SOURCES
     code_fix/import_fixes.cpp
 )
 
+ets2panda_add_gtest(lsp_api_compute_relative_import_path_test CPP_SOURCES
+    code_fix/compute_relative_import_path_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_remove_catch_type_annotation_test CPP_SOURCES
     code_fix/remove_catch_type_annotation_test.cpp
 )
@@ -637,6 +641,10 @@ ets2panda_add_gtest(lsp_api_get_node_type_namespace_test CPP_SOURCES
 
 ets2panda_add_gtest(lsp_api_get_node_export_test CPP_SOURCES
     get_node_export_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_node_export_static_test CPP_SOURCES
+    get_node_export_static_test.cpp
 )
 
 ets2panda_add_gtest(lsp_api_get_node_ts_class_Implements_test CPP_SOURCES

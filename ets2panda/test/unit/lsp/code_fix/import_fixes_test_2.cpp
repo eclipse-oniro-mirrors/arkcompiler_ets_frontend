@@ -244,4 +244,76 @@ function use(): void {
     EXPECT_EQ(change.newText, "import DefWidget, { existFn } from './IfxDmSrc';");
 }
 
+// A commented-out 'export default <name>' must not turn a named-only export into a default
+// export: the import fix keeps the named import form.
+TEST_F(ImportFixesTest2, CommentedDefaultExportKeepsNamedImport)
+{
+    std::vector<std::string> fileNames = {"IfxCommentDefaultSrc.ets", "IfxCommentDefaultConsumer.ets"};
+    std::vector<std::string> fileContents = {
+        R"(// export default LayeredWidget;
+export class LayeredWidget {}
+)",
+        R"(function use(): void {
+    let w = new LayeredWidget();
+}
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer indexInitializer;
+    BuildSymbolIndex(indexInitializer, filePaths[SOURCE_FILE_INDEX]);
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[CONSUMER_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto &consumer = fileContents[CONSUMER_FILE_INDEX];
+    const std::string_view className = "LayeredWidget";
+    const auto pos = consumer.find(className);
+    ASSERT_NE(pos, std::string::npos);
+    auto fixes = GetFixesAtSpan(context, pos, className.size());
+    initializer.DestroyContext(context);
+
+    const auto *fix = RequireSingleImportFix(fixes);
+    ASSERT_NE(fix, nullptr);
+    EXPECT_EQ(fix->description_, "Add import {LayeredWidget} from './IfxCommentDefaultSrc'");
+}
+
+// A member of an exported class is not itself a module export: it is reachable only through
+// the class and cannot be imported by name, so no import fix is offered for it.
+TEST_F(ImportFixesTest2, ClassMemberIsNotOfferedAsImport)
+{
+    std::vector<std::string> fileNames = {"IfxClassMemberSrc.ets", "IfxClassMemberConsumer.ets"};
+    std::vector<std::string> fileContents = {R"(export class Container {
+    add(): number {
+        return 1;
+    }
+}
+)",
+                                             R"(function use(): void {
+    add();
+}
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer indexInitializer;
+    BuildSymbolIndex(indexInitializer, filePaths[SOURCE_FILE_INDEX]);
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[CONSUMER_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto &consumer = fileContents[CONSUMER_FILE_INDEX];
+    const auto pos = consumer.find("add");
+    ASSERT_NE(pos, std::string::npos);
+    auto fixes = GetFixesAtSpan(context, pos, std::string_view("add").size());
+    initializer.DestroyContext(context);
+
+    EXPECT_TRUE(CollectImportFixes(fixes).empty());
+    for (const auto &fix : fixes) {
+        EXPECT_NE(fix.fixName_, "FixImportSource");
+    }
+}
+
 }  // namespace

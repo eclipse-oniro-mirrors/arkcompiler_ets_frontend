@@ -1074,9 +1074,12 @@ export class LspNodeInfo extends LspNode {
     super(peer);
     this.name = unpackString(global.es2panda._getNameByNodeInfo(peer));
     this.kind = toAstNodeType(unpackString(global.es2panda._getKindByNodeInfo(peer)));
+    const paramNumber = global.es2panda._getParamNumberByNodeInfo(peer);
+    this.paramNumber = paramNumber >= 0 ? paramNumber : undefined;
   }
   readonly name: string;
   readonly kind: AstNodeType;
+  readonly paramNumber?: number;
 }
 
 export class LspTokenTypeInfo extends LspNode {

@@ -71,7 +71,8 @@ import {
   ModuleInfo,
   PathConfig,
   TextDocumentChangeInfo,
-  NodeInfo
+  NodeInfo,
+  AstNodeType
 } from '../common/types';
 import { PluginDriver, PluginHook } from '../common/ui_plugins_driver';
 import { ModuleDescriptor, generateBuildConfigs } from './generateBuildConfig';
@@ -88,6 +89,7 @@ import * as child_process from 'child_process';
 import { DECL_ETS_SUFFIX, DEFAULT_CACHE_DIR, LANGUAGE_VERSION, TS_SUFFIX } from '../common/preDefine';
 import * as crypto from 'crypto';
 import * as os from 'os';
+import * as JSON5 from 'json5';
 import { changeDeclgenFileExtension } from '../common/utils';
 import { logger } from './logger';
 import { TextPositionUtils, formEts2pandaCmd } from './utils';
@@ -95,6 +97,28 @@ import { ArkTSConfigGenerator } from '../common/arkTSConfigGenerator'
 
 const ets2pandaCmdPrefix = ['-', '--extension', 'ets', '--arktsconfig'];
 const LSP_OPTIONS = ['--unused-vars-analyzer'];
+
+// Keep in sync with the C++ side: GetNodeInfoHandlers (node_matchers.cpp) decides which
+// node kinds the extractor emits, and IsNodeInfoSymbolKind (api.cpp) gates them; a kind
+// missing there never reaches this conversion table.
+const NODE_INFO_KIND_CONVERSIONS: ReadonlyMap<AstNodeType, AstNodeType> = new Map([
+  [AstNodeType.ETS_MODULE, AstNodeType.CLASS_DECLARATION],
+  [AstNodeType.TS_MODULE_DECLARATION, AstNodeType.CLASS_DECLARATION],
+  [AstNodeType.TS_ENUM_DECLARATION, AstNodeType.CLASS_DECLARATION],
+  [AstNodeType.TS_ENUM_MEMBER, AstNodeType.CLASS_PROPERTY],
+  [AstNodeType.FUNCTION_DECLARATION, AstNodeType.METHOD_DEFINITION]
+]);
+
+// Kinds whose node info chain elements can never be matched back by the node matchers
+// (GetNodeMatchers in node_matchers.cpp); keep both lists aligned when adding kinds.
+const UNMATCHABLE_NODE_KINDS: ReadonlySet<AstNodeType> = new Set([
+  AstNodeType.EMPTY_STATEMENT,
+  AstNodeType.EXPRESSION_STATEMENT,
+  AstNodeType.RETURN_STATEMENT,
+  AstNodeType.ETS_FUNCTION_TYPE,
+  AstNodeType.TS_FUNCTION_TYPE,
+  AstNodeType.FUNCTION_EXPRESSION
+]);
 
 function initBuildEnv(): void {
   const currentPath: string | undefined = process.env.PATH;
@@ -144,6 +168,13 @@ export class Lsp {
   private pathConfig: PathConfig;
   private lspDriverHelper = new LspDriverHelper();
   private declFileMap: Record<string, string> = {}; // Map<declFilePath, sourceFilePath>
+  private indexedDynamicDecls: Set<string> = new Set(); // dynamic SDK decl files already indexed
+  // Caches for the dynamic SDK decl indexing: the reference queries run on every cursor
+  // idle (reference highlight), so the file scan and the arktsconfig parse must not be
+  // repeated per query - a multi-megabyte arktsconfig parse per query would grow the
+  // runtime heap high-water mark permanently.
+  private dynamicImportScanCache: Map<string, { hash: string; imports: string[] }> = new Map();
+  private dynamicDeclDependenciesCache: Map<string, Record<string, { path?: string }>> = new Map();
   private enablePerfMetric: boolean = false;
   private perfMetricLogFilePath: string = '';
   private kitFiles: string[] = [];
@@ -153,14 +184,17 @@ export class Lsp {
   private consecutiveEditsCount: number = 0;
   private baselineRssMB: number = 0;
   private idleRecyclePostponeCount: number = 0;
+  private lastRecycleTimestamp: number = 0;
 
-  public static idleRecycleDelayMs: number = 3000;
-  public static highMemoryRecycleDelayMs: number = 1500;
-  public static queryActivityQuietWindowMs: number = 1500;
+  public static idleRecycleDelayMs: number = 5000;
+  public static highMemoryRecycleDelayMs: number = 3000;
+  public static queryActivityQuietWindowMs: number = 2000;
   public static consecutiveEditsThreshold: number = 25;
-  public static memoryGrowthThresholdMB: number = 500;
-  public static maxProcessRssLimitMB: number = 2048;
+  public static highMemoryGrowthThresholdMB: number = 768;
+  public static memoryGrowthThresholdMB: number = 1024;
+  public static maxProcessRssLimitMB: number = 4096;
   public static maxIdleRecyclePostponeCount: number = 3;
+  public static minRecycleIntervalMs: number = 30000;
 
   constructor(
     pathConfig: PathConfig,
@@ -188,9 +222,7 @@ export class Lsp {
     this.defaultBuildConfig = Object.values(this.buildConfigs)[0];
     PluginDriver.getInstance().initPlugins(this.defaultBuildConfig);
     this.lspDriverHelper.memInitialize(this.pandaLibPath);
-    if (typeof process !== 'undefined' && typeof process.memoryUsage === 'function') {
-      this.baselineRssMB = process.memoryUsage().rss / (1024 * 1024);
-    }
+    this.refreshBaselineRss('Lsp constructed');
     try {
       global.es2panda._initSymbolReferenceIndex();
     } catch (error) {
@@ -244,29 +276,58 @@ export class Lsp {
     this.scheduleIdleContextRecycle();
   }
 
+  private getCurrentRssMB(): number {
+    return typeof process !== 'undefined' && typeof process.memoryUsage === 'function'
+      ? process.memoryUsage().rss / (1024 * 1024)
+      : 0;
+  }
+
+  // The baseline marks the expected steady-state resident memory: the memory guard
+  // only reacts to growth beyond it. It is captured at warm-up points (construction,
+  // initAstCache, after each recycle), never in between.
+  private refreshBaselineRss(reason: string): number {
+    const rssMB = this.getCurrentRssMB();
+    if (rssMB > 0) {
+      this.baselineRssMB = rssMB;
+    }
+    logger.info(`[LSP MemGuard] Baseline RSS recorded at ${this.baselineRssMB.toFixed(1)} MB (${reason})`);
+    return rssMB;
+  }
+
+  private isRecycleCooldownElapsed(): boolean {
+    return this.lastRecycleTimestamp === 0 || Date.now() - this.lastRecycleTimestamp >= Lsp.minRecycleIntervalMs;
+  }
+
   private checkAndProactivelyRecycleBeforeEdit(): void {
     if (this.disposed || this.isTestEnv() || this.filesMap.size === 0) {
       return;
     }
-    const currentRssMB =
-      typeof process !== 'undefined' && typeof process.memoryUsage === 'function'
-        ? process.memoryUsage().rss / (1024 * 1024)
-        : 0;
+    const currentRssMB = this.getCurrentRssMB();
     const growthMB = currentRssMB - this.baselineRssMB;
-
-    if (
-      (this.baselineRssMB > 0 && growthMB >= Lsp.memoryGrowthThresholdMB) ||
-      (Lsp.maxProcessRssLimitMB > 0 && currentRssMB >= Lsp.maxProcessRssLimitMB)
-    ) {
-      logger.info(
-        `[LSP MemGuard] Proactive emergency recycle triggered before edit (consecutive edits: ${this.consecutiveEditsCount}, growth: ${growthMB.toFixed(1)} MB, RSS: ${currentRssMB.toFixed(1)} MB)`
-      );
-      this.proactiveResetEHeap();
+    const rssLimitBreached = Lsp.maxProcessRssLimitMB > 0 && currentRssMB >= Lsp.maxProcessRssLimitMB;
+    const growthBreached = this.baselineRssMB > 0 && growthMB >= Lsp.memoryGrowthThresholdMB;
+    if (!rssLimitBreached && !growthBreached) {
+      return;
     }
+    // A growth breach within the cooldown defers to the idle channel: at this growth
+    // level getAdaptiveRecycleDelay() already shortens the idle delay, while the
+    // synchronous destroy-and-rebuild here is exactly what stalled the edit. Only the
+    // hard RSS limit keeps the synchronous emergency path.
+    if (!rssLimitBreached && !this.isRecycleCooldownElapsed()) {
+      logger.info(
+        `[LSP MemGuard] Memory growth before edit deferred to idle recycle (consecutive edits: ${this.consecutiveEditsCount}, growth: ${growthMB.toFixed(1)} MB, RSS: ${currentRssMB.toFixed(1)} MB)`
+      );
+      return;
+    }
+    logger.info(
+      `[LSP MemGuard] Proactive emergency recycle triggered before edit (consecutive edits: ${this.consecutiveEditsCount}, growth: ${growthMB.toFixed(1)} MB, RSS: ${currentRssMB.toFixed(1)} MB)`
+    );
+    this.proactiveResetEHeap();
   }
 
   private proactiveResetEHeap(): void {
     this.clearIdleRecycleTimer();
+    this.lastRecycleTimestamp = Date.now();
     this.disposeCachedContexts();
     if (global.es2panda && typeof global.es2panda._resetEHeap === 'function') {
       global.es2panda._resetEHeap();
@@ -276,9 +337,7 @@ export class Lsp {
       runtimeGlobal.gc();
     }
     this.consecutiveEditsCount = 0;
-    if (typeof process !== 'undefined' && typeof process.memoryUsage === 'function') {
-      this.baselineRssMB = process.memoryUsage().rss / (1024 * 1024);
-    }
+    this.refreshBaselineRss('proactive emergency recycle');
   }
 
   public clearIdleRecycleTimer(): void {
@@ -308,7 +367,7 @@ export class Lsp {
         ? process.memoryUsage().rss / (1024 * 1024)
         : 0;
     const growthMB = currentRssMB - this.baselineRssMB;
-    if (this.baselineRssMB > 0 && growthMB >= 250) {
+    if (this.baselineRssMB > 0 && growthMB >= Lsp.highMemoryGrowthThresholdMB) {
       return Lsp.highMemoryRecycleDelayMs;
     }
     return Lsp.idleRecycleDelayMs;
@@ -380,12 +439,7 @@ export class Lsp {
     const newCache = this.createFileCache(activeFilePath, fileSource, hash, true);
     const createCost = Date.now() - recreateStart;
 
-    const afterRss =
-      typeof process !== 'undefined' && typeof process.memoryUsage === 'function'
-        ? process.memoryUsage().rss / (1024 * 1024)
-        : 0;
-    this.baselineRssMB = afterRss;
-    const afterRssMB = afterRss.toFixed(1);
+    const afterRssMB = this.refreshBaselineRss('idle context recycle completed').toFixed(1);
 
     if (newCache !== undefined) {
       logger.info(
@@ -401,6 +455,13 @@ export class Lsp {
     if (this.disposed || this.filesMap.size === 0 || this.shouldPostponeIdleRecycle()) {
       return;
     }
+    // Back-to-back recycles (post-recycle warm-up counted as fresh growth) made the
+    // guard oscillate: rearm the timer for the rest of the cooldown instead.
+    if (!this.isRecycleCooldownElapsed()) {
+      const remainingMs = Math.max(Lsp.minRecycleIntervalMs - (Date.now() - this.lastRecycleTimestamp), 1);
+      this.scheduleIdleContextRecycle(remainingMs);
+      return;
+    }
 
     const firstEntry = Array.from(this.filesMap.entries())[0];
     if (!firstEntry || !firstEntry[1]) {
@@ -410,10 +471,7 @@ export class Lsp {
     const fileSource = activeFileCache.fileContent;
     const hash = activeFileCache.fileHash;
 
-    const beforeRssMB =
-      typeof process !== 'undefined' && typeof process.memoryUsage === 'function'
-        ? (process.memoryUsage().rss / (1024 * 1024)).toFixed(1)
-        : '0.0';
+    const beforeRssMB = this.getCurrentRssMB().toFixed(1);
     const startTime = Date.now();
 
     logger.info(
@@ -421,6 +479,7 @@ export class Lsp {
     );
 
     try {
+      this.lastRecycleTimestamp = Date.now();
       this.disposeCachedContexts();
       const destroyCost = Date.now() - startTime;
 
@@ -496,7 +555,7 @@ export class Lsp {
       fileHash: this.computeContentHash(fileSource),
       arktsConfigPath: this.getArkTsConfigPath(fileName, true)
     };
-    this.tryBuildSymbolReferenceIndex(fileName, ctx);
+    this.tryBuildSymbolReferenceIndexWithExternal(fileName, ctx);
     try {
       return query(fileCache);
     } finally {
@@ -531,7 +590,7 @@ export class Lsp {
     }
     if (ret === 0) {
       this.proceedPreparedContext(fileName, fileCache.fileContext, true);
-      this.tryBuildSymbolReferenceIndex(fileName, fileCache.fileContext);
+      this.tryBuildSymbolReferenceIndexWithExternal(fileName, fileCache.fileContext);
     }
     this.recordCompilationState(fileName, fileCache.fileHash, ret === 0);
     this.filesMap.clear();
@@ -640,7 +699,7 @@ export class Lsp {
     }
     if (ret === 0) {
       this.proceedPreparedContext(fileName, activeFileCache.fileContext, true);
-      this.tryBuildSymbolReferenceIndex(fileName, activeFileCache.fileContext);
+      this.tryBuildSymbolReferenceIndexWithExternal(fileName, activeFileCache.fileContext);
       this.updateDiagnosticFilesForContext(fileName, activeFileCache.fileContext);
     }
 
@@ -707,6 +766,12 @@ export class Lsp {
     }
   }
 
+  // The external build also indexes the imported declaration programs (including the
+  // static / dynamic SDK declaration files), so references inside them are reported by
+  // the index-based reference queries. Runs when a file program is (re)introduced into
+  // a context - first cache entry, incremental re-introduction, cross-module temporary
+  // context - so the declaration content enters the index once per introduction instead
+  // of being rebuilt on every reference query.
   private tryBuildSymbolReferenceIndexWithExternal(filePath: string, context: KNativePointer): void {
     try {
       if (global.es2panda && typeof global.es2panda._buildSymbolReferenceIndexForContextWithExternal === 'function') {
@@ -1433,17 +1498,132 @@ export class Lsp {
     return result;
   }
 
-  getReferencesAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspReferenceData[] | undefined {
-    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getReferencesAtPosition', this.perfMetricLogFilePath) : undefined;
-    const source = this.getFileSource(filename.valueOf());
-    const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(source, offset);
-    if (codePointOffset === undefined) {
-      perfScope?.end();
+  // Collects the dynamic module names (`dynamic@ohos.xxx`) referenced by the file source.
+  private collectDynamicImports(source: string): string[] {
+    const dynamicImports: string[] = [];
+    const pattern = /['"]dynamic@([^'"]+)['"]/g;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(source)) !== null) {
+      dynamicImports.push(`dynamic@${match[1]}`);
+    }
+    return dynamicImports;
+  }
+
+  // The dynamic module names (`dynamic@ohos.xxx`) referenced by the given file, served from
+  // the scan cache when the file content is unchanged.
+  private getDynamicImports(fileName: string, source: string): string[] {
+    const hash = this.computeContentHash(source);
+    const cachedScan = this.dynamicImportScanCache.get(fileName);
+    if (cachedScan !== undefined && cachedScan.hash === hash) {
+      return cachedScan.imports;
+    }
+    const dynamicImports = this.collectDynamicImports(source);
+    this.dynamicImportScanCache.set(fileName, { hash, imports: dynamicImports });
+    return dynamicImports;
+  }
+
+  // The arktsconfig 'dependencies' section of the given config, served from the parse
+  // cache; undefined when the config cannot be read or parsed.
+  private getDynamicDeclDependencies(arktsConfigFile: string): Record<string, { path?: string }> | undefined {
+    const cachedDependencies = this.dynamicDeclDependenciesCache.get(arktsConfigFile);
+    if (cachedDependencies !== undefined) {
+      return cachedDependencies;
+    }
+    try {
+      const parsed = JSON5.parse(fs.readFileSync(arktsConfigFile, 'utf-8'));
+      const dependencies = parsed?.compilerOptions?.dependencies ?? {};
+      this.dynamicDeclDependenciesCache.set(arktsConfigFile, dependencies);
+      return dependencies;
+    } catch (error) {
+      logger.warn(`failed to parse arktsconfig for dynamic decls: ${arktsConfigFile}`);
       return undefined;
     }
+  }
+
+  // Builds the symbol reference index of one dynamic SDK declaration file. Checked state
+  // resolves the declaration scopes (GetOwner), which the index registration relies on.
+  private indexDynamicDeclFile(declPath: string): void {
+    const [declFileCfg, declFileCtx] = this.createContext(declPath) ?? [];
+    if (!declFileCfg || !declFileCtx) {
+      return;
+    }
+    try {
+      global.es2panda._buildSymbolReferenceIndexForContext(declFileCtx);
+      this.indexedDynamicDecls.add(declPath);
+    } catch (error) {
+      logger.warn(`build symbol reference index failed for dynamic decl ${declPath}: ${String(error)}`);
+    } finally {
+      this.destroyContext(declFileCfg, declFileCtx);
+    }
+  }
+
+  // Dynamic imports are foreign bindings: their interop declaration files are not parsed
+  // into the context externals, so the symbol reference index never sees them. Index the
+  // declaration files of the dynamic modules imported by the given file explicitly, so
+  // reference queries also report references inside the dynamic SDK declarations.
+  private indexDynamicSdkDecls(fileName: String): void {
+    const moduleInfo = this.moduleInfos[path.resolve(fileName.valueOf())];
+    const arktsConfigFile = moduleInfo?.arktsConfigFile;
+    if (!arktsConfigFile || !fs.existsSync(arktsConfigFile)) {
+      return;
+    }
+    const dynamicImports = this.getDynamicImports(fileName.valueOf(), this.getFileSource(fileName.valueOf()));
+    if (dynamicImports.length === 0) {
+      return;
+    }
+    const dependencies = this.getDynamicDeclDependencies(arktsConfigFile);
+    if (dependencies === undefined) {
+      return;
+    }
+    dynamicImports.forEach((moduleName) => {
+      const declPath = dependencies[moduleName]?.path;
+      if (!declPath || !fs.existsSync(declPath) || this.indexedDynamicDecls.has(declPath)) {
+        return;
+      }
+      this.indexDynamicDeclFile(declPath);
+    });
+  }
+
+  // Auto import entries come from the symbol export index, which only holds programs that
+  // were parsed somewhere. The files a project's dynamic module lists in its decl-fileInfo
+  // are not parsed unless some file imports them, so their exported symbols (a sibling
+  // file nobody imports yet) would never be suggested. Index every listed declaration up
+  // front so the import suggestions cover the whole module. Runs before the cache
+  // context's own external indexing so the live context's registrations replace these
+  // for the files it also parses.
+  private indexProjectDynamicDecls(): void {
+    Object.values(this.buildConfigs).forEach((buildConfig) => this.indexModuleDeclFiles(buildConfig));
+  }
+
+  private indexModuleDeclFiles(buildConfig: BuildConfig): void {
+    if (!buildConfig.declFilesPath || !fs.existsSync(buildConfig.declFilesPath)) {
+      return;
+    }
+    let declFiles: Record<string, { declPath?: string }>;
+    try {
+      declFiles = (JSON5.parse(fs.readFileSync(buildConfig.declFilesPath, 'utf-8'))?.files ?? {}) as Record<
+        string,
+        { declPath?: string }
+      >;
+    } catch (error) {
+      logger.warn(`failed to index decl files of module ${buildConfig.packageName}: ${String(error)}`);
+      return;
+    }
+    Object.values(declFiles).forEach((entry) => this.indexDeclFileIfNeeded(entry?.declPath));
+  }
+
+  private indexDeclFileIfNeeded(declPath?: string): void {
+    if (declPath && fs.existsSync(declPath) && !this.indexedDynamicDecls.has(declPath)) {
+      this.indexDynamicDeclFile(declPath);
+    }
+  }
+
+  getReferencesAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspReferenceData[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getReferencesAtPosition', this.perfMetricLogFilePath) : undefined;
     let result: LspDefinitionData[] = [];
     if (nodeInfos) {
-      result = [this.getAtPositionByNodeInfos(filename, nodeInfos, 'reference') as LspReferenceData];
+      const anchor = this.getAtPositionByNodeInfos(filename, nodeInfos, 'reference') as LspReferenceData | undefined;
+      result = anchor ? [anchor] : [];
       result.forEach((ref) => {
         this.convertTextSpanToUtf16(this.getFileSource(ref.fileName.valueOf()), ref);
       });
@@ -1451,12 +1631,22 @@ export class Lsp {
       return result;
     }
 
+    const source = this.getFileSource(filename.valueOf());
+    const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(source, offset);
+    if (codePointOffset === undefined) {
+      perfScope?.end();
+      return undefined;
+    }
+
     let ptr: KPointer;
     const isWindows = typeof process !== 'undefined' && process.platform === 'win32';
     filename = isWindows ? filename.replace(/\//g, '\\') : filename;
+    // Index the dynamic SDK declaration files imported by this file before querying.
+    this.indexDynamicSdkDecls(filename);
     if (this.filesMap.size > 0) {
-      const cachedPtr = this.withFileCacheForQuery(filename, (fileCache) =>
-        global.es2panda._getReferencesAtPositionFromIndex(fileCache.fileContext, codePointOffset)
+      const cachedPtr = this.withFileCacheForQuery(
+        filename,
+        (fileCache) => global.es2panda._getReferencesAtPositionFromIndex(fileCache.fileContext, codePointOffset)
       );
       if (cachedPtr === undefined) {
         return;
@@ -1549,13 +1739,26 @@ export class Lsp {
     return nodeInfos;
   }
 
+  private createNodeInfoPtrs(nodeInfos: NodeInfo[]): KPointer[] {
+    const nodeInfoPtrs: KPointer[] = [];
+    nodeInfos.forEach((nodeInfo) => {
+      const kind = NODE_INFO_KIND_CONVERSIONS.get(nodeInfo.kind) ?? nodeInfo.kind;
+      if (UNMATCHABLE_NODE_KINDS.has(kind)) {
+        logger.error(`unmatchable node info kind ${AstNodeType[kind]} for name ${nodeInfo.name}`);
+        return;
+      }
+      nodeInfoPtrs.push(global.es2panda._CreateNodeInfoPtr(nodeInfo.name, kind, nodeInfo.paramNumber ?? -1));
+    });
+    return nodeInfoPtrs;
+  }
+
   private getAtPositionByNodeInfos(
     declFilePath: String,
     nodeInfos: NodeInfo[],
     type: 'definition' | 'reference' | 'renameLocation'
   ): LspNode | undefined {
     let ptr: KPointer;
-    let nodeInfoPtrs: KPointer[] = [];
+    let nodeInfoPtrs: KPointer[] = this.createNodeInfoPtrs(nodeInfos);
     let sourceFilePath = this.declFileMap[declFilePath.valueOf()];
     if (sourceFilePath === undefined) {
       let unifiedPath = declFilePath.replace(/\\/g, '/');
@@ -1568,9 +1771,6 @@ export class Lsp {
     let fileCache = this.filesMap.get(sourceFilePath.valueOf());
     if (fileCache) {
       try {
-        nodeInfos.forEach((nodeInfo) => {
-          nodeInfoPtrs.push(global.es2panda._CreateNodeInfoPtr(nodeInfo.name, nodeInfo.kind));
-        });
         if (type === 'renameLocation') {
           ptr = global.es2panda._findRenameLocationsFromNode(fileCache.fileContext, passPointerArray(nodeInfoPtrs), nodeInfoPtrs.length);
         } else {
@@ -1584,9 +1784,6 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(sourceFilePath) ?? [];
       if (!cfg || !ctx) { return };
       try {
-        nodeInfos.forEach((nodeInfo) => {
-          nodeInfoPtrs.push(global.es2panda._CreateNodeInfoPtr(nodeInfo.name, nodeInfo.kind));
-        });
         if (type === 'renameLocation') {
           ptr = global.es2panda._findRenameLocationsFromNode(ctx, passPointerArray(nodeInfoPtrs), nodeInfoPtrs.length);
         } else {
@@ -2166,10 +2363,26 @@ export class Lsp {
     return result ?? new LspTokenNativeInfo();
   }
 
+  // Extracts the identifier covering the given UTF-16 offset of the source: the
+  // offset may point anywhere inside the identifier.
+  private extractIdentifierAt(source: string, offset: number): string | undefined {
+    if (offset < 0 || offset >= source.length) {
+      return undefined;
+    }
+    let start = offset;
+    while (start > 0 && /[A-Za-z0-9_$]/.test(source[start - 1])) {
+      start--;
+    }
+    const match = source.substring(start).match(/^[A-Za-z_$][A-Za-z0-9_$]*/);
+    return match !== null ? match[0] : undefined;
+  }
+
   findRenameLocations(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspRenameLocation[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('findRenameLocations', this.perfMetricLogFilePath) : undefined;
     if (nodeInfos) {
-      const result = [this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation];
+      const location =
+        this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation | undefined;
+      const result = location ? [location] : [];
       result.forEach((ref) => this.convertRenameLocationToUtf16(ref));
       perfScope?.end();
       return result;
@@ -2207,7 +2420,33 @@ export class Lsp {
       return new LspRenameLocation(elPeer);
     });
 
-    result.forEach((ref) => {
+    // Renaming an aliased import only renames the alias occurrences: the symbol
+    // reference index aggregates alias and declaration references under one symbol, so
+    // the aggregated locations are filtered by the queried name and the original-name
+    // locations stay untouched.
+    const queriedSource = fileCache ? fileCache.fileContent : this.getFileSource(filename.valueOf());
+    const queriedName = this.extractIdentifierAt(queriedSource, offset);
+    // The per-file source is read once: the aggregated rename locations may contain many
+    // references inside the same file.
+    const refSources = new Map<string, string>();
+    const getRefSource = (refFileName: String): string => {
+      const key = refFileName.valueOf();
+      let source = refSources.get(key);
+      if (source === undefined) {
+        source = this.getFileSource(key);
+        refSources.set(key, source);
+      }
+      return source;
+    };
+    const sameNameResult = queriedName
+      ? result.filter((ref) => {
+        const refSource = getRefSource(ref.fileName);
+        const refUtf16Start = TextPositionUtils.codePointOffsetToUtf16Offset(refSource, ref.start);
+        return refUtf16Start !== undefined && this.extractIdentifierAt(refSource, refUtf16Start) === queriedName;
+      })
+      : result;
+
+    sameNameResult.forEach((ref) => {
       const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, ref.fileName, ref.start);
       if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
         ref.nodeInfos = nodeInfoTemp;
@@ -2215,7 +2454,7 @@ export class Lsp {
       this.convertRenameLocationToUtf16(ref);
     });
 
-    const uniqueResult = Array.from(new Set(result));
+    const uniqueResult = Array.from(new Set(sameNameResult));
     perfScope?.end();
     return uniqueResult;
   }
@@ -2285,7 +2524,28 @@ export class Lsp {
         const codeFixActionInfos: CodeFixActionInfo[] = [];
         codeFixActionInfos.push(...codeFixActionInfoList.codeFixActionInfos);
         this.convertCodeFixActionsToUtf16(codeFixActionInfos);
-        return codeFixActionInfos;
+        // Independent fixes may propose the same import action for one diagnostic
+        // (ImportFixes and FixImportSource both handle the unresolved-reference code);
+        // one proposal is kept - the one carrying the declaration source metadata.
+        // Actions that only share a description (for example per-occurrence UI plugin
+        // suggestions) differ in their text changes and are all kept.
+        const actionIdentity = (action: CodeFixActionInfo): string =>
+          `${action.description.valueOf()}#${action.changes
+            .map((change) =>
+              `${change.fileName.valueOf()}|${change.textChanges
+                .map((edit) => `${edit.span.start}:${edit.span.length}:${edit.newText.valueOf()}`)
+                .join(',')}`
+            )
+            .join(';')}`;
+        const byIdentity = new Map<string, CodeFixActionInfo>();
+        codeFixActionInfos.forEach((action) => {
+          const key = actionIdentity(action);
+          const existing = byIdentity.get(key);
+          if (existing === undefined || (existing.additionalMessage_ === '' && action.additionalMessage_ !== '')) {
+            byIdentity.set(key, action);
+          }
+        });
+        return Array.from(byIdentity.values());
       } catch (error) {
         logger.error('failed to getCodeFixesAtPosition by fileCache', error);
         return undefined;
@@ -2760,6 +3020,7 @@ export class Lsp {
     this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, ctx);
     PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
 
+    this.indexProjectDynamicDecls();
     global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
     this.compiledFileHashes.clear();
     this.diagnosticFiles.clear();
@@ -2773,6 +3034,19 @@ export class Lsp {
       this.pendingInitialDiagnosticFiles.add(files[i]);
     }
     const content = fs.readFileSync(files[0], 'utf8').replace(/\r\n/g, '\n');
+    // The simultaneous context carries no single-file source; prepare it for files[0]
+    // (mirroring restoreFileCacheForQuery) so the first query hitting the cache reads a
+    // valid program instead of an empty SourceCode.
+    const ret = global.es2pandaPublic._IncrementalPrepareProgram(ctx, files[0], content, 0);
+    if (ret !== 0 && ret !== 1) {
+      logger.error('initAstCache prepare failed for ' + files[0] + ', ret: ' + ret);
+      this.refreshBaselineRss('initAstCache main file prepare failed');
+      return;
+    }
+    if (ret === 0) {
+      this.proceedPreparedContext(files[0], ctx, true);
+      this.tryBuildSymbolReferenceIndex(files[0], ctx);
+    }
     this.filesMap.set(files[0], {
       fileContent: content,
       fileConfig: config,
@@ -2780,6 +3054,10 @@ export class Lsp {
       fileHash: this.computeContentHash(content),
       arktsConfigPath: this.defaultArkTsConfig
     });
+    // The AST cache and the main-file warm-up above are expected steady-state
+    // residents: record them into the baseline so the memory guard only measures
+    // growth beyond the warm state instead of re-counting the cache on every check.
+    this.refreshBaselineRss('initAstCache completed');
   }
 
   private compileExternalProgram(jobInfo: JobInfo): void {

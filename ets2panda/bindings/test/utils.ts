@@ -21,7 +21,17 @@ import path from 'path';
 export const DEFAULT_PATH_CONFIG: PathConfig = {
   buildSdkPath: path.resolve('test', 'ets', 'static'),
   projectPath: path.resolve('test', 'testcases'),
-  declgenOutDir: ''
+  declgenOutDir: '',
+  // The ets/dynamic root should carry the real dynamic-interop declarations
+  // (out/sdk/sdk-interface/dynamic-interop), but that build product is currently
+  // incomplete: it imports '@ohos.lang.interop' without shipping the module itself and
+  // contains 1.1-style constructs ('Available; { ... }' blocks, 'const enum') the local
+  // ets2panda cannot parse. Until the generation side is fixed, the root is filled with
+  // the static root's content so every suite stays runnable; the content-calibrated
+  // cases (importDynamicSdk offsets/completions) then need a proper dynamic SDK to pass.
+  // Restore after a workspace sync overwrites it:
+  // cp -r test/ets/static/{api,arkts,kits} test/ets/dynamic/build-tools/interop/
+  interopApiPath: path.resolve('test', 'ets', 'dynamic', 'build-tools', 'interop')
 };
 
 export const UI_PLUGIN_LIST: string[] = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
@@ -167,10 +177,18 @@ if (typeof afterAll === 'function') {
   });
 }
 
-export function getLsp(moduleName: string, plugins: string[] = DEFAULT_PLUGIN_LIST): Lsp {
-  initLspEnv(DEFAULT_PATH_CONFIG);
+export function getLsp(
+  moduleName: string,
+  plugins: string[] = DEFAULT_PLUGIN_LIST,
+  pathConfigOverrides: Partial<PathConfig> = {}
+): Lsp {
+  const pathConfig: PathConfig = {
+    ...DEFAULT_PATH_CONFIG,
+    ...pathConfigOverrides
+  };
+  initLspEnv(pathConfig);
   const lsp = new Lsp(
-    DEFAULT_PATH_CONFIG,
+    pathConfig,
     undefined,
     [{ name: moduleName, moduleType: 'har', srcPath: path.resolve('test/testcases/', moduleName) }],
     plugins

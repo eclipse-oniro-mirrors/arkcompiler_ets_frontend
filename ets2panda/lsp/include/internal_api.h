@@ -16,6 +16,8 @@
 #ifndef ES2PANDA_LSP_INCLUDE_INTERNAL_API_H
 #define ES2PANDA_LSP_INCLUDE_INTERNAL_API_H
 
+#include <optional>
+#include <string_view>
 #include <vector>
 #include "api.h"
 #include "checker/types/type.h"
@@ -27,6 +29,10 @@
 namespace ark::es2panda::util {
 class ImportInfo;
 }  // namespace ark::es2panda::util
+
+namespace ark::es2panda {
+class ArkTsConfig;
+}  // namespace ark::es2panda
 
 namespace ark::es2panda::checker {
 class ExportClosureResolver;
@@ -186,7 +192,55 @@ std::string GetImportFilePath(const util::ImportInfo &importInfo);
 void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,
                               DiagnosticReferences &result);
 std::string GetTokenTypes(ir::ModifierFlags flags);
-std::string ComputeRelativeImportPath(const std::string &fromFile, const std::string &toFile);
+std::string ComputeRelativeImportPath(const std::string &fromFile, const std::string &toFile,
+                                      const ArkTsConfig *config = nullptr);
+// The module alias import form of a file ('library' for a file under the paths module root,
+// 'dynlib' for a dynamic-module file). Used by import fixes in addition to the file-level
+// specifier so the entry alias form stays available.
+std::string ComputeModuleImportPath(const std::string &toFile, const ArkTsConfig *config = nullptr);
+// The module entry file (without extension) for a file: the bare package dependency's
+// source/declaration for a dynamic module, or the 'paths' module root's 'Index' (or the
+// per-file alias target). Returns an empty string when the file is not inside a module.
+std::string FindModuleEntryFile(const std::string &file, const ArkTsConfig &config);
+const ArkTsConfig *GetArkTsConfigOrNull(const public_lib::Context *ctx);
+
+// The live-code mask of a source: true where the byte belongs to code, false inside line
+// comments, block comments and string literals. Template literals count as strings in full.
+// Regex literals are not distinguished from division: '/'-delimited patterns are
+// indistinguishable without parsing context (an accepted limitation of a text scan).
+std::vector<bool> BuildLiveCodeMask(const std::string &source);
+
+// The dynamic import form ('dynamic@xxx') of a dependency key: build-system-format keys
+// are 'dynamic/'-prefixed and carry the 'dynamic@xxx' import form in the item alias; the
+// legacy 'dynamic@'-prefixed key format is returned as is. Returns nullopt for non-dynamic
+// keys. Keep in sync with GetDependencyImportSpecifier, which adds the module-key fallback.
+std::optional<std::string> GetDynamicImportSpecifierOrNull(std::string_view dependencyKey,
+                                                           const ArkTsConfig::ExternalModuleData &moduleData);
+
+// GetDynamicImportSpecifierOrNull with the module-key fallback: a non-dynamic dependency
+// key resolves to its first module segment ('dynlib/src/main/ets/Index' -> 'dynlib').
+std::string GetDependencyImportSpecifier(std::string_view dependencyKey,
+                                         const ArkTsConfig::ExternalModuleData &moduleData);
+
+// The dynamic module key ('dynamic@xxx') when the file is the declaration ('path') or source
+// file ('sourceFilePath') of a dynamic dependency; nullopt otherwise. The arktsconfig
+// 'dependencies' section is the single source of truth for the dynamic classification.
+// The key keeps the file-level import form (see CanonicalizeDynamicImportSource): the module
+// entry normalizes to the bare package name, sibling files keep their file identity.
+std::optional<std::string> FindDynamicDeclModuleKey(const std::string &file, const ArkTsConfig &config);
+
+// The canonical file-level import form of a resolved import source: a dependency key of a
+// dynamic module canonicalizes like FindDynamicDeclModuleKey does for declaration files, so
+// both sides of a module symbol key match regardless of the dependency key form written (the
+// legacy full form resolves to the transformed form, an entry alias to the package name).
+// Sources that are no dynamic dependency keys stay as they are.
+std::string CanonicalizeDynamicImportSource(const std::string &source, const ArkTsConfig &config);
+
+// Whether the file is the declaration ('path') or source file ('sourceFilePath') of a
+// dependency recorded with a dynamic language. Unlike FindDynamicDeclModuleKey this also
+// matches module-relative keys ('dynlib/src/main/ets/Index'), so it covers every dynamic
+// dependency of a generated arktsconfig, not only the interop SDK entries.
+bool IsDynamicDependencyFile(const std::string &file, const ArkTsConfig &config);
 }  // namespace ark::es2panda::lsp
 
 #endif

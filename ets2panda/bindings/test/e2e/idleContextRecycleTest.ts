@@ -20,6 +20,18 @@ import { Lsp } from '../../src/lsp/lsp_helper';
 describe('idleContextRecycleTest', () => {
   const moduleName = 'getReferencesAtPosition';
 
+  // A full-suite jest worker can accumulate tens of GB of native RSS; past
+  // maxProcessRssLimitMB every edit would trigger the synchronous emergency recycle
+  // and shift the timer schedules these tests assert. The hard-limit branch is inert
+  // here - the emergency behaviour is exercised through the mocked growth branch.
+  const originalMaxProcessRssLimitMB = Lsp.maxProcessRssLimitMB;
+  beforeAll(() => {
+    Lsp.maxProcessRssLimitMB = 0;
+  });
+  afterAll(() => {
+    Lsp.maxProcessRssLimitMB = originalMaxProcessRssLimitMB;
+  });
+
   afterEach(() => {
     delete process.env.FORCE_LSP_IDLE_RECYCLE;
     jest.useRealTimers();
@@ -64,23 +76,23 @@ describe('idleContextRecycleTest', () => {
     const source = fs.readFileSync(testFile, 'utf8');
 
     try {
-      // First modification starts timer (3000ms)
+      // First modification starts timer
       lsp.modifyFilesMap(testFile, { newDoc: source });
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Advance by 1500ms (half of delay)
-      jest.advanceTimersByTime(1500);
+      // Advance by half of the idle delay
+      jest.advanceTimersByTime(Math.floor(Lsp.idleRecycleDelayMs / 2));
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
       // Second modification resets timer
       lsp.modifyFilesMap(testFile, { newDoc: source });
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Advance by another 2000ms -> only 2000ms since second edit -> timer still active
-      jest.advanceTimersByTime(2000);
+      // Advance to just before the rescheduled expiry -> timer still active
+      jest.advanceTimersByTime(Lsp.idleRecycleDelayMs - 1000);
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Advance by remaining 1000ms -> 3000ms idle reached, timer fires
+      // Advance the remaining 1000ms -> idle delay reached, timer fires
       jest.advanceTimersByTime(1000);
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
     } finally {
@@ -120,23 +132,22 @@ describe('idleContextRecycleTest', () => {
       lsp.modifyFilesMap(testFile, { newDoc: source });
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Advance 2500ms (500ms before 3000ms expiry)
-      jest.advanceTimersByTime(2500);
+      // Advance to 500ms before idle expiry
+      jest.advanceTimersByTime(Lsp.idleRecycleDelayMs - 500);
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Foreground query occurs at 2500ms
+      // Foreground query occurs just before idle expiry
       const preRecycleRefs = lsp.getReferencesAtPosition(testFile, 635);
       expect(preRecycleRefs).toBeDefined();
       expect(preRecycleRefs!.length).toBeGreaterThan(0);
 
-      // Advance 500ms to reach the original 3000ms timer
+      // Advance 500ms to reach the original timer
       jest.advanceTimersByTime(500);
-      // Because query happened only 500ms ago (< 1500ms quiet window), timer postponed by 1500ms
+      // The recent query postpones the timer by the quiet window
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Advance remaining 1500ms quiet window
-      jest.advanceTimersByTime(1500);
-      // Now idle recycle completes and timer clears
+      // Advance the remaining quiet window; idle recycle completes and timer clears
+      jest.advanceTimersByTime(Lsp.queryActivityQuietWindowMs);
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
 
       // Verify query still works normally after deferred recycle
@@ -213,6 +224,135 @@ describe('idleContextRecycleTest', () => {
       expect(references).toBeDefined();
       expect(references!.length).toBeGreaterThan(0);
       expect(references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)).toBe(true);
+    } finally {
+      lsp.dispose();
+      expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+    }
+  });
+
+  // The case builds the AST cache (initAstCache), which resolves the fixture's dynamic
+  // SDK declarations; environments whose ets/dynamic fixture cannot be parsed (gate
+  // fixture builds) run with SKIP_UI_PLUGINS and skip it.
+  (process.env.SKIP_UI_PLUGINS ? test.skip : test)(
+    'initAstCache records the warm baseline so the AST cache is not counted as growth',
+    () => {
+      jest.useFakeTimers();
+      process.env.FORCE_LSP_IDLE_RECYCLE = 'true';
+
+      const astCacheModuleName = 'findRenameLocations';
+      const lsp = getLsp(astCacheModuleName);
+      const testFile = getRealPath(astCacheModuleName, 'findRenameLocations1.ets');
+      const source = fs.readFileSync(testFile, 'utf8');
+
+      try {
+        // The AST-cache footprint appears after construction: every later RSS read is high.
+        const baseline = process.memoryUsage().rss;
+        const memSpy = jest.spyOn(process, 'memoryUsage').mockImplementation(() => ({
+          rss: baseline + (Lsp.memoryGrowthThresholdMB + 10) * 1024 * 1024,
+          heapTotal: 0,
+          heapUsed: 0,
+          external: 0,
+          arrayBuffers: 0
+        }));
+        try {
+          lsp.initAstCache();
+        } finally {
+          memSpy.mockRestore();
+        }
+
+        // The warm baseline absorbs the AST cache: the edit must not trigger an emergency
+        // reset before it, so the consecutive edit counter keeps counting.
+        lsp.modifyFilesMap(testFile, { newDoc: source });
+        expect(lsp.getConsecutiveEditsCount()).toBe(1);
+        expect(lsp.isIdleRecycleTimerActive()).toBe(true);
+
+        const locations = lsp.findRenameLocations(testFile, 708);
+        expect(locations).toBeDefined();
+        expect(locations!.length).toBeGreaterThan(0);
+      } finally {
+        lsp.dispose();
+        expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+      }
+    }
+  );
+
+  test('idle recycle within the cooldown interval is deferred until the cooldown elapses', () => {
+    jest.useFakeTimers();
+    process.env.FORCE_LSP_IDLE_RECYCLE = 'true';
+
+    const lsp = getLsp(moduleName);
+    const testFile = getRealPath(moduleName, 'getReferencesAtPosition2.ets');
+    const source = fs.readFileSync(testFile, 'utf8');
+
+    try {
+      // 1. First idle recycle runs: the cooldown starts
+      lsp.modifyFilesMap(testFile, { newDoc: source });
+      jest.advanceTimersByTime(Lsp.idleRecycleDelayMs);
+      expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+
+      // 2. Second idle window expires within the cooldown: no second recycle,
+      //    the timer is rearmed for the rest of the cooldown instead
+      lsp.modifyFilesMap(testFile, { newDoc: source });
+      expect(lsp.isIdleRecycleTimerActive()).toBe(true);
+      jest.advanceTimersByTime(Lsp.idleRecycleDelayMs);
+      expect(lsp.isIdleRecycleTimerActive()).toBe(true);
+
+      // 3. Once the cooldown elapses the rearmed timer recycles
+      jest.advanceTimersByTime(Lsp.minRecycleIntervalMs);
+      expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+
+      const references = lsp.getReferencesAtPosition(testFile, 635);
+      expect(references).toBeDefined();
+      expect(references!.length).toBeGreaterThan(0);
+    } finally {
+      lsp.dispose();
+      expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+    }
+  });
+
+  test('growth-triggered emergency before edit respects the recycle cooldown', () => {
+    jest.useFakeTimers();
+    process.env.FORCE_LSP_IDLE_RECYCLE = 'true';
+
+    const lsp = getLsp(moduleName);
+    const testFile = getRealPath(moduleName, 'getReferencesAtPosition2.ets');
+    const source = fs.readFileSync(testFile, 'utf8');
+
+    try {
+      // 1. A completed idle recycle starts the cooldown and refreshes the baseline
+      lsp.modifyFilesMap(testFile, { newDoc: source });
+      jest.advanceTimersByTime(Lsp.idleRecycleDelayMs);
+      expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+      const rssAfterRecycle = process.memoryUsage().rss;
+      const baselineAfterRecycle = (lsp as unknown as { baselineRssMB: number }).baselineRssMB;
+      expect(baselineAfterRecycle * 1024 * 1024).toBeGreaterThan(rssAfterRecycle - 64 * 1024 * 1024);
+
+      // 2. Growth beyond the threshold within the cooldown must defer to the idle
+      //    channel: the edit is not stalled by a synchronous destroy-and-rebuild.
+      const memSpy = jest.spyOn(process, 'memoryUsage').mockImplementation(() => ({
+        rss: rssAfterRecycle + (Lsp.memoryGrowthThresholdMB + 10) * 1024 * 1024,
+        heapTotal: 0,
+        heapUsed: 0,
+        external: 0,
+        arrayBuffers: 0
+      }));
+      try {
+        lsp.modifyFilesMap(testFile, { newDoc: source });
+        expect(lsp.getConsecutiveEditsCount()).toBe(1);
+        expect(lsp.isIdleRecycleTimerActive()).toBe(true);
+      } finally {
+        memSpy.mockRestore();
+      }
+
+      // 3. The deferred recycle completes once the cooldown allows it
+      jest.advanceTimersByTime(Lsp.idleRecycleDelayMs);
+      expect(lsp.isIdleRecycleTimerActive()).toBe(true);
+      jest.advanceTimersByTime(Lsp.minRecycleIntervalMs);
+      expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+
+      const references = lsp.getReferencesAtPosition(testFile, 635);
+      expect(references).toBeDefined();
+      expect(references!.length).toBeGreaterThan(0);
     } finally {
       lsp.dispose();
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
