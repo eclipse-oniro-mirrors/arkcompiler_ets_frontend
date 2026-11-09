@@ -1,6 +1,5 @@
-.language ECMAScript
-
 slotNum = 0x2
+.language ECMAScript
 .function any .#~A=#A(any a0, any a1, any a2) {
 label_1: 
 label_0: 
@@ -12,6 +11,7 @@ label_2:
 }
 
 slotNum = 0x6
+.language ECMAScript
 .function any .#~A>#instance_initializer(any a0, any a1, any a2) {
 label_1: 
 label_0: 
@@ -22,16 +22,13 @@ label_0:
 	lda.str a
 	callruntime.definefieldbyvalue 0x2, v0, a2
 	ldlexvar 0x1, 0x0
-	sta v0
-	throw.undefinedifholewithname a
-	lda v0
 	definepropertybyname 0x4, b, a2
-	ldundefined
 	returnundefined
 label_2: 
 }
 
 slotNum = 0x4
+.language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
 	nop
 label_7: 
@@ -43,14 +40,11 @@ label_0:
 label_2: 
 label_4: 
 	ldhole
-	sta v1
+	sta v0
 	ldlexvar 0x1, 0x0
-	sta v2
-	throw.undefinedifholewithname a
-	lda v2
 	callruntime.topropertykey
 	stlexvar 0x0, 0x0
-	defineclasswithbuffer 0x0, .#~A=#A, _2, 0x0, v1
+	defineclasswithbuffer 0x0, .#~A=#A, _2, 0x0, v0
 	ldobjbyname 0x1, prototype
 	definemethod 0x3, .#~A>#instance_initializer, 0x0
 	stlexvar 0x0, 0x1
@@ -58,14 +52,11 @@ label_3:
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv
-	ldundefined
 	returnundefined
 label_8: 
 }

@@ -360,7 +360,6 @@ label_16:
 	callarg1 0x2f, v1
 label_15: 
 	ldlexvar 0x0, 0x0
-	throw.undefinedifholewithname NORMALIZED_LEXVAR
 	ldobjbyname 0x31, FILE_TYPE
 	sta v0
 	lda.str normalized

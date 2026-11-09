@@ -1,20 +1,18 @@
-.language ECMAScript
-
 slotNum = 0x2
+.language ECMAScript
 .function any .#~@0=#SendableLazyLoading(any a0, any a1, any a2) {
 label_1: 
 label_0: 
 	callruntime.ldlazysendablemodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname a1
-	lda v0
 	stobjbyname 0x0, name, a2
 	lda a2
 	return
 label_2: 
 }
 
-slotNum = 0x8
+slotNum = 0xb
+.language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
 label_1: 
 label_0: 
@@ -22,8 +20,7 @@ label_0:
 	sta v0
 	callruntime.definesendableclass 0x0, .#~@0=#SendableLazyLoading, _4, 0x0, v0
 	sta v0
-	mov v2, v0
-	newobjrange 0x1, 0x1, v2
+	newobjrange 0x1, 0x1, v0
 	sta v0
 	callruntime.ldlazymodulevar 0x1
 	throw.undefinedifholewithname a2
@@ -34,7 +31,13 @@ label_0:
 	sta v0
 	lda v1
 	callarg1 0x6, v0
-	ldundefined
+	tryldglobalbyname 0x8, print
+	sta v0
+	callruntime.ldlazymodulevar 0x2
+	sta v1
+	throw.undefinedifholewithname defaultImportValue
+	lda v0
+	callarg1 0x9, v1
 	returnundefined
 label_2: 
 }

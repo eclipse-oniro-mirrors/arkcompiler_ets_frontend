@@ -42,7 +42,6 @@ label_4:
 	ldhole
 	sta v0
 	ldlexvar 0x1, 0x0
-	throw.undefinedifholewithname a
 	callruntime.topropertykey
 	stlexvar 0x0, 0x0
 	defineclasswithbuffer 0x1, .#~A=#A, _2, 0x0, v0

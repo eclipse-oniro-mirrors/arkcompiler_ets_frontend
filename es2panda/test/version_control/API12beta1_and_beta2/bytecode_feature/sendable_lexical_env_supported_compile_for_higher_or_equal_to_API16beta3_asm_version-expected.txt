@@ -1,6 +1,5 @@
-.language ECMAScript
-
 slotNum = 0x2
+.language ECMAScript
 .function any .#~@0=#TopLevelSendableClass1(any a0, any a1, any a2) {
 label_1: 
 label_0: 
@@ -12,14 +11,14 @@ label_2:
 }
 
 slotNum = 0xa
+.language ECMAScript
 .function any .#~@1=#SendableTestClass1(any a0, any a1, any a2) {
 label_1: 
 label_0: 
 	callruntime.ldsendablevar 0x0, 0x0
 	sta v0
 	throw.undefinedifholewithname TopLevelSendableClass1
-	mov v1, v0
-	newobjrange 0x0, 0x1, v1
+	newobjrange 0x0, 0x1, v0
 	stobjbyname 0x2, a1, a2
 	lda a2
 	ldobjbyname 0x4, a1
@@ -31,6 +30,7 @@ label_2:
 }
 
 slotNum = 0x4
+.language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
 label_1: 
 label_0: 
@@ -43,9 +43,7 @@ label_0:
 	sta v0
 	callruntime.definesendableclass 0x1, .#~@1=#SendableTestClass1, _5, 0x0, v0
 	sta v0
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
-	ldundefined
+	newobjrange 0x2, 0x1, v0
 	returnundefined
 label_2: 
 }
