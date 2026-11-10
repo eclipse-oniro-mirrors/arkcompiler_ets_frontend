@@ -3253,6 +3253,50 @@ static void ApplyTestedSmartCasts(ETSChecker *const checker, const SmartCastType
     }
 }
 
+// Strict operand diagnostics must survive the silent check of an unreachable branch: the branch is
+// not taken, but its operands are still ill-typed. All other diagnostics stay suppressed.
+static util::DiagnosticStorage CollectStrictBooleanDiagnostics(util::DiagnosticEngine &engine,
+                                                               const util::DiagnosticCheckpoint &checkpoint)
+{
+    util::DiagnosticStorage strictDiagnostics;
+    const auto &errors = engine.GetDiagnosticStorage(util::DiagnosticType::SEMANTIC);
+    for (size_t i = checkpoint[util::DiagnosticType::SEMANTIC]; i < errors.size(); ++i) {
+        if (errors[i]->GetId() == diagnostic::STRICT_BOOLEAN_REQUIRED.Id()) {
+            strictDiagnostics.push_back(errors[i]);
+        }
+    }
+    return strictDiagnostics;
+}
+
+static checker::Type *CheckSilentBranch(ETSChecker *const checker, ir::Expression *branch)
+{
+    auto &engine = checker->DiagnosticEngine();
+    const auto checkpoint = engine.Save();
+    Type *branchType = nullptr;
+    util::DiagnosticStorage strictDiagnostics;
+    {
+        checker::InferMatchContext silentBranchCheckCtx(checker, util::DiagnosticType::SEMANTIC, branch->Range(),
+                                                        false);
+        branchType = branch->Check(checker);
+        strictDiagnostics = CollectStrictBooleanDiagnostics(engine, checkpoint);
+    }
+    for (auto &error : strictDiagnostics) {
+        engine.InsertLog(std::move(error));
+    }
+    return branchType;
+}
+
+static checker::Type *CheckConditionalBranch(ETSChecker *const checker, const SmartCastTypes &testedTypes,
+                                             ir::Expression *branch, bool takeConsequentSmartCast,
+                                             bool suppressDiagnostics)
+{
+    ApplyTestedSmartCasts(checker, testedTypes, takeConsequentSmartCast);
+    if (suppressDiagnostics) {
+        return CheckSilentBranch(checker, branch);
+    }
+    return branch->Check(checker);
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -3266,25 +3310,12 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
     SmartCastTypes testedTypes = checker->Context().ExitTestExpression();
     auto const testValue = TryResolveConditionalTestValue(expr->Test());
     if (testValue.has_value()) {
-        auto const checkBranch = [checker, &testedTypes](ir::Expression *branch, bool takeConsequentSmartCast,
-                                                         bool suppressDiagnostics) {
-            ApplyTestedSmartCasts(checker, testedTypes, takeConsequentSmartCast);
-            if (suppressDiagnostics) {
-                checker::InferMatchContext silentBranchCheckCtx(checker, util::DiagnosticType::SEMANTIC,
-                                                                branch->Range(), false);
-                Type *const branchType = branch->Check(checker);
-                return branchType;
-            }
-            Type *const branchType = branch->Check(checker);
-            return branchType;
-        };
-
         auto *const takenBranch = testValue.value() ? expr->Consequent() : expr->Alternate();
         auto *const deadBranch = testValue.value() ? expr->Alternate() : expr->Consequent();
-        auto *const takenType = checkBranch(takenBranch, testValue.value(), false);
+        auto *const takenType = CheckConditionalBranch(checker, testedTypes, takenBranch, testValue.value(), false);
 
         checker->Context().RestoreSmartCasts(smartCasts);
-        (void)checkBranch(deadBranch, !testValue.value(), true);
+        (void)CheckConditionalBranch(checker, testedTypes, deadBranch, !testValue.value(), true);
 
         expr->SetTsType(takenType);
 
@@ -4705,6 +4736,9 @@ checker::Type *ETSAnalyzer::Check(ir::UnaryExpression *expr) const
 
     auto argType = expr->argument_->Check(checker);
     const auto isCondExpr = expr->OperatorType() == lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK;
+    if (isCondExpr && !checker->CheckStrictBooleanType(argType, expr->Argument()->Start())) {
+        return expr->SetTsType(checker->GlobalTypeError());
+    }
     checker::Type *operandType = checker->ApplyUnaryOperatorPromotion(expr->argument_, argType, isCondExpr);
     if (argType != nullptr && argType->IsETSBigIntType() && argType->HasTypeFlag(checker::TypeFlag::BIGINT_LITERAL)) {
         switch (expr->OperatorType()) {

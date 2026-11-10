@@ -476,7 +476,8 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
             Program()->IsBuiltSimultaneously() ? DiagnosticEngine().HasErrorDiagnosticsFor(Program()) : IsAnyError();
         if (!skipAnalyzers) {
             AliveAnalyzer aliveAnalyzer(Program()->Ast(), this);
-            AssignAnalyzer(this).Analyze(Program()->Ast());
+            const auto &options = *VarBinder()->GetContext()->config->options;
+            AssignAnalyzer(this, InitializationPolicy {options.IsStrictMode()}).Analyze(Program()->Ast());
         }
     } else if (!VarBinder()->GetContext()->lazyCheck) {
         Program()->Ast()->Check(this);

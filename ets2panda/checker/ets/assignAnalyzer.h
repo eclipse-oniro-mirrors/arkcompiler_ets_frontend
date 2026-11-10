@@ -384,9 +384,34 @@ public:
 using NodeId = int;
 using NodeIdMap = std::unordered_map<const ir::AstNode *, NodeId>;
 
+// Per-analysis compatibility policy. The default preserves legacy initialization rules.
+class InitializationPolicy {
+public:
+    InitializationPolicy() = default;
+    explicit InitializationPolicy(bool strict) : strict_(strict) {}
+
+    bool AllowValueTypeDefaultInitialization() const
+    {
+        return !strict_;
+    }
+
+    bool AllowUninitializedNullComparison() const
+    {
+        return !strict_;
+    }
+
+    bool CheckExpressionFlow() const
+    {
+        return strict_;
+    }
+
+private:
+    bool strict_ {false};
+};
+
 class AssignAnalyzer : public BaseAnalyzer<AssignPendingExit> {
 public:
-    explicit AssignAnalyzer(ETSChecker *checker);
+    explicit AssignAnalyzer(ETSChecker *checker, InitializationPolicy policy = InitializationPolicy {});
     void Analyze(const ir::AstNode *node);
 
     void MarkDead() override;
@@ -471,6 +496,7 @@ private:
     void ReportUseBeforeInit(const ir::AstNode *node, const ir::AstNode *declNode);
 
     ETSChecker *checker_;
+    InitializationPolicy policy_;
     Set inits_ {};
     Set uninits_ {};
     Set uninitsTry_ {};

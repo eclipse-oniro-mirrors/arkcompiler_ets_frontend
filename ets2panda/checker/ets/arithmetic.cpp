@@ -1606,6 +1606,13 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperator(ir::Expression *left,
 
     const bool isLogicalExtendedOperator = (operationType == lexer::TokenType::PUNCTUATOR_LOGICAL_AND) ||
                                            (operationType == lexer::TokenType::PUNCTUATOR_LOGICAL_OR);
+    if (isLogicalExtendedOperator) {
+        const bool validLeft = CheckStrictBooleanType(leftType, left->Start());
+        const bool validRight = CheckStrictBooleanType(rightType, right->Start());
+        if (!validLeft || !validRight) {
+            return {GlobalTypeError(), GlobalTypeError()};
+        }
+    }
     Type *unboxedL =
         isLogicalExtendedOperator ? MaybeUnboxConditionalInRelation(leftType) : MaybeUnboxInRelation(leftType);
     Type *unboxedR =

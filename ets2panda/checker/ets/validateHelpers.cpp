@@ -13,9 +13,22 @@
  * limitations under the License.
  */
 
+#include "checker/types/ets/etsAwaitedType.h"
+#include "checker/types/ets/etsNonNullishType.h"
+#include "checker/types/ets/etsObjectType.h"
+#include "checker/types/ets/etsObjectTypeConstants.h"
+#include "checker/types/ets/etsPartialTypeParameter.h"
+#include "checker/types/ets/etsReadonlyType.h"
+#include "checker/types/ets/etsTypeAliasType.h"
+#include "checker/types/ets/etsTypeParameter.h"
+#include "checker/types/ets/etsUnionType.h"
+#include "checker/types/ets/etsWildcardType.h"
 #include "varbinder/variableFlags.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "checker/ETSchecker.h"
+#include "public/public.h"
+#include "util/options.h"
+#include "generated/diagnostic.h"
 
 namespace ark::es2panda::checker {
 void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType *obj, ir::Expression const *expr)
@@ -394,4 +407,127 @@ bool ETSChecker::IsArrayExprSizeValidForTuple(const ir::ArrayExpression *const a
     LogError(diagnostic::TUPLE_WRONG_NUMBER_OF_ELEMS, {size, tuple->GetTupleSize()}, arrayExpr->Start());
     return false;
 }
+
+// One link of the unwrap path used by the strict-boolean operand test. The links live on the caller
+// stack, so the traversal allocates nothing. Constraint legality and its diagnostics remain the
+// responsibility of the existing constraint validation.
+struct StrictBooleanOperandFrame {
+    Type const *type;
+    bool ignoreNullish;
+    StrictBooleanOperandFrame const *previous;
+};
+
+static bool IsStrictBooleanOperand(Type const *type, bool ignoreNullish, StrictBooleanOperandFrame const *path);
+
+// Underlying constraint of the wildcard/readonly/awaited wrappers, read without resolving anything.
+static Type const *GetUnderlyingConstraintType(ETSTypeParameter const *underlying)
+{
+    return underlying != nullptr ? underlying->GetConstraintType() : nullptr;
+}
+
+// Leaf test of the strict-boolean rule. Reads the existing type representation only, using the same
+// unboxing classification as the rest of this file.
+static bool IsStrictBooleanValue(Type const *type)
+{
+    if (type->IsETSNeverType() || type->IsTypeError()) {
+        // The bottom type produces no value, and error recovery is not a new diagnostic source.
+        return true;
+    }
+    if (type->IsETSBooleanType()) {
+        // Covers the primitive type as well as both boolean literal types.
+        return true;
+    }
+    if (type->IsETSObjectType()) {
+        return type->AsETSObjectType()->UnboxableKind() == ETSObjectFlags::BUILTIN_BOOLEAN;
+    }
+    return false;
+}
+
+// Every constituent of a union has to satisfy the rule on its own.
+static bool AreUnionConstituentsStrictBoolean(ETSUnionType const *unionType, bool ignoreNullish,
+                                              StrictBooleanOperandFrame const *path)
+{
+    for (auto *constituent : unionType->ConstituentTypes()) {
+        if (!IsStrictBooleanOperand(constituent, ignoreNullish, path)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Unwraps the wrappers that expose an already resolved target or constraint type. Read-only like the
+// rest of this predicate: no apparent type, no relation query, no clone and no utility type
+// materialization, so the checker cannot create nodes here.
+static bool UnwrapStrictBooleanOperand(Type const *type, bool ignoreNullish, StrictBooleanOperandFrame const *path)
+{
+    if (type->IsETSTypeAliasType()) {
+        return IsStrictBooleanOperand(type->AsETSTypeAliasType()->GetTargetType(), ignoreNullish, path);
+    }
+    if (type->IsETSNonNullishType()) {
+        // Only null and undefined are dropped; every other constituent must still be boolean.
+        return IsStrictBooleanOperand(type->AsETSNonNullishType()->GetConstraintOrUnderlying(), true, path);
+    }
+    if (type->IsETSWildcardType()) {
+        return IsStrictBooleanOperand(GetUnderlyingConstraintType(type->AsETSWildcardType()->GetUnderlying()),
+                                      ignoreNullish, path);
+    }
+    if (type->IsETSReadonlyType()) {
+        return IsStrictBooleanOperand(GetUnderlyingConstraintType(type->AsETSReadonlyType()->GetUnderlying()),
+                                      ignoreNullish, path);
+    }
+    if (type->IsETSAwaitedType()) {
+        return IsStrictBooleanOperand(GetUnderlyingConstraintType(type->AsETSAwaitedType()->GetUnderlying()),
+                                      ignoreNullish, path);
+    }
+    if (type->IsETSTypeParameter()) {
+        return IsStrictBooleanOperand(type->AsETSTypeParameter()->GetConstraintType(), ignoreNullish, path);
+    }
+    if (type->IsETSUnionType()) {
+        return AreUnionConstituentsStrictBoolean(type->AsETSUnionType(), ignoreNullish, path);
+    }
+    return false;
+}
+
+static bool IsStrictBooleanOperand(Type const *type, bool ignoreNullish, StrictBooleanOperandFrame const *path)
+{
+    if (type == nullptr) {
+        return false;
+    }
+    if (type->IsETSAnyType() || type->IsETSRelaxedAnyType()) {
+        return false;
+    }
+    if (type->IsETSNullType() || type->IsETSUndefinedType()) {
+        return ignoreNullish;
+    }
+    if (type->IsETSPartialTypeParameter() || type->IsETSReturnTypeUtilityType()) {
+        // Their resolved shape is an object or any: no boolean guarantee, and materializing them is
+        // what the checker must not do here.
+        return false;
+    }
+    if (IsStrictBooleanValue(type)) {
+        return true;
+    }
+    for (auto const *frame = path; frame != nullptr; frame = frame->previous) {
+        if (frame->type == type && frame->ignoreNullish == ignoreNullish) {
+            // Re-entering a type that is already being unwrapped is a cycle, not a boolean guarantee.
+            return false;
+        }
+    }
+    const StrictBooleanOperandFrame frame {type, ignoreNullish, path};
+    return UnwrapStrictBooleanOperand(type, ignoreNullish, &frame);
+}
+
+bool ETSChecker::CheckStrictBooleanType(Type *type, const lexer::SourcePosition &pos)
+{
+    if (!VarBinder()->GetContext()->config->options->IsStrictMode() || type == nullptr || type->IsTypeError()) {
+        return true;
+    }
+
+    if (IsStrictBooleanOperand(type, false, nullptr)) {
+        return true;
+    }
+    LogError(diagnostic::STRICT_BOOLEAN_REQUIRED, {type}, pos);
+    return false;
+}
+
 }  // namespace ark::es2panda::checker

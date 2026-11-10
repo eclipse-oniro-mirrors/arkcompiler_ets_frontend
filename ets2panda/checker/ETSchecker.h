@@ -652,6 +652,7 @@ public:
     checker::Type *CheckVariableDeclaration(ir::Identifier *ident, ir::TypeNode *typeAnnotation, ir::Expression *init,
                                             ir::ModifierFlags flags);
     void CheckTruthinessOfType(ir::Expression *expr);
+    bool CheckStrictBooleanType(Type *type, const lexer::SourcePosition &pos);
 
     bool CheckNonNullish(ir::Expression const *expr);
     Type *GetNonNullishType(Type *type);

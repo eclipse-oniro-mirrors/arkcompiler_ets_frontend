@@ -58,6 +58,9 @@ void ETSChecker::CheckTruthinessOfType(ir::Expression *expr)
 {
     auto const testType = expr->Check(this);
     ES2PANDA_ASSERT(testType != nullptr);
+    if (!CheckStrictBooleanType(testType, expr->Start())) {
+        return;
+    }
     // For T_S compatibility
     if (testType->IsETSEnumType()) {
         expr->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);

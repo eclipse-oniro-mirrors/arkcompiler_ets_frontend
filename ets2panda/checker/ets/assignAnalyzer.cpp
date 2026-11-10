@@ -64,6 +64,8 @@
 #include "checker/ETSAnalyzerHelpers.h"
 #include "ir/base/catchClause.h"
 #include "parser/program/program.h"
+#include "public/public.h"
+#include "util/options.h"
 #include "checker/types/ts/objectType.h"
 
 namespace ark::es2panda::checker {
@@ -125,7 +127,7 @@ static std::string Capitalize(const util::StringView &str)
     return ret;
 }
 
-AssignAnalyzer::AssignAnalyzer(ETSChecker *checker) : checker_(checker) {}
+AssignAnalyzer::AssignAnalyzer(ETSChecker *checker, InitializationPolicy policy) : checker_(checker), policy_(policy) {}
 
 void AssignAnalyzer::Analyze(const ir::AstNode *node)
 {
@@ -200,6 +202,10 @@ bool AssignAnalyzer::AnalyzeStmtNode1(const ir::AstNode *node, const ir::AstNode
     switch (node->Type()) {
         case ir::AstNodeType::EXPRESSION_STATEMENT: {
             AnalyzeNode(node->AsExpressionStatement()->GetExpression(), currentTopLevelDecl);
+            if (policy_.CheckExpressionFlow() && inits_.IsReset()) {
+                // A short-circuit expression can leave separate true/false states.
+                Merge();
+            }
             break;
         }
         case ir::AstNodeType::BLOCK_STATEMENT: {
@@ -414,6 +420,8 @@ void AssignAnalyzer::AnalyzeClassDef(const ir::ClassDefinition *classDef)
 // NOTE (pantos) awkward methods to conform method length/complexity requirements of CI...
 void AssignAnalyzer::ProcessClassDefStaticFields(const ir::ClassDefinition *classDef)
 {
+    const bool checkStdlibInitializers = checker_->VarBinder()->GetContext()->config->options->IsGenStdlib() &&
+                                         !policy_.AllowValueTypeDefaultInitialization();
     for (const auto it : classDef->Body()) {
         if (IsStaticClassProperty(it)) {
             NewVar(it->AsClassProperty());
@@ -427,12 +435,19 @@ void AssignAnalyzer::ProcessClassDefStaticFields(const ir::ClassDefinition *clas
         }
 
         const auto prop = it->AsClassProperty();
-        if (!ShouldAnalyzeStaticFieldInitializer(prop)) {
+        // GEN_STD_LIB omits the lowered module declaration assignments. Use the
+        // retained initializer instead of assuming a scalar default. Omitted
+        // initializers must not count as assignments based on metadata alone.
+        const bool stdlibInitializer = checkStdlibInitializers && prop->IsTopLevelLexicalDecl() &&
+                                       prop->IsImmediateInit() && prop->Value() != nullptr;
+        if (!ShouldAnalyzeStaticFieldInitializer(prop) && !stdlibInitializer) {
             continue;
         }
 
         inStaticFieldInit_ = true;
-        AnalyzeNode(prop->Value());
+        if (prop->Value() != nullptr) {
+            AnalyzeNode(prop->Value(), stdlibInitializer ? prop : nullptr);
+        }
         LetInit(prop);
     }
     for (const auto it : classDef->Body()) {
@@ -971,6 +986,10 @@ void AssignAnalyzer::AnalyzeCond(const ir::AstNode *node, const ir::AstNode *cur
 
     if (auto etype = expr->TsType();
         etype != nullptr && etype->IsETSBooleanType() && etype->HasTypeFlag(TypeFlag::CONSTANT)) {
+        if (policy_.CheckExpressionFlow()) {
+            // A constant result does not imply that evaluating its operands is safe.
+            AnalyzeExpr(node, currentTopLevelDecl);
+        }
         const ETSBooleanType *condType = etype->AsETSBooleanType();
         if (inits_.IsReset()) {
             Merge();
@@ -1008,7 +1027,7 @@ void AssignAnalyzer::AnalyzeId(const ir::Identifier *id, const ir::AstNode *curr
         return;  // inside ObjectExpression
     }
 
-    if (id->Parent()->IsBinaryExpression()) {
+    if (policy_.AllowUninitializedNullComparison() && id->Parent()->IsBinaryExpression()) {
         const ir::BinaryExpression *binExpr = id->Parent()->AsBinaryExpression();
         if ((binExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_EQUAL ||
              binExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_NOT_EQUAL) &&
@@ -1473,7 +1492,7 @@ const ir::AstNode *AssignAnalyzer::GetDeclaringNode(const ir::AstNode *node)
     return ret;
 }
 
-static bool IsDefaultValueType(const Type *type)
+static bool IsDefaultValueType(const Type *type, const InitializationPolicy &policy)
 {
     if (type == nullptr) {
         return false;
@@ -1483,7 +1502,10 @@ static bool IsDefaultValueType(const Type *type)
 
     bool boxedPrimitive = (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive());
     bool nullOrUndefined = type->IsETSUndefinedType() || type->IsETSNullType();
-    if (boxedPrimitive || nullOrUndefined) {
+    if (boxedPrimitive) {
+        return policy.AllowValueTypeDefaultInitialization();
+    }
+    if (nullOrUndefined) {
         return true;
     }
 
@@ -1511,7 +1533,7 @@ bool AssignAnalyzer::VariableHasDefaultValue(const ir::AstNode *node)
     } else {
         ES2PANDA_UNREACHABLE();
     }
-    return IsDefaultValueType(type);
+    return IsDefaultValueType(type, policy_);
 }
 
 void AssignAnalyzer::LetInit(const ir::AstNode *node)

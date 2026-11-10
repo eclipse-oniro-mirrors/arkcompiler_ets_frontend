@@ -27,6 +27,7 @@
 #include "ir/ts/tsAsExpression.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "util/helpers.h"
+#include "util/options.h"
 #include "libarkbase/utils/small_vector.h"
 
 namespace ark::es2panda::compiler {
@@ -361,6 +362,11 @@ private:
     {
         ES2PANDA_ASSERT(inputs_.size() == 3U);
         const auto *test = inputs_[0];
+        // Preserve invalid strict conditions for the checker instead of folding
+        // away the expression that must produce the diagnostic.
+        if (context_->config->options->IsStrictMode() && !test->IsBooleanLiteral()) {
+            return nullptr;
+        }
         auto *conseq = inputs_[1];
         auto *altern = inputs_[2U];
         auto res = TestLiteral(test) ? conseq : altern;
@@ -561,6 +567,9 @@ private:
     {
         ES2PANDA_ASSERT(inputs_.size() == 1);
         if (unary->OperatorType() == lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK) {
+            if (context_->config->options->IsStrictMode() && !inputs_[0]->IsBooleanLiteral()) {
+                return nullptr;
+            }
             return CreateBooleanLiteral(!TestLiteral(inputs_[0]));
         }
 
@@ -1137,6 +1146,9 @@ private:
 
     ir::Literal *HandleLogicalExpression(const ir::BinaryExpression *expr, ir::Literal *left, ir::Literal *right)
     {
+        if (context_->config->options->IsStrictMode() && (!left->IsBooleanLiteral() || !right->IsBooleanLiteral())) {
+            return nullptr;
+        }
         auto allocator = context_->allocator;
         auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
         bool lhs = TestLiteral(left);
