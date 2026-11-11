@@ -1,0 +1,13 @@
+ctor body
+    at B (test/compiler/js/lexicalEnv/classEnv/constructor-nosuper-super-check-line-info.js:20:1)
+    at func_main_0 (test/compiler/js/lexicalEnv/classEnv/constructor-nosuper-super-check-line-info.js:38:1)
+
+    at C (test/compiler/js/lexicalEnv/classEnv/constructor-nosuper-super-check-line-info.js:25:1)
+    at func_main_0 (test/compiler/js/lexicalEnv/classEnv/constructor-nosuper-super-check-line-info.js:43:1)
+
+    at D (test/compiler/js/lexicalEnv/classEnv/constructor-nosuper-super-check-line-info.js:33:1)
+    at func_main_0 (test/compiler/js/lexicalEnv/classEnv/constructor-nosuper-super-check-line-info.js:48:1)
+
+    at D (test/compiler/js/lexicalEnv/classEnv/constructor-nosuper-super-check-line-info.js:35:1)
+    at func_main_0 (test/compiler/js/lexicalEnv/classEnv/constructor-nosuper-super-check-line-info.js:53:1)
+

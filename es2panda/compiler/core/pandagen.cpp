@@ -1341,9 +1341,9 @@ void PandaGen::EmitReturnUndefined(const ir::AstNode *node)
     ra_.Emit<Returnundefined>(node);
 }
 
-void PandaGen::ImplicitReturn(const ir::AstNode *node)
+void PandaGen::ImplicitReturn(const ir::AstNode *node, bool isBareReturn)
 {
-    builder_->ImplicitReturn(node);
+    builder_->ImplicitReturn(node, isBareReturn);
 }
 
 void PandaGen::DirectReturn(const ir::AstNode *node)

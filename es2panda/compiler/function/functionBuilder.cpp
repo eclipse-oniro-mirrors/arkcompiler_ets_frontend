@@ -37,7 +37,7 @@ void FunctionBuilder::DirectReturn(const ir::AstNode *node) const
     pg_->EmitReturn(node);
 }
 
-void FunctionBuilder::ImplicitReturn(const ir::AstNode *node) const
+void FunctionBuilder::ImplicitReturn(const ir::AstNode *node, bool isBareReturn) const
 {
     const auto *rootNode = pg_->RootNode();
     pg_->SetSourceLocationFlag(lexer::SourceLocationFlag::INVALID_SOURCE_LOCATION);
@@ -65,7 +65,17 @@ void FunctionBuilder::ImplicitReturn(const ir::AstNode *node) const
 
     pg_->GetThis(node);
     if (pg_->IsDerivedConstructor()) {
-        pg_->CheckIfSuperCorrectCallBeforeReturn(node);
+        // The super-check of the implicit `return this` throws at runtime when super()
+        // was never called. Give it a real source position so the error stack resolves a
+        // valid line instead of INVALID (-1). A bare `return;` reports its own position;
+        // the fall-off-the-end case is attributed to the end of the
+        // constructor (LAST_NODE_OF_FUNCTION), which never precedes any statement of the
+        // body, keeping debugger stepping monotonic, and also avoids conditional-breakpoint
+        // false hits (see 413fd362d). The two cases must be distinguished by the caller:
+        // FindLastStatement may pick a conditional `return` as the associated node of the
+        // natural fall-off-the-end path, and that return may never have executed.
+        pg_->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
+        pg_->CheckIfSuperCorrectCallBeforeReturn(isBareReturn ? node : LAST_NODE_OF_FUNCTION);
     }
 
     pg_->NotifyConcurrentResult(node);
