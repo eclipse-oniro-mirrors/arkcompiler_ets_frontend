@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -97,6 +97,7 @@ class IRNode;
 using Operand = std::variant<compiler::VReg, double, int64_t, util::StringView, Label *>;
 
 #define FIRST_NODE_OF_FUNCTION (reinterpret_cast<ir::AstNode *>(0x1))
+#define LAST_NODE_OF_FUNCTION (reinterpret_cast<ir::AstNode *>(0x2))
 
 using ICSlot = uint16_t;
 

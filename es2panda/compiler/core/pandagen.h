@@ -360,7 +360,7 @@ public:
     void ValidateClassDirectReturn(const ir::AstNode *node);
     void DirectReturn(const ir::AstNode *node);
     void ExplicitReturn(const ir::AstNode *node);
-    void ImplicitReturn(const ir::AstNode *node);
+    void ImplicitReturn(const ir::AstNode *node, bool isBareReturn = false);
     void EmitAwait(const ir::AstNode *node);
 
     void CallThis(const ir::AstNode *node, VReg startReg, size_t argCount);

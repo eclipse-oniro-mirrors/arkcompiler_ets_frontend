@@ -57,7 +57,7 @@ void ReturnStatement::Compile(compiler::PandaGen *pg) const
         pg->ValidateClassDirectReturn(this);
         pg->ExplicitReturn(this);
     } else {
-        pg->ImplicitReturn(this);
+        pg->ImplicitReturn(this, true);
     }
 }
 

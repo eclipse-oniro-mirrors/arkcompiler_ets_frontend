@@ -178,6 +178,17 @@ uint32_t FunctionEmitter::UpdateForReturnIns(const ir::AstNode *astNode, panda::
     // the column number in pandaIns->ins_debug starts with 0
     constexpr uint32_t OFFSET_COL = 1;
     uint32_t columnNum = INVALID_COL;
+    if (astNode == LAST_NODE_OF_FUNCTION) {
+        // Synthetic node attributed to the end (closing brace) of the enclosing function.
+        // Used by the implicit `return this` super-check: the end position never precedes
+        // any statement of the body, so debugger stepping stays monotonic and the error
+        // stack points at where the function ends.
+        const ir::ScriptFunction *func =
+            pg_->RootNode()->IsScriptFunction() ? pg_->RootNode()->AsScriptFunction() : nullptr;
+        pandaIns->ins_debug.line_number = func ? func->Range().end.line : INVALID_LINE;
+        columnNum = func ? (GetLineIndex().GetLocation(func->Range().end).col - OFFSET_COL) : INVALID_COL;
+        return columnNum;
+    }
     if (pandaIns->GetOpcode() == pandasm::Opcode::RETURNUNDEFINED || pandaIns->GetOpcode() == pandasm::Opcode::RETURN) {
         while (astNode != nullptr && !astNode->IsScriptFunction()) {
             if (astNode->IsBlockStatement() &&
