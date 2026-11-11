@@ -362,8 +362,8 @@ static int RunMergedTest(const ReloadTestCase &tc, int argc, char **argv)
 {
     std::string tag = std::to_string(getpid()) + "_m_" + tc.label;
     std::string workDir = "/tmp/capi_merged_" + tag;
-    std::string mainPath = workDir + "/main.ets";
-    std::string depPath = workDir + "/dep.ets";
+    std::string mainPath = workDir + "/main.ats";
+    std::string depPath = workDir + "/dep.ats";
     std::string stPath = workDir + "/base.st";
     std::string abcPath = workDir + "/merged.abc";
     mkdir(workDir.c_str(), DIR_CREATE_MODE);
@@ -420,9 +420,9 @@ static int RunMergedImportChangeTest(int argc, char **argv)
 {
     std::string tag = std::to_string(getpid()) + "_m_impchg";
     std::string workDir = "/tmp/capi_merged_" + tag;
-    std::string mainPath = workDir + "/main.ets";
-    std::string depPath = workDir + "/dep.ets";
-    std::string dep2Path = workDir + "/dep2.ets";
+    std::string mainPath = workDir + "/main.ats";
+    std::string depPath = workDir + "/dep.ats";
+    std::string dep2Path = workDir + "/dep2.ats";
     std::string stPath = workDir + "/base.st";
     std::string abcPath = workDir + "/merged.abc";
     mkdir(workDir.c_str(), DIR_CREATE_MODE);
@@ -468,9 +468,9 @@ static int RunMergedClassRefTest(int argc, char **argv)
 {
     std::string tag = std::to_string(getpid()) + "_m_clsref";
     std::string workDir = "/tmp/capi_merged_" + tag;
-    std::string mainPath = workDir + "/main.ets";
-    std::string depPath = workDir + "/dep.ets";
-    std::string dep2Path = workDir + "/dep2.ets";
+    std::string mainPath = workDir + "/main.ats";
+    std::string depPath = workDir + "/dep.ats";
+    std::string dep2Path = workDir + "/dep2.ats";
     std::string stPath = workDir + "/base.st";
     std::string abcPath = workDir + "/merged.abc";
     mkdir(workDir.c_str(), DIR_CREATE_MODE);
@@ -509,16 +509,16 @@ static int RunMergedClassRefTest(int argc, char **argv)
     return 0;
 }
 
-// Lambda-numbering scenario: merged dump passes first.ets (several lambdas) together
-// with second.ets, reload passes ONLY second.ets with an allowed change (function
+// Lambda-numbering scenario: merged dump passes first.ats (several lambdas) together
+// with second.ats, reload passes ONLY second.ats with an allowed change (function
 // added). If the lambda counter is not reset per program, second's lambdas are
 // renumbered between the two phases and the reload reports false positives.
 static int RunMergedLambdaTest(int argc, char **argv)
 {
     std::string tag = std::to_string(getpid()) + "_m_lambda";
     std::string workDir = "/tmp/capi_merged_" + tag;
-    std::string firstPath = workDir + "/first.ets";
-    std::string secondPath = workDir + "/second.ets";
+    std::string firstPath = workDir + "/first.ats";
+    std::string secondPath = workDir + "/second.ats";
     std::string stPath = workDir + "/base.st";
     std::string abcPath = workDir + "/merged.abc";
     mkdir(workDir.c_str(), DIR_CREATE_MODE);
@@ -557,11 +557,11 @@ static int RunMergedLambdaTest(int argc, char **argv)
 
 static int RunSimultTest(const ReloadTestCase &tc, int argc, char **argv)
 {
-    // Each case gets its own directory so './dep' resolves to the adjacent dep.ets.
+    // Each case gets its own directory so './dep' resolves to the adjacent dep.ats.
     std::string tag = std::to_string(getpid()) + "_" + tc.label;
     std::string workDir = "/tmp/capi_simult_" + tag;
-    std::string mainPath = workDir + "/main.ets";
-    std::string depPath = workDir + "/dep.ets";
+    std::string mainPath = workDir + "/main.ats";
+    std::string depPath = workDir + "/dep.ats";
     std::string stPath = workDir + "/base.st";
     std::string outDir = workDir + "/out";
     mkdir(workDir.c_str(), DIR_CREATE_MODE);

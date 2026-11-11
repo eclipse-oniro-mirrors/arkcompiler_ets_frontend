@@ -43,7 +43,7 @@ private:
 TEST_F(MetadataTestAbc, abc2program)
 {
     const auto abcPath = workingDir + "app.abc";
-    Compile(std::string(TEST_DATA_PATH) + "abc/common.ets", abcPath);
+    Compile(std::string(TEST_DATA_PATH) + "abc/common.ats", abcPath);
 
     abc2program::Abc2ProgramDriver driver;
     ASSERT_EQ(driver.Compile(abcPath), true) << abcPath << " is failed to load by abc2program";
@@ -53,7 +53,7 @@ TEST_F(MetadataTestAbc, abc2program)
 TEST_F(MetadataTestAbc, metadata_disabled)
 {
     const auto abcPath = workingDir + "app.abc";
-    Compile<false>(std::string(TEST_DATA_PATH) + "abc/common.ets", abcPath);
+    Compile<false>(std::string(TEST_DATA_PATH) + "abc/common.ats", abcPath);
 
     abc2program::Abc2ProgramDriver driver;
     ASSERT_EQ(driver.Compile(abcPath), true) << abcPath << " is failed to load by abc2program";

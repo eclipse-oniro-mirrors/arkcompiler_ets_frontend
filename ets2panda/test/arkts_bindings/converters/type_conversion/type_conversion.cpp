@@ -43,7 +43,7 @@ static constexpr std::array<const char *, 13> STRING_TEST_DATA {"",
                                                                 "   whitespaces at the beginning",
                                                                 "whitespaces at the end   ",
                                                                 "   whitespaces     everywhere   ",
-                                                                "/home/project/src/dir1/dir2/dir3/file.ets"};
+                                                                "/home/project/src/dir1/dir2/dir3/file.ats"};
 // NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
 static const std::array<std::vector<const char *>, 5> STRING_ARRAY_TEST_DATA {
     std::vector<const char *> {}, std::vector<const char *> {""}, std::vector<const char *> {"hello world"},

@@ -27,7 +27,7 @@ set(ARKTS_BINDINGS_LIB ${CMAKE_BINARY_ROOT}/tools/es2panda/arkts_bindings/arkts_
 set(ETS_CONFIG ${CURRENT_BINARY_DIR}/arktsconfig.json)
 configure_file(${CURRENT_SOURCE_DIR}/arktsconfig.in.json ${ETS_CONFIG})
 
-set(TEST_CASE_FILE ${CURRENT_SOURCE_DIR}/testcases/func.ets)
+set(TEST_CASE_FILE ${CURRENT_SOURCE_DIR}/testcases/func.ats)
 
 add_custom_target(arkts_bindings_tests_api_clean
     COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_CACHE_DIR}"
@@ -40,7 +40,7 @@ add_dependencies(arkts_bindings_tests arkts_bindings_tests_api)
 set(RUNTIME_ARGS "--native-library-path=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
 run_arkts_bindings_test(arkts_bindings_tests_api-plugin
-    ${CURRENT_SOURCE_DIR}/plugin/compile.ets
+    ${CURRENT_SOURCE_DIR}/plugin/compile.ats
     ${CURRENT_BINARY_DIR}/plugin
     ARKTS_CONFIG ${ETS_CONFIG}
     ENTRYPOINT ${TEST_PACKAGE}.plugin/compile

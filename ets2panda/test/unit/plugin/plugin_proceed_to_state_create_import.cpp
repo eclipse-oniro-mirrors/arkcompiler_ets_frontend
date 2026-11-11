@@ -98,28 +98,6 @@ bool TestInsertImportAfterParse(es2panda_Context *context, [[maybe_unused]] es2p
     return true;
 }
 
-bool CheckFirstUseStatic(es2panda_Program *program)
-{
-    auto *parserProgram = reinterpret_cast<ark::es2panda::parser::Program *>(program);
-    auto &stmts = parserProgram->Ast()->StatementsForUpdates();
-    if (stmts.empty()) {
-        return false;
-    }
-    auto *firstStmt = stmts.front();
-    if (!firstStmt->IsExpressionStatement()) {
-        return false;
-    }
-    auto *expr = firstStmt->AsExpressionStatement()->GetExpression();
-    if (!expr->IsStringLiteral()) {
-        return false;
-    }
-    auto *strLiteral = expr->AsStringLiteral();
-    if (strLiteral->Str() != ark::es2panda::compiler::Signatures::STATIC_PROGRAM_FLAG) {
-        return false;
-    }
-    return true;
-}
-
 void InsertImportInHeaderAfterParse(es2panda_Context *context, [[maybe_unused]] es2panda_Config *config,
                                     es2panda_Program *program)
 {
@@ -171,7 +149,7 @@ bool Find(es2panda_AstNode *ast)
         if (g_impl->AstNodeIsProgramConst(g_ctx, parent)) {
             size_t sizeOfStatements = 0;
             auto *statements = g_impl->BlockStatementStatements(g_ctx, parent, &sizeOfStatements);
-            statements[1] = importDeclaration;
+            statements[0] = importDeclaration;
             g_impl->BlockStatementSetStatements(g_ctx, parent, statements, sizeOfStatements);
             g_impl->AstNodeSetParent(g_ctx, importDeclaration, parent);
             std::string str(g_impl->AstNodeDumpEtsSrcConst(g_ctx, parent));
@@ -203,8 +181,7 @@ int main(int argc, char **argv)
     std::cout << "LOAD SUCCESS" << std::endl;
     const char **args = const_cast<const char **>(std::next(argv));
     auto config = g_impl->CreateConfig(argc - 1, args);
-    auto source = std::string(
-        "\"use static\";import {A} from \"./export\" ;function foo() {let b:B = new B();let a:A = new A()}");
+    auto source = std::string("import {A} from \"./export\" ;function foo() {let b:B = new B();let a:A = new A()}");
 
     auto context = g_impl->CreateContextFromString(config, source.data(), *(std::next(argv, argc - 1)));
     if (context == nullptr) {
@@ -221,7 +198,7 @@ int main(int argc, char **argv)
         return TEST_ERROR_CODE;
     }
 
-    if (!TestInsertImportAfterParse(context, config, program) || !CheckFirstUseStatic(program)) {
+    if (!TestInsertImportAfterParse(context, config, program)) {
         DestroyConfigAndContext(context, config);
         return 1;
     }

@@ -198,7 +198,7 @@ TEST_F(LoweringTest, TestTrailingLambdaSourceRange)
 
 TEST_F(LoweringTest, TestExportedClassInDeclarationModuleDoseNotError)
 {
-    const auto mainPath = std::string(DECL_MOD_EXPORT_TEST_DATA_DIR) + "/main.ets";
+    const auto mainPath = std::string(DECL_MOD_EXPORT_TEST_DATA_DIR) + "/main.ats";
     CONTEXT_FROM_FILE(ES2PANDA_STATE_LOWERED, mainPath.c_str())
     {
         const auto *const ast = GetAst();

@@ -44,7 +44,7 @@ private:
 TEST_F(MetadataTestSerialization, basic)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertClassPresented(program.get(), "MyClass");
 }
@@ -52,7 +52,7 @@ TEST_F(MetadataTestSerialization, basic)
 TEST_F(MetadataTestSerialization, method)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertMethodPresented(program.get(), "MyClass", "hehehe");
 }
@@ -60,7 +60,7 @@ TEST_F(MetadataTestSerialization, method)
 TEST_F(MetadataTestSerialization, several_methods)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertMethodPresented(program.get(), "MyClass", "hehehe");
     MetadataAssertions::AssertMethodPresented(program.get(), "MyClass", "hohoho");
@@ -70,7 +70,7 @@ TEST_F(MetadataTestSerialization, several_methods)
 TEST_F(MetadataTestSerialization, method_return_type_builtin)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hehehe", BuiltinTypeKind_void_);
     MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hohoho", BuiltinTypeKind_null);
@@ -85,7 +85,7 @@ TEST_F(MetadataTestSerialization, method_return_type_builtin)
 TEST_F(MetadataTestSerialization, method_return_type_primitive)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hehehe", BuiltinTypeKind_int_);
     MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hohoho", BuiltinTypeKind_long_);
@@ -100,7 +100,7 @@ TEST_F(MetadataTestSerialization, method_return_type_primitive)
 TEST_F(MetadataTestSerialization, method_return_type_string_literal)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertClassPresented(program.get(), "MyClass");
     MetadataAssertions::AssertMethodPresented(program.get(), "MyClass", "getString");
@@ -110,7 +110,7 @@ TEST_F(MetadataTestSerialization, method_return_type_string_literal)
 TEST_F(MetadataTestSerialization, several_methods_return_type_string_literal)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertClassPresented(program.get(), "MyClass");
     MetadataAssertions::AssertMethodPresented(program.get(), "MyClass", "getFirst");
@@ -125,7 +125,7 @@ TEST_F(MetadataTestSerialization, several_methods_return_type_string_literal)
 TEST_F(MetadataTestSerialization, method_type_params)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertTypeParamPresented(program.get(), "MyClass", "hehehe", "T");
     MetadataAssertions::AssertTypeParamPresented(program.get(), "MyClass", "hehehe", "K");
@@ -134,7 +134,7 @@ TEST_F(MetadataTestSerialization, method_type_params)
 TEST_F(MetadataTestSerialization, annotation)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertClassPresented(program.get(), "MyClass");
     MetadataAssertions::AssertAnnotationPresented(program.get(), "MyAnnotation");
@@ -145,7 +145,7 @@ TEST_F(MetadataTestSerialization, annotation)
 TEST_F(MetadataTestSerialization, annotation_not_exported)
 {
     const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
+        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ats");
 
     MetadataAssertions::AssertAnnotationNotPresented(program.get(), "InternalAnnotation");
     MetadataAssertions::AssertClassPresented(program.get(), "MyClass");

@@ -33,9 +33,9 @@ struct OffsetTestCase {
 };
 
 static const OffsetTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", 0, 0},           {"project/bench_l2.ets", 2, 4}, {"project/bench_l3.ets", 4, 4},
-    {"project/bench_l4.ets", 6, 4},           {"project/entry.ets", 0, 0},    {"project/shared_small_100.ets", 10, 4},
-    {"project/shared_large_1000.ets", 20, 4},
+    {"project/bench_l1.ats", 0, 0},           {"project/bench_l2.ats", 2, 4}, {"project/bench_l3.ats", 4, 4},
+    {"project/bench_l4.ats", 6, 4},           {"project/entry.ats", 0, 0},    {"project/shared_small_100.ats", 10, 4},
+    {"project/shared_large_1000.ats", 20, 4},
 };
 
 static void BM_GetOffsetByColAndLine(benchmark::State &state)

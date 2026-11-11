@@ -31,8 +31,8 @@ struct OrganizeImportsTestCase {
 };
 
 static const OrganizeImportsTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", 0}, {"project/bench_l2.ets", 0},         {"project/bench_l3.ets", 0},
-    {"project/bench_l4.ets", 0}, {"project/formatting_cases.ets", 0}, {"project/entry.ets", 0},
+    {"project/bench_l1.ats", 0}, {"project/bench_l2.ats", 0},         {"project/bench_l3.ats", 0},
+    {"project/bench_l4.ats", 0}, {"project/formatting_cases.ats", 0}, {"project/entry.ats", 0},
 };
 
 static void BM_GetOrganizeImports(benchmark::State &state)

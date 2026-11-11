@@ -74,7 +74,7 @@ class RelativeFilePathAliasTest : public ::test::utils::AsmTest {};
 TEST_F(RelativeFilePathAliasTest, DirectoryPrefixMapsToPathsAlias)
 {
     const std::filesystem::path base = RFPA_DATA_DIR;
-    const std::string entryPath = (base / "src" / "mod" / "entry.ets").string();
+    const std::string entryPath = (base / "src" / "mod" / "entry.ats").string();
     const std::string cfgPath = (base / "arktsconfig.json").string();
 
     const std::string src = ReadEntireFile(entryPath);
@@ -87,14 +87,14 @@ TEST_F(RelativeFilePathAliasTest, DirectoryPrefixMapsToPathsAlias)
         if (!IsUserDefined(name)) {
             continue;
         }
-        EXPECT_EQ(fn.sourceFile, "@ut_alias/entry.ets") << "function=" << name << " sourceFile=" << fn.sourceFile;
+        EXPECT_EQ(fn.sourceFile, "@ut_alias/entry.ats") << "function=" << name << " sourceFile=" << fn.sourceFile;
     }
 }
 
 TEST_F(RelativeFilePathAliasTest, ExactPathMapsToKeyWithPreservedExtension)
 {
     const std::filesystem::path base = RFPA_DATA_DIR;
-    const std::string flatPath = (base / "flat_file.ets").string();
+    const std::string flatPath = (base / "flat_file.ats").string();
     const std::string cfgPath = (base / "arktsconfig.json").string();
 
     const std::string src = ReadEntireFile(flatPath);
@@ -107,14 +107,14 @@ TEST_F(RelativeFilePathAliasTest, ExactPathMapsToKeyWithPreservedExtension)
         if (!IsUserDefined(name)) {
             continue;
         }
-        EXPECT_EQ(fn.sourceFile, "@ut_file.ets") << "function=" << name << " sourceFile=" << fn.sourceFile;
+        EXPECT_EQ(fn.sourceFile, "@ut_file.ats") << "function=" << name << " sourceFile=" << fn.sourceFile;
     }
 }
 
 TEST_F(RelativeFilePathAliasTest, DeclarationSourceFileKeepsFileName)
 {
     const std::filesystem::path base = RFPA_DATA_DIR;
-    const std::string declPath = (base / "src" / "mod" / "decl_entry.d.ets").string();
+    const std::string declPath = (base / "src" / "mod" / "decl_entry.d.ats").string();
     const std::string cfgPath = (base / "arktsconfig.json").string();
 
     const std::string src = ReadEntireFile(declPath);
@@ -129,7 +129,7 @@ TEST_F(RelativeFilePathAliasTest, DeclarationSourceFileKeepsFileName)
             continue;
         }
         found = true;
-        EXPECT_TRUE(EndsWith(record.sourceFile, "decl_entry.d.ets"))
+        EXPECT_TRUE(EndsWith(record.sourceFile, "decl_entry.d.ats"))
             << "record=" << name << " sourceFile=" << record.sourceFile;
     }
     EXPECT_TRUE(found) << "Expected at least one user-defined record";

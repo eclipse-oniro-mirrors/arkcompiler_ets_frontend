@@ -25,7 +25,7 @@ const DOUBLE_TEST_DATA: double[] = [-10.0, 0.0, 1.2, -300.6125, 2/3.0, 100/3.0];
 const STRING_TEST_DATA: string[] = [
     '', '  ', '1', '200', 'a', 'b', 'z', 'qwerty123', '500600123456foobar',
     '   whitespaces at the beginning', 'whitespaces at the end   ', '   whitespaces     everywhere   ',
-    '/home/project/src/dir1/dir2/dir3/file.ets'
+    '/home/project/src/dir1/dir2/dir3/file.ats'
 ];
 
 const STRING_ARRAY_TEST_DATA: string[][] = [

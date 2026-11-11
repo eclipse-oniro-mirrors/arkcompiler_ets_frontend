@@ -60,14 +60,14 @@ bool CheckCompletionResult(CompletionInfo &completionResult, const CompletionTes
 }
 
 static const CompletionTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", 0, "benchObjL1.", 10, 0, {}},
-    {"project/bench_l2.ets", 0, "benchObjL2.", 10, 0, {}},
-    {"project/bench_l3.ets", 0, "benchObjL3.", 10, 0, {}},
-    {"project/bench_l4.ets", 0, "benchObjL4.", 10, 0, {}},
-    {"project/entry.ets", 0, "targetAdminValue.", 17, 5, {}},
-    {"project/shared_small_100.ets", 0, "scenario.", 9, 6, {}},
-    {"project/shared_large_1000.ets", 0, "runner.", 7, 7, {}},
-    {"project/services.ets", 0, "registry.", 9, 3, {}},
+    {"project/bench_l1.ats", 0, "benchObjL1.", 10, 0, {}},
+    {"project/bench_l2.ats", 0, "benchObjL2.", 10, 0, {}},
+    {"project/bench_l3.ats", 0, "benchObjL3.", 10, 0, {}},
+    {"project/bench_l4.ats", 0, "benchObjL4.", 10, 0, {}},
+    {"project/entry.ats", 0, "targetAdminValue.", 17, 5, {}},
+    {"project/shared_small_100.ats", 0, "scenario.", 9, 6, {}},
+    {"project/shared_large_1000.ats", 0, "runner.", 7, 7, {}},
+    {"project/services.ats", 0, "registry.", 9, 3, {}},
 };
 
 static void BM_GetCompletionAtPosition(benchmark::State &state)

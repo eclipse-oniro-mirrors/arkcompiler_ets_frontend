@@ -23,13 +23,13 @@ Usage:
   build_dir: path to the ets2panda build directory (contains bin/es2panda).
 
 Each test case is a subdirectory containing:
-  base.ets       — original source (Phase 1: dump symbol table)
-  base_mod.ets   — modified source (Phase 2: cold/hot reload)
+  base.ats       — original source (Phase 1: dump symbol table)
+  base_mod.ats   — modified source (Phase 2: cold/hot reload)
   expected.txt   — expected stderr from reload phase (may be empty)
 
 The runner:
-  1. Runs es2panda --dump-symbol-table=<tmp>.st base.ets
-  2. Runs es2panda --cold-reload/--hot-reload --input-symbol-table=<tmp>.st base_mod.ets
+  1. Runs es2panda --dump-symbol-table=<tmp>.st base.ats
+  2. Runs es2panda --cold-reload/--hot-reload --input-symbol-table=<tmp>.st base_mod.ats
   3. Compares the reload stderr against expected.txt
 """
 
@@ -55,9 +55,9 @@ def _first_existing(case_dir, *names):
 
 
 def _glob_test_sources(directory):
-    """Yield test source files: legacy '.ets' and renamed '.ats' alike."""
+    """Yield '.ats' test source files."""
     seen = set()
-    for pattern in ('*.ets', '*.ats'):
+    for pattern in ('*.ats',):
         for path in glob.glob(os.path.join(directory, pattern)):
             if path not in seen:
                 seen.add(path)
@@ -67,7 +67,7 @@ def _glob_test_sources(directory):
 def find_test_cases(mode):
     """Find all test case directories under coldreload/ or hotreload/.
 
-    Requires base.ats (formerly base.ets) and base_mod.ats. If expected.txt exists,
+    Requires base.ats and base_mod.ats. If expected.txt exists,
     it defines the expected reload stderr (fail test). If absent, the test is
     positive (no errors expected).
     """
@@ -78,8 +78,8 @@ def find_test_cases(mode):
     for name in sorted(os.listdir(mode_dir)):
         case_dir = os.path.join(mode_dir, name)
         if os.path.isdir(case_dir):
-            base = _first_existing(case_dir, 'base.ats', 'base.ets')
-            mod = _first_existing(case_dir, 'base_mod.ats', 'base_mod.ets')
+            base = _first_existing(case_dir, 'base.ats')
+            mod = _first_existing(case_dir, 'base_mod.ats')
             if base is None or mod is None:
                 continue
             expected = os.path.join(case_dir, 'expected.txt')

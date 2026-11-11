@@ -12,7 +12,7 @@
         "./src/mod"
       ],
       "@ut_file": [
-        "./flat_file.ets"
+        "./flat_file.ats"
       ]
     }
   }

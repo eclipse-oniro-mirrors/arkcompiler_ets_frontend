@@ -59,13 +59,13 @@ TEST_F(LoweringTest, TestEnumMemberFromDeclarationModuleIsInlined)
                       "_" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
     std::filesystem::create_directory(dir);
     {
-        std::ofstream {dir / "dep.d.ets"}
+        std::ofstream {dir / "dep.d.ats"}
             << "export enum PhotoKeys { URI = 'uri', LOCAL_ASSET_SIZE = 'local_asset_size' }\n";
-        std::ofstream {dir / "main.ets"} << "import { PhotoKeys } from './dep';\n"
+        std::ofstream {dir / "main.ats"} << "import { PhotoKeys } from './dep';\n"
                                             "function read(): string { return PhotoKeys.LOCAL_ASSET_SIZE; }\n";
     }
 
-    const auto mainPath = (dir / "main.ets").string();
+    const auto mainPath = (dir / "main.ats").string();
 
     CONTEXT_FROM_FILE(ES2PANDA_STATE_LOWERED, mainPath.c_str())
     {
@@ -82,7 +82,7 @@ TEST_F(LoweringTest, TestEnumMemberFromDeclarationModuleIsInlined)
 
 TEST_F(LoweringTest, TestEnumMemberFromNotEmittedModuleSourceIsInlined)
 {
-    // A per-file compilation parses an imported regular module (dep.ets) only for
+    // A per-file compilation parses an imported regular module (dep.ats) only for
     // checking: its bytecode is not part of the produced file. A member read must
     // therefore be inlined as a compile-time literal — a runtime valueOf() call
     // would reference an enum class missing from the output.
@@ -92,12 +92,12 @@ TEST_F(LoweringTest, TestEnumMemberFromNotEmittedModuleSourceIsInlined)
          std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
     std::filesystem::create_directory(dir);
     {
-        std::ofstream {dir / "dep.ets"} << "export enum Color { RED = 1, GREEN = 2 }\n";
-        std::ofstream {dir / "main.ets"} << "import { Color } from './dep';\n"
+        std::ofstream {dir / "dep.ats"} << "export enum Color { RED = 1, GREEN = 2 }\n";
+        std::ofstream {dir / "main.ats"} << "import { Color } from './dep';\n"
                                             "function read(): int { return Color.RED; }\n";
     }
 
-    const auto mainPath = (dir / "main.ets").string();
+    const auto mainPath = (dir / "main.ats").string();
 
     CONTEXT_FROM_FILE(ES2PANDA_STATE_LOWERED, mainPath.c_str())
     {

@@ -17,10 +17,6 @@ ast/compiler/ets/package_namespace_static_block_multi/main_test.ats
 ast/compiler/ets/package_static_block_multi_files/P1/P1_0.ats
 ast/compiler/ets/package_static_block_multi_files/P1/P1_1.ats
 ast/compiler/ets/package_static_block_multi_files/main_test.ats
-ast/compiler/ets/use_static_flag/package/flag_before_package.ats
-ast/compiler/ets/use_static_flag/package/flag_before_package2.ats
-ast/compiler/ets/use_static_flag/package_neg/flag_package.ats
-ast/compiler/ets/use_static_flag/package_neg/flag_package2.ats
 
 # Fails with Assertion. Description in Issue #19645
 ast/parser/ets/extension_function_tests/extension_function_not_for_class_type.ats

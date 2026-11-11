@@ -94,7 +94,7 @@ void PrepareContextForDestruction(ark::es2panda::public_lib::Context *ctx)
         ctx->parserProgram->ResetLineIndexCache();
         ctx->parserProgram->GetExternalPrograms()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
     }
-    // The stdlib imports program ("<default_import>.ets") is introduced during binding and is
+    // The stdlib imports program ("<default_import>.ats") is introduced during binding and is
     // registered only in the ImportPathManager's parse queue, not in parserProgram's external
     // decls, so the Visit above misses it. Walk the parse queue too so every parsed program's
     // heap-owned lineIndex_ is released before DestroyContext() frees the arena. The parse queue

@@ -46,22 +46,22 @@ private:
 TEST_F(MetadataTestImport, basic_calls)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
-    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+    CompileLibToImport(testDataDir + "/lib.ats", workingDir + "lib.abc");
+    Compile(testDataDir + "/main.ats", workingDir + "main.abc");
 }
 
 TEST_F(MetadataTestImport, complex_calls)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
-    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+    CompileLibToImport(testDataDir + "/lib.ats", workingDir + "lib.abc");
+    Compile(testDataDir + "/main.ats", workingDir + "main.abc");
 }
 
 TEST_F(MetadataTestImport, generic_alias_arguments)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
-    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+    CompileLibToImport(testDataDir + "/lib.ats", workingDir + "lib.abc");
+    Compile(testDataDir + "/main.ats", workingDir + "main.abc");
 }
 
 static bool ContainsClassDecl(const Metadata::Decls *decls, const std::string &className)
@@ -96,9 +96,9 @@ static bool MetadataContainsClassDecl(const pandasm::Program &program, const std
 TEST_F(MetadataTestImport, enum_in_source_imported_module)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-    AddPathToConfig("enum_lib", testDataDir + "/lib.ets");
+    AddPathToConfig("enum_lib", testDataDir + "/lib.ats");
     const auto mainAbcPath = workingDir + "main.abc";
-    Compile(testDataDir + "/main.ets", mainAbcPath);
+    Compile(testDataDir + "/main.ats", mainAbcPath);
 
     abc2program::Abc2ProgramDriver driver;
     ASSERT_EQ(driver.Compile(mainAbcPath), true) << mainAbcPath << " is failed to load by abc2program";
@@ -113,25 +113,25 @@ TEST_F(MetadataTestImport, enum_in_source_imported_module)
 TEST_F(MetadataTestImport, alias_to_imported_type)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-    CompileLibToImport(testDataDir + "/widget.ets", workingDir + "widget.abc", "widget");
-    CompileLibToImport(testDataDir + "/alias.ets", workingDir + "alias.abc", "alias");
-    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+    CompileLibToImport(testDataDir + "/widget.ats", workingDir + "widget.abc", "widget");
+    CompileLibToImport(testDataDir + "/alias.ats", workingDir + "alias.abc", "alias");
+    Compile(testDataDir + "/main.ats", workingDir + "main.abc");
 }
 
 TEST_F(MetadataTestImport, this_return_type)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
-    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+    CompileLibToImport(testDataDir + "/lib.ats", workingDir + "lib.abc");
+    Compile(testDataDir + "/main.ats", workingDir + "main.abc");
 }
 
 TEST_F(MetadataTestImport, cached_program_materializes_members)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
+    CompileLibToImport(testDataDir + "/lib.ats", workingDir + "lib.abc");
 
     SetExternalContext();
-    ASSERT_NE(RunCheckerWithMetadata(testDataDir + "/main.ets"), nullptr);
+    ASSERT_NE(RunCheckerWithMetadata(testDataDir + "/main.ats"), nullptr);
 
     bool classMaterialized = false;
     bool interfaceMaterialized = false;
@@ -156,7 +156,7 @@ TEST_F(MetadataTestImport, cached_program_materializes_members)
 TEST_F(MetadataTestImport, from_stdlib)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+    Compile(testDataDir + "/main.ats", workingDir + "main.abc");
     util::DumpPerfMetrics();
 }
 

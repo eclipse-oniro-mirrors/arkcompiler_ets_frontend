@@ -565,8 +565,8 @@ void ImportPathManager::SetupGlobalProgram(public_lib::Context *ctx)
     }
 }
 
-static constexpr auto STDLIB_MAIN_PROG_NAME = "etsstdlib.ets";
-static constexpr auto STDLIB_IMPORTS_MAIN_PROG_NAME = "<default_import>.ets";
+static constexpr auto STDLIB_MAIN_PROG_NAME = "etsstdlib.ats";
+static constexpr auto STDLIB_IMPORTS_MAIN_PROG_NAME = "<default_import>.ats";
 static constexpr auto SIMULT_MAIN_PROG_NAME = "<simult>";
 
 void ImportPathManager::SetupGlobalProgram()

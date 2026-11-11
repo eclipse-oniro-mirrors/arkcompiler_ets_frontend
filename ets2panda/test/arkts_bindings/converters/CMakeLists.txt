@@ -21,11 +21,11 @@ set(CPP_SOURCES
 set(ETS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(ETS_SOURCES
-    ${ETS_SRC_DIR}/test_entry.ets
-    ${ETS_SRC_DIR}/native.ets
-    ${ETS_SRC_DIR}/type_conversion/type_conversion.ets
-    ${ETS_SRC_DIR}/native_object/native_object.ets
-    ${ETS_SRC_DIR}/bridge_templates/bridge_templates.ets
+    ${ETS_SRC_DIR}/test_entry.ats
+    ${ETS_SRC_DIR}/native.ats
+    ${ETS_SRC_DIR}/type_conversion/type_conversion.ats
+    ${ETS_SRC_DIR}/native_object/native_object.ats
+    ${ETS_SRC_DIR}/bridge_templates/bridge_templates.ats
 )
 
 panda_add_library(arkts_bindings_tests_converters_native SHARED ${CPP_SOURCES})

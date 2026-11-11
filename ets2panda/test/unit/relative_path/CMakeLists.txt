@@ -40,4 +40,4 @@ endfunction()
 
 add_dependencies(es2panda_tests es2panda_relative_path_to_file)
 
-launch_with_reletaive_path_single_file(package_a_file_1.ets)
+launch_with_reletaive_path_single_file(package_a_file_1.ats)

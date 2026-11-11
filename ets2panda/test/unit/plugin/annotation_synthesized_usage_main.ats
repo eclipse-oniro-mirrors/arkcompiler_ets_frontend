@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { ExportedMarker } from './annotation_synthesized_usage_export.ets';
+import { ExportedMarker } from './annotation_synthesized_usage_export.ats';
 
 @Retention({policy: "SOURCE"})
 @interface Marker {}

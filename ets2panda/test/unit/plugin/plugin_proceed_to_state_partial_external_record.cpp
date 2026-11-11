@@ -93,7 +93,7 @@ static es2panda_Program *FindDirectProgram(es2panda_Context *context, const char
 
 static bool RecheckUserProgram(es2panda_Context *context)
 {
-    auto *userProgram = FindDirectProgram(context, "partial_external_record_user.ets");
+    auto *userProgram = FindDirectProgram(context, "partial_external_record_user.ats");
     if (userProgram == nullptr || impl->ProgramIsProgramModifiedConst(context, userProgram)) {
         return false;
     }
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
     std::cout << "LOAD SUCCESS" << std::endl;
     auto configArgs = BuildSimultaneousConfigArgs(argc, argv);
     auto config = impl->CreateConfig(static_cast<int>(configArgs.size()), configArgs.data());
-    auto userPath = SiblingPath(argv[argc - 1], "partial_external_record_user.ets");
+    auto userPath = SiblingPath(argv[argc - 1], "partial_external_record_user.ats");
     const char *fileNames[] = {argv[argc - 1], userPath.c_str()};
     auto context = impl->CreateContextSimultaneousMode(config, 2, fileNames);
     if (context == nullptr) {

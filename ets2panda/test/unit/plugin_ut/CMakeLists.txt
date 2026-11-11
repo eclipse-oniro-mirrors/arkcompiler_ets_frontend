@@ -31,9 +31,9 @@ set(COMMON_SOURCE_FILES
 
 set(PLUGIN_UT_TESTS
     #"test_name test_sts_file how_to_test_mode plugin_file_extension(c|cpp) how_to_compile_mode"
-    "plugin_ut_variables_api compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
-    "plugin_ut_new_array_instance_expression_api compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
-    "plugin_ut_binary_expression_api compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_ut_variables_api compile.ats ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_ut_new_array_instance_expression_api compile.ats ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_ut_binary_expression_api compile.ats ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
 )
 
 set(RUNTIME_ARGUMENTS

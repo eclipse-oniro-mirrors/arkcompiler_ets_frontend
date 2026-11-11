@@ -38,7 +38,7 @@ function main() {
 }
 ```
 
-It is ensured currently via the *ETSParser::IntroduceStdlibImportProgram* method, which parse an internally created ets file  named "<default_import>.ets".
+It is ensured currently via the *ETSParser::IntroduceStdlibImportProgram* method, which parse an internally created ets file  named "<default_import>.ats".
 
 ### 3.1. Package level scope
 
@@ -74,19 +74,19 @@ This **foreignBinding_** member helps to eliminate "export waterfall" that is de
 
 
 ```
-// C.ets
+// C.ats
 export let a = 2
 ```
 
-```b.ets
-// B.ets
-import { a } from c.ets  // 'a' marked as foreign
+```b.ats
+// B.ats
+import { a } from c.ats  // 'a' marked as foreign
 ```
 
 ```
-// A.ets
-import { a } from b.ets
-// 'a' is not visible here, since 'a' is foreign in B.ets
+// A.ats
+import { a } from b.ats
+// 'a' is not visible here, since 'a' is foreign in B.ats
 ```
 
 ### 4.3. Improvement possibilities/suggestions
@@ -109,7 +109,7 @@ Import directive use the following form:
 
 ## 5.1. Resolving importPath
 
-The *importPath* is a string literal which can be points to a module (separate module | package module) or a folder (package folder, or a folder which contains an index.ts/index.ets file). It can be specified with a relative or an absolute path, with or without a file extension, and must be able to manage the paths entered in arktsconfig as well.  
+The *importPath* is a string literal which can be points to a module (separate module | package module) or a folder (package folder, or a folder which contains an index.ts/index.ats file). It can be specified with a relative or an absolute path, with or without a file extension, and must be able to manage the paths entered in arktsconfig as well.  
 Resolving these paths within the compiler is the responsibility of the *importPathManager*. In the process of parsing an import path, the string literal will be passed to the importPathManager which will resolve it as an absolute path and adds it to an own list, called *parseQueue_.*  
 The latter list serves to let the compiler know what still needs to be parsed (handle and avoid duplications), and this list will be requested and traversed during the *ParseSources* call. The importPathManager also handles errors that can be caught before parsing, for example non-existent, incorrectly specified import paths, but not errors that can only be found after parsing (for example, the package folder should contains only package files that use the same package directive, etc.)  
 
@@ -211,10 +211,10 @@ In nutshell, when a top-level declaration is exported, the following happens:
 Default import binding allows importing a declaration exported from some module as default export
 
 ```
-//export.ets
+//export.ats
 export default class TestClass {}
 
-//import.ets
+//import.ats
 import ImportedClass from "./export"
 ```
 
@@ -295,20 +295,20 @@ As it has been mentioned above, renaming inside selective export is still under 
     * A compile time error will be thrown, if something is being imported using its original name, but it was exported with an alias
     * Similar behaviour will occur if something is being referred by its original name after being imported with a namespace import:
         ```
-        //export.ets
+        //export.ats
         function test_func(): void {}
 
         export {test_func as foo}
 
-        //import.ets
+        //import.ats
         import * as all from "./export
         all.test_func() //A compile time error will be thrown at this point, since 'test_func' has an alias 'foo'
         ```
     * Support for exporting an imported program element will also be added at some point:
         ```
-        //export.ets
+        //export.ats
         export function foo(): void {}
-        //export_imported.ets
+        //export_imported.ats
         import {foo} from "./export"
 
         export {foo}
@@ -331,10 +331,10 @@ reExportDirective:
 ```
 
     ```
-    //export.ets
+    //export.ats
     export function foo(): void {}
 
-    //re-export.ets
+    //re-export.ats
     export {foo} from "./export"
     ```
 
@@ -359,30 +359,30 @@ A brief description how it works:
 Currently, re-export is a bit tweaked. See the following example, that is a typical usage of re-export:
 
 ```
-// C.ets
+// C.ats
 export let a = 3
 
-// B.ets
-export {a} from "./C.ets"
+// B.ats
+export {a} from "./C.ats"
 
-// A.ets
-import {a} from "./B.ets"
+// A.ats
+import {a} from "./B.ats"
 ```
 
-On a very high level view, the engine copies the path of C.ets (that is defined in B.ets for re-export", and creates a direct import call to C.ets from A.ets. The following code symbolizes it:
+On a very high level view, the engine copies the path of C.ats (that is defined in B.ats for re-export", and creates a direct import call to C.ats from A.ats. The following code symbolizes it:
 
 ```
-// C.ets
+// C.ats
 export let a = 3
 
-// B.ets
-export {a} from "./C.ets"
+// B.ats
+export {a} from "./C.ats"
 
-// A.ets
-import {a} from "./C.ets"  <---- here, a direct import call is executed to C.ets, that works, but not correct.
+// A.ats
+import {a} from "./C.ats"  <---- here, a direct import call is executed to C.ats, that works, but not correct.
 ```
 
-Instead, B.ets should import all variables from C.ets and all re-exported variables should be stored in a separated re-exported-variables variable map in B. These variables are not visible in B.ets (for usage) since they are treated for re-export only. After that, A.ets can import all exported variables from B.ets including re-exported-variables.
+Instead, B.ats should import all variables from C.ats and all re-exported variables should be stored in a separated re-exported-variables variable map in B. These variables are not visible in B.ats (for usage) since they are treated for re-export only. After that, A.ats can import all exported variables from B.ats including re-exported-variables.
 
 
 ### 6.6. Type exports

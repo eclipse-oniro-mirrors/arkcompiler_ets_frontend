@@ -81,7 +81,7 @@ ir::ETSIntrinsicNode *FindStoreIntrinsic(es2panda_Impl const *impl, es2panda_Con
 void CheckRelaxedAnyStoreLowering(es2panda_Impl const *impl, es2panda_Config *cfg, char const *text,
                                   char const *intrinsicName)
 {
-    auto *ctx = impl->CreateContextFromString(cfg, text, "relaxed_any_lowering.ets");
+    auto *ctx = impl->CreateContextFromString(cfg, text, "relaxed_any_lowering.ats");
     ASSERT_NE(ctx, nullptr);
 
     impl->ProceedToState(ctx, ES2PANDA_STATE_LOWERED);

@@ -60,19 +60,19 @@ int main(int argc, char **argv)
     impl->ProceedToState(context, ES2PANDA_STATE_PARSED);
     CheckForErrors("PARSE", context);
 
-    auto resolvedPath = ResolveImportPath(context, const_cast<char *>("./export.ets"));
-    if (strstr(resolvedPath, "export.ets") == nullptr) {
+    auto resolvedPath = ResolveImportPath(context, const_cast<char *>("./export.ats"));
+    if (strstr(resolvedPath, "export.ats") == nullptr) {
         return TEST_ERROR_CODE;
     }
 
-    // '.ets' preempts '.d.ets':
+    // '.ats' preempts '.d.ats':
     auto resolvedPath1 = ResolveImportPath(context, const_cast<char *>("./export"));
-    if (strstr(resolvedPath1, "export.ets") == nullptr) {
+    if (strstr(resolvedPath1, "export.ats") == nullptr) {
         return TEST_ERROR_CODE;
     }
 
-    auto resolvedPath2 = ResolveImportPath(context, const_cast<char *>("./export.d.ets"));
-    if (strstr(resolvedPath2, "export.d.ets") == nullptr) {
+    auto resolvedPath2 = ResolveImportPath(context, const_cast<char *>("./export.d.ats"));
+    if (strstr(resolvedPath2, "export.d.ats") == nullptr) {
         return TEST_ERROR_CODE;
     }
 
