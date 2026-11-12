@@ -695,6 +695,10 @@ semantic:
   id: 315
   message: "Interface '{}' cannot simultaneously extend types '{}' and '{}'."
 
+- name: IFACE_OPTIONAL_PROPERTY_MISSING_IMPL
+  id: 95271
+  message: "Class '{}' incorrectly implements interface '{}'. Property '{}' is missing in type '{}' but required in type '{}'."
+
 - name: ILLEGAL_UNARY_OP
   id: 11
   message: "Illegal unary operator."

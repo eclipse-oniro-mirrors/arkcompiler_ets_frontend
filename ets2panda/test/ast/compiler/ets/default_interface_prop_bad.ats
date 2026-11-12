@@ -23,3 +23,4 @@ class Klass implements Inter {
 
 /* @@? 21:5 Error Semantic error ESE985118: Class member a with type undefined|String in Klass cannot implement a with type Double|undefined property from interface Inter because the implementing return type is not compatible with the interface return type. */
 /* @@? 21:5 Error Semantic error ESE0136: Method a(): undefined|String in Klass not overriding any method */
+/* @@? 21:5 Error Semantic error ESE0136: Method a(a: undefined|String): undefined in Klass not overriding any method */

@@ -742,6 +742,7 @@ ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *co
     auto *function = nullishAccessor->Function();
     nullishAccessor->SetRange(accessor->Range());
     function->SetRange(accessor->Function()->Range());
+    function->ClearFlag(ir::ScriptFunctionFlags::INTERFACE_PROPERTY);
 
     if (!accessor->IsDeclare()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)

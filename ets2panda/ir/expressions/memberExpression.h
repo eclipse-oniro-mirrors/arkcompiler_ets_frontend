@@ -203,6 +203,11 @@ public:
         return uncheckedType_;
     }
 
+    void SetUncheckedType(checker::Type *uncheckedType) noexcept
+    {
+        uncheckedType_ = uncheckedType;
+    }
+
     [[nodiscard]] bool IsPrivateReference() const noexcept;
 
     [[nodiscard]] MemberExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;

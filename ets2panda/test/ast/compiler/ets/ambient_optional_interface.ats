@@ -24,3 +24,4 @@ function main() {
     arktest.assertTrue(true);
 }
 
+/* @@? 20:26 Error Semantic error ESE95271: Class 'A' incorrectly implements interface 'Color'. Property 'a' is missing in type 'A' but required in type 'Color'. */

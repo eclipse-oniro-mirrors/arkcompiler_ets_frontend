@@ -13,9 +13,12 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include <functional>
 #include <iterator>
 #include <string_view>
+#include <unordered_set>
+#include <vector>
 #include "checker/ETSAnalyzerHelpers.h"
 #include "checker/ETSchecker.h"
 #include "checker/checkerContext.h"
@@ -1381,7 +1384,10 @@ std::vector<Signature *> ETSChecker::CollectAbstractSignaturesFromObject(const E
         }
 
         for (auto *sig : prop->TsType()->AsETSFunctionType()->CallSignatures()) {
-            if (sig->HasSignatureFlag(SignatureFlags::ABSTRACT) && !sig->HasSignatureFlag(SignatureFlags::PRIVATE)) {
+            auto const isOptionalInterfaceProperty =
+                sig->Function()->IsOptionalDeclaration() && sig->Function()->IsInterfaceProperty();
+            if ((sig->HasSignatureFlag(SignatureFlags::ABSTRACT) || isOptionalInterfaceProperty) &&
+                !sig->HasSignatureFlag(SignatureFlags::PRIVATE)) {
                 abstracts.push_back(sig);
             }
         }
@@ -1644,7 +1650,6 @@ void ETSChecker::CheckInterfaceFunctions(ETSObjectType *classType)
 /// Traverse the interface inheritance tree and collects implemented methods
 void ETSChecker::CollectImplementedMethodsFromInterfaces(ETSObjectType *classType,
                                                          std::vector<Signature *> *implementedSignatures,
-                                                         std::vector<ETSFunctionType *> *optionalProps,
                                                          const std::vector<ETSFunctionType *> &abstractsToBeImplemented)
 {
     std::vector<ETSObjectType *> collectedInterfaces;
@@ -1663,7 +1668,6 @@ void ETSChecker::CollectImplementedMethodsFromInterfaces(ETSObjectType *classTyp
             for (auto &it : abstractsToBeImplemented) {
                 AddImplementedSignature(implementedSignatures, prop, it);
             }
-            AddOptionalProps(optionalProps, prop);
         }
 
         for (auto &currentInterfaceChild : collectedInterfaces[index]->Interfaces()) {
@@ -1721,6 +1725,83 @@ void ETSChecker::ValidateAbstractSignature(std::vector<ETSFunctionType *>::itera
     }
 }
 
+static void CloneSuperFieldIntoClass(ETSChecker *checker, ETSObjectType *classType, varbinder::LocalVariable *field,
+                                     bool hasGetter, bool hasSetter)
+{
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *newProp =
+        field->Declaration()->Node()->Clone(checker->ProgramAllocator(), classType->GetDeclNode())->AsClassProperty();
+    newProp->AddModifier(ir::ModifierFlags::SUPER_OWNER);
+    newProp->AddModifier(hasGetter && hasSetter ? ir::ModifierFlags::GETTER_SETTER
+                         : hasGetter            ? ir::ModifierFlags::GETTER
+                                                : ir::ModifierFlags::SETTER);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *newFieldDecl = checker->ProgramAllocator()->New<varbinder::LetDecl>(newProp->Key()->AsIdentifier()->Name());
+    newFieldDecl->BindNode(newProp);
+
+    auto newFieldVar = classType->GetDeclNode()
+                           ->Scope()
+                           ->AsClassScope()
+                           ->InstanceFieldScope()
+                           ->AddDecl(checker->ProgramAllocator(), newFieldDecl, ScriptExtension::ATS)
+                           ->AsLocalVariable();
+    newFieldVar->AddFlag(varbinder::VariableFlags::PROPERTY);
+    newFieldVar->AddFlag(varbinder::VariableFlags::PUBLIC);
+    classType->AddProperty<PropertyType::INSTANCE_FIELD>(newFieldVar);
+}
+static bool IsPropertyOptional(const ir::ClassProperty *prop)
+{
+    if (prop->IsOptionalDeclaration()) {
+        return true;
+    }
+
+    auto typeAnno = prop->TypeAnnotation();
+    if (typeAnno == nullptr || !typeAnno->IsETSUnionType()) {
+        return false;
+    }
+
+    auto unionTypeAnno = typeAnno->AsETSUnionType();
+    for (auto *typeNode : unionTypeAnno->Types()) {
+        if (typeNode->IsETSUndefinedType()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool IsNonOptionalFieldImplementingOptionalProp(const ETSFunctionType *propType,
+                                                       const varbinder::LocalVariable *field)
+{
+    const bool isOptionalIfaceProp =
+        std::any_of(propType->CallSignatures().begin(), propType->CallSignatures().end(),
+                    [](const Signature *sig) { return sig->Function()->IsOptionalDeclaration(); });
+    return isOptionalIfaceProp && !IsPropertyOptional(field->Declaration()->Node()->AsClassProperty());
+}
+
+static bool ReportNonOptionalFieldImplementingOptionalPropIfNeeded(ETSChecker *checker, ETSObjectType *classType,
+                                                                   const ETSFunctionType *propType,
+                                                                   const varbinder::LocalVariable *field)
+{
+    if (!IsNonOptionalFieldImplementingOptionalProp(propType, field)) {
+        return false;
+    }
+    checker->LogError(diagnostic::IFACE_INVALID_OVERRIDE,
+                      {field->Name(), classType->Name(),
+                       checker->GetContainingObjectNameFromSignature(propType->CallSignatures().front())},
+                      field->Declaration()->Node()->Start());
+    return true;
+}
+
+static bool IsInheritedFieldTypeNullable(const varbinder::LocalVariable *field)
+{
+    auto *fieldType = field->TsType();
+    if (fieldType == nullptr || fieldType->IsTypeError() || !fieldType->IsETSUnionType()) {
+        return false;
+    }
+    return fieldType->AsETSUnionType()->AnyOfConstituentTypes(
+        [](const Type *constituent) { return constituent->IsETSUndefinedType(); });
+}
+
 void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, std::vector<ETSFunctionType *>::iterator &it,
                                                std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                bool &functionOverridden, const Accessor &isGetSet)
@@ -1741,26 +1822,15 @@ void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, std::ve
                 break;
             }
 
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            auto *newProp =
-                field->Declaration()->Node()->Clone(ProgramAllocator(), classType->GetDeclNode())->AsClassProperty();
-            newProp->AddModifier(ir::ModifierFlags::SUPER_OWNER);
-            newProp->AddModifier(isGetSet.isGetter && isGetSet.isSetter ? ir::ModifierFlags::GETTER_SETTER
-                                 : isGetSet.isGetter                    ? ir::ModifierFlags::GETTER
-                                                                        : ir::ModifierFlags::SETTER);
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            auto *newFieldDecl = ProgramAllocator()->New<varbinder::LetDecl>(newProp->Key()->AsIdentifier()->Name());
-            newFieldDecl->BindNode(newProp);
+            if (!IsInheritedFieldTypeNullable(field) &&
+                ReportNonOptionalFieldImplementingOptionalPropIfNeeded(this, classType, *it, field)) {
+                it = abstractsToBeImplemented.erase(it);
+                functionOverridden = true;
+                break;
+            }
 
-            auto newFieldVar = classType->GetDeclNode()
-                                   ->Scope()
-                                   ->AsClassScope()
-                                   ->InstanceFieldScope()
-                                   ->AddDecl(ProgramAllocator(), newFieldDecl, ScriptExtension::ATS)
-                                   ->AsLocalVariable();
-            newFieldVar->AddFlag(varbinder::VariableFlags::PROPERTY);
-            newFieldVar->AddFlag(varbinder::VariableFlags::PUBLIC);
-            classType->AddProperty<PropertyType::INSTANCE_FIELD>(newFieldVar);
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            CloneSuperFieldIntoClass(this, classType, field, isGetSet.isGetter, isGetSet.isSetter);
             it = abstractsToBeImplemented.erase(it);
             functionOverridden = true;
             break;
@@ -1790,6 +1860,12 @@ void ETSChecker::ApplyModifiersAndRemoveImplementedAbstracts(std::vector<ETSFunc
                 break;
             }
 
+            if (ReportNonOptionalFieldImplementingOptionalPropIfNeeded(this, classType, *it, field)) {
+                it = abstractsToBeImplemented.erase(it);
+                functionOverridden = true;
+                break;
+            }
+
             field->Declaration()->Node()->AddModifier(isGetSetExternal.isGetter && isGetSetExternal.isSetter
                                                           ? ir::ModifierFlags::GETTER_SETTER
                                                       : isGetSetExternal.isGetter ? ir::ModifierFlags::GETTER
@@ -1797,53 +1873,6 @@ void ETSChecker::ApplyModifiersAndRemoveImplementedAbstracts(std::vector<ETSFunc
             it = abstractsToBeImplemented.erase(it);
             functionOverridden = true;
             break;
-        }
-    }
-}
-
-static bool IsPropertyOptional(ir::ClassProperty *prop)
-{
-    if (prop->IsOptionalDeclaration()) {
-        return true;
-    }
-
-    // Check if property type includes undefined (indicating optional)
-    auto typeAnno = prop->TypeAnnotation();
-    if (typeAnno == nullptr || !typeAnno->IsETSUnionType()) {
-        return false;
-    }
-
-    auto unionTypeAnno = typeAnno->AsETSUnionType();
-    for (auto *typeNode : unionTypeAnno->Types()) {
-        if (typeNode->IsETSUndefinedType()) {
-            return true;
-        }
-    }
-    return false;
-}
-
-void ETSChecker::ValidateOptionalPropOverriding(const std::vector<ETSFunctionType *> &optionalProps,
-                                                ETSObjectType *classType)
-{
-    if (optionalProps.empty()) {
-        return;
-    }
-
-    for (auto *prop : optionalProps) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        for (auto *field : classType->Fields()) {
-            auto classProp = field->Declaration()->Node()->AsClassProperty();
-            if (classProp->IsStatic()) {
-                continue;
-            }
-
-            if (field->Name() == prop->Name() && !IsPropertyOptional(classProp)) {
-                LogError(diagnostic::IFACE_INVALID_OVERRIDE,
-                         {field->Name(), classType->Name(),
-                          util::Helpers::GetContainingObjectName(prop->Variable()->Declaration()->Node())},
-                         field->Declaration()->Node()->Start());
-                return;
-            }
         }
     }
 }
@@ -1896,6 +1925,25 @@ void ETSChecker::MaybeReportErrorsForOverridingValidation(std::vector<ETSFunctio
         if (unimplementedSignature->HasSignatureFlag(SignatureFlags::DEFAULT)) {
             return;
         }
+        if (unimplementedSignature->Function()->IsOptionalDeclaration()) {
+            bool hasUnimplementedGetter = false;
+            bool hasUnimplementedSetter = false;
+            for (const auto *sig : abstractsToBeImplemented.front()->CallSignatures()) {
+                hasUnimplementedGetter |= sig->HasSignatureFlag(SignatureFlags::GETTER);
+                hasUnimplementedSetter |= sig->HasSignatureFlag(SignatureFlags::SETTER);
+            }
+            if (hasUnimplementedSetter && !hasUnimplementedGetter) {
+                LogError(diagnostic::SETTER_MISSING_IMPL,
+                         {classType->Name(), unimplementedSignature->Function()->Id()->Name(), containingObjectName},
+                         pos);
+                return;
+            }
+            LogError(diagnostic::IFACE_OPTIONAL_PROPERTY_MISSING_IMPL,
+                     {classType->Name(), containingObjectName, unimplementedSignature->Function()->Id()->Name(),
+                      classType->Name(), containingObjectName},
+                     pos);
+            return;
+        }
         if (unimplementedSignature->HasSignatureFlag(SignatureFlags::GETTER)) {
             LogError(diagnostic::GETTER_MISSING_IMPL,
                      {classType->Name(), unimplementedSignature->Function()->Id()->Name(), containingObjectName}, pos);
@@ -1916,7 +1964,7 @@ void ETSChecker::MaybeReportErrorsForOverridingValidation(std::vector<ETSFunctio
 void ETSChecker::AddAccessorFlagsForOptionalPropInterface(ETSObjectType *classType, ETSObjectType *interfaceType,
                                                           ir::MethodDefinition *ifaceMethod)
 {
-    // Since optional properties in interface have default implementation,
+    // Since interface methods with bodies have default implementation,
     // Getter/Setter flags need manually add to class field to ensure correct overriding.
     if (ifaceMethod->IsAbstract() || ifaceMethod->Function()->Body() == nullptr || classType == interfaceType) {
         return;
@@ -1954,12 +2002,9 @@ void ETSChecker::ValidateOverriding(ETSObjectType *classType, const lexer::Sourc
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto &abstractsToBeImplemented = GetAbstractsForClass(classType);
     std::vector<Signature *> implementedSignatures;
-    // Collect optional properties in interface to ensure correct overriding.
-    std::vector<ETSFunctionType *> optionalProps;
     // Since interfaces can define function bodies we have to collect the implemented ones first
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    CollectImplementedMethodsFromInterfaces(classType, &implementedSignatures, &optionalProps,
-                                            abstractsToBeImplemented);
+    CollectImplementedMethodsFromInterfaces(classType, &implementedSignatures, abstractsToBeImplemented);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CheckInterfaceFunctions(classType);
 
@@ -1977,8 +2022,6 @@ void ETSChecker::ValidateOverriding(ETSObjectType *classType, const lexer::Sourc
     } while (superIter != nullptr);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ValidateAbstractMethodsToBeImplemented(abstractsToBeImplemented, classType, implementedSignatures);
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    ValidateOptionalPropOverriding(optionalProps, classType);
     MaybeReportErrorsForOverridingValidation(abstractsToBeImplemented, classType, pos, throwError);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CheckMultipleOverrideOfSameSuperMethod(classType);
@@ -2075,9 +2118,14 @@ static bool HasSameNameAndStaticFlag(Signature *const first, Signature *const se
            first->HasSignatureFlag(SignatureFlags::STATIC) == second->HasSignatureFlag(SignatureFlags::STATIC);
 }
 
-static bool DoesSignatureOverrideBase(ETSChecker *const checker, TypeRelation *const relation,
-                                      ETSObjectType *const classType, Signature *const derived, Signature *const base,
-                                      bool const allowInterfaceAsClassMember = true)
+struct MultipleOverrideCheckContext {
+    ETSChecker *checker;
+    TypeRelation *relation;
+    ETSObjectType *classType;
+};
+
+static bool DoesSignatureOverrideBase(MultipleOverrideCheckContext const &ctx, Signature *const derived,
+                                      Signature *const base, bool const allowInterfaceAsClassMember = true)
 {
     if (derived->Function() == base->Function()) {
         return false;
@@ -2087,20 +2135,20 @@ static bool DoesSignatureOverrideBase(ETSChecker *const checker, TypeRelation *c
         return false;
     }
 
-    if (!HasValidOverrideOwnerDirection(classType, derived, base, allowInterfaceAsClassMember)) {
+    if (!HasValidOverrideOwnerDirection(ctx.classType, derived, base, allowInterfaceAsClassMember)) {
         return false;
     }
 
-    if (!relation->CheckTypeParameterConstraints(derived->TypeParams(), base->TypeParams())) {
+    if (!ctx.relation->CheckTypeParameterConstraints(derived->TypeParams(), base->TypeParams())) {
         return false;
     }
 
-    auto *const adjustedBase = checker->AdjustForTypeParameters(derived, base, relation);
+    auto *const adjustedBase = ctx.checker->AdjustForTypeParameters(derived, base, ctx.relation);
     if (adjustedBase == nullptr) {
         return false;
     }
 
-    return IsMethodOverridesOtherInMultipleOverrideCheck(relation, adjustedBase, derived);
+    return IsMethodOverridesOtherInMultipleOverrideCheck(ctx.relation, adjustedBase, derived);
 }
 
 static bool HasSignature(std::vector<Signature *> const &signatures, Signature *const signature)
@@ -2108,33 +2156,31 @@ static bool HasSignature(std::vector<Signature *> const &signatures, Signature *
     return std::find(signatures.begin(), signatures.end(), signature) != signatures.end();
 }
 
-static bool HasCloserOverride(ETSChecker *const checker, TypeRelation *const relation, ETSObjectType *const classType,
-                              std::vector<Signature *> const &candidates, Signature *const signature)
+static bool HasCloserOverride(MultipleOverrideCheckContext const &ctx, std::vector<Signature *> const &candidates,
+                              Signature *const signature)
 {
     for (auto *const candidate : candidates) {
         if (candidate->Owner() == signature->Owner()) {
             continue;
         }
-        if (DoesSignatureOverrideBase(checker, relation, classType, candidate, signature)) {
+        if (DoesSignatureOverrideBase(ctx, candidate, signature)) {
             return true;
         }
     }
     return false;
 }
 
-static void AddEffectiveSignature(ETSChecker *const checker, TypeRelation *const relation,
-                                  ETSObjectType *const classType, Signature *const signature,
+static void AddEffectiveSignature(MultipleOverrideCheckContext const &ctx, Signature *const signature,
                                   std::vector<Signature *> &candidates)
 {
-    if (HasSignature(candidates, signature) || HasCloserOverride(checker, relation, classType, candidates, signature)) {
+    if (HasSignature(candidates, signature) || HasCloserOverride(ctx, candidates, signature)) {
         return;
     }
 
     candidates.emplace_back(signature);
 }
 
-static void CollectSignaturesFromType(ETSChecker *const checker, TypeRelation *const relation,
-                                      ETSObjectType *const classType, ETSObjectType *const type,
+static void CollectSignaturesFromType(MultipleOverrideCheckContext const &ctx, ETSObjectType *const type,
                                       std::vector<Signature *> &signatures, bool effectiveOnly)
 {
     if (type == nullptr) {
@@ -2149,7 +2195,7 @@ static void CollectSignaturesFromType(ETSChecker *const checker, TypeRelation *c
 
         for (auto *const signature : prop->TsType()->AsETSFunctionType()->CallSignatures()) {
             if (effectiveOnly) {
-                AddEffectiveSignature(checker, relation, classType, signature, signatures);
+                AddEffectiveSignature(ctx, signature, signatures);
             } else if (!HasSignature(signatures, signature)) {
                 signatures.emplace_back(signature);
             }
@@ -2157,48 +2203,45 @@ static void CollectSignaturesFromType(ETSChecker *const checker, TypeRelation *c
     }
 }
 
-static void CollectSignaturesFromInterface(ETSChecker *const checker, TypeRelation *const relation,
-                                           ETSObjectType *const iface, ETSObjectType *const classType,
+static void CollectSignaturesFromInterface(MultipleOverrideCheckContext const &ctx, ETSObjectType *const iface,
                                            std::vector<Signature *> &signatures, bool effectiveOnly)
 {
     if (iface == nullptr) {
         return;
     }
 
-    CollectSignaturesFromType(checker, relation, classType, iface, signatures, effectiveOnly);
+    CollectSignaturesFromType(ctx, iface, signatures, effectiveOnly);
     for (auto *const superIface : iface->Interfaces()) {
-        CollectSignaturesFromInterface(checker, relation, superIface, classType, signatures, effectiveOnly);
+        CollectSignaturesFromInterface(ctx, superIface, signatures, effectiveOnly);
     }
 }
 
-static void CollectEffectiveClassSignatures(ETSChecker *const checker, TypeRelation *const relation,
-                                            ETSObjectType *const classType, std::vector<Signature *> &candidates)
+static void CollectEffectiveClassSignatures(MultipleOverrideCheckContext const &ctx,
+                                            std::vector<Signature *> &candidates)
 {
-    for (auto *iter = classType; iter != nullptr; iter = iter->SuperType()) {
-        CollectSignaturesFromType(checker, relation, classType, iter, candidates, true);
+    for (auto *iter = ctx.classType; iter != nullptr; iter = iter->SuperType()) {
+        CollectSignaturesFromType(ctx, iter, candidates, true);
     }
 
-    for (auto *iter = classType; iter != nullptr; iter = iter->SuperType()) {
+    for (auto *iter = ctx.classType; iter != nullptr; iter = iter->SuperType()) {
         for (auto *const iface : iter->Interfaces()) {
-            CollectSignaturesFromInterface(checker, relation, iface, classType, candidates, true);
+            CollectSignaturesFromInterface(ctx, iface, candidates, true);
         }
     }
 }
 
-static void CollectPotentialBaseSignatures(ETSChecker *const checker, TypeRelation *const relation,
-                                           ETSObjectType *const classType, std::vector<Signature *> &bases)
+static void CollectPotentialBaseSignatures(MultipleOverrideCheckContext const &ctx, std::vector<Signature *> &bases)
 {
-    for (auto *iter = classType->SuperType(); iter != nullptr; iter = iter->SuperType()) {
-        CollectSignaturesFromType(checker, relation, classType, iter, bases, false);
+    for (auto *iter = ctx.classType->SuperType(); iter != nullptr; iter = iter->SuperType()) {
+        CollectSignaturesFromType(ctx, iter, bases, false);
     }
 
-    for (auto *const iface : classType->Interfaces()) {
-        CollectSignaturesFromInterface(checker, relation, iface, classType, bases, false);
+    for (auto *const iface : ctx.classType->Interfaces()) {
+        CollectSignaturesFromInterface(ctx, iface, bases, false);
     }
 }
 
-static Signature *FindCommonOverriddenBase(ETSChecker *const checker, TypeRelation *const relation,
-                                           ETSObjectType *const classType, Signature *const first,
+static Signature *FindCommonOverriddenBase(MultipleOverrideCheckContext const &ctx, Signature *const first,
                                            Signature *const second, std::vector<Signature *> const &bases)
 {
     for (auto *const base : bases) {
@@ -2208,43 +2251,41 @@ static Signature *FindCommonOverriddenBase(ETSChecker *const checker, TypeRelati
         if (!HasSameNameAndStaticFlag(first, base) || !HasSameNameAndStaticFlag(second, base)) {
             continue;
         }
-        if (DoesSignatureOverrideBase(checker, relation, classType, first, base) &&
-            DoesSignatureOverrideBase(checker, relation, classType, second, base)) {
+        if (DoesSignatureOverrideBase(ctx, first, base) && DoesSignatureOverrideBase(ctx, second, base)) {
             return base;
         }
     }
     return nullptr;
 }
 
-static bool IsClassImplementationOfInterfaceSignature(ETSChecker *const checker, TypeRelation *const relation,
-                                                      ETSObjectType *const classType, Signature *const classMember,
-                                                      Signature *const interfaceMember)
+static bool IsClassImplementationOfInterfaceSignature(MultipleOverrideCheckContext const &ctx,
+                                                      Signature *const classMember, Signature *const interfaceMember)
 {
     if (!classMember->Owner()->HasObjectFlag(ETSObjectFlags::CLASS) ||
         !interfaceMember->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
         return false;
     }
 
-    if (!InheritsFrom(classType->GetOriginalBaseType(), classMember->Owner()->GetOriginalBaseType()) ||
-        !InheritsFrom(classType->GetOriginalBaseType(), interfaceMember->Owner()->GetOriginalBaseType())) {
+    if (!InheritsFrom(ctx.classType->GetOriginalBaseType(), classMember->Owner()->GetOriginalBaseType()) ||
+        !InheritsFrom(ctx.classType->GetOriginalBaseType(), interfaceMember->Owner()->GetOriginalBaseType())) {
         return false;
     }
 
-    if (!relation->CheckTypeParameterConstraints(classMember->TypeParams(), interfaceMember->TypeParams())) {
+    if (!ctx.relation->CheckTypeParameterConstraints(classMember->TypeParams(), interfaceMember->TypeParams())) {
         return false;
     }
 
-    auto *const adjustedInterfaceMember = checker->AdjustForTypeParameters(classMember, interfaceMember, relation);
+    auto *const adjustedInterfaceMember =
+        ctx.checker->AdjustForTypeParameters(classMember, interfaceMember, ctx.relation);
     return adjustedInterfaceMember != nullptr &&
-           IsMethodOverridesOtherInMultipleOverrideCheck(relation, adjustedInterfaceMember, classMember);
+           IsMethodOverridesOtherInMultipleOverrideCheck(ctx.relation, adjustedInterfaceMember, classMember);
 }
 
-static bool IsClassInterfaceImplementationPair(ETSChecker *const checker, TypeRelation *const relation,
-                                               ETSObjectType *const classType, Signature *const first,
+static bool IsClassInterfaceImplementationPair(MultipleOverrideCheckContext const &ctx, Signature *const first,
                                                Signature *const second)
 {
-    return IsClassImplementationOfInterfaceSignature(checker, relation, classType, first, second) ||
-           IsClassImplementationOfInterfaceSignature(checker, relation, classType, second, first);
+    return IsClassImplementationOfInterfaceSignature(ctx, first, second) ||
+           IsClassImplementationOfInterfaceSignature(ctx, second, first);
 }
 
 static bool ShouldReportMultipleOverrideConflict(ETSObjectType *const classType, Signature *const first,
@@ -2316,33 +2357,31 @@ static void ReportMultipleOverrideConflict(ETSChecker *const checker, ETSObjectT
                       GetMultipleOverrideConflictPosition(classType, current));
 }
 
-static bool TryReportMultipleOverrideConflict(ETSChecker *const checker, TypeRelation *const relation,
-                                              ETSObjectType *const classType, Signature *const first,
+static bool TryReportMultipleOverrideConflict(MultipleOverrideCheckContext const &ctx, Signature *const first,
                                               Signature *const second, std::vector<Signature *> const &bases)
 {
     if (!HasSameNameAndStaticFlag(first, second)) {
         return false;
     }
 
-    if (DoesSignatureOverrideBase(checker, relation, classType, first, second, false) ||
-        DoesSignatureOverrideBase(checker, relation, classType, second, first, false)) {
+    if (DoesSignatureOverrideBase(ctx, first, second, false) || DoesSignatureOverrideBase(ctx, second, first, false)) {
         return false;
     }
 
-    if (IsClassInterfaceImplementationPair(checker, relation, classType, first, second)) {
+    if (IsClassInterfaceImplementationPair(ctx, first, second)) {
         return false;
     }
 
-    auto *const base = FindCommonOverriddenBase(checker, relation, classType, first, second, bases);
+    auto *const base = FindCommonOverriddenBase(ctx, first, second, bases);
     if (base == nullptr) {
         return false;
     }
 
-    if (!ShouldReportMultipleOverrideConflict(classType, first, second, base)) {
+    if (!ShouldReportMultipleOverrideConflict(ctx.classType, first, second, base)) {
         return false;
     }
 
-    ReportMultipleOverrideConflict(checker, classType, first, second, base);
+    ReportMultipleOverrideConflict(ctx.checker, ctx.classType, first, second, base);
     return true;
 }
 
@@ -2354,41 +2393,20 @@ void ETSChecker::CheckMultipleOverrideOfSameSuperMethod(ETSObjectType *classType
     }
 
     TypeRelation localRelation(this, true);
+    MultipleOverrideCheckContext ctx {this, &localRelation, classType};
     std::vector<Signature *> candidates;
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    CollectEffectiveClassSignatures(this, &localRelation, classType, candidates);
+    CollectEffectiveClassSignatures(ctx, candidates);
 
     std::vector<Signature *> bases;
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    CollectPotentialBaseSignatures(this, &localRelation, classType, bases);
+    CollectPotentialBaseSignatures(ctx, bases);
 
     for (size_t idx = 0; idx < candidates.size(); ++idx) {
         for (size_t next = idx + 1; next < candidates.size(); ++next) {
-            if (TryReportMultipleOverrideConflict(this, &localRelation, classType, candidates[idx], candidates[next],
-                                                  bases)) {
+            if (TryReportMultipleOverrideConflict(ctx, candidates[idx], candidates[next], bases)) {
                 return;
             }
-        }
-    }
-}
-
-void ETSChecker::AddOptionalProps(std::vector<ETSFunctionType *> *optionalProps, varbinder::LocalVariable *function)
-{
-    if (!function->TsType()->IsETSFunctionType()) {
-        return;
-    }
-    auto functionType = function->TsType()->AsETSFunctionType();
-    for (auto signature : functionType->CallSignatures()) {
-        auto const isAbstract = signature->Function()->IsAbstract() ||
-                                (!signature->Function()->HasBody() && !signature->Function()->IsNative());
-        if (isAbstract || signature->Function()->IsStatic()) {
-            continue;
-        }
-
-        // If getter or setter has implementation in interface, it must be transformed from optional properties.
-        if (signature->Function()->IsGetter() || signature->Function()->IsSetter()) {
-            optionalProps->emplace_back(functionType);
-            break;
         }
     }
 }
@@ -2401,7 +2419,8 @@ void ETSChecker::AddImplementedSignature(std::vector<Signature *> *implementedSi
     }
 
     for (auto signature : function->TsType()->AsETSFunctionType()->CallSignatures()) {
-        if (signature->Function()->IsAbstract() || signature->Function()->IsStatic()) {
+        if (signature->Function()->IsAbstract() || signature->Function()->IsStatic() ||
+            signature->Function()->IsOptionalDeclaration()) {
             continue;
         }
 
@@ -3265,6 +3284,13 @@ Type *ETSChecker::TryToInstantiate(Type *const type, ArenaAllocator *const alloc
     return returnType;
 }
 
+static bool IsInsideSynthesizedPropertyAccessor(ETSChecker *checker)
+{
+    auto const *signature = checker->Context().ContainingSignature();
+    return signature != nullptr && signature->Function() != nullptr &&
+           signature->Function()->OriginalNode() != nullptr && signature->Function()->OriginalNode()->IsClassProperty();
+}
+
 void ETSChecker::ValidateNamespaceProperty(varbinder::Variable *property, const ETSObjectType *target,
                                            const ir::Identifier *ident)
 {
@@ -3279,8 +3305,9 @@ void ETSChecker::ValidateNamespaceProperty(varbinder::Variable *property, const 
                            ? funcType->CallSignatures()[0]->OwnerVar()
                            : property;
             ES2PANDA_ASSERT(property != nullptr);
-        } else if (auto *parent = ident->Parent();
-                   parent->IsMemberExpression() && parent->AsMemberExpression()->Object()->IsSuperExpression()) {
+        } else if (auto *parent = ident->Parent(); parent->IsMemberExpression() &&
+                                                   parent->AsMemberExpression()->Object()->IsSuperExpression() &&
+                                                   !IsInsideSynthesizedPropertyAccessor(this)) {
             LogError(diagnostic::SUPER_NOT_ACCESSIBLE, {ident->Name()}, ident->Start());
             const_cast<ir::AstNode *>(parent)->AsMemberExpression()->SetPreferredType(GlobalTypeError());
             return;
@@ -3882,8 +3909,8 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
     }
 
     const bool preferClassPropertyAccessor = prop != nullptr && IsVariableGetterSetterClassProperty(prop);
-    const bool isSuperInaccessibleField =
-        prop != nullptr && memberExpr->Object()->IsSuperExpression() && IsSuperInaccessibleField(prop);
+    const bool isSuperInaccessibleField = prop != nullptr && memberExpr->Object()->IsSuperExpression() &&
+                                          IsSuperInaccessibleField(prop) && !IsInsideSynthesizedPropertyAccessor(this);
     if (isSuperInaccessibleField) {
         LogError(diagnostic::SUPER_NOT_ACCESSIBLE, {memberExpr->Property()->AsIdentifier()->Name()},
                  memberExpr->Property()->Start());

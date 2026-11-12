@@ -109,15 +109,11 @@ ir::FunctionSignature InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
 static ir::ModifierFlags GetFlags(bool isOptional, bool isDeclare)
 {
     auto flags = ir::ModifierFlags::PUBLIC;
-
     if (!isOptional || isDeclare) {
         flags |= ir::ModifierFlags::ABSTRACT;
     }
     if (isOptional) {
         flags |= ir::ModifierFlags::OPTIONAL;
-    }
-    if (isDeclare && isOptional) {
-        flags |= ir::ModifierFlags::DEFAULT;
     }
     return flags;
 }
@@ -169,16 +165,15 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     ir::FunctionSignature signature = GenerateGetterOrSetterSignature(field, isSetter, paramScope);
 
     auto scriptFunctionFlags = GetScriptFunctionFlags(isSetter);
+    auto *body = (isOptional && !isDeclare)
+                     ? ctx->GetChecker()->AsETSChecker()->CreateGetterOrSetterBodyForOptional(isSetter, true)
+                     : nullptr;
     auto *func = ctx->AllocNode<ir::ScriptFunction>(
         ctx->Allocator(),
-        ir::ScriptFunction::ScriptFunctionData {
-            ctx->GetChecker()->AsETSChecker()->CreateGetterOrSetterBodyForOptional(isSetter, isOptional && !isDeclare),
-            std::move(signature), scriptFunctionFlags, flags,
-            classScope->Node()->AsTSInterfaceDeclaration()->Language()});
+        ir::ScriptFunction::ScriptFunctionData {body, std::move(signature), scriptFunctionFlags, flags,
+                                                classScope->Node()->AsTSInterfaceDeclaration()->Language()});
 
     func->SetRange(field->Range());
-
-    // Since optional prop has default body, need to set scope.
     if (isOptional && !isDeclare) {
         auto funcCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, classScope);
         InitScopesPhaseETS::RunExternalNode(func, varbinder);
