@@ -17,13 +17,17 @@
 #define ES2PANDA_LSP_INCLUDE_INTERNAL_API_H
 
 #include <optional>
+#include <string>
 #include <string_view>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 #include "api.h"
 #include "checker/types/type.h"
 #include "ir/astNode.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
+#include "util/arktsconfig.h"
 #include "util/eheap.h"
 
 namespace ark::es2panda::util {
@@ -192,6 +196,71 @@ std::string GetImportFilePath(const util::ImportInfo &importInfo);
 void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,
                               DiagnosticReferences &result);
 std::string GetTokenTypes(ir::ModifierFlags flags);
+
+// The arktsconfig 'paths' entry covering a file: its importable alias (without file
+// extension) and the normalized target (module directory or file).
+struct PathsMatch {
+    std::string alias;  // CC-OFF(G.NAM.03-CPP) project code style
+    std::string target;
+};
+
+// The dependency entry of a file: its key in the arktsconfig 'dependencies' section and
+// the entry's module data. Both are borrowed from the config.
+using DependencyEntry = std::pair<const std::string *, const ArkTsConfig::ExternalModuleData *>;
+
+// A per-request accelerated view of an arktsconfig's file lookups: the dependency entries
+// indexed by their normalized file paths and the 'paths' entries in pre-normalized
+// comparison forms, built once (one pass over the config) and shared by every lookup of
+// one request. A single lookup costs a full config scan, so request flows that resolve
+// many files (import fixes, completions) construct this cache up front and use its
+// members instead of the free functions below. The matched entries are borrowed from the
+// config: the cache must not outlive it. A null config behaves like the config-free
+// lookups (no module resolution).
+class ArkTsConfigLookupCache {
+public:
+    explicit ArkTsConfigLookupCache(const ArkTsConfig *config);
+
+    // The config the cache was built from; null when constructed without one.
+    const ArkTsConfig *Config() const
+    {
+        return config_;
+    }
+
+    // The lookup members mirror the free functions of the same names; keep them in sync.
+    DependencyEntry FindDependencyEntryForFile(const std::string &file) const;
+    std::optional<std::string> FindDynamicDependencyModuleName(const std::string &file) const;
+    std::optional<std::string> FindDynamicDeclModuleKey(const std::string &file) const;
+    std::optional<PathsMatch> FindPathsMatch(const std::string &file) const;
+    std::string FindModuleEntryFile(const std::string &file) const;
+    std::string ComputeRelativeImportPath(const std::string &fromFile, const std::string &toFile) const;
+    std::string ComputeModuleImportPath(const std::string &toFile) const;
+
+private:
+    ArkTsConfigLookupCache(const ArkTsConfigLookupCache &) = delete;
+    ArkTsConfigLookupCache &operator=(const ArkTsConfigLookupCache &) = delete;
+
+    std::optional<std::string> FindModuleName(const std::string &file) const;
+    bool IsSameModule(const std::string &fromFile, const std::string &toFile) const;
+
+    // The cached dependency entries of one file: the first match overall and the first
+    // match carrying a source file, both in 'Dependencies()' order.
+    struct DependencyFileMatches {
+        const std::string *key {nullptr};
+        const ArkTsConfig::ExternalModuleData *data {nullptr};
+        const std::string *keyWithSource {nullptr};
+        const ArkTsConfig::ExternalModuleData *dataWithSource {nullptr};
+    };
+    struct NormalizedPathsTarget {
+        std::string alias;
+        std::string target;
+        std::string targetWithoutExtension;
+    };
+
+    const ArkTsConfig *config_;
+    std::unordered_map<std::string, DependencyFileMatches> dependencyByFile_;
+    std::vector<NormalizedPathsTarget> normalizedPathsTargets_;
+};
+
 std::string ComputeRelativeImportPath(const std::string &fromFile, const std::string &toFile,
                                       const ArkTsConfig *config = nullptr);
 // The module alias import form of a file ('library' for a file under the paths module root,

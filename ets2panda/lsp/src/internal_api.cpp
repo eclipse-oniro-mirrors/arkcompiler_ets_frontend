@@ -125,11 +125,6 @@ std::string FirstModuleSegment(const std::string &moduleSpecifier)
     return separatorPos == std::string::npos ? moduleSpecifier : moduleSpecifier.substr(0U, separatorPos);
 }
 
-struct PathsMatch {
-    std::string alias;  // CC-OFF(G.NAM.03-CPP) project code style
-    std::string target;
-};
-
 // Finds the arktsconfig 'paths' entry covering the file: either a per-file alias whose target
 // is the file itself, or a module-directory alias whose target contains the file. Longer
 // aliases are preferred because 'Paths()' is ordered by descending key length.
@@ -178,32 +173,11 @@ std::string ImportSpecifierForPathsMatch(const std::string &toFile, const PathsM
     return TrimIndexSegment(match.alias + normalizedFile.substr(match.target.size()));
 }
 
-// Finds the dynamic module name that owns the file through the arktsconfig 'dependencies'
+// The dynamic module name that owns the file through the arktsconfig 'dependencies'
 // section: the file is either the module source recorded as 'sourceFilePath', or the module
 // declaration recorded as 'path'. Dependencies without a source file (interop SDK
-// declarations) are skipped.
-std::optional<std::string> FindDynamicDependencyModuleName(const std::string &file, const ArkTsConfig &config)
-{
-    const auto normalizedFile = NormalizeModuleSeparators(file);
-    if (normalizedFile.empty()) {
-        return std::nullopt;
-    }
-    const auto fileWithoutExtension = StripExtension(normalizedFile);
-    for (const auto &[dependencyKey, moduleData] : config.Dependencies()) {
-        if (moduleData.SourceFilePath().empty()) {
-            continue;
-        }
-        const auto sourcePath = NormalizeModuleSeparators(std::string(moduleData.SourceFilePath()));
-        if (StripExtension(sourcePath) == fileWithoutExtension) {
-            return GetDependencyImportSpecifier(dependencyKey, moduleData);
-        }
-        const auto declPath = NormalizeModuleSeparators(moduleData.Path());
-        if (!declPath.empty() && StripExtension(declPath) == fileWithoutExtension) {
-            return GetDependencyImportSpecifier(dependencyKey, moduleData);
-        }
-    }
-    return std::nullopt;
-}
+// declarations) are skipped. See ArkTsConfigLookupCache::FindDynamicDependencyModuleName
+// for the accelerated twin.
 
 // The dependency entry whose source file ('sourceFilePath') or declaration ('path') is the
 // given file, if any. Unlike FindDynamicDependencyModuleName this also matches entries
@@ -233,34 +207,12 @@ std::pair<const std::string *, const ArkTsConfig::ExternalModuleData *> FindDepe
 
 // The module a file belongs to: dynamic dependency declarations resolve to their dynamic
 // module first (the 'dependencies' entry is the authoritative dynamic classification, and
-// the same declaration file can also be aliased by a 'paths' entry; the module name is the
-// first segment of the file-level key, so sibling files of one dynamic package stay in the
+// the same declaration file can also be aliased by a 'paths' entry; the module name is
+// the first segment of the file-level key, so sibling files of one dynamic package stay in the
 // same module), static files (including the per-file aliases of hybrid modules) resolve
 // through the 'paths' section, and dynamic files of hybrid modules through the
-// 'dependencies' section.
-std::optional<std::string> FindModuleName(const std::string &file, const ArkTsConfig &config)
-{
-    if (auto dynamicKey = FindDynamicDeclModuleKey(file, config)) {
-        return FirstModuleSegment(*dynamicKey);
-    }
-    auto pathsMatch = FindPathsMatch(file, config);
-    if (pathsMatch.has_value()) {
-        return FirstModuleSegment(pathsMatch->alias);
-    }
-    return FindDynamicDependencyModuleName(file, config);
-}
-
-// Both files belong to the same module, no matter which section maps them. A static file of a
-// hybrid module and a dynamic sibling both resolve to the module name.
-bool IsSameModule(const std::string &fromFile, const std::string &toFile, const ArkTsConfig &config)
-{
-    auto fromModule = FindModuleName(fromFile, config);
-    if (!fromModule.has_value()) {
-        return false;
-    }
-    auto toModule = FindModuleName(toFile, config);
-    return toModule.has_value() && *fromModule == *toModule;
-}
+// 'dependencies' section. See ArkTsConfigLookupCache::FindModuleName for the accelerated
+// twin.
 
 }  // namespace
 
@@ -385,20 +337,244 @@ std::string CanonicalizeDynamicImportSource(const std::string &source, const Ark
 // file-level dynamic module key even when a 'paths' entry aliases the same file, and a
 // module-directory alias of the 'paths' section keeps the file's path under the module root
 // so symbols exported only by inner files stay importable. Definitions from the module of
-// the importing file keep the relative form.
+// the importing file keep the relative form. The single lookup builds the whole lookup
+// cache - request flows that resolve many files hold an ArkTsConfigLookupCache instead.
 std::string ComputeRelativeImportPath(const std::string &fromFile, const std::string &toFile, const ArkTsConfig *config)
 {
-    if (config != nullptr) {
-        auto dynamicDeclModule = FindDynamicDeclModuleKey(toFile, *config);
-        if (dynamicDeclModule.has_value() && !IsSameModule(fromFile, toFile, *config)) {
+    return ArkTsConfigLookupCache(config).ComputeRelativeImportPath(fromFile, toFile);
+}
+
+// See internal_api.h: the entry-level import form of a module file. Dynamic modules use the
+// canonical dependency key's package segment, 'paths' modules use the alias key (the
+// directory alias for a module root, the per-file key otherwise).
+std::string ComputeModuleImportPath(const std::string &toFile, const ArkTsConfig *config)
+{
+    return ArkTsConfigLookupCache(config).ComputeModuleImportPath(toFile);
+}
+
+// See internal_api.h: the entry file of the module that owns 'file'.
+std::string FindModuleEntryFile(const std::string &file, const ArkTsConfig &config)
+{
+    if (auto dynamicKey = FindDynamicDeclModuleKey(file, config)) {
+        if (dynamicKey->find('/') == std::string::npos) {
+            return StripExtension(NormalizeModuleSeparators(file));
+        }
+        const auto package = FirstModuleSegment(*dynamicKey);
+        const auto &dependencies = config.Dependencies();
+        const auto entryIt = dependencies.find(package);
+        if (entryIt == dependencies.cend()) {
+            return "";
+        }
+        const auto &moduleData = entryIt->second;
+        const auto entryFile = !moduleData.SourceFilePath().empty() ? std::string(moduleData.SourceFilePath())
+                                                                    : std::string(moduleData.Path());
+        if (entryFile.empty()) {
+            return "";
+        }
+        return StripExtension(NormalizeModuleSeparators(entryFile));
+    }
+    auto match = FindPathsMatch(file, config);
+    if (!match.has_value()) {
+        return "";
+    }
+    const auto normalizedFile = StripExtension(NormalizeModuleSeparators(file));
+    const auto normalizedTarget = StripExtension(NormalizeModuleSeparators(match->target));
+    if (normalizedFile == normalizedTarget) {
+        return normalizedTarget;
+    }
+    return normalizedTarget + "/" + std::string(MODULE_ENTRY_SEGMENT);
+}
+
+// See internal_api.h. The comparison forms below mirror the anonymous-namespace helpers and
+// the free lookup functions: the caches built from them must stay byte-identical with the
+// linear scans they replace.
+ArkTsConfigLookupCache::ArkTsConfigLookupCache(const ArkTsConfig *config) : config_(config)
+{
+    if (config_ == nullptr) {
+        return;
+    }
+    // First entry wins per slot, matching the linear 'Dependencies()' scans.
+    for (const auto &[key, moduleData] : config_->Dependencies()) {
+        const auto hasSourceFile = !moduleData.SourceFilePath().empty();
+        if (hasSourceFile) {
+            auto &matches =
+                dependencyByFile_[StripExtension(NormalizeModuleSeparators(std::string(moduleData.SourceFilePath())))];
+            if (matches.keyWithSource == nullptr) {
+                matches.keyWithSource = &key;
+                matches.dataWithSource = &moduleData;
+            }
+            if (matches.key == nullptr) {
+                matches.key = &key;
+                matches.data = &moduleData;
+            }
+        }
+        if (!moduleData.Path().empty()) {
+            auto &matches = dependencyByFile_[StripExtension(NormalizeModuleSeparators(moduleData.Path()))];
+            if (matches.key == nullptr) {
+                matches.key = &key;
+                matches.data = &moduleData;
+            }
+            if (matches.keyWithSource == nullptr && hasSourceFile) {
+                matches.keyWithSource = &key;
+                matches.dataWithSource = &moduleData;
+            }
+        }
+    }
+    // 'Paths()' is ordered by descending alias length; the vector preserves the order the
+    // prefix matching relies on.
+    for (const auto &[alias, targets] : config_->Paths()) {
+        for (const auto &target : targets) {
+            auto normalizedTarget = TrimTrailingSeparators(NormalizeModuleSeparators(target));
+            if (normalizedTarget.empty()) {
+                continue;
+            }
+            auto targetWithoutExtension = StripExtension(normalizedTarget);
+            normalizedPathsTargets_.emplace_back(NormalizedPathsTarget {
+                StripExtension(alias), std::move(normalizedTarget), std::move(targetWithoutExtension)});
+        }
+    }
+}
+
+DependencyEntry ArkTsConfigLookupCache::FindDependencyEntryForFile(const std::string &file) const
+{
+    if (config_ == nullptr) {
+        return {nullptr, nullptr};
+    }
+    const auto normalizedFile = NormalizeModuleSeparators(file);
+    if (normalizedFile.empty()) {
+        return {nullptr, nullptr};
+    }
+    const auto entryIt = dependencyByFile_.find(StripExtension(normalizedFile));
+    if (entryIt == dependencyByFile_.cend() || entryIt->second.key == nullptr) {
+        return {nullptr, nullptr};
+    }
+    return {entryIt->second.key, entryIt->second.data};
+}
+
+std::optional<std::string> ArkTsConfigLookupCache::FindDynamicDependencyModuleName(const std::string &file) const
+{
+    if (config_ == nullptr) {
+        return std::nullopt;
+    }
+    const auto normalizedFile = NormalizeModuleSeparators(file);
+    if (normalizedFile.empty()) {
+        return std::nullopt;
+    }
+    const auto entryIt = dependencyByFile_.find(StripExtension(normalizedFile));
+    if (entryIt == dependencyByFile_.cend() || entryIt->second.keyWithSource == nullptr) {
+        return std::nullopt;
+    }
+    return GetDependencyImportSpecifier(*entryIt->second.keyWithSource, *entryIt->second.dataWithSource);
+}
+
+std::optional<std::string> ArkTsConfigLookupCache::FindDynamicDeclModuleKey(const std::string &file) const
+{
+    if (config_ == nullptr) {
+        return std::nullopt;
+    }
+    const auto entry = FindDependencyEntryForFile(file);
+    if (entry.second == nullptr) {
+        return std::nullopt;
+    }
+    if (entry.second->GetLanguage().IsDynamic()) {
+        return CanonicalizeDynamicDependencyKey(*entry.first, *entry.second, *config_);
+    }
+    return std::nullopt;
+}
+
+std::optional<PathsMatch> ArkTsConfigLookupCache::FindPathsMatch(const std::string &file) const
+{
+    if (config_ == nullptr) {
+        return std::nullopt;
+    }
+    const auto normalizedFile = NormalizeModuleSeparators(file);
+    if (normalizedFile.empty()) {
+        return std::nullopt;
+    }
+    const auto fileWithoutExtension = StripExtension(normalizedFile);
+    for (const auto &candidate : normalizedPathsTargets_) {
+        const bool isTargetFile = fileWithoutExtension == candidate.targetWithoutExtension;
+        const bool isUnderTargetDirectory = normalizedFile.size() > candidate.target.size() &&
+                                            normalizedFile[candidate.target.size()] == '/' &&
+                                            util::Helpers::StartsWith(normalizedFile, candidate.target);
+        if (isTargetFile || isUnderTargetDirectory) {
+            return PathsMatch {candidate.alias, candidate.target};
+        }
+    }
+    return std::nullopt;
+}
+
+std::string ArkTsConfigLookupCache::FindModuleEntryFile(const std::string &file) const
+{
+    if (config_ == nullptr) {
+        return "";
+    }
+    if (auto dynamicKey = FindDynamicDeclModuleKey(file)) {
+        if (dynamicKey->find('/') == std::string::npos) {
+            return StripExtension(NormalizeModuleSeparators(file));
+        }
+        const auto package = FirstModuleSegment(*dynamicKey);
+        const auto &dependencies = config_->Dependencies();
+        const auto entryIt = dependencies.find(package);
+        if (entryIt == dependencies.cend()) {
+            return "";
+        }
+        const auto &moduleData = entryIt->second;
+        const auto entryFile = !moduleData.SourceFilePath().empty() ? std::string(moduleData.SourceFilePath())
+                                                                    : std::string(moduleData.Path());
+        if (entryFile.empty()) {
+            return "";
+        }
+        return StripExtension(NormalizeModuleSeparators(entryFile));
+    }
+    auto match = FindPathsMatch(file);
+    if (!match.has_value()) {
+        return "";
+    }
+    const auto normalizedFile = StripExtension(NormalizeModuleSeparators(file));
+    const auto normalizedTarget = StripExtension(NormalizeModuleSeparators(match->target));
+    if (normalizedFile == normalizedTarget) {
+        return normalizedTarget;
+    }
+    return normalizedTarget + "/" + std::string(MODULE_ENTRY_SEGMENT);
+}
+
+std::optional<std::string> ArkTsConfigLookupCache::FindModuleName(const std::string &file) const
+{
+    if (auto dynamicKey = FindDynamicDeclModuleKey(file)) {
+        return FirstModuleSegment(*dynamicKey);
+    }
+    auto pathsMatch = FindPathsMatch(file);
+    if (pathsMatch.has_value()) {
+        return FirstModuleSegment(pathsMatch->alias);
+    }
+    return FindDynamicDependencyModuleName(file);
+}
+
+bool ArkTsConfigLookupCache::IsSameModule(const std::string &fromFile, const std::string &toFile) const
+{
+    auto fromModule = FindModuleName(fromFile);
+    if (!fromModule.has_value()) {
+        return false;
+    }
+    auto toModule = FindModuleName(toFile);
+    return toModule.has_value() && *fromModule == *toModule;
+}
+
+std::string ArkTsConfigLookupCache::ComputeRelativeImportPath(const std::string &fromFile,
+                                                              const std::string &toFile) const
+{
+    if (config_ != nullptr) {
+        auto dynamicDeclModule = FindDynamicDeclModuleKey(toFile);
+        if (dynamicDeclModule.has_value() && !IsSameModule(fromFile, toFile)) {
             return std::move(*dynamicDeclModule);
         }
-        auto match = FindPathsMatch(toFile, *config);
-        if (match.has_value() && !IsSameModule(fromFile, toFile, *config)) {
+        auto match = FindPathsMatch(toFile);
+        if (match.has_value() && !IsSameModule(fromFile, toFile)) {
             return ImportSpecifierForPathsMatch(toFile, *match);
         }
-        auto dynamicModule = FindDynamicDependencyModuleName(toFile, *config);
-        if (dynamicModule.has_value() && !IsSameModule(fromFile, toFile, *config)) {
+        auto dynamicModule = FindDynamicDependencyModuleName(toFile);
+        if (dynamicModule.has_value() && !IsSameModule(fromFile, toFile)) {
             return std::move(*dynamicModule);
         }
     }
@@ -446,55 +622,19 @@ std::string ComputeRelativeImportPath(const std::string &fromFile, const std::st
     return StripExtension(relative);
 }
 
-// See internal_api.h: the entry-level import form of a module file. Dynamic modules use the
-// canonical dependency key's package segment, 'paths' modules use the alias key (the
-// directory alias for a module root, the per-file key otherwise).
-std::string ComputeModuleImportPath(const std::string &toFile, const ArkTsConfig *config)
+std::string ArkTsConfigLookupCache::ComputeModuleImportPath(const std::string &toFile) const
 {
-    if (config == nullptr || toFile.empty()) {
+    if (config_ == nullptr || toFile.empty()) {
         return "";
     }
-    if (auto dynamicKey = FindDynamicDeclModuleKey(toFile, *config)) {
+    if (auto dynamicKey = FindDynamicDeclModuleKey(toFile)) {
         return FirstModuleSegment(*dynamicKey);
     }
-    auto match = FindPathsMatch(toFile, *config);
+    auto match = FindPathsMatch(toFile);
     if (!match.has_value()) {
         return "";
     }
     return TrimIndexSegment(match->alias);
-}
-
-// See internal_api.h: the entry file of the module that owns 'file'.
-std::string FindModuleEntryFile(const std::string &file, const ArkTsConfig &config)
-{
-    if (auto dynamicKey = FindDynamicDeclModuleKey(file, config)) {
-        if (dynamicKey->find('/') == std::string::npos) {
-            return StripExtension(NormalizeModuleSeparators(file));
-        }
-        const auto package = FirstModuleSegment(*dynamicKey);
-        const auto &dependencies = config.Dependencies();
-        const auto entryIt = dependencies.find(package);
-        if (entryIt == dependencies.cend()) {
-            return "";
-        }
-        const auto &moduleData = entryIt->second;
-        const auto entryFile = !moduleData.SourceFilePath().empty() ? std::string(moduleData.SourceFilePath())
-                                                                    : std::string(moduleData.Path());
-        if (entryFile.empty()) {
-            return "";
-        }
-        return StripExtension(NormalizeModuleSeparators(entryFile));
-    }
-    auto match = FindPathsMatch(file, config);
-    if (!match.has_value()) {
-        return "";
-    }
-    const auto normalizedFile = StripExtension(NormalizeModuleSeparators(file));
-    const auto normalizedTarget = StripExtension(NormalizeModuleSeparators(match->target));
-    if (normalizedFile == normalizedTarget) {
-        return normalizedTarget;
-    }
-    return normalizedTarget + "/" + std::string(MODULE_ENTRY_SEGMENT);
 }
 
 const ArkTsConfig *GetArkTsConfigOrNull(const public_lib::Context *ctx)

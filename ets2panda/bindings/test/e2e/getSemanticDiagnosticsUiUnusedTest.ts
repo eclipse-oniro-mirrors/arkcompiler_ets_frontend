@@ -46,11 +46,17 @@ describe('getSemanticDiagnosticsUiUnusedTest', () => {
   }
 
   describe('With UI Plugins', () => {
-    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    let uiLsp: ReturnType<typeof getLspWithUi> | undefined;
+    const getUiLspInstance = (): ReturnType<typeof getLspWithUi> => {
+      if (uiLsp === undefined) {
+        uiLsp = getLspWithUi(moduleName);
+      }
+      return uiLsp;
+    };
 
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getSemanticDiagnostics_ui_unused_warning', () => {
       const diagnostics =
-        getUiLsp().getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnosticsUiUnused.ets'))?.diagnostics ??
+        getUiLspInstance().getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnosticsUiUnused.ets'))?.diagnostics ??
         [];
       expectUnusedWarnings(diagnostics, [`'unusedUiLocal' is never used`]);
       expectNoWarnings(diagnostics, [
@@ -64,7 +70,7 @@ describe('getSemanticDiagnosticsUiUnusedTest', () => {
 
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getSemanticDiagnostics_kit_ui_unused_warning', () => {
       const diagnostics =
-        getUiLsp().getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnosticsKitUiUnused.ets'))
+        getUiLspInstance().getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnosticsKitUiUnused.ets'))
           ?.diagnostics ?? [];
 
       expectUnusedWarnings(diagnostics, [`'unusedKitUiLocal' is never used`]);

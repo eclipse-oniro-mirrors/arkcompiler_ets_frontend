@@ -342,7 +342,7 @@ std::vector<CodeFixAction> FixImportSource::GetCodeActions(const CodeFixContext 
     insertPos = AdjustInsertPositionForUseStaticDirective(insertPos, sourceCode);
 
     ActionBuildContext buildCtx {context, ctx, unresolvedName, sourceCode, insertPos};
-    const ArkTsConfig *arkTsConfig = GetArkTsConfigOrNull(ctx);
+    const ArkTsConfigLookupCache lookupCache(GetArkTsConfigOrNull(ctx));
 
     std::vector<CodeFixAction> actions;
     std::unordered_set<std::string> seenModules;
@@ -357,10 +357,10 @@ std::vector<CodeFixAction> FixImportSource::GetCodeActions(const CodeFixContext 
     };
     for (const auto &def : definitions) {
         // Keep both the module alias form and the file-level form (see ImportFixes).
-        if (IsSymbolExportedByModuleEntry(def.fileName, unresolvedName, arkTsConfig)) {
-            addActionForModule(def, ComputeModuleImportPath(def.fileName, arkTsConfig));
+        if (IsSymbolExportedByModuleEntry(def.fileName, unresolvedName, lookupCache)) {
+            addActionForModule(def, lookupCache.ComputeModuleImportPath(def.fileName));
         }
-        addActionForModule(def, ComputeRelativeImportPath(ctx->sourceFileName, def.fileName, arkTsConfig));
+        addActionForModule(def, lookupCache.ComputeRelativeImportPath(ctx->sourceFileName, def.fileName));
     }
 
     return actions;

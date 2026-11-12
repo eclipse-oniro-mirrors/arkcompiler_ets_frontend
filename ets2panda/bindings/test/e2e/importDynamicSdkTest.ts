@@ -350,7 +350,15 @@ describe('importDynamicSdkTest', () => {
   });
 
   describe('With UI Plugins', () => {
-    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    // One shared instance serves every case of the describe (the lazy singleton pattern
+    // of the other e2e suites); constructing a new Lsp per case triples the suite time.
+    let uiLsp: ReturnType<typeof getLspWithUi> | undefined;
+    const getUiLspInstance = (): ReturnType<typeof getLspWithUi> => {
+      if (uiLsp === undefined) {
+        uiLsp = getLspWithUi(moduleName);
+      }
+      return uiLsp;
+    };
     const collectFilesRecursively = (dirPath: string): string[] => {
       if (!fs.existsSync(dirPath)) {
         return [];
@@ -368,33 +376,33 @@ describe('importDynamicSdkTest', () => {
       return files;
     };
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_001', () => {
-      const res = getUiLsp().getSemanticDiagnostics(getRealPath(moduleName, 'importDynamicSdkDiagnostics.ets'));
+      const res = getUiLspInstance().getSemanticDiagnostics(getRealPath(moduleName, 'importDynamicSdkDiagnostics.ets'));
       expectEntriesContainUnorderedWithDiagnostics(DIAGNOSTICS_001, res);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_002', () => {
-      const res = getUiLsp().getDefinitionAtPosition(getRealPath(moduleName, 'importDynamicSdkDefinitions.ets'), 856);
+      const res = getUiLspInstance().getDefinitionAtPosition(getRealPath(moduleName, 'importDynamicSdkDefinitions.ets'), 856);
       expect(res?.fileName.valueOf().endsWith('@ohos.batteryInfo.d.ets')).toBe(true);
       expect(res?.start).toBe(986);
       expect(res?.length).toBe(11);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_003', () => {
-      const res = getUiLsp().getDefinitionAtPosition(getRealPath(moduleName, 'importDynamicSdkDefinitions.ets'), 876);
+      const res = getUiLspInstance().getDefinitionAtPosition(getRealPath(moduleName, 'importDynamicSdkDefinitions.ets'), 876);
       expect(res?.fileName.valueOf().endsWith('@ohos.batteryInfo.d.ets')).toBe(true);
       expect(res?.start).toBe(0);
       expect(res?.length).toBe(0);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_004', () => {
-      const res = getUiLsp().getCompletionAtPosition(getRealPath(moduleName, 'importDynamicSdkCompletions.ets'), 1535);
+      const res = getUiLspInstance().getCompletionAtPosition(getRealPath(moduleName, 'importDynamicSdkCompletions.ets'), 1535);
       expectEntriesContainUnorderedWithCompletions(res, COMPLETIONS_002);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_005', () => {
-      const res = getUiLsp().getSemanticDiagnostics(
+      const res = getUiLspInstance().getSemanticDiagnostics(
         getRealPath(moduleName, 'importDynamicSdkDynamicImportDiagnostics.ets')
       );
       expectEntriesContainUnorderedWithDiagnostics(DIAGNOSTICS_DYNAMIC_IMPORT, res);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_006', () => {
-      const res = getUiLsp().getDefinitionAtPosition(
+      const res = getUiLspInstance().getDefinitionAtPosition(
         getRealPath(moduleName, 'importDynamicSdkInteropDefinition.ets'),
         677
       );

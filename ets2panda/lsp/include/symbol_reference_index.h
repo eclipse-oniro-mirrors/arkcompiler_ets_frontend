@@ -25,6 +25,7 @@
 #include "public/es2panda_lib.h"
 
 namespace ark::es2panda::lsp {
+class ArkTsConfigLookupCache;
 
 using SymbolId = uint64_t;
 
@@ -55,7 +56,11 @@ std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std
                                                                        const std::string &excludeFile);
 // Whether the module entry that owns 'file' exports 'symbolName', either directly or through
 // an 'export { ... }' statement. Used to keep the bare module-alias import candidate valid.
+// The config version resolves through a one-shot lookup cache; request flows that resolve
+// many symbols hold an ArkTsConfigLookupCache and use the cache overload below.
 bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &symbolName, const ArkTsConfig *config);
+bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &symbolName,
+                                   const ArkTsConfigLookupCache &lookupCache);
 
 }  // namespace ark::es2panda::lsp
 

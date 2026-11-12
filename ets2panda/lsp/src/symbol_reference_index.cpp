@@ -1619,9 +1619,9 @@ bool HasDefaultExportReference(const std::string &source, const std::string &nam
 // source stays the navigation target, and it is the side the symbol index holds for a
 // dynamic module. Empty for entry files themselves, files outside a dynamic module and
 // entries without a declaration.
-static std::string FindModuleEntryDeclFile(const std::string &file, const ArkTsConfig &config)
+static std::string FindModuleEntryDeclFile(const std::string &file, const ArkTsConfigLookupCache &lookupCache)
 {
-    const auto dynamicKey = ark::es2panda::lsp::FindDynamicDeclModuleKey(file, config);
+    const auto dynamicKey = lookupCache.FindDynamicDeclModuleKey(file);
     if (!dynamicKey.has_value()) {
         return "";
     }
@@ -1629,7 +1629,7 @@ static std::string FindModuleEntryDeclFile(const std::string &file, const ArkTsC
     if (separatorPos == std::string::npos) {
         return "";
     }
-    const auto &dependencies = config.Dependencies();
+    const auto &dependencies = lookupCache.Config()->Dependencies();
     const auto entryIt = dependencies.find(dynamicKey->substr(0U, separatorPos));
     if (entryIt == dependencies.cend()) {
         return "";
@@ -1643,36 +1643,75 @@ static std::string FindModuleEntryDeclFile(const std::string &file, const ArkTsC
 
 bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &symbolName, const ArkTsConfig *config)
 {
-    if (config == nullptr || file.empty() || symbolName.empty()) {
+    if (config == nullptr) {
         return false;
     }
-    const auto entryFile = ark::es2panda::lsp::FindModuleEntryFile(file, *config);
+    return IsSymbolExportedByModuleEntry(file, symbolName, ArkTsConfigLookupCache(config));
+}
+
+// Whether the file's indexed references include an export of symbolName declared by the
+// target entry file itself (not by an inner file that merely belongs to the same module).
+static bool HasDirectExportFromFile(const std::string &targetFile, const std::string &symbolName,
+                                    const FileIndexData &fileData)
+{
+    for (const auto &[symbolId, refInfo] : fileData.references) {
+        static_cast<void>(refInfo);
+        auto exportIt = g_symbolExportInfos.find(symbolId);
+        if (exportIt == g_symbolExportInfos.end()) {
+            continue;
+        }
+        const auto &info = exportIt->second;
+        if ((info.flags & (EXPORT_NAMED | EXPORT_DEFAULT)) == 0U || info.symbolName != symbolName) {
+            continue;
+        }
+        if (StripModuleFileExtension(info.fileName) == targetFile) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &symbolName,
+                                   const ArkTsConfigLookupCache &lookupCache)
+{
+    if (file.empty() || symbolName.empty()) {
+        return false;
+    }
+    const auto entryFile = lookupCache.FindModuleEntryFile(file);
     if (entryFile.empty()) {
         return false;
     }
-    const auto entryDeclFile = FindModuleEntryDeclFile(file, *config);
+    const auto entryDeclFile = FindModuleEntryDeclFile(file, lookupCache);
+    // The entry files are known, so their indexed data is found by direct lookups over the
+    // module file extensions instead of stripping every indexed file's path - a full
+    // g_fileIndices iteration allocated one string per file for the path comparison.
+    static constexpr std::string_view MODULE_FILE_EXTENSIONS[] = {".d.ets", ".d.ats", ".ets", ".ats", ".ts"};
+    for (const auto &targetFile : {entryFile, entryDeclFile}) {
+        if (targetFile.empty()) {
+            continue;
+        }
+        for (const auto &extension : MODULE_FILE_EXTENSIONS) {
+            const auto fileIt = g_fileIndices.find(targetFile + std::string(extension));
+            if (fileIt == g_fileIndices.end()) {
+                continue;
+            }
+            if (HasDirectExportFromFile(targetFile, symbolName, fileIt->second) ||
+                HasReExportOfName(fileIt->second.source, symbolName)) {
+                return true;
+            }
+        }
+    }
+    // A symbol with this name may be declared in a file that is itself a module entry
+    // (its dependency key is a bare package name, no '/'): the bare module alias form
+    // stays valid. The name filter eliminates most entries cheaply; the expensive
+    // dynamic-key lookup runs only for the matching few.
     for (const auto &[symbolId, info] : g_symbolExportInfos) {
         static_cast<void>(symbolId);
         if ((info.flags & (EXPORT_NAMED | EXPORT_DEFAULT)) == 0U || info.symbolName != symbolName) {
             continue;
         }
-        // The export must be declared by the entry file itself (source or declaration),
-        // not by an inner file that merely belongs to the same module.
-        if (StripModuleFileExtension(info.fileName) == entryFile ||
-            (!entryDeclFile.empty() && StripModuleFileExtension(info.fileName) == entryDeclFile)) {
-            return true;
-        }
-        if (auto dynamicKey = ark::es2panda::lsp::FindDynamicDeclModuleKey(info.fileName, *config);
+        if (auto dynamicKey = lookupCache.FindDynamicDeclModuleKey(info.fileName);
             dynamicKey.has_value() && dynamicKey->find('/') == std::string::npos) {
-            return true;
-        }
-    }
-    for (const auto &[indexedFile, fileData] : g_fileIndices) {
-        const auto strippedIndexedFile = StripModuleFileExtension(indexedFile);
-        if (strippedIndexedFile != entryFile && strippedIndexedFile != entryDeclFile) {
-            continue;
-        }
-        if (HasReExportOfName(fileData.source, symbolName)) {
             return true;
         }
     }
@@ -1694,37 +1733,25 @@ std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string
         if (exportIt == g_symbolExportInfos.end() || (exportIt->second.flags & (EXPORT_NAMED | EXPORT_DEFAULT)) == 0U) {
             continue;
         }
-
-        auto fileIt = g_fileIndices.find(defRef.fileName);
-        if (fileIt == g_fileIndices.end()) {
-            continue;
-        }
-        const auto &source = fileIt->second.source;
-        if (defRef.start >= source.size()) {
+        // The export info's symbolName replaces the source text extraction: it is
+        // captured from the same identifier at the same definition position, and the
+        // string comparison eliminates non-matching entries before the source is touched.
+        if (exportIt->second.symbolName != name) {
             continue;
         }
 
-        size_t nameStart = defRef.start;
-        size_t nameEnd = nameStart;
-        while (nameEnd < source.size() && (isalnum(source[nameEnd]) != 0 || source[nameEnd] == '_')) {
-            nameEnd++;
-        }
-        std::string symbolName = source.substr(nameStart, nameEnd - nameStart);
-        if (symbolName != name) {
-            continue;
-        }
-
-        std::string dedupKey = defRef.fileName + ":" + symbolName;
+        std::string dedupKey = defRef.fileName + ":" + name;
         if (!seen.insert(dedupKey).second) {
             continue;
         }
 
         bool isDefault = HasExportFlag(symbolId, EXPORT_DEFAULT);
-        if (!isDefault && HasDefaultExportReference(source, symbolName)) {
+        auto fileIt = g_fileIndices.find(defRef.fileName);
+        if (!isDefault && fileIt != g_fileIndices.end() && HasDefaultExportReference(fileIt->second.source, name)) {
             isDefault = true;
         }
 
-        results.push_back(SymbolDefSearchResult {defRef.fileName, symbolName, isDefault});
+        results.push_back(SymbolDefSearchResult {defRef.fileName, name, isDefault});
     }
 
     return results;
