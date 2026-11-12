@@ -85,8 +85,8 @@ static const std::vector<ark::es2panda::lsp::FormatCodeSettings> K_SETTINGS_LIST
 };
 
 static const FormattingTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", 0}, {"project/bench_l2.ets", 0},         {"project/bench_l3.ets", 0},
-    {"project/bench_l4.ets", 0}, {"project/formatting_cases.ets", 0},
+    {"project/bench_l1.ats", 0}, {"project/bench_l2.ats", 0},         {"project/bench_l3.ats", 0},
+    {"project/bench_l4.ats", 0}, {"project/formatting_cases.ats", 0},
 };
 
 bool CheckFormattingResult(const FormattingTestCase &testCase, const std::vector<TextChange> &changes,

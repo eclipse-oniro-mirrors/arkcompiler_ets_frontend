@@ -97,8 +97,8 @@ struct TestPaths {
 static bool ResolveTestPaths(int argc, char **argv, TestPaths &paths)
 {
     std::string testDataDir = ark::os::GetAbsolutePath(ark::os::GetParentDir(argv[argc - 1])) + "/simult_declgen";
-    paths.fooPath = testDataDir + "/Foo.ets";
-    paths.mainPagePath = testDataDir + "/MainPage.ets";
+    paths.fooPath = testDataDir + "/Foo.ats";
+    paths.mainPagePath = testDataDir + "/MainPage.ats";
     paths.expectedPath = testDataDir + "/expected/MainPage-expected.txt";
     paths.configPath = FindArktsConfig(argc, argv);
     return !paths.configPath.empty();

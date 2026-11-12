@@ -57,7 +57,7 @@ struct Context {
         const char *args[] = {COMPILER_PATH};
         config = api->CreateConfig(1, args);
         Require(config != nullptr, "config");
-        value = api->CreateContextFromString(config, source.c_str(), "capi_blackbox.ets");
+        value = api->CreateContextFromString(config, source.c_str(), "capi_blackbox.ats");
         Require(value != nullptr, "context");
         Proceed(ES2PANDA_STATE_PARSED);
     }

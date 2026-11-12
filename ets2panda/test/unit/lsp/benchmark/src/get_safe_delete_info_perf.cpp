@@ -34,13 +34,13 @@ struct SafeDeleteInfoTestCase {
 };
 
 static const SafeDeleteInfoTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", "BENCH_CHAIN_SYMBOL_L1", 0, 2},
-    {"project/bench_l2.ets", "BENCH_CHAIN_SYMBOL_L2", 0, 2},
-    {"project/bench_l3.ets", "BENCH_CHAIN_SYMBOL_L3", 0, 2},
-    {"project/bench_l4.ets", "BENCH_CHAIN_SYMBOL_L4", 0, 2},
-    {"project/entry.ets", "targetAdminValue", 0, 2},
-    {"project/shared_small_100.ets", "SMALL_SHARED_ANCHOR", 0, 2},
-    {"project/shared_large_1000.ets", "LARGE_SHARED_ANCHOR", 0, 2},
+    {"project/bench_l1.ats", "BENCH_CHAIN_SYMBOL_L1", 0, 2},
+    {"project/bench_l2.ats", "BENCH_CHAIN_SYMBOL_L2", 0, 2},
+    {"project/bench_l3.ats", "BENCH_CHAIN_SYMBOL_L3", 0, 2},
+    {"project/bench_l4.ats", "BENCH_CHAIN_SYMBOL_L4", 0, 2},
+    {"project/entry.ats", "targetAdminValue", 0, 2},
+    {"project/shared_small_100.ats", "SMALL_SHARED_ANCHOR", 0, 2},
+    {"project/shared_large_1000.ats", "LARGE_SHARED_ANCHOR", 0, 2},
 };
 
 static size_t FindNthOccurrence(const std::string &source, const std::string &token, size_t occurrence)

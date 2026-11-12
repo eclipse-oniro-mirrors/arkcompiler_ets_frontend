@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,7 @@ int main()
 {
     es2panda_Impl *impl = GetImpl();
     const char *arg1 = "es2panda";
-    const char *arg2 = "test.ets";
+    const char *arg2 = "test.ats";
     char const *const args[] = {arg1, arg2};
     auto config = impl->CreateConfig(2, args);
     auto context = impl->CreateContextFromString(config, "fn main() { println!(\"Hello, Rust!\") }", arg2);

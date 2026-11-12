@@ -246,7 +246,7 @@ ts.addTest('arktest.assertEQ(Double.MIN_VALUE / 2, 0)'){
 
 // 7.22.2 Division 
 // Both operands are zero
-// prim_boxing_nan.ets has similar check, but for 0.0f / 0.0f
+// prim_boxing_nan.ats has similar check, but for 0.0f / 0.0f
 ts.addTest('arktest.assertEQ((0.0 / 0.0).isNaN(), true)') {
     arktest.assertEQ((0.0 / 0.0).isNaN(), true)
     assertDouble(0.0 / 0.0)

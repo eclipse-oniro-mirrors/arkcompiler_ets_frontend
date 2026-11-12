@@ -35,14 +35,14 @@ struct CurrentTokenValueTestCase {
 };
 
 static const CurrentTokenValueTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", 0, "BENCH_CHAIN_SYMBOL_L1", 2, "BE"},
-    {"project/bench_l2.ets", 0, "BENCH_CHAIN_SYMBOL_L2", 2, "BE"},
-    {"project/bench_l3.ets", 0, "BENCH_CHAIN_SYMBOL_L3", 2, "BE"},
-    {"project/bench_l4.ets", 0, "BENCH_CHAIN_SYMBOL_L4", 2, "BE"},
-    {"project/entry.ets", 0, "targetAdminValue", 2, "ta"},
-    {"project/shared_small_100.ets", 0, "SMALL_SHARED_ANCHOR", 2, "SM"},
-    {"project/shared_large_1000.ets", 0, "LARGE_SHARED_ANCHOR", 2, "LA"},
-    {"project/domain.ets", 0, "FeatureAdmin", 2, "Fe"},
+    {"project/bench_l1.ats", 0, "BENCH_CHAIN_SYMBOL_L1", 2, "BE"},
+    {"project/bench_l2.ats", 0, "BENCH_CHAIN_SYMBOL_L2", 2, "BE"},
+    {"project/bench_l3.ats", 0, "BENCH_CHAIN_SYMBOL_L3", 2, "BE"},
+    {"project/bench_l4.ats", 0, "BENCH_CHAIN_SYMBOL_L4", 2, "BE"},
+    {"project/entry.ats", 0, "targetAdminValue", 2, "ta"},
+    {"project/shared_small_100.ats", 0, "SMALL_SHARED_ANCHOR", 2, "SM"},
+    {"project/shared_large_1000.ats", 0, "LARGE_SHARED_ANCHOR", 2, "LA"},
+    {"project/domain.ats", 0, "FeatureAdmin", 2, "Fe"},
 };
 
 static void BM_GetCurrentTokenValue(benchmark::State &state)

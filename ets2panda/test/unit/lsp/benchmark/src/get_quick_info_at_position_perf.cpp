@@ -35,13 +35,13 @@ struct QuickInfoTestCase {
 };
 
 static const QuickInfoTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", 0, "BenchRunnerL1Impl", 2, "class", 0, 0},
-    {"project/bench_l2.ets", 0, "BenchRunnerL2Impl", 2, "class", 0, 0},
-    {"project/bench_l3.ets", 0, "BenchRunnerL3Impl", 2, "class", 0, 0},
-    {"project/bench_l4.ets", 0, "BenchRunnerL4Impl", 2, "class", 0, 0},
-    {"project/domain.ets", 0, "FeatureAdmin", 2, "class", 0, 12},
-    {"project/entry.ets", 0, "FeatureAdmin", 2, "class", 0, 12},
-    {"project/shared_large_1000.ets", 0, "KeyResolver", 2, "class", 0, 11},
+    {"project/bench_l1.ats", 0, "BenchRunnerL1Impl", 2, "class", 0, 0},
+    {"project/bench_l2.ats", 0, "BenchRunnerL2Impl", 2, "class", 0, 0},
+    {"project/bench_l3.ats", 0, "BenchRunnerL3Impl", 2, "class", 0, 0},
+    {"project/bench_l4.ats", 0, "BenchRunnerL4Impl", 2, "class", 0, 0},
+    {"project/domain.ats", 0, "FeatureAdmin", 2, "class", 0, 12},
+    {"project/entry.ats", 0, "FeatureAdmin", 2, "class", 0, 12},
+    {"project/shared_large_1000.ats", 0, "KeyResolver", 2, "class", 0, 11},
 };
 
 static void BM_GetQuickInfoAtPosition(benchmark::State &state)

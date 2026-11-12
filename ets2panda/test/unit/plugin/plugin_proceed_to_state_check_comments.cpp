@@ -99,7 +99,7 @@ static std::map<std::string, es2panda_AstNode *> callMap = {
 // Struct UI chains must also be captured at PARSED (before plugins-after-parse transforms structs).
 static std::map<std::string, std::string> callCommentsMap;
 
-static std::string g_source = R"('use static'
+static std::string g_source = R"(
 
 /**
  * import jsdoc

@@ -13,13 +13,5 @@
  * limitations under the License.
  */
 
-import {A, B, foo} from "./export.ets"
-
-function goo() : int { return 2}
-
-function main() {
-    let a: A = new A();
-    a.foo();
-    foo();
-    a.b;
-}
+import { A } from './recheck_import_A.ats'
+export let c = 0

@@ -31,13 +31,13 @@ struct ToLineColumnOffsetTestCase {
 };
 
 static const ToLineColumnOffsetTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", "BENCH_CHAIN_SYMBOL_L1", 2},
-    {"project/bench_l2.ets", "BENCH_CHAIN_SYMBOL_L2", 2},
-    {"project/bench_l3.ets", "BENCH_CHAIN_SYMBOL_L3", 2},
-    {"project/bench_l4.ets", "BENCH_CHAIN_SYMBOL_L4", 2},
-    {"project/entry.ets", "targetAdminValue", 2},
-    {"project/shared_small_100.ets", "SMALL_SHARED_ANCHOR", 2},
-    {"project/shared_large_1000.ets", "LARGE_SHARED_ANCHOR", 2},
+    {"project/bench_l1.ats", "BENCH_CHAIN_SYMBOL_L1", 2},
+    {"project/bench_l2.ats", "BENCH_CHAIN_SYMBOL_L2", 2},
+    {"project/bench_l3.ats", "BENCH_CHAIN_SYMBOL_L3", 2},
+    {"project/bench_l4.ats", "BENCH_CHAIN_SYMBOL_L4", 2},
+    {"project/entry.ats", "targetAdminValue", 2},
+    {"project/shared_small_100.ats", "SMALL_SHARED_ANCHOR", 2},
+    {"project/shared_large_1000.ats", "LARGE_SHARED_ANCHOR", 2},
 };
 
 static void BM_ToLineColumnOffset(benchmark::State &state)

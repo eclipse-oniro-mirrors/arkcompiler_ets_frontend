@@ -450,7 +450,7 @@ private:
     // ArkTS supported utility types
     const std::unordered_set<std::string_view> utilityTypes_ = {"Record",   "Partial", "Readonly",
                                                                 "Required", "Awaited", "ReturnType"};
-    const std::set<std::string> extensions_ = {".sts", ".ets", ".ts", ".js"};
+    const std::set<std::string> extensions_ = {".sts", ".ets", ".ats", ".ts", ".js"};
     const std::string interopSdkName_ = "@ohos.lang.interop";
 
     std::stringstream outputDts_;

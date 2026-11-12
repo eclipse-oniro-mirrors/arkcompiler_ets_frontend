@@ -44,17 +44,17 @@ struct ReferenceTestCase {
 using ReferenceList = std::vector<ReferenceInfoExpect>;
 
 static const ReferenceTestCase K_TEST_CASES[] = {
-    {{"project/bench_l1.ets"}, {}, "project/bench_l1.ets", "BenchRunnerL1Impl", 2, 2},
-    {{"project/bench_l1.ets", "project/bench_l2.ets"}, {}, "project/bench_l2.ets", "BenchRunnerL2Impl", 2, 2},
-    {{"project/bench_l1.ets", "project/bench_l2.ets", "project/bench_l3.ets"},
+    {{"project/bench_l1.ats"}, {}, "project/bench_l1.ats", "BenchRunnerL1Impl", 2, 2},
+    {{"project/bench_l1.ats", "project/bench_l2.ats"}, {}, "project/bench_l2.ats", "BenchRunnerL2Impl", 2, 2},
+    {{"project/bench_l1.ats", "project/bench_l2.ats", "project/bench_l3.ats"},
      {},
-     "project/bench_l3.ets",
+     "project/bench_l3.ats",
      "BenchRunnerL3Impl",
      2,
      2},
-    {{"project/bench_l1.ets", "project/bench_l2.ets", "project/bench_l3.ets", "project/bench_l4.ets"},
+    {{"project/bench_l1.ats", "project/bench_l2.ats", "project/bench_l3.ats", "project/bench_l4.ats"},
      {},
-     "project/bench_l4.ets",
+     "project/bench_l4.ats",
      "BenchRunnerL4Impl",
      2,
      2}};

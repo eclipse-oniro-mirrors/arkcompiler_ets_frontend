@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import { foo } from "./file2.ets"
+import { boo } from "./file3.ats"
 
-function main() {
-    foo();
+export function foo(): void {
+    boo();
 }

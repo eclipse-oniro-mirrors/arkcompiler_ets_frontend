@@ -49,10 +49,10 @@ bool CheckRenameLocationsResult(const T &result, const FindRenameLocationsTestCa
 }
 
 static const FindRenameLocationsTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", "BenchRunnerL1Impl", 2, 2}, {"project/bench_l2.ets", "BenchRunnerL2Impl", 2, 2},
-    {"project/bench_l3.ets", "BenchRunnerL3Impl", 2, 2}, {"project/bench_l4.ets", "BenchRunnerL4Impl", 2, 2},
-    {"project/entry.ets", "BuildScenarioData", 2, 2},    {"project/domain.ets", "FindByName", 2, 1},
-    {"project/entry.ets", "targetAdminValue", 2, 7},     {"project/domain.ets", "FeatureAdmin", 2, 4},
+    {"project/bench_l1.ats", "BenchRunnerL1Impl", 2, 2}, {"project/bench_l2.ats", "BenchRunnerL2Impl", 2, 2},
+    {"project/bench_l3.ats", "BenchRunnerL3Impl", 2, 2}, {"project/bench_l4.ats", "BenchRunnerL4Impl", 2, 2},
+    {"project/entry.ats", "BuildScenarioData", 2, 2},    {"project/domain.ats", "FindByName", 2, 1},
+    {"project/entry.ats", "targetAdminValue", 2, 7},     {"project/domain.ats", "FeatureAdmin", 2, 4},
 };
 
 static void BM_FindRenameLocations(benchmark::State &state)

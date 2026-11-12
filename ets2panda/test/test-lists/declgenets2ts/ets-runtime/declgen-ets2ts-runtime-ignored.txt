@@ -1,113 +1,113 @@
 #FailKind.SEGFAULT_FAIL - 3 tests:
-lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
+lambda_with_receiver/lambda_with_receiver_generics_return_this.ats
 #FailKind.DECLGEN_ETS2TS_FAIL - 6 tests:
-StringFasta.ets
-struct-identifier.ets
-struct-init2.ets
-type_param_in_union.ets
+StringFasta.ats
+struct-identifier.ats
+struct-init2.ats
+type_param_in_union.ats
 #FailKind.ABORT_FAIL - 1 tests:
 #FailKind.ABORT_FAIL - 2 tests:
-type_param_in_union.ets
-mypackage/implicit_package_import_2.ets
+type_param_in_union.ats
+mypackage/implicit_package_import_2.ats
 #FailKind.TSC_FAIL - 21 tests:
-ClassNewInstance.ets
-Enum7.ets
-GenericBridges_01.ets
-GenericBridges_02.ets
-RecordKeyTypeCheck.ets
-StringFasta.ets
-function_type_with_receiver/validReturnThisOfExtensionFunction.ets
-generic_constraint_implicit.ets
-generics_1.ets
-lambda_with_receiver/lambda_with_receiver_generics_return_this_rotate.ets
-lambda_with_receiver/lambda_with_receiver_return_this3.ets
-lambda_with_receiver/lambda_with_receiver_trailing_in_function_return_this_rotate.ets
-static-invoke.ets
-top_level_03.ets
-function_type_with_receiver/extensionFunctionType_return_this.ets
-fuzz/too_many_async.ets
-typeAlias_2.ets
-Multiline_string.ets
-Multiline_string_escape_char.ets
-run_ok_without_semicolon.ets
-async_lambda_return_type_test.ets
-fuzz/invalid_rest_param_await.ets
-fuzz/repeated_del.ets
-fuzz/create_partial.ets
-fuzz/class_body_interface.ets
-return_type_utility_1.ets
-return_type_utility_2.ets
-abstract_method_override.ets
+ClassNewInstance.ats
+Enum7.ats
+GenericBridges_01.ats
+GenericBridges_02.ats
+RecordKeyTypeCheck.ats
+StringFasta.ats
+function_type_with_receiver/validReturnThisOfExtensionFunction.ats
+generic_constraint_implicit.ats
+generics_1.ats
+lambda_with_receiver/lambda_with_receiver_generics_return_this_rotate.ats
+lambda_with_receiver/lambda_with_receiver_return_this3.ats
+lambda_with_receiver/lambda_with_receiver_trailing_in_function_return_this_rotate.ats
+static-invoke.ats
+top_level_03.ats
+function_type_with_receiver/extensionFunctionType_return_this.ats
+fuzz/too_many_async.ats
+typeAlias_2.ats
+Multiline_string.ats
+Multiline_string_escape_char.ats
+run_ok_without_semicolon.ats
+async_lambda_return_type_test.ats
+fuzz/invalid_rest_param_await.ats
+fuzz/repeated_del.ats
+fuzz/create_partial.ats
+fuzz/class_body_interface.ats
+return_type_utility_1.ats
+return_type_utility_2.ats
+abstract_method_override.ats
 
 #31593 TSC Fail
-generic_bridges_1.ets
+generic_bridges_1.ats
 
 #30364 TSC Fail
-array_const_anno.ets
+array_const_anno.ats
 
 #30577 TSC Fail
-re_export_default/reexport1.ets
-re_export_default/reexport2.ets
-re_export_class/import_class.ets
-re_export_class/re_export_class.ets
+re_export_default/reexport1.ats
+re_export_default/reexport2.ats
+re_export_class/import_class.ats
+re_export_class/re_export_class.ats
 
 #31191 TSC Fail
-chain_accessor.ets
-chain_accessor1.ets
-complex_accessor.ets
-diff_type_accessor.ets
-ns_getter_setter.ets
-ns_getter_setter1.ets
-ns_getter_setter_outside.ets
-ns_getter_setter_outside1.ets
-primitive_accessor.ets
-top_level_getter_setter.ets
+chain_accessor.ats
+chain_accessor1.ats
+complex_accessor.ats
+diff_type_accessor.ats
+ns_getter_setter.ats
+ns_getter_setter1.ats
+ns_getter_setter_outside.ats
+ns_getter_setter_outside1.ats
+primitive_accessor.ats
+top_level_getter_setter.ats
 
-first_match2/same_name.ets
-first_match2/same_name3.ets
-first_match2/same_name4.ets
-first_match2/static_same_name.ets
-first_match2/static_same_name3.ets
+first_match2/same_name.ats
+first_match2/same_name3.ats
+first_match2/same_name4.ats
+first_match2/static_same_name.ats
+first_match2/static_same_name3.ats
 
 #31992 TSC Fail
-overload_interface/overload_interface_2.ets
-overload_interface/overload_interface_3.ets
-overload_interface/overload_interface_4.ets
+overload_interface/overload_interface_2.ats
+overload_interface/overload_interface_3.ats
+overload_interface/overload_interface_4.ats
 
 #todo, create an gitlab issue.
-context-sensitive-expr/RecordRecursiveTest-Lambda.ets
-context-sensitive-expr/RecordRecursiveTest-Lambda02.ets
-context-sensitive-expr/RecordRecursiveTest-Lambda03.ets
-context-sensitive-expr/RecordRecursiveTest-Lambda04.ets
-context-sensitive-expr/RecordRecursiveTest-OriginalTdd.ets
-TypeAliasRecusive.ets
+context-sensitive-expr/RecordRecursiveTest-Lambda.ats
+context-sensitive-expr/RecordRecursiveTest-Lambda02.ats
+context-sensitive-expr/RecordRecursiveTest-Lambda03.ats
+context-sensitive-expr/RecordRecursiveTest-Lambda04.ats
+context-sensitive-expr/RecordRecursiveTest-OriginalTdd.ats
+TypeAliasRecusive.ats
 
 # TSC Fail
-nested_array_1.ets
-nested_array_2.ets
-array_as_rest_constraint.ets
-interfaceObjectLiteral_inherited_generic_default_method.ets
-interfaceObjectLiteral_inherited_generic_overload.ets
-interfaceObjectLiteral_inherited_generic_partial_override.ets
+nested_array_1.ats
+nested_array_2.ats
+array_as_rest_constraint.ats
+interfaceObjectLiteral_inherited_generic_default_method.ats
+interfaceObjectLiteral_inherited_generic_overload.ats
+interfaceObjectLiteral_inherited_generic_partial_override.ats
 
 # TSC Fail
-re_export/export/reexport_elements1.ets
-re_export/export/reexport_elements2.ets
-interface_with_optional_property_cycle_import/class_file.ets
-namespace_tests/namespace_import_type_test/namespace_import.ets
-overload_methods_with_primitive_types/override_accessors.ets
+re_export/export/reexport_elements1.ats
+re_export/export/reexport_elements2.ats
+interface_with_optional_property_cycle_import/class_file.ats
+namespace_tests/namespace_import_type_test/namespace_import.ats
+overload_methods_with_primitive_types/override_accessors.ats
 
 #33327 TSC Fail
-override_tests/overload_override_2.ets
-override_tests/mixed_override.ets
+override_tests/overload_override_2.ats
+override_tests/mixed_override.ats
 
 # TSC Fail
-overload_decl_inheritance/overload_decl_inherited_same_name_far_parent.ets
+overload_decl_inheritance/overload_decl_inherited_same_name_far_parent.ats
 
 # TSC Fail
-for_of_union_array_string.ets
+for_of_union_array_string.ats
 
 # TSC Fail
-static_callable_inheritance/static_instantiate_2.ets
-static_callable_inheritance/static_instantiate_3.ets
-static_callable_inheritance/static_invoke_3.ets
+static_callable_inheritance/static_instantiate_2.ats
+static_callable_inheritance/static_instantiate_3.ats
+static_callable_inheritance/static_invoke_3.ats

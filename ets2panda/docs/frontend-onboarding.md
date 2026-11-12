@@ -13,7 +13,7 @@ This document summarizes day-to-day onboarding guidance for contributors working
 Run from a build directory that contains `./bin`:
 
 ```bash
-./bin/es2panda --extension=ets --opt-level=0 --output=out.abc fault.ets
+./bin/es2panda --extension=ets --opt-level=0 --output=out.abc fault.ats
 ./bin/verifier --boot-panda-files=./plugins/ets/etsstdlib.abc --load-runtimes=ets out.abc
 ./bin/ark --boot-panda-files=./plugins/ets/etsstdlib.abc --load-runtimes=ets --panda-files=out.abc out.abc fault.ETSGLOBAL::main
 ```

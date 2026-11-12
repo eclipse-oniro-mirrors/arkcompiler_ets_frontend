@@ -83,8 +83,8 @@ static es2panda_Program *FindDirectProgram(es2panda_Context *context, const char
 
 static bool RecheckRestTuple(es2panda_Context *context)
 {
-    auto *restTupleProgram = FindDirectProgram(context, "recheck_rest_tuple_target.ets");
-    auto *modifiedProgram = FindDirectProgram(context, "recheck_rest_tuple_modified.ets");
+    auto *restTupleProgram = FindDirectProgram(context, "recheck_rest_tuple_target.ats");
+    auto *modifiedProgram = FindDirectProgram(context, "recheck_rest_tuple_modified.ats");
     if (restTupleProgram == nullptr || modifiedProgram == nullptr || restTupleProgram == modifiedProgram) {
         return false;
     }
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
     std::cout << "LOAD SUCCESS" << std::endl;
     auto configArgs = BuildSimultaneousConfigArgs(argc, argv);
     auto config = impl->CreateConfig(static_cast<int>(configArgs.size()), configArgs.data());
-    auto modifiedPath = SiblingPath(argv[argc - 1], "recheck_rest_tuple_modified.ets");
+    auto modifiedPath = SiblingPath(argv[argc - 1], "recheck_rest_tuple_modified.ats");
     const char *fileNames[] = {argv[argc - 1], modifiedPath.c_str()};
     auto context = impl->CreateContextSimultaneousMode(config, 2, fileNames);
     if (context == nullptr) {

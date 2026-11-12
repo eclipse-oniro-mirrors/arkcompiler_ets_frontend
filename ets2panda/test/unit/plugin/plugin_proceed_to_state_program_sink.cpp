@@ -71,8 +71,8 @@ std::string MakeTestDir()
     std::string remove = "rm -rf " + dir;
     (void)system(remove.c_str());
     mkdir(dir.c_str(), S_IRWXU);
-    WriteFile(dir + "/lib.ets", LIB_SOURCE);
-    WriteFile(dir + "/main.ets", MAIN_SOURCE);
+    WriteFile(dir + "/lib.ats", LIB_SOURCE);
+    WriteFile(dir + "/main.ats", MAIN_SOURCE);
     WriteFile(dir + "/arktsconfig.json", R"({"compilerOptions": {"paths": {}}})");
     return dir;
 }
@@ -122,7 +122,7 @@ bool CompileMain(const std::string &dir, const std::string &arktsconfig, es2pand
                  util::DiagnosticEngine *de,
                  std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> *programs)
 {
-    std::string sourcePath = dir + "/main.ets";
+    std::string sourcePath = dir + "/main.ats";
     std::vector<std::string> argStorage = {"es2panda",
                                            "--extension=ets",
                                            "--simultaneous",
@@ -173,7 +173,7 @@ int RunWithSink()
         return 1;
     }
     if (abcPaths.size() != 1U) {
-        // The loop iterates over the 'direct' external sources: lib.ets (the main
+        // The loop iterates over the 'direct' external sources: lib.ats (the main
         // source itself is not delivered through the sink in this mode).
         std::cerr << "FAIL [sink]: expected 1 sink invocation for the imported file, got " << abcPaths.size()
                   << std::endl;
@@ -204,7 +204,7 @@ int RunWithoutSink()
         de.FlushDiagnostic();
         return 1;
     }
-    if (dir.CountFiles() != 3U) {  // lib.ets, main.ets and arktsconfig.json prepared above
+    if (dir.CountFiles() != 3U) {  // lib.ats, main.ats and arktsconfig.json prepared above
         std::cerr << "FAIL [no-sink]: no files must be written without a sink, got " << dir.CountFiles() << std::endl;
         return 1;
     }

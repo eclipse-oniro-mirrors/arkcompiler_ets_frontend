@@ -218,7 +218,7 @@ struct TestCase {
 
 static int RunTest(const TestCase &tc, int argc, char **argv)
 {
-    std::string srcPath = std::string("/tmp/capi_src_") + std::to_string(getpid()) + "_" + tc.label + ".ets";
+    std::string srcPath = std::string("/tmp/capi_src_") + std::to_string(getpid()) + "_" + tc.label + ".ats";
     std::string stPath = std::string("/tmp/capi_st_") + std::to_string(getpid()) + "_" + tc.label + ".st";
     std::string da = "--dump-symbol-table=" + stPath;
     std::string ia = "--input-symbol-table=" + stPath;
@@ -495,7 +495,7 @@ static int RunAsmBoundaryPhase(int argc, char **argv, const char *extraFlag1, co
 static int RunAsmBoundaryHotCase(int argc, char **argv, const char *label, const char *baseSrc, const char *modSrc,
                                  bool expectError)
 {
-    std::string srcPath = std::string("/tmp/capi_src_") + std::to_string(getpid()) + "_" + label + ".ets";
+    std::string srcPath = std::string("/tmp/capi_src_") + std::to_string(getpid()) + "_" + label + ".ats";
     std::string stPath = std::string("/tmp/capi_st_") + std::to_string(getpid()) + "_" + label + ".st";
     std::string da = "--dump-symbol-table=" + stPath;
     std::string ia = "--input-symbol-table=" + stPath;
@@ -513,7 +513,7 @@ static int RunAsmBoundaryHotCase(int argc, char **argv, const char *label, const
 // (HandleFunction -> DetectSignatureChanges, classinfo validation) end to end.
 static int RunHotTest(const TestCase &tc, int argc, char **argv)
 {
-    std::string srcPath = std::string("/tmp/capi_src_") + std::to_string(getpid()) + "_hot_" + tc.label + ".ets";
+    std::string srcPath = std::string("/tmp/capi_src_") + std::to_string(getpid()) + "_hot_" + tc.label + ".ats";
     std::string stPath = std::string("/tmp/capi_st_") + std::to_string(getpid()) + "_hot_" + tc.label + ".st";
     std::string da = "--dump-symbol-table=" + stPath;
     std::string ia = "--input-symbol-table=" + stPath;

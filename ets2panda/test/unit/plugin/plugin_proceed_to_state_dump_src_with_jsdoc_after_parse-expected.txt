@@ -1,6 +1,5 @@
 PROCEED TO PARSE SUCCESS
 
-"use static"
 /**
  * ==== import specifier jsdoc1 ====
  * @param1 {} behindStr

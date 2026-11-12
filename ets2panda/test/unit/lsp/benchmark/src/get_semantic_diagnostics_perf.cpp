@@ -33,9 +33,9 @@ struct SemanticDiagnosticsTestCase {
 };
 
 static const SemanticDiagnosticsTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", 0, 16},          {"project/bench_l2.ets", 0, 24}, {"project/bench_l3.ets", 0, 32},
-    {"project/bench_l4.ets", 0, 48},          {"project/entry.ets", 0, 16},    {"project/shared_small_100.ets", 0, 16},
-    {"project/shared_large_1000.ets", 0, 32},
+    {"project/bench_l1.ats", 0, 16},          {"project/bench_l2.ats", 0, 24}, {"project/bench_l3.ats", 0, 32},
+    {"project/bench_l4.ats", 0, 48},          {"project/entry.ats", 0, 16},    {"project/shared_small_100.ats", 0, 16},
+    {"project/shared_large_1000.ats", 0, 32},
 };
 
 static void BM_GetSemanticDiagnostics(benchmark::State &state)

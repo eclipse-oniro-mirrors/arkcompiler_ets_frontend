@@ -121,8 +121,8 @@ static bool PartialConstructorHasTargetProgram(es2panda_Context *context, es2pan
 
 static bool RecheckPartialType(es2panda_Context *context)
 {
-    auto *partialTypeProgram = FindDirectProgram(context, "recheck_partial_type_target.ets");
-    auto *modifiedProgram = FindDirectProgram(context, "recheck_partial_type_modified.ets");
+    auto *partialTypeProgram = FindDirectProgram(context, "recheck_partial_type_target.ats");
+    auto *modifiedProgram = FindDirectProgram(context, "recheck_partial_type_modified.ats");
     if (partialTypeProgram == nullptr || modifiedProgram == nullptr || partialTypeProgram == modifiedProgram) {
         return false;
     }
@@ -167,7 +167,7 @@ int main(int argc, char **argv)
     std::cout << "LOAD SUCCESS" << std::endl;
     auto configArgs = BuildSimultaneousConfigArgs(argc, argv);
     auto config = impl->CreateConfig(static_cast<int>(configArgs.size()), configArgs.data());
-    auto modifiedPath = SiblingPath(argv[argc - 1], "recheck_partial_type_modified.ets");
+    auto modifiedPath = SiblingPath(argv[argc - 1], "recheck_partial_type_modified.ats");
     const char *fileNames[] = {argv[argc - 1], modifiedPath.c_str()};
     auto context = impl->CreateContextSimultaneousMode(config, 2, fileNames);
     if (context == nullptr) {

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
-"use static"
-import {A as A} from "./export1.ets"
-import {B as B} from "./export2.ets"
+ import { c } from './recheck_import_C.ats'
+ import { A } from './recheck_import_A.ats'
+ export { A as B } from './recheck_import_A.ats'
+
+ export type B1 = A

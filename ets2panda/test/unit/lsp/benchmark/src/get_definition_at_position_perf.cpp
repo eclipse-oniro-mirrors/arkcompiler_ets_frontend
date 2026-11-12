@@ -77,16 +77,16 @@ bool CheckDefinitionResult(const DefinitionInfo *result, const DefinitionTestCas
 }
 
 static const DefinitionTestCase K_TEST_CASES[] = {
-    {"project/bench_l1.ets", 0, "BenchRunnerL1Impl", 2, "project/bench_l1.ets", "export class BenchRunnerL1Impl", 13, 0,
+    {"project/bench_l1.ats", 0, "BenchRunnerL1Impl", 2, "project/bench_l1.ats", "export class BenchRunnerL1Impl", 13, 0,
      0},
-    {"project/bench_l2.ets", 0, "L1MakeToken()", 2, "project/bench_l1.ets", "export function L1MakeToken", 16, 0, 0},
-    {"project/bench_l3.ets", 0, "L2MakeToken()", 2, "project/bench_l2.ets", "export function L2MakeToken", 16, 0, 0},
-    {"project/bench_l4.ets", 0, "L3MakeToken()", 2, "project/bench_l3.ets", "export function L3MakeToken", 16, 0, 0},
-    {"project/entry.ets", 0, "createAdmin(\"Mika\")", 2, "project/services.ets", "export function createAdmin", 16, 0,
+    {"project/bench_l2.ats", 0, "L1MakeToken()", 2, "project/bench_l1.ats", "export function L1MakeToken", 16, 0, 0},
+    {"project/bench_l3.ats", 0, "L2MakeToken()", 2, "project/bench_l2.ats", "export function L2MakeToken", 16, 0, 0},
+    {"project/bench_l4.ats", 0, "L3MakeToken()", 2, "project/bench_l3.ats", "export function L3MakeToken", 16, 0, 0},
+    {"project/entry.ats", 0, "createAdmin(\"Mika\")", 2, "project/services.ats", "export function createAdmin", 16, 0,
      11},
-    {"project/shared_small_100.ets", 0, "BuildStableKey(", 2, "project/helpers.ets", "export function BuildStableKey",
+    {"project/shared_small_100.ats", 0, "BuildStableKey(", 2, "project/helpers.ats", "export function BuildStableKey",
      16, 0, 14},
-    {"project/shared_large_1000.ets", 0, "CreateSymbolRegistry(", 2, "project/registry.ets",
+    {"project/shared_large_1000.ats", 0, "CreateSymbolRegistry(", 2, "project/registry.ats",
      "export function CreateSymbolRegistry", 16, 0, 20},
 };
 
