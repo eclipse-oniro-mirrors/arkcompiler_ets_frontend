@@ -76,7 +76,7 @@ describe('getDefinitionAtPositionTest', () => {
   });
   test('getDefinitionAtPosition_009', () => {
     const res = lsp.getDefinitionAtPosition(getRealPath(moduleName, 'getDefinitionAtPosition19.ets'), 648);
-    expect(res ? path.basename(res.fileName.valueOf()) : undefined).toBe('taskpool.ets');
+    expect(res ? path.basename(res.fileName.valueOf()) : undefined).toBe('taskpool.ats');
     expect(res?.length).toBe(4);
   });
   test('getDefinitionAtPosition_010', () => {

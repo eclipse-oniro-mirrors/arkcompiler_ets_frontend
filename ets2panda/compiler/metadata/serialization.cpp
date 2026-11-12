@@ -215,7 +215,7 @@ static bool IsBuiltinErrorAliasDecl(const ir::ClassDefinition *classDef)
     }
 
     if (!util::Helpers::IsStdLib(classDef->Program()) ||
-        !EndsWith(classDef->Program()->SourceFilePath().Utf8(), "std/core/Errors.ets")) {
+        !EndsWith(classDef->Program()->SourceFilePath().Utf8(), "std/core/Errors.ats")) {
         return false;
     }
 

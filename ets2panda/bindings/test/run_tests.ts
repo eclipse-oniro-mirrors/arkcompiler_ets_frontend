@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -312,7 +312,7 @@ function compareGetDefinitionResult(
   }
   // This is the definition info for the class in std library.
   // File in the SDK might changed, so the offset needs to be checked dynamically.
-  if (expected['fileName'] === 'taskpool.ets') {
+  if (expected['fileName'] === 'taskpool.ats') {
     const expectedStart = findTaskDefinitionPosition(fileContent);
     expectedResult = {
       ...expected,
