@@ -52,6 +52,11 @@ public:
 
     bool Parse(Span<const char *const> args);
 
+    bool IsStrictMode() const
+    {
+        return WasSetStrict() ? IsStrict() : IsGenStdlib();
+    }
+
     ScriptExtension GetExtension() const
     {
         return extension_;

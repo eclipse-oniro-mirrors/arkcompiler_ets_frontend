@@ -27,6 +27,11 @@ options:
   default: false
   description: Print version and exit
 
+- name: strict
+  type: bool
+  default: false
+  description: Require initialization before use and boolean conditions (enabled by default when generating stdlib)
+
 - name: target-api-version
   type: int
   default: 0

@@ -1502,6 +1502,10 @@ semantic:
   id: 335
   message: "Static union member expression cannot be interpreted."
 
+- name: STRICT_BOOLEAN_REQUIRED
+  id: 1215897
+  message: "Expected a boolean expression, got '{}'."
+
 - name: SUPER_NOT_ACCESSIBLE
   id: 377
   message: "Class field '{}' defined by the parent class is not accessible in the child class via super."

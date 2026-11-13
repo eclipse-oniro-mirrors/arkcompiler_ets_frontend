@@ -109,6 +109,7 @@ if(NOT PANDA_WITH_ETS)
 endif()
 
 add_subdirectory(ets_specific_optimizer)
+add_subdirectory(strict_initialization)
 ets2panda_add_gtest(es2panda_checker_tests
     CPP_SOURCES
         checker_test.cpp
