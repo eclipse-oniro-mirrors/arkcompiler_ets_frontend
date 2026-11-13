@@ -77,7 +77,7 @@ function main(): void {
         test3(async () => { return 1 });
         test4(async () => { return 1 });
         test5(async () => { return 1 });
-        test7(async () => { return 1 });
+        test7(async () => { return 1.0 });
         test7(async () => { return 's' });
         test8(async () => { return 1 });
         test8(async () => { return 's' });

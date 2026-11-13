@@ -227,6 +227,35 @@ panda_gen(
         ${DIAGNOSTIC_DIR}/diagnostic.rb
 )
 
+# Keep util/diagnostic/stable_map.json (the ordered diagnostic code registry)
+# in sync with the diagnostic YAMLs on every build. Append-only: new
+# diagnostics get the next free code of their kind, renames keep their code,
+# deletions require the YAML 'graveyard' first. See
+# util/diagnostic/README.md ("Stable map") for the full contract.
+find_program(ES2PANDA_PYTHON3_EXE python3)
+if(NOT ES2PANDA_PYTHON3_EXE)
+    message(FATAL_ERROR "python3 not found: it is required to sync util/diagnostic/stable_map.json")
+endif()
+add_custom_target(es2panda_stable_map_sync
+    COMMAND ${ES2PANDA_PYTHON3_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/sync_stable_map
+    COMMAND ${ES2PANDA_PYTHON3_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/sync_stable_map
+        --emit-header ${GENERATED_DIR}/stableMap.h
+    DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/scripts/sync_stable_map
+        ${DIAGNOSTIC_DIR}/fatal.yaml
+        ${DIAGNOSTIC_DIR}/syntax.yaml
+        ${DIAGNOSTIC_DIR}/semantic.yaml
+        ${DIAGNOSTIC_DIR}/warning.yaml
+        ${DIAGNOSTIC_DIR}/arktsconfig_error.yaml
+        ${DIAGNOSTIC_DIR}/stable_map.json
+        ${CMAKE_CURRENT_SOURCE_DIR}/declgen_ets2ts/declgen_ets2ts_error.yaml
+        ${CMAKE_CURRENT_SOURCE_DIR}/declgen_ets2ts/declgen_ets2ts_warning.yaml
+        ${CMAKE_CURRENT_SOURCE_DIR}/declgen_ets2ts/isolated_declgen.yaml
+    COMMENT "Syncing diagnostic stable code map (util/diagnostic/stable_map.json)"
+    VERBATIM
+)
+add_dependencies(es2panda_diagnostic_gen es2panda_stable_map_sync)
+
 panda_gen(
     TARGET_NAME es2panda_keywords
     TEMPLATES

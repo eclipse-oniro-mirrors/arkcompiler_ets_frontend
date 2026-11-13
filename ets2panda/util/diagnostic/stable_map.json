@@ -1,0 +1,3641 @@
+{
+  "map": {
+    "arkts_config_error/CYCLIC_IMPORT": {
+      "code": 1,
+      "yaml_id": 2
+    },
+    "arkts_config_error/DEPENDENCIES_ABSOLUTE": {
+      "code": 2,
+      "yaml_id": 18
+    },
+    "arkts_config_error/DUPLICATED_DEPENDENCIES": {
+      "code": 3,
+      "yaml_id": 9
+    },
+    "arkts_config_error/EMPTY_ARRAY_SUBSTITOTIONS": {
+      "code": 4,
+      "yaml_id": 5
+    },
+    "arkts_config_error/EMPTY_LIST": {
+      "code": 5,
+      "yaml_id": 11
+    },
+    "arkts_config_error/FAILED_TO_OPEN_FILE": {
+      "code": 6,
+      "yaml_id": 12
+    },
+    "arkts_config_error/INVALID_DESTINATION_FILE": {
+      "code": 7,
+      "yaml_id": 16
+    },
+    "arkts_config_error/INVALID_JSON": {
+      "code": 8,
+      "yaml_id": 13
+    },
+    "arkts_config_error/INVALID_JSON_TYPE": {
+      "code": 9,
+      "yaml_id": 10
+    },
+    "arkts_config_error/INVALID_LANGUAGE": {
+      "code": 10,
+      "yaml_id": 6
+    },
+    "arkts_config_error/INVALID_NAMED_VALUE": {
+      "code": 11,
+      "yaml_id": 8
+    },
+    "arkts_config_error/INVALID_PATH": {
+      "code": 12,
+      "yaml_id": 17
+    },
+    "arkts_config_error/INVALID_VALUE": {
+      "code": 13,
+      "yaml_id": 4
+    },
+    "arkts_config_error/NOT_A_DIR": {
+      "code": 14,
+      "yaml_id": 19
+    },
+    "arkts_config_error/NOT_ROOT_DIR": {
+      "code": 15,
+      "yaml_id": 15
+    },
+    "arkts_config_error/NO_FILE": {
+      "code": 16,
+      "yaml_id": 14
+    },
+    "arkts_config_error/NO_MAIN_FILE": {
+      "code": 17,
+      "yaml_id": 20
+    },
+    "arkts_config_error/UNRESOLVABLE_CONFIG_PATH": {
+      "code": 18,
+      "yaml_id": 1
+    },
+    "arkts_config_error/UNSUPPORTED_LANGUAGE_FOR_INTEROP": {
+      "code": 19,
+      "yaml_id": 7
+    },
+    "arkts_config_error/WRONG_BASE_CONFIG": {
+      "code": 20,
+      "yaml_id": 3
+    },
+    "declgen_ets2ts_error/IDENT_KEY_SUPPORT": {
+      "code": 1,
+      "yaml_id": 1
+    },
+    "declgen_ets2ts_error/IMPORT_SPECIFIERS_SUPPORT": {
+      "code": 2,
+      "yaml_id": 8
+    },
+    "declgen_ets2ts_error/INCORRECT_ENUM_MEMBER": {
+      "code": 3,
+      "yaml_id": 6
+    },
+    "declgen_ets2ts_error/NOT_LITERAL_ENUM_INITIALIZER": {
+      "code": 4,
+      "yaml_id": 7
+    },
+    "declgen_ets2ts_error/NOT_OVERLOAD_SUPPORT": {
+      "code": 5,
+      "yaml_id": 5
+    },
+    "declgen_ets2ts_error/UNEXPECTED_NUMBER_LITERAL_TYPE": {
+      "code": 6,
+      "yaml_id": 4
+    },
+    "declgen_ets2ts_error/UNSUPPORTED_ENCODING_SPECIFICATIONS": {
+      "code": 7,
+      "yaml_id": 10
+    },
+    "declgen_ets2ts_error/UNSUPPORTED_LITERAL_TYPE": {
+      "code": 8,
+      "yaml_id": 3
+    },
+    "declgen_ets2ts_error/UNSUPPORTED_LOCAL_BINDINGS": {
+      "code": 9,
+      "yaml_id": 9
+    },
+    "declgen_ets2ts_error/UNSUPPORTED_TYPE": {
+      "code": 10,
+      "yaml_id": 2
+    },
+    "declgen_ets2ts_warning/EMPTY_TYPE_NAME": {
+      "code": 1,
+      "yaml_id": 1
+    },
+    "declgen_ets2ts_warning/UNTYPED_METHOD": {
+      "code": 2,
+      "yaml_id": 2
+    },
+    "fatal/ASSIGN_PROFILE_INFO_FAILED": {
+      "code": 1,
+      "yaml_id": 23
+    },
+    "fatal/COMPILE_FAILED": {
+      "code": 2,
+      "yaml_id": 21
+    },
+    "fatal/DUMP_ETS_INVALID_EXT": {
+      "code": 3,
+      "yaml_id": 8
+    },
+    "fatal/EMIT_FAILED": {
+      "code": 4,
+      "yaml_id": 22
+    },
+    "fatal/EMPTY_IMPORT_PATH": {
+      "code": 5,
+      "yaml_id": 15
+    },
+    "fatal/EVAL_MODE_NOT_SINGLE_INPUT": {
+      "code": 6,
+      "yaml_id": 5
+    },
+    "fatal/FILE_RUNTIME_NAME_CLASH": {
+      "code": 7,
+      "yaml_id": 18
+    },
+    "fatal/GENERATE_DYNAMIC_DECLARATIONS": {
+      "code": 8,
+      "yaml_id": 24
+    },
+    "fatal/IMPORT_CANT_FIND_PREFIX": {
+      "code": 9,
+      "yaml_id": 16
+    },
+    "fatal/INTEROP_DYNAMIC_FILE_NOT_FOUND": {
+      "code": 10,
+      "yaml_id": 28
+    },
+    "fatal/INVALID_ARKTSCONFIG": {
+      "code": 11,
+      "yaml_id": 13
+    },
+    "fatal/JS_UNSUPPORTED": {
+      "code": 12,
+      "yaml_id": 11
+    },
+    "fatal/MISSING_OUTPUT_FILE": {
+      "code": 13,
+      "yaml_id": 25
+    },
+    "fatal/MODULE_INVALID_EXT": {
+      "code": 14,
+      "yaml_id": 7
+    },
+    "fatal/NO_CACHE_DIRECTORY": {
+      "code": 15,
+      "yaml_id": 27
+    },
+    "fatal/NO_INPUT": {
+      "code": 16,
+      "yaml_id": 3
+    },
+    "fatal/OPEN_FAILED": {
+      "code": 17,
+      "yaml_id": 2
+    },
+    "fatal/OPEN_FAILED_ARKTSCONF": {
+      "code": 18,
+      "yaml_id": 12
+    },
+    "fatal/OPEN_FOLDER_FAILED": {
+      "code": 19,
+      "yaml_id": 17
+    },
+    "fatal/PLUGIN_LOAD_FAILED": {
+      "code": 20,
+      "yaml_id": 4
+    },
+    "fatal/PROJECT_EXT_NOT_ETS": {
+      "code": 21,
+      "yaml_id": 9
+    },
+    "fatal/PROJ_COMP_WITH_OUTPUT": {
+      "code": 22,
+      "yaml_id": 6
+    },
+    "fatal/SIMULTANEOUSLY_MARK_FAILED": {
+      "code": 23,
+      "yaml_id": 26
+    },
+    "fatal/SOURCE_OUTSIDE_ETS_PATH": {
+      "code": 24,
+      "yaml_id": 20
+    },
+    "fatal/TBD1": {
+      "code": 25,
+      "yaml_id": 1
+    },
+    "fatal/UNKNOWN_EXT": {
+      "code": 26,
+      "yaml_id": 10
+    },
+    "fatal/UNRESOLVED_MODULE": {
+      "code": 27,
+      "yaml_id": 14
+    },
+    "fatal/UNSUPPORTED_FILE_NAME": {
+      "code": 28,
+      "yaml_id": 44
+    },
+    "fatal/UNSUPPORTED_IMPORT_WITH_METADATA": {
+      "code": 29,
+      "yaml_id": 64778
+    },
+    "fatal/UNSUPPORTED_PATH": {
+      "code": 30,
+      "yaml_id": 19
+    },
+    "isolated_declgen/DECLARATION_EMIT_FOR_THIS_PARAMETER_REQUIRES_IMPLICITLY_ADD_UNDEFINED_TO_ITS_TYPE_NOT_ALLOWED_IN_ISOLATED_DECL": {
+      "code": 1,
+      "yaml_id": 5
+    },
+    "isolated_declgen/DEFAULT_EXPORTS_CANNOT_BE_INFERRED_WITH_ISOLATED_DECL": {
+      "code": 2,
+      "yaml_id": 6
+    },
+    "isolated_declgen/FUNCTION_MUST_HAVE_AN_EXPLICIT_RETURN_TYPE_ANNOTATION_WITH_ISOLATED_DECL": {
+      "code": 3,
+      "yaml_id": 7
+    },
+    "isolated_declgen/METHOD_MUST_HAVE_AN_EXPLICIT_RETURN_TYPE_ANNOTATION_WITH_ISOLATED_DECL": {
+      "code": 4,
+      "yaml_id": 8
+    },
+    "isolated_declgen/ONLY_CONST_ARRAYS_CAN_BE_INFERRED_WITH_ISOLATED_DECL": {
+      "code": 5,
+      "yaml_id": 4
+    },
+    "isolated_declgen/PARAMETER_MUST_HAVE_EXPLICIT_TYPE_ANNOTATION_WITH_ISOLATED_DECL": {
+      "code": 6,
+      "yaml_id": 2
+    },
+    "isolated_declgen/PROPERTY_MUST_HAVE_EXPLICIT_TYPE_ANNOTATION_WITH_ISOLATED_DECL": {
+      "code": 7,
+      "yaml_id": 3
+    },
+    "isolated_declgen/VARABLE_MUST_HAVE_EXPLICIT_TYPE_ANNOTATION_WITH_ISOLATED_DECL": {
+      "code": 8,
+      "yaml_id": 1
+    },
+    "semantic/ABSTRACT_CALL": {
+      "code": 1,
+      "yaml_id": 26
+    },
+    "semantic/ABSTRACT_CLASS_AS_ARRAY_ELEMENT_TYPE": {
+      "code": 2,
+      "yaml_id": 50
+    },
+    "semantic/ABSTRACT_INSTANTIATION": {
+      "code": 3,
+      "yaml_id": 52
+    },
+    "semantic/ABSTRACT_IN_CONCRETE": {
+      "code": 4,
+      "yaml_id": 19
+    },
+    "semantic/ABSTRACT_IS_FINAL": {
+      "code": 5,
+      "yaml_id": 186
+    },
+    "semantic/ABSTRACT_METHOD_INVALID_MODIFIER": {
+      "code": 6,
+      "yaml_id": 47
+    },
+    "semantic/ABSTRACT_METH_IN_ABSTRACT_CLASS": {
+      "code": 7,
+      "yaml_id": 257
+    },
+    "semantic/ACCESSOR_OVERRIDE_PROP": {
+      "code": 8,
+      "yaml_id": 45073
+    },
+    "semantic/ACCESS_MODIFIER_MISMATCH": {
+      "code": 9,
+      "yaml_id": 1600001
+    },
+    "semantic/ACCESS_MODIFIER_NARROWING": {
+      "code": 10,
+      "yaml_id": 771273
+    },
+    "semantic/ALREADY_EXPORTED": {
+      "code": 11,
+      "yaml_id": 130586
+    },
+    "semantic/AMBIENT_ANNOT_FIELD_INIT_MISMATCH": {
+      "code": 12,
+      "yaml_id": 36
+    },
+    "semantic/AMBIENT_ANNOT_FIELD_MISMATCH": {
+      "code": 13,
+      "yaml_id": 39
+    },
+    "semantic/AMBIENT_ANNOT_FIELD_MISSING_IMPL": {
+      "code": 14,
+      "yaml_id": 40
+    },
+    "semantic/AMBIENT_ANNOT_FIELD_TYPE_MISMATCH": {
+      "code": 15,
+      "yaml_id": 38
+    },
+    "semantic/AMBIENT_ANNOT_IMPL_OF_UNDEFINED_FIELD": {
+      "code": 16,
+      "yaml_id": 37
+    },
+    "semantic/AMBIENT_CONST_INVALID_LIT": {
+      "code": 17,
+      "yaml_id": 175
+    },
+    "semantic/AMBIGUOUS_AMBIENT": {
+      "code": 18,
+      "yaml_id": 399
+    },
+    "semantic/AMBIGUOUS_ARRAY_LITERAL_TYPE": {
+      "code": 19,
+      "yaml_id": 146473
+    },
+    "semantic/AMBIGUOUS_CALL": {
+      "code": 20,
+      "yaml_id": 142
+    },
+    "semantic/AMBIGUOUS_CALL_2": {
+      "code": 21,
+      "yaml_id": 129
+    },
+    "semantic/AMBIGUOUS_EXPORT": {
+      "code": 22,
+      "yaml_id": 362
+    },
+    "semantic/AMBIGUOUS_FUNC_REF": {
+      "code": 23,
+      "yaml_id": 126
+    },
+    "semantic/AMBIGUOUS_REFERENCE": {
+      "code": 24,
+      "yaml_id": 61
+    },
+    "semantic/AMBIGUOUS_UNION_TYPE_OP": {
+      "code": 25,
+      "yaml_id": 255
+    },
+    "semantic/ANNOTATION_ARG_COUNT_MISMATCH": {
+      "code": 27,
+      "yaml_id": 68
+    },
+    "semantic/ANNOTATION_AS_TYPE": {
+      "code": 28,
+      "yaml_id": 159
+    },
+    "semantic/ANNOTATION_FIELD_NONLITERAL": {
+      "code": 29,
+      "yaml_id": 12
+    },
+    "semantic/ANNOTATION_INSTANTIATION": {
+      "code": 30,
+      "yaml_id": 396
+    },
+    "semantic/ANNOTATION_ON_LAMBDA_LOCAL_TYPE": {
+      "code": 31,
+      "yaml_id": 5
+    },
+    "semantic/ANNOTATION_POLICY_INVALID": {
+      "code": 32,
+      "yaml_id": 4
+    },
+    "semantic/ANNOTATION_RESOLUTION_FAILED": {
+      "code": 33,
+      "yaml_id": 880937
+    },
+    "semantic/ANNOTATION_TARGET_DUPLICATE": {
+      "code": 34,
+      "yaml_id": 263981
+    },
+    "semantic/ANNOTATION_TARGET_MISMATCH": {
+      "code": 35,
+      "yaml_id": 495032
+    },
+    "semantic/ANNOTATION_UNUSED_GENERIC_ALIAS": {
+      "code": 36,
+      "yaml_id": 71
+    },
+    "semantic/ANNOTATION_USAGE_WITHOUT_NAME": {
+      "code": 37,
+      "yaml_id": 478166
+    },
+    "semantic/ANNOT_DUPLICATE": {
+      "code": 38,
+      "yaml_id": 41
+    },
+    "semantic/ANNOT_FIELD_INVALID_TYPE": {
+      "code": 39,
+      "yaml_id": 42
+    },
+    "semantic/ANNOT_FIELD_NO_VAL": {
+      "code": 40,
+      "yaml_id": 44
+    },
+    "semantic/ANNOT_MULTIPLE_FIELD": {
+      "code": 41,
+      "yaml_id": 43
+    },
+    "semantic/ANNOT_PROP_UNDEFINED": {
+      "code": 42,
+      "yaml_id": 45
+    },
+    "semantic/ANNOT_WITHOUT_AT": {
+      "code": 43,
+      "yaml_id": 230
+    },
+    "semantic/ANY_TYPE_ANNOTATION_FORBIDDEN": {
+      "code": 44,
+      "yaml_id": 153545
+    },
+    "semantic/ARG_IS_CLASS_ID": {
+      "code": 45,
+      "yaml_id": 122
+    },
+    "semantic/ARKRUNTIME_INTERNAL_API_ACCESS": {
+      "code": 46,
+      "yaml_id": 154780
+    },
+    "semantic/ARRAY_ELEMENT_INIT_TYPE_INCOMPAT": {
+      "code": 47,
+      "yaml_id": 227
+    },
+    "semantic/ARRAY_LENGTH_MODIFICATION": {
+      "code": 48,
+      "yaml_id": 24
+    },
+    "semantic/ARRAY_SIZE_IS_NEGATIVE": {
+      "code": 49,
+      "yaml_id": 708183
+    },
+    "semantic/ARROW_TYPE_MISMATCH": {
+      "code": 50,
+      "yaml_id": 91
+    },
+    "semantic/ASSIGNMENT_INVALID_LHS": {
+      "code": 51,
+      "yaml_id": 25
+    },
+    "semantic/ASSIGN_TO_READONLY_PROP": {
+      "code": 52,
+      "yaml_id": 209
+    },
+    "semantic/ASYNC_CALL_IN_STATIC_INIT": {
+      "code": 53,
+      "yaml_id": 1339359
+    },
+    "semantic/ASYNC_FUNCTION_RETURN_TYPE": {
+      "code": 54,
+      "yaml_id": 1
+    },
+    "semantic/ASYNC_MAIN_BAD_RETURN": {
+      "code": 55,
+      "yaml_id": 1097099
+    },
+    "semantic/AWAIT_IN_NON_ASYNC_DEPRECATED": {
+      "code": 56,
+      "yaml_id": 173979
+    },
+    "semantic/BINOP_INCOMPARABLE": {
+      "code": 57,
+      "yaml_id": 114
+    },
+    "semantic/BINOP_INVALID_TYPE": {
+      "code": 58,
+      "yaml_id": 105
+    },
+    "semantic/BINOP_NONARITHMETIC_TYPE": {
+      "code": 59,
+      "yaml_id": 108
+    },
+    "semantic/BINOP_NOT_REFERENCE": {
+      "code": 60,
+      "yaml_id": 111
+    },
+    "semantic/BINOP_NOT_SAME": {
+      "code": 61,
+      "yaml_id": 115
+    },
+    "semantic/BINOP_ON_UNION": {
+      "code": 62,
+      "yaml_id": 106
+    },
+    "semantic/BINOP_UNEXPECTED_ERROR": {
+      "code": 63,
+      "yaml_id": 118
+    },
+    "semantic/BINOP_UNION": {
+      "code": 64,
+      "yaml_id": 109
+    },
+    "semantic/CALLEE_NONCONSTRUCTIBLE": {
+      "code": 65,
+      "yaml_id": 290
+    },
+    "semantic/CANNOT_ANNOTATE": {
+      "code": 66,
+      "yaml_id": 489430
+    },
+    "semantic/CANNOT_IMPLEMENT_INCOMPATIBLE_RETURN": {
+      "code": 67,
+      "yaml_id": 985118
+    },
+    "semantic/CANNOT_INFER_OBJ_LIT": {
+      "code": 68,
+      "yaml_id": 174
+    },
+    "semantic/CANNOT_OVERRIDE_INCOMPATIBLE_NULLISH_PARAM": {
+      "code": 69,
+      "yaml_id": 1029298
+    },
+    "semantic/CANNOT_OVERRIDE_INCOMPATIBLE_RETURN": {
+      "code": 70,
+      "yaml_id": 141
+    },
+    "semantic/CANNOT_OVERRIDE_INCOMPATIBLE_TYPEPARAM": {
+      "code": 71,
+      "yaml_id": 150729
+    },
+    "semantic/CANNOT_OVERRIDE_OVERRIDDEN_FINAL": {
+      "code": 72,
+      "yaml_id": 1324203
+    },
+    "semantic/CANNOT_OVERRIDE_OVERRIDDEN_WEAKER": {
+      "code": 73,
+      "yaml_id": 873275
+    },
+    "semantic/CAST_FAIL_UNREACHABLE": {
+      "code": 74,
+      "yaml_id": 336
+    },
+    "semantic/CAST_TO_NEVER": {
+      "code": 75,
+      "yaml_id": 305
+    },
+    "semantic/CATCH_DEFAULT_NOT_LAST": {
+      "code": 76,
+      "yaml_id": 34
+    },
+    "semantic/CATCH_OR_THROW_OF_INVALID_TYPE": {
+      "code": 77,
+      "yaml_id": 205
+    },
+    "semantic/CHAR_TO_STR_CONVERSION": {
+      "code": 78,
+      "yaml_id": 4201
+    },
+    "semantic/CIRCULAR_DEPENDENCY": {
+      "code": 79,
+      "yaml_id": 308
+    },
+    "semantic/CLASS_AS_OBJ": {
+      "code": 80,
+      "yaml_id": 132307
+    },
+    "semantic/CLASS_COMPOSITE_INVALID_KEY": {
+      "code": 81,
+      "yaml_id": 73
+    },
+    "semantic/CLASS_COMPOSITE_INVALID_TARGET": {
+      "code": 82,
+      "yaml_id": 63
+    },
+    "semantic/CLASS_COMPOSITE_UNKNOWN_TYPE": {
+      "code": 83,
+      "yaml_id": 62
+    },
+    "semantic/CLASS_OR_IFACE_OR_ENUM_AS_OBJ": {
+      "code": 84,
+      "yaml_id": 294
+    },
+    "semantic/COALESCE_NOT_REF": {
+      "code": 85,
+      "yaml_id": 117
+    },
+    "semantic/CONFLICTING_GENERIC_INTERFACE_IMPLS": {
+      "code": 86,
+      "yaml_id": 181
+    },
+    "semantic/CONFLICTING_INTERFACE_OVERRIDE_OF_SAME_SUPER_METHOD": {
+      "code": 417,
+      "strict": true,
+      "yaml_id": 602430
+    },
+    "semantic/CONFLICTS_WITH_GLOBAL_IDENTIFIER": {
+      "code": 87,
+      "yaml_id": 121810
+    },
+    "semantic/CONSTANT_FLOATING_POINT_COVERSION": {
+      "code": 88,
+      "yaml_id": 344
+    },
+    "semantic/CONSTANT_VALUE_OUT_OF_RANGE": {
+      "code": 89,
+      "yaml_id": 345
+    },
+    "semantic/CONST_WITHOUT_INIT": {
+      "code": 90,
+      "yaml_id": 363
+    },
+    "semantic/CONTINUE_OR_BREAK_TARGET_OUTSIDE_FUNCTION": {
+      "code": 91,
+      "yaml_id": 49316
+    },
+    "semantic/CTOR_CALL_NOT_ROOT_LEVEL": {
+      "code": 92,
+      "yaml_id": 2077
+    },
+    "semantic/CTOR_CLASS_NOT_FIRST": {
+      "code": 93,
+      "yaml_id": 201
+    },
+    "semantic/CTOR_MISSING_SUPER_CALL": {
+      "code": 94,
+      "yaml_id": 192
+    },
+    "semantic/CTOR_REF_INVALID_CTX_GLOBAL": {
+      "code": 95,
+      "yaml_id": 203
+    },
+    "semantic/CTOR_REF_IN_STATIC_CTX": {
+      "code": 96,
+      "yaml_id": 202
+    },
+    "semantic/CYCLIC_ALIAS": {
+      "code": 97,
+      "yaml_id": 311
+    },
+    "semantic/CYCLIC_ALIAS_2": {
+      "code": 98,
+      "yaml_id": 313
+    },
+    "semantic/CYCLIC_CALLEE": {
+      "code": 99,
+      "yaml_id": 381
+    },
+    "semantic/CYCLIC_CLASS_SUPER_TYPE": {
+      "code": 100,
+      "yaml_id": 380
+    },
+    "semantic/CYCLIC_EXPORT": {
+      "code": 101,
+      "yaml_id": 67633
+    },
+    "semantic/CYCLIC_INHERITANCE": {
+      "code": 102,
+      "yaml_id": 310
+    },
+    "semantic/CYCLIC_TYPE_OF": {
+      "code": 103,
+      "yaml_id": 379
+    },
+    "semantic/CYCLIC_VAR_REF": {
+      "code": 104,
+      "yaml_id": 314
+    },
+    "semantic/DECLARATION_PROPERTY_MISSING_IN_IMPLEMENTATION": {
+      "code": 105,
+      "yaml_id": 159111
+    },
+    "semantic/DEFAULT_EXPORT_DIRECT_IMPORTED": {
+      "code": 106,
+      "yaml_id": 353
+    },
+    "semantic/DEFAULT_IMPORT_NOT_FOUND": {
+      "code": 107,
+      "yaml_id": 358
+    },
+    "semantic/DIFFERENT_SUBSEQ_DECL": {
+      "code": 108,
+      "yaml_id": 316
+    },
+    "semantic/DIFFERENT_SUBSEQ_PROP_DECL": {
+      "code": 109,
+      "yaml_id": 317
+    },
+    "semantic/DISJOINT_CONVERSION": {
+      "code": 110,
+      "yaml_id": 322
+    },
+    "semantic/DUPLICATE_ACCESSOR": {
+      "code": 111,
+      "yaml_id": 219
+    },
+    "semantic/DUPLICATE_OVERLOADED_NAME": {
+      "code": 112,
+      "yaml_id": 385
+    },
+    "semantic/DUPLICATE_SUPER_OR_THIS_CALL": {
+      "code": 113,
+      "yaml_id": 611
+    },
+    "semantic/DUPLICATE_TYPE_PARAM": {
+      "code": 114,
+      "yaml_id": 182
+    },
+    "semantic/DYMANIC_INIT_WITH_OBJEXPR": {
+      "code": 115,
+      "yaml_id": 382
+    },
+    "semantic/ENUM_AS_OBJ": {
+      "code": 116,
+      "yaml_id": 154289
+    },
+    "semantic/ENUM_CONVERSION_ERROR_FROM": {
+      "code": 117,
+      "yaml_id": 593373
+    },
+    "semantic/ENUM_CONVERSION_ERROR_TO": {
+      "code": 118,
+      "yaml_id": 593372
+    },
+    "semantic/ERROR_ARKTS_NO_CONDITIONAL_TYPES": {
+      "code": 119,
+      "yaml_id": 136365
+    },
+    "semantic/ERROR_ARKTS_NO_ENUM_MIXED_TYPES": {
+      "code": 120,
+      "yaml_id": 342
+    },
+    "semantic/ERROR_ARKTS_NO_PROPERTIES_BY_INDEX": {
+      "code": 121,
+      "yaml_id": 343
+    },
+    "semantic/ERROR_ARKTS_NO_UNTYPED_OBJ_LITERALS": {
+      "code": 122,
+      "yaml_id": 115343
+    },
+    "semantic/ERROR_ARKTS_SPREAD_ONLY_WITH_REST": {
+      "code": 123,
+      "yaml_id": 44192
+    },
+    "semantic/ERROR_NO_ENUM_MIXED_TYPES": {
+      "code": 418,
+      "strict": true,
+      "yaml_id": 2501
+    },
+    "semantic/EXCEPTION_REDECLARATION": {
+      "code": 124,
+      "yaml_id": 13
+    },
+    "semantic/EXPECTED_TYPE_ARGUMENTS": {
+      "code": 125,
+      "yaml_id": 274
+    },
+    "semantic/EXPLICIT_TYPE_ARGUMENTS_REQUIRED": {
+      "code": 126,
+      "yaml_id": 655063
+    },
+    "semantic/EXPONENTIATION_BASE_LESS_ZERO": {
+      "code": 127,
+      "yaml_id": 22843
+    },
+    "semantic/EXPONENTIATION_BIGINT_NEGATIVE_EXPONENT": {
+      "code": 128,
+      "yaml_id": 655064
+    },
+    "semantic/EXPONENTIATION_TYPE_LIMITATION": {
+      "code": 129,
+      "yaml_id": 295768
+    },
+    "semantic/EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO": {
+      "code": 419,
+      "strict": true,
+      "yaml_id": 71336
+    },
+    "semantic/EXPORT_INCORRECT": {
+      "code": 130,
+      "yaml_id": 361
+    },
+    "semantic/EXPR_NONCONSTRUCTIBLE": {
+      "code": 131,
+      "yaml_id": 292
+    },
+    "semantic/EXPR_NOT_CALLABLE": {
+      "code": 132,
+      "yaml_id": 289
+    },
+    "semantic/EXTENDING_CLASS_WITH_PRIVATE_CTOR": {
+      "code": 133,
+      "yaml_id": 201875
+    },
+    "semantic/EXTENDING_FINAL": {
+      "code": 134,
+      "yaml_id": 178
+    },
+    "semantic/EXTENDING_STRUCT": {
+      "code": 135,
+      "yaml_id": 177
+    },
+    "semantic/EXTENDING_UTILITY_TYPE": {
+      "code": 136,
+      "yaml_id": 176
+    },
+    "semantic/EXTENSION_ACCESSOR_INVALID_CALL": {
+      "code": 137,
+      "yaml_id": 59
+    },
+    "semantic/EXTENSION_FUNC_ON_INEXETENSIBLE": {
+      "code": 138,
+      "yaml_id": 82
+    },
+    "semantic/EXTENSION_GETTER_INVALID_CTX": {
+      "code": 139,
+      "yaml_id": 269
+    },
+    "semantic/EXTENSION_NAME_CONFLICT_WITH_FIELD": {
+      "code": 140,
+      "yaml_id": 79
+    },
+    "semantic/EXTENSION_NAME_CONFLICT_WITH_METHOD": {
+      "code": 141,
+      "yaml_id": 80
+    },
+    "semantic/FIELD_ASSIGN_TO_CONST": {
+      "code": 142,
+      "yaml_id": 4001
+    },
+    "semantic/FIELD_ASSIGN_TO_READONLY": {
+      "code": 143,
+      "yaml_id": 4002
+    },
+    "semantic/FIELD_REASSIGNMENT": {
+      "code": 144,
+      "yaml_id": 297
+    },
+    "semantic/FINAL_METHOD_INVALID_MODIFIER": {
+      "code": 145,
+      "yaml_id": 48
+    },
+    "semantic/FIXED_ARRAY_PARAM_ERROR": {
+      "code": 146,
+      "yaml_id": 277
+    },
+    "semantic/FLOW_REDIRECTION_INVALID_CTX": {
+      "code": 147,
+      "yaml_id": 161
+    },
+    "semantic/FOROF_SOURCE_NONITERABLE": {
+      "code": 148,
+      "yaml_id": 76
+    },
+    "semantic/FOROF_UNSUPPORTED_MIXED_ITERABLE_UNION": {
+      "code": 149,
+      "yaml_id": 402
+    },
+    "semantic/FUNCTION_REDECLERATION": {
+      "code": 150,
+      "yaml_id": 160
+    },
+    "semantic/FUNCTION_REDECL_BY_ASM_SIG": {
+      "code": 151,
+      "yaml_id": 131
+    },
+    "semantic/FUNCTION_REDECL_BY_TYPE_SIG": {
+      "code": 152,
+      "yaml_id": 130
+    },
+    "semantic/FUNCTION_WITHOUT_BODY": {
+      "code": 153,
+      "yaml_id": 17
+    },
+    "semantic/GENERIC_ALIAS_WITHOUT_PARAMS": {
+      "code": 154,
+      "yaml_id": 155
+    },
+    "semantic/GENERIC_TYPE_PARAM_COUNT_MISMATCH": {
+      "code": 155,
+      "yaml_id": 171
+    },
+    "semantic/GENERIC_TYPE_PARAM_INFERENCE_FAILED": {
+      "code": 156,
+      "yaml_id": 8745
+    },
+    "semantic/GENERIC_WITHOUT_TYPE_PARAMS": {
+      "code": 157,
+      "yaml_id": 170
+    },
+    "semantic/GETTER_MISSING_IMPL": {
+      "code": 158,
+      "yaml_id": 188
+    },
+    "semantic/ID_IN_WRONG_CTX": {
+      "code": 159,
+      "yaml_id": 144
+    },
+    "semantic/ID_REDECLARED": {
+      "code": 160,
+      "yaml_id": 369
+    },
+    "semantic/ID_WRONG_CTX": {
+      "code": 161,
+      "yaml_id": 330
+    },
+    "semantic/IFACE_INVALID_EXTENDS": {
+      "code": 162,
+      "yaml_id": 320
+    },
+    "semantic/IFACE_INVALID_OVERRIDE": {
+      "code": 163,
+      "yaml_id": 79074
+    },
+    "semantic/IFACE_MULTIPLE_EXTENSION": {
+      "code": 164,
+      "yaml_id": 315
+    },
+    "semantic/IFACE_OPTIONAL_PROPERTY_MISSING_IMPL": {
+      "code": 426,
+      "yaml_id": 95271
+    },
+    "semantic/ILLEGAL_UNARY_OP": {
+      "code": 165,
+      "yaml_id": 11
+    },
+    "semantic/IMPORTED_NOT_EXPORTED": {
+      "code": 166,
+      "yaml_id": 355
+    },
+    "semantic/IMPORT_NOT_FOUND": {
+      "code": 167,
+      "yaml_id": 356
+    },
+    "semantic/IMPORT_NOT_FOUND_2": {
+      "code": 168,
+      "yaml_id": 360
+    },
+    "semantic/IMPORT_RENAMES_ANNOTATION": {
+      "code": 169,
+      "yaml_id": 357
+    },
+    "semantic/IMPROPER_NUMERIC_CAST": {
+      "code": 170,
+      "yaml_id": 123811
+    },
+    "semantic/INCOMPATIBLE_TYPE_FOR_OVERRIDE": {
+      "code": 420,
+      "strict": true,
+      "yaml_id": 52491
+    },
+    "semantic/INDEX_NEGATIVE_OR_FRACTIONAL": {
+      "code": 171,
+      "yaml_id": 248
+    },
+    "semantic/INDEX_NONINTEGRAL_FLOAT": {
+      "code": 172,
+      "yaml_id": 197
+    },
+    "semantic/INDEX_ON_INVALID_TYPE": {
+      "code": 173,
+      "yaml_id": 252
+    },
+    "semantic/INDEX_OOB": {
+      "code": 174,
+      "yaml_id": 249
+    },
+    "semantic/INFERENCE_TYPE_INCOMPAT": {
+      "code": 175,
+      "yaml_id": 120
+    },
+    "semantic/INFER_FAILURE_FUNC_PARAM": {
+      "code": 176,
+      "yaml_id": 132
+    },
+    "semantic/INHERITED_CLASS_MODIFIERS_MISMATCH": {
+      "code": 177,
+      "yaml_id": 1484256
+    },
+    "semantic/INHERITED_CLASS_TYPE_MISMATCH": {
+      "code": 178,
+      "yaml_id": 216
+    },
+    "semantic/INHERITED_INTERFACE_TYPE_MISMATCH": {
+      "code": 179,
+      "yaml_id": 215
+    },
+    "semantic/INITIALIZERS_IN_AMBIENT_CONTEXTS": {
+      "code": 421,
+      "strict": true,
+      "yaml_id": 125125
+    },
+    "semantic/INIT_DOESNT_COMPLETE": {
+      "code": 180,
+      "yaml_id": 101
+    },
+    "semantic/INIT_MODULE_REFERENCES": {
+      "code": 181,
+      "yaml_id": 467
+    },
+    "semantic/INNER_CLASS_MUTABLE_STATIC_PROP": {
+      "code": 182,
+      "yaml_id": 196
+    },
+    "semantic/INNER_CLASS_WITH_STATIC_METH": {
+      "code": 183,
+      "yaml_id": 195
+    },
+    "semantic/INSTANCEOF_NONOBJECT": {
+      "code": 184,
+      "yaml_id": 296
+    },
+    "semantic/INTERFACE_AS_OBJ": {
+      "code": 185,
+      "yaml_id": 165326
+    },
+    "semantic/INTERFACE_EXTENDS_CLASS": {
+      "code": 186,
+      "yaml_id": 378
+    },
+    "semantic/INTERFACE_INSTANTIATION": {
+      "code": 187,
+      "yaml_id": 275
+    },
+    "semantic/INTERFACE_OR_CLASS_CANNOT_IMPL_OR_EXTEND_DYNAMIC": {
+      "code": 188,
+      "yaml_id": 24143
+    },
+    "semantic/INTERFACE_PROPERTY_COLLISION": {
+      "code": 189,
+      "yaml_id": 73710
+    },
+    "semantic/INTERFACE_PROPERTY_REQUIRES_SETTER": {
+      "code": 190,
+      "yaml_id": 337
+    },
+    "semantic/INTERFACE_PROP_NOT_PUBLIC": {
+      "code": 191,
+      "yaml_id": 217
+    },
+    "semantic/INTERFACE_REDECLARED": {
+      "code": 192,
+      "yaml_id": 372
+    },
+    "semantic/INTERFACE_WITH_METHOD": {
+      "code": 193,
+      "yaml_id": 256
+    },
+    "semantic/INVALID_ASSIGNMNENT": {
+      "code": 194,
+      "yaml_id": 318
+    },
+    "semantic/INVALID_ASSIGNMNENT_2": {
+      "code": 195,
+      "yaml_id": 321
+    },
+    "semantic/INVALID_CAPTURE": {
+      "code": 196,
+      "yaml_id": 366
+    },
+    "semantic/INVALID_CONST_ASSIGNMENT": {
+      "code": 197,
+      "yaml_id": 97
+    },
+    "semantic/INVALID_EXPORT": {
+      "code": 198,
+      "yaml_id": 367
+    },
+    "semantic/INVALID_EXPR_IN_RETURN": {
+      "code": 199,
+      "yaml_id": 148
+    },
+    "semantic/INVALID_INDEX_TYPE": {
+      "code": 200,
+      "yaml_id": 236
+    },
+    "semantic/INVALID_INSTANCEOF_LHS_TYPE": {
+      "code": 201,
+      "yaml_id": 173103
+    },
+    "semantic/INVALID_INSTANCEOF_RHS_TYPE": {
+      "code": 202,
+      "yaml_id": 38251
+    },
+    "semantic/INVALID_INSTANTIATE_FACTORY_PARAM": {
+      "code": 203,
+      "yaml_id": 37484
+    },
+    "semantic/INVALID_INTRINSIC": {
+      "code": 204,
+      "yaml_id": 61055
+    },
+    "semantic/INVALID_LAMBDA_PARAMETER": {
+      "code": 205,
+      "yaml_id": 395
+    },
+    "semantic/INVALID_LITERAL_CAST": {
+      "code": 206,
+      "yaml_id": 326
+    },
+    "semantic/INVALID_READONLY_ASSIGNMENT": {
+      "code": 207,
+      "yaml_id": 98
+    },
+    "semantic/INVALID_RECORD_PROPERTY": {
+      "code": 208,
+      "yaml_id": 393
+    },
+    "semantic/INVALID_RETURN_FUNC_EXPR": {
+      "code": 209,
+      "yaml_id": 149
+    },
+    "semantic/INVALID_SPREAD_IN_TUPLE": {
+      "code": 210,
+      "yaml_id": 55
+    },
+    "semantic/INVALID_STANDARD_ANNOTATION": {
+      "code": 211,
+      "yaml_id": 1122645
+    },
+    "semantic/INVALID_TYPE_AS_VALUE": {
+      "code": 212,
+      "yaml_id": 134683
+    },
+    "semantic/INVALID_TYPE_PARAM": {
+      "code": 213,
+      "yaml_id": 168
+    },
+    "semantic/INVALID_TYPE_REF": {
+      "code": 214,
+      "yaml_id": 299
+    },
+    "semantic/INVISIBLE_ITERATOR": {
+      "code": 215,
+      "yaml_id": 272
+    },
+    "semantic/ITERATOR_DOESNT_RETURN_ITERABLE": {
+      "code": 216,
+      "yaml_id": 261
+    },
+    "semantic/ITERATOR_ELEMENT_TYPE_MISMATCH": {
+      "code": 217,
+      "yaml_id": 69
+    },
+    "semantic/ITERATOR_MISSING_NEXT": {
+      "code": 218,
+      "yaml_id": 260
+    },
+    "semantic/ITERATOR_TYPE_ABSENT": {
+      "code": 219,
+      "yaml_id": 99
+    },
+    "semantic/KEYOF_REFERENCE_TYPE": {
+      "code": 220,
+      "yaml_id": 276
+    },
+    "semantic/LAMBDA_MISSING_RETURN_STMT": {
+      "code": 221,
+      "yaml_id": 57199
+    },
+    "semantic/LAMBDA_NOT_SUPPORTED": {
+      "code": 222,
+      "yaml_id": 17070
+    },
+    "semantic/LATE_INITIALIZATION_FIELD_HAS_INVALID_TYPE": {
+      "code": 223,
+      "yaml_id": 376
+    },
+    "semantic/LOCAL_CLASS_INVALID_CTX": {
+      "code": 224,
+      "yaml_id": 191
+    },
+    "semantic/LOCAL_CLASS_NATIVE_METHOD": {
+      "code": 225,
+      "yaml_id": 278
+    },
+    "semantic/MAIN_BAD_RETURN": {
+      "code": 226,
+      "yaml_id": 88
+    },
+    "semantic/MAIN_INVALID_ARG_COUNT": {
+      "code": 227,
+      "yaml_id": 133
+    },
+    "semantic/MAIN_PARAM_NOT_ARR_OF_STRING": {
+      "code": 228,
+      "yaml_id": 135
+    },
+    "semantic/MAIN_WITH_REST": {
+      "code": 229,
+      "yaml_id": 134
+    },
+    "semantic/MAYBE_DOUBLE_INIT": {
+      "code": 230,
+      "yaml_id": 193
+    },
+    "semantic/MAYBE_MISSING_INIT": {
+      "code": 231,
+      "yaml_id": 194
+    },
+    "semantic/MEMBER_OF_OBJECT_LIT": {
+      "code": 232,
+      "yaml_id": 151
+    },
+    "semantic/MEMBER_TYPE_MISMATCH_ACROSS_UNION": {
+      "code": 233,
+      "yaml_id": 244
+    },
+    "semantic/MERGED_DECLS": {
+      "code": 234,
+      "yaml_id": 370
+    },
+    "semantic/METHOD_ACCESSOR_COLLISION": {
+      "code": 235,
+      "yaml_id": 218
+    },
+    "semantic/METHOD_ASSIGNMENT": {
+      "code": 236,
+      "yaml_id": 394
+    },
+    "semantic/METHOD_OVERLOAD_PROPERTY": {
+      "code": 237,
+      "yaml_id": 567795
+    },
+    "semantic/MISSING_ARRAY_SIZE": {
+      "code": 238,
+      "yaml_id": 421701
+    },
+    "semantic/MISSING_EXTENSION_ACCESSOR": {
+      "code": 239,
+      "yaml_id": 246
+    },
+    "semantic/MISSING_INDEX_ACCESSOR_WITH_SIG": {
+      "code": 240,
+      "yaml_id": 251
+    },
+    "semantic/MISSING_ITERATOR_METHOD": {
+      "code": 241,
+      "yaml_id": 258
+    },
+    "semantic/MISSING_ITERATOR_METHOD_WITH_SIG": {
+      "code": 242,
+      "yaml_id": 259
+    },
+    "semantic/MISSING_OVERRIDE_OF_ABSTRACT_METH": {
+      "code": 243,
+      "yaml_id": 190
+    },
+    "semantic/MISSING_RETURN_STMT": {
+      "code": 244,
+      "yaml_id": 103
+    },
+    "semantic/MISSING_RETURN_TYPE": {
+      "code": 245,
+      "yaml_id": 18
+    },
+    "semantic/MISSING_TYPE_ANNOTATION": {
+      "code": 422,
+      "strict": true,
+      "yaml_id": 1111
+    },
+    "semantic/MODULE_INDEX_MISSING": {
+      "code": 246,
+      "yaml_id": 359
+    },
+    "semantic/MULTIPLE_DEFAULT_EXPORTS": {
+      "code": 247,
+      "yaml_id": 374
+    },
+    "semantic/MULTIPLE_SPREADS": {
+      "code": 248,
+      "yaml_id": 123
+    },
+    "semantic/MULTI_CATCH_DEPRECATED": {
+      "code": 249,
+      "yaml_id": 33781
+    },
+    "semantic/MUST_BE_CLASS_INTERFACE_TYPE": {
+      "code": 250,
+      "yaml_id": 124644
+    },
+    "semantic/NAMESPACE_AS_OBJ": {
+      "code": 251,
+      "yaml_id": 43831
+    },
+    "semantic/NAMESPACE_AS_TYPE": {
+      "code": 252,
+      "yaml_id": 158
+    },
+    "semantic/NAMESPACE_CALL": {
+      "code": 253,
+      "yaml_id": 295
+    },
+    "semantic/NATIVE_WITH_BODY": {
+      "code": 254,
+      "yaml_id": 84
+    },
+    "semantic/NEGATIVE_INDEX": {
+      "code": 255,
+      "yaml_id": 247
+    },
+    "semantic/NONEXISTENT_TYPE": {
+      "code": 256,
+      "yaml_id": 70
+    },
+    "semantic/NONLITERAL_INSTANTIATION": {
+      "code": 257,
+      "yaml_id": 53
+    },
+    "semantic/NONRETURNING_PATHS": {
+      "code": 258,
+      "yaml_id": 104
+    },
+    "semantic/NON_GENERIC_ALIAS_WITH_PARAMS": {
+      "code": 259,
+      "yaml_id": 156
+    },
+    "semantic/NON_SUPERTYPE_OF_UNDEFINED_AS_ARRAY_ELEMENT_TYPE": {
+      "code": 260,
+      "yaml_id": 51
+    },
+    "semantic/NON_VOID_RETURN_IN_CONSTRUCTOR": {
+      "code": 261,
+      "yaml_id": 33
+    },
+    "semantic/NOT_ALLOWED_THIS_IN_ARRAY_TYPE": {
+      "code": 262,
+      "yaml_id": 283
+    },
+    "semantic/NOT_ALLOWED_THIS_IN_TUPLE_TYPE": {
+      "code": 263,
+      "yaml_id": 282
+    },
+    "semantic/NOT_ALLOWED_THIS_IN_UNION_TYPE": {
+      "code": 264,
+      "yaml_id": 281
+    },
+    "semantic/NOT_AN_ANNOTATION": {
+      "code": 265,
+      "yaml_id": 67
+    },
+    "semantic/NOT_A_SUPERINTERFACE_OF_ARRAY": {
+      "code": 266,
+      "yaml_id": 1195013
+    },
+    "semantic/NOT_CONSTANT": {
+      "code": 267,
+      "yaml_id": 163
+    },
+    "semantic/NOT_EXPORTED": {
+      "code": 268,
+      "yaml_id": 206
+    },
+    "semantic/NOT_GENERIC": {
+      "code": 269,
+      "yaml_id": 169
+    },
+    "semantic/NOT_IMPLEMENTED": {
+      "code": 270,
+      "yaml_id": 368
+    },
+    "semantic/NOT_INTERFACE": {
+      "code": 271,
+      "yaml_id": 179
+    },
+    "semantic/NO_CALL_SIGNATURE": {
+      "code": 272,
+      "yaml_id": 2
+    },
+    "semantic/NO_EXPLICIT_OVERLOAD_OVERRIDING": {
+      "code": 273,
+      "yaml_id": 464
+    },
+    "semantic/NO_INDEX_ACCESS_METHOD": {
+      "code": 274,
+      "yaml_id": 250
+    },
+    "semantic/NO_MATCHING_SIG": {
+      "code": 275,
+      "yaml_id": 127
+    },
+    "semantic/NO_MATCHING_SIG_2": {
+      "code": 276,
+      "yaml_id": 128
+    },
+    "semantic/NO_PARAMLESS_CTOR": {
+      "code": 277,
+      "yaml_id": 291
+    },
+    "semantic/NO_STATIC_INVOKE": {
+      "code": 278,
+      "yaml_id": 172
+    },
+    "semantic/NO_SUCH_CTOR_SIG": {
+      "code": 279,
+      "yaml_id": 204
+    },
+    "semantic/NO_SUCH_PARAMLESS_CTOR": {
+      "code": 280,
+      "yaml_id": 125
+    },
+    "semantic/NO_SUCH_PARAMLESS_CTOR_2": {
+      "code": 281,
+      "yaml_id": 270
+    },
+    "semantic/NO_SUCH_SIG_WITH_TRAILING_LAMBDA": {
+      "code": 282,
+      "yaml_id": 140
+    },
+    "semantic/OBJECT_LITERAL_METHOD_KEY": {
+      "code": 283,
+      "yaml_id": 74
+    },
+    "semantic/OBJECT_LITERAL_NON_OPTIONAL_PROP_LOST": {
+      "code": 284,
+      "yaml_id": 400
+    },
+    "semantic/OBJECT_LITERAL_NON_OPTIONAL_PROP_OF_SUPER_LOST": {
+      "code": 285,
+      "yaml_id": 401
+    },
+    "semantic/OBJECT_LITERAL_NOT_KV": {
+      "code": 286,
+      "yaml_id": 64
+    },
+    "semantic/OBJ_LIT_NOT_COVERING_UNION": {
+      "code": 287,
+      "yaml_id": 265
+    },
+    "semantic/OBJ_LIT_PROPERTY_REDECLARATION": {
+      "code": 288,
+      "yaml_id": 100
+    },
+    "semantic/OBJ_LIT_PROP_NAME_COLLISION": {
+      "code": 289,
+      "yaml_id": 263
+    },
+    "semantic/OBJ_LIT_UNKNOWN_PROP": {
+      "code": 290,
+      "yaml_id": 264
+    },
+    "semantic/OPERAND_NOT_NUMERIC": {
+      "code": 291,
+      "yaml_id": 66
+    },
+    "semantic/OP_NONNUMERIC": {
+      "code": 292,
+      "yaml_id": 107
+    },
+    "semantic/OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE": {
+      "code": 293,
+      "yaml_id": 503573
+    },
+    "semantic/OVERLOADED_MAIN": {
+      "code": 294,
+      "yaml_id": 373
+    },
+    "semantic/OVERLOADED_METHOD_AS_VALUE": {
+      "code": 295,
+      "yaml_id": 307
+    },
+    "semantic/OVERLOADED_NAME_MUST_FUNCTION": {
+      "code": 296,
+      "yaml_id": 384
+    },
+    "semantic/OVERLOADED_NAME_REFER_TO_OVERLOAD_FUNCTION": {
+      "code": 297,
+      "yaml_id": 389
+    },
+    "semantic/OVERLOADED_UNION_CALL": {
+      "code": 298,
+      "yaml_id": 391
+    },
+    "semantic/OVERLOAD_MUST_ALSO_BE_EXPORTED": {
+      "code": 299,
+      "yaml_id": 456
+    },
+    "semantic/OVERLOAD_MUST_BOTH_CONSTRUCT": {
+      "code": 300,
+      "yaml_id": 388
+    },
+    "semantic/OVERLOAD_NAME_NOT_LISTED": {
+      "code": 301,
+      "yaml_id": 390
+    },
+    "semantic/OVERLOAD_SAME_ACCESS_MODIFIERS": {
+      "code": 302,
+      "yaml_id": 386
+    },
+    "semantic/OVERLOAD_SAME_ACCESS_MODIFIERS_STATIC_ASYNC": {
+      "code": 303,
+      "yaml_id": 387
+    },
+    "semantic/OVERLOAD_SAME_NAME_METHOD": {
+      "code": 304,
+      "yaml_id": 397
+    },
+    "semantic/OVERRIDE_DOESNT_OVERRIDE": {
+      "code": 305,
+      "yaml_id": 136
+    },
+    "semantic/OVERRIDE_FIELD_MUST_HAVE_INITIALIZER": {
+      "code": 423,
+      "strict": true,
+      "yaml_id": 1049305
+    },
+    "semantic/OVERRIDE_NOT_EXTENDS": {
+      "code": 306,
+      "yaml_id": 46316
+    },
+    "semantic/OVERRIDE_NOT_IN_BASE": {
+      "code": 307,
+      "yaml_id": 49702
+    },
+    "semantic/OVERRIDE_NOT_PRIVATE": {
+      "code": 308,
+      "yaml_id": 1365480
+    },
+    "semantic/PARAM_COUNT_MISMATCH": {
+      "code": 309,
+      "yaml_id": 124
+    },
+    "semantic/POSSIBLY_NULLISH": {
+      "code": 310,
+      "yaml_id": 10
+    },
+    "semantic/POSTCOND_FAILED": {
+      "code": 311,
+      "yaml_id": 267
+    },
+    "semantic/PRECOND_FAILED": {
+      "code": 312,
+      "yaml_id": 266
+    },
+    "semantic/PRIVATE_OR_PROTECTED_METHOD_AS_VALUE": {
+      "code": 313,
+      "yaml_id": 306
+    },
+    "semantic/PROPERTY_CAPTURE": {
+      "code": 314,
+      "yaml_id": 146
+    },
+    "semantic/PROPERTY_CAPTURE_IN_STATIC": {
+      "code": 315,
+      "yaml_id": 147
+    },
+    "semantic/PROPERTY_MAYBE_MISSING_INIT": {
+      "code": 316,
+      "yaml_id": 280
+    },
+    "semantic/PROPERTY_NONEXISTENT": {
+      "code": 317,
+      "yaml_id": 87
+    },
+    "semantic/PROP_ACCESS_WITHOUT_THIS": {
+      "code": 318,
+      "yaml_id": 145
+    },
+    "semantic/PROP_ASSIGN_TO_NUMERIC_INDEX": {
+      "code": 319,
+      "yaml_id": 324
+    },
+    "semantic/PROP_ASSIGN_TO_STRING_INDEX": {
+      "code": 320,
+      "yaml_id": 327
+    },
+    "semantic/PROP_INCOMPAT": {
+      "code": 321,
+      "yaml_id": 319
+    },
+    "semantic/PROP_INVISIBLE": {
+      "code": 322,
+      "yaml_id": 293
+    },
+    "semantic/PROP_IS_STATIC": {
+      "code": 323,
+      "yaml_id": 207
+    },
+    "semantic/PROP_NOT_STATIC": {
+      "code": 324,
+      "yaml_id": 208
+    },
+    "semantic/PROP_OVERRIDE_ACCESSOR": {
+      "code": 325,
+      "yaml_id": 129829
+    },
+    "semantic/READONLY_ARRAYLIKE_MODIFICATION": {
+      "code": 326,
+      "yaml_id": 58
+    },
+    "semantic/READONLY_CALL": {
+      "code": 327,
+      "yaml_id": 27
+    },
+    "semantic/READONLY_FIELD_MULTIPLE_INIT": {
+      "code": 328,
+      "yaml_id": 210
+    },
+    "semantic/READONLY_PROPERTY_REASSIGN": {
+      "code": 329,
+      "yaml_id": 338
+    },
+    "semantic/READ_FROM_WRITEONLY_PROP": {
+      "code": 330,
+      "yaml_id": 211
+    },
+    "semantic/RECURSIVE_CTOR": {
+      "code": 331,
+      "yaml_id": 309
+    },
+    "semantic/RECURSIVE_EXTENSION": {
+      "code": 332,
+      "yaml_id": 312
+    },
+    "semantic/REDEFINITION": {
+      "code": 333,
+      "yaml_id": 349
+    },
+    "semantic/REDEFINITION_DIFF_TYPE": {
+      "code": 334,
+      "yaml_id": 350
+    },
+    "semantic/REF_INVALID": {
+      "code": 335,
+      "yaml_id": 329
+    },
+    "semantic/REQUIRED_CALL": {
+      "code": 336,
+      "yaml_id": 123454
+    },
+    "semantic/REQUIRED_PROP_MISSING_INIT": {
+      "code": 337,
+      "yaml_id": 226
+    },
+    "semantic/REST_PARAM_INCOMPAT_AT": {
+      "code": 338,
+      "yaml_id": 323
+    },
+    "semantic/RETURN_DIFFERENT_PRIM": {
+      "code": 339,
+      "yaml_id": 150
+    },
+    "semantic/RETURN_ISNT_ITERATOR": {
+      "code": 340,
+      "yaml_id": 96
+    },
+    "semantic/RETURN_THIS_OUTSIDE_METHOD": {
+      "code": 341,
+      "yaml_id": 31
+    },
+    "semantic/RETURN_TYPE_UTILITY_INCORRECT_PARAM": {
+      "code": 342,
+      "yaml_id": 36530
+    },
+    "semantic/RETURN_WITHOUT_VALUE": {
+      "code": 343,
+      "yaml_id": 32
+    },
+    "semantic/RTYPE_PARAM_COUNT_MISMATCH": {
+      "code": 344,
+      "yaml_id": 273
+    },
+    "semantic/SAME_NAMED_TYPES_FROM_DIFFERENT_SOURCES": {
+      "code": 345,
+      "yaml_id": 249556
+    },
+    "semantic/SETTER_MISSING_IMPL": {
+      "code": 346,
+      "yaml_id": 189
+    },
+    "semantic/SIG_INVISIBLE": {
+      "code": 347,
+      "yaml_id": 139
+    },
+    "semantic/SIG_UNAVAILABLE": {
+      "code": 348,
+      "yaml_id": 137
+    },
+    "semantic/SPREAD_OF_INVALID_TYPE": {
+      "code": 349,
+      "yaml_id": 49
+    },
+    "semantic/SPREAD_ONTO_SINGLE_PARAM": {
+      "code": 350,
+      "yaml_id": 121
+    },
+    "semantic/STANDARD_ANNOTATION_REQUIRED": {
+      "code": 351,
+      "yaml_id": 6
+    },
+    "semantic/STATIC_INIT_IN_NESTED_CLASS": {
+      "code": 352,
+      "yaml_id": 14
+    },
+    "semantic/STATIC_METHOD_CANNOT_REFERENCE_CLASS_TYPE": {
+      "code": 353,
+      "yaml_id": 170021
+    },
+    "semantic/STATIC_METHOD_INVALID_MODIFIER": {
+      "code": 354,
+      "yaml_id": 77
+    },
+    "semantic/STATIC_METH_IN_CLASS_AND_INTERFACE": {
+      "code": 355,
+      "yaml_id": 221
+    },
+    "semantic/STATIC_OVERRIDE": {
+      "code": 356,
+      "yaml_id": 225047
+    },
+    "semantic/STATIC_PROP_INHERITANCE": {
+      "code": 357,
+      "yaml_id": 854298
+    },
+    "semantic/STATIC_PROP_INVALID_CTX": {
+      "code": 358,
+      "yaml_id": 173
+    },
+    "semantic/STATIC_REF_TO_NONSTATIC": {
+      "code": 359,
+      "yaml_id": 288
+    },
+    "semantic/STATIC_UNION": {
+      "code": 360,
+      "yaml_id": 335
+    },
+    "semantic/STRICT_BOOLEAN_REQUIRED": {
+      "code": 361,
+      "yaml_id": 1215897
+    },
+    "semantic/SUPER_NOT_ACCESSIBLE": {
+      "code": 362,
+      "yaml_id": 377
+    },
+    "semantic/SWITCH_CASE_TYPE_INCOMPARABLE": {
+      "code": 363,
+      "yaml_id": 262
+    },
+    "semantic/SWITCH_ENUM_NOT_UNQUALIFIED_ENUM_CONST": {
+      "code": 364,
+      "yaml_id": 334
+    },
+    "semantic/TEMPLATE_COUNT_MISMATCH": {
+      "code": 365,
+      "yaml_id": 28
+    },
+    "semantic/TEMPORAL_DEADZONE": {
+      "code": 366,
+      "yaml_id": 365
+    },
+    "semantic/THIS_BEFORE_THIS_OR_SUPER": {
+      "code": 367,
+      "yaml_id": 679
+    },
+    "semantic/THIS_INCORRECTLY_USED_AS_TYPE_ANNOTAITON": {
+      "code": 368,
+      "yaml_id": 392
+    },
+    "semantic/THIS_OR_SUPER_IN_CTOR": {
+      "code": 369,
+      "yaml_id": 235
+    },
+    "semantic/TOO_LARGE_TO_CAST": {
+      "code": 370,
+      "yaml_id": 1050320
+    },
+    "semantic/TUPLE_INDEX_NONCONST": {
+      "code": 371,
+      "yaml_id": 199
+    },
+    "semantic/TUPLE_INDEX_NOT_INT": {
+      "code": 372,
+      "yaml_id": 200
+    },
+    "semantic/TUPLE_INDEX_OOB": {
+      "code": 373,
+      "yaml_id": 198
+    },
+    "semantic/TUPLE_SIZE_MISMATCH": {
+      "code": 374,
+      "yaml_id": 56
+    },
+    "semantic/TUPLE_UNASSIGNABLE_ARRAY": {
+      "code": 375,
+      "yaml_id": 57
+    },
+    "semantic/TUPLE_WRONG_NUMBER_OF_ELEMS": {
+      "code": 376,
+      "yaml_id": 231
+    },
+    "semantic/TYPEARG_TYPEPARAM_SUBTYPING": {
+      "code": 377,
+      "yaml_id": 228
+    },
+    "semantic/TYPES_CANNOT_BE_MODIFIED_AT_RUNTIME": {
+      "code": 378,
+      "yaml_id": 55815
+    },
+    "semantic/TYPE_ARGS_FOR_NON_GENERIC_SIGNATURE": {
+      "code": 379,
+      "yaml_id": 72257
+    },
+    "semantic/TYPE_FROM_STRING_LITERAL_TYPE_UNSUPPORTED": {
+      "code": 380,
+      "yaml_id": 287
+    },
+    "semantic/TYPE_FROM_TUPLE_TYPE_UNSUPPORTED": {
+      "code": 381,
+      "yaml_id": 286
+    },
+    "semantic/TYPE_FROM_UNION_TYPE_UNSUPPORTED": {
+      "code": 382,
+      "yaml_id": 284
+    },
+    "semantic/TYPE_FROM_UNRESOLVABLE_TYPE": {
+      "code": 383,
+      "yaml_id": 285
+    },
+    "semantic/TYPE_MISMATCH_AT_IDX": {
+      "code": 384,
+      "yaml_id": 46
+    },
+    "semantic/TYPE_MISMATCH_ENUM": {
+      "code": 385,
+      "yaml_id": 152
+    },
+    "semantic/TYPE_NOT_FOUND": {
+      "code": 386,
+      "yaml_id": 371
+    },
+    "semantic/TYPE_NOT_PRESERVED_BY_ERASURE_FOR_FIXED_ARRAY": {
+      "code": 387,
+      "yaml_id": 461884
+    },
+    "semantic/TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE": {
+      "code": 388,
+      "yaml_id": 7
+    },
+    "semantic/TYPE_PARAM_CIRCULAR_CONSTRAINT": {
+      "code": 389,
+      "yaml_id": 184
+    },
+    "semantic/TYPE_PARAM_CIRCULAR_DEFAULT_TYPE": {
+      "code": 390,
+      "yaml_id": 398
+    },
+    "semantic/TYPE_PARAM_USE_BEFORE_DEFINE": {
+      "code": 391,
+      "yaml_id": 183
+    },
+    "semantic/UNDEFINED_PROPERTY": {
+      "code": 392,
+      "yaml_id": 65
+    },
+    "semantic/UNEXPECTED_ARRAY": {
+      "code": 393,
+      "yaml_id": 72
+    },
+    "semantic/UNEXPECTED_FUNC_BODY": {
+      "code": 394,
+      "yaml_id": 83
+    },
+    "semantic/UNEXPECTED_NONVOID": {
+      "code": 395,
+      "yaml_id": 94
+    },
+    "semantic/UNEXPECTED_STRUCT": {
+      "code": 396,
+      "yaml_id": 364
+    },
+    "semantic/UNEXPECTED_VOID": {
+      "code": 397,
+      "yaml_id": 93
+    },
+    "semantic/UNION_MEMBER_ILLEGAL_TYPE": {
+      "code": 398,
+      "yaml_id": 245
+    },
+    "semantic/UNION_MEMBER_METHOD_REFERENCE": {
+      "code": 399,
+      "yaml_id": 186623
+    },
+    "semantic/UNION_NONCONSTRUCTIBLE": {
+      "code": 400,
+      "yaml_id": 300
+    },
+    "semantic/UNRESOLVABLE_ARRAY": {
+      "code": 401,
+      "yaml_id": 301
+    },
+    "semantic/UNRESOLVED_REF": {
+      "code": 402,
+      "yaml_id": 143
+    },
+    "semantic/UNSAFE_VARIANCE_ONLY_IN_STDLIB": {
+      "code": 403,
+      "yaml_id": 154779
+    },
+    "semantic/UNSUPPORTED_CLASS_LITERAL": {
+      "code": 404,
+      "yaml_id": 20
+    },
+    "semantic/UNSUPPORTED_CONST_ENUM": {
+      "code": 424,
+      "strict": true,
+      "yaml_id": 440
+    },
+    "semantic/USED_ENTITY_IS_NOT_EXPORTED": {
+      "code": 405,
+      "yaml_id": 386984
+    },
+    "semantic/USED_TYPE_IS_NOT_EXPORTED": {
+      "code": 425,
+      "strict": true,
+      "yaml_id": 1236581
+    },
+    "semantic/USE_BEFORE_INIT": {
+      "code": 406,
+      "yaml_id": 375
+    },
+    "semantic/UTILITY_TYPE_UNIMPLEMENTED": {
+      "code": 407,
+      "yaml_id": 225
+    },
+    "semantic/UTIL_TYPE_INVALID_TYPE_PARAM_COUNT": {
+      "code": 408,
+      "yaml_id": 223
+    },
+    "semantic/UTIL_TYPE_OF_NONREFERENCE": {
+      "code": 409,
+      "yaml_id": 224
+    },
+    "semantic/VALUE_ARRAY_PRIMITIVE_REQUIRED": {
+      "code": 410,
+      "yaml_id": 1547180
+    },
+    "semantic/VARIABLE_REDECLARED": {
+      "code": 411,
+      "yaml_id": 351
+    },
+    "semantic/VARIANCE_TPARAM_IN_OUT": {
+      "code": 412,
+      "yaml_id": 332
+    },
+    "semantic/VARIANCE_TPARAM_OUT_IN": {
+      "code": 413,
+      "yaml_id": 333
+    },
+    "semantic/VARIANT_PARAM_INVARIAN_USE": {
+      "code": 414,
+      "yaml_id": 331
+    },
+    "semantic/WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION": {
+      "code": 415,
+      "yaml_id": 346
+    },
+    "semantic/WRONG_OPERAND_TYPE_FOR_UNARY_EXPRESSION": {
+      "code": 416,
+      "yaml_id": 347
+    },
+    "syntax/ABSTRACT_METHODS_ONLY_IN_ABSTRACT_CLASS": {
+      "code": 1,
+      "yaml_id": 184
+    },
+    "syntax/ABSTRACT_METHOD_ASYNC": {
+      "code": 2,
+      "yaml_id": 118
+    },
+    "syntax/ACCESS_BEFORE_FIELD_METHOD": {
+      "code": 3,
+      "yaml_id": 120
+    },
+    "syntax/AMBIENT_CLASS_MISSING_BODY": {
+      "code": 4,
+      "yaml_id": 4
+    },
+    "syntax/AMBIGUOUS_FUNC_TYPE_INUNION": {
+      "code": 5,
+      "yaml_id": 113981
+    },
+    "syntax/ANNOTATION_AT_NAME_GAP": {
+      "code": 6,
+      "yaml_id": 125879
+    },
+    "syntax/ANNOTATION_DECLARATION_ACCESS_MODIFIER": {
+      "code": 7,
+      "yaml_id": 210
+    },
+    "syntax/ANNOTATION_METHOD_AS_PROP": {
+      "code": 8,
+      "yaml_id": 25
+    },
+    "syntax/ANNOTATION_NOT_ALLOWED": {
+      "code": 9,
+      "yaml_id": 113
+    },
+    "syntax/ANNOTATION_ONLY_TOP_LEVEL": {
+      "code": 10,
+      "yaml_id": 114
+    },
+    "syntax/ANNOTATION_PAREN_REQUIRED": {
+      "code": 11,
+      "yaml_id": 150811
+    },
+    "syntax/ANNOTATION_PROPERTY_ACCESS_MODIFIERS": {
+      "code": 12,
+      "yaml_id": 24
+    },
+    "syntax/ANNOTATION_WRONG_DEC": {
+      "code": 13,
+      "yaml_id": 28
+    },
+    "syntax/ANY_UNKNOWN_TYPES": {
+      "code": 14,
+      "yaml_id": 102460
+    },
+    "syntax/ASSIGN_TO_ARGS_INVALID": {
+      "code": 15,
+      "yaml_id": 57
+    },
+    "syntax/ASSIGN_TO_EVAL_INVALID": {
+      "code": 16,
+      "yaml_id": 51
+    },
+    "syntax/ASTERIKS_NOT_ALLOWED_IN_SELECTIVE_BINDING": {
+      "code": 17,
+      "yaml_id": 102
+    },
+    "syntax/ASYNC_CONSTRUCTOR": {
+      "code": 18,
+      "yaml_id": 200
+    },
+    "syntax/ASYNC_FLAG_ONLY_FOR_TOP_FUN": {
+      "code": 19,
+      "yaml_id": 202
+    },
+    "syntax/ASYNC_IN_AMBIENT_CONTEXT": {
+      "code": 20,
+      "yaml_id": 106
+    },
+    "syntax/ASYNC_METHOD_LINE_TERM": {
+      "code": 21,
+      "yaml_id": 197
+    },
+    "syntax/AS_CONST_USAGE": {
+      "code": 22,
+      "yaml_id": 311
+    },
+    "syntax/ATS_USE_STATIC_PROHIBITED": {
+      "code": 23,
+      "yaml_id": 152288
+    },
+    "syntax/AWAIT_IN_ARROW_FUN_PARAM": {
+      "code": 24,
+      "yaml_id": 46
+    },
+    "syntax/AWAIT_RESERVED_IDENTIFIER_IN_MODULE": {
+      "code": 25,
+      "yaml_id": 213
+    },
+    "syntax/BIGINT_DIVISION_BY_ZERO": {
+      "code": 26,
+      "yaml_id": 206401
+    },
+    "syntax/BINDING_ARGS_INVALID": {
+      "code": 27,
+      "yaml_id": 182
+    },
+    "syntax/BINDING_EVAL_INVALID": {
+      "code": 28,
+      "yaml_id": 190
+    },
+    "syntax/BINDING_PATTERN_PARAM_CANNOT_BE_OPTIONAL": {
+      "code": 29,
+      "yaml_id": 217
+    },
+    "syntax/CALL_SIG_IN_OBJECT": {
+      "code": 30,
+      "yaml_id": 103145
+    },
+    "syntax/CANNOT_EXPORT_DIFFERENT_OBJECTS_WITH_SAME_NAME": {
+      "code": 31,
+      "yaml_id": 344
+    },
+    "syntax/CANNOT_INITIALIZE_ARRAY": {
+      "code": 32,
+      "yaml_id": 63526
+    },
+    "syntax/CAN_NOT_FIND_NAME_TO_EXPORT": {
+      "code": 33,
+      "yaml_id": 279
+    },
+    "syntax/CAN_NOT_RENAME_ANNOTATION": {
+      "code": 34,
+      "yaml_id": 280
+    },
+    "syntax/CATCH_CLAUSE_VAR_HAS_INIT": {
+      "code": 35,
+      "yaml_id": 101
+    },
+    "syntax/CLASS_FIELD_CONSTRUCTOR": {
+      "code": 36,
+      "yaml_id": 144
+    },
+    "syntax/CLASS_INTERFACE_METHOD_OVERLOADED_NAME_MUST_IDENT": {
+      "code": 37,
+      "yaml_id": 324
+    },
+    "syntax/CLASS_OUT_OF_ORDER": {
+      "code": 38,
+      "yaml_id": 80
+    },
+    "syntax/CONFLICTING_FIELD_MODIFIERS": {
+      "code": 39,
+      "yaml_id": 127
+    },
+    "syntax/CONSTRUCTOR_FUNC_TYPE_NOT_SUPPORTED": {
+      "code": 40,
+      "yaml_id": 93489
+    },
+    "syntax/CONSTRUCTOR_TYPE_PARAMETERS": {
+      "code": 41,
+      "yaml_id": 330
+    },
+    "syntax/DECALRE_IN_AMBIENT_CONTEXT": {
+      "code": 42,
+      "yaml_id": 104
+    },
+    "syntax/DECORATORS_INVALID": {
+      "code": 43,
+      "yaml_id": 183
+    },
+    "syntax/DEEP_NESTING": {
+      "code": 44,
+      "yaml_id": 305
+    },
+    "syntax/DEFAULT_ONLY_FOR_OPTIONAL": {
+      "code": 45,
+      "yaml_id": 133
+    },
+    "syntax/DEFAULT_PARAM_IN_DECLARE": {
+      "code": 46,
+      "yaml_id": 328
+    },
+    "syntax/DEFAULT_UNDEF_NOT_ALLOWED": {
+      "code": 47,
+      "yaml_id": 132
+    },
+    "syntax/DEFAULT_UNSUPPORTED_IN_DESTRUCTURING": {
+      "code": 48,
+      "yaml_id": 125256
+    },
+    "syntax/DELETING_LOCAL_VAR": {
+      "code": 49,
+      "yaml_id": 50
+    },
+    "syntax/DELETING_PRIVATE_FIELDS": {
+      "code": 50,
+      "yaml_id": 70
+    },
+    "syntax/DIVISION_BY_ZERO": {
+      "code": 51,
+      "yaml_id": 273
+    },
+    "syntax/DUPLICATED_IDENTIFIER": {
+      "code": 52,
+      "yaml_id": 215
+    },
+    "syntax/DUPLICATED_MODIFIER": {
+      "code": 53,
+      "yaml_id": 115
+    },
+    "syntax/DUPLICATE_EXPORT_NAME": {
+      "code": 54,
+      "yaml_id": 281
+    },
+    "syntax/DUPLICATE_GROUP_NAME": {
+      "code": 55,
+      "yaml_id": 82
+    },
+    "syntax/DUPLICATE_PROTO_FIELDS": {
+      "code": 56,
+      "yaml_id": 119997
+    },
+    "syntax/EMPTY_IMPORT_SPECIFIER_LIST": {
+      "code": 57,
+      "yaml_id": 10292
+    },
+    "syntax/EMPTY_OVERLOAD_LIST": {
+      "code": 58,
+      "yaml_id": 93372
+    },
+    "syntax/ENUM_IMPLICIT_AFTER_NON_CONST_INIT": {
+      "code": 59,
+      "yaml_id": 133690
+    },
+    "syntax/ENUM_INVALID_INIT": {
+      "code": 60,
+      "yaml_id": 36
+    },
+    "syntax/ENUM_NON_INT_TYPE_ALL_ITEMS_INIT": {
+      "code": 61,
+      "yaml_id": 276
+    },
+    "syntax/ERROR_ARKTS_NO_COMMA_OUTSIDE_LOOPS": {
+      "code": 62,
+      "yaml_id": 133681
+    },
+    "syntax/ERROR_ARKTS_NO_DEBUGGER_STATEMENT": {
+      "code": 63,
+      "yaml_id": 299
+    },
+    "syntax/ERROR_ARKTS_NO_EXPORT_ASSIGNMENT": {
+      "code": 64,
+      "yaml_id": 307
+    },
+    "syntax/ERROR_ARKTS_NO_FOR_IN_LOOP": {
+      "code": 65,
+      "yaml_id": 6987
+    },
+    "syntax/ERROR_ARKTS_NO_IMPORT_ASSERTIONS": {
+      "code": 66,
+      "yaml_id": 313
+    },
+    "syntax/ERROR_ARKTS_NO_INTERFACE_CONSTRUCTOR_SIGNATURES": {
+      "code": 67,
+      "yaml_id": 81515
+    },
+    "syntax/ERROR_ARKTS_NO_IN_OPERATOR": {
+      "code": 68,
+      "yaml_id": 105822
+    },
+    "syntax/ERROR_ARKTS_NO_IS_OPERATOR": {
+      "code": 69,
+      "yaml_id": 169587
+    },
+    "syntax/ERROR_ARKTS_NO_OBJ_LITERAL_TO_DECL_TYPE": {
+      "code": 70,
+      "yaml_id": 177354
+    },
+    "syntax/ERROR_ARKTS_NO_PRIVATE_IDENTIFIERS": {
+      "code": 71,
+      "yaml_id": 298
+    },
+    "syntax/ERROR_ARKTS_NO_REQUIRE": {
+      "code": 72,
+      "yaml_id": 312
+    },
+    "syntax/ERROR_ARKTS_NO_RUNTIME_PROTOTYPE_INHERITANCE": {
+      "code": 73,
+      "yaml_id": 167923
+    },
+    "syntax/ERROR_ARKTS_NO_SIDE_EFFECT_IMPORT": {
+      "code": 74,
+      "yaml_id": 73297
+    },
+    "syntax/ERROR_ARKTS_NO_UMD": {
+      "code": 75,
+      "yaml_id": 114179
+    },
+    "syntax/ERROR_ARKTS_NO_VAR": {
+      "code": 76,
+      "yaml_id": 297
+    },
+    "syntax/ERROR_ARKTS_NO_WITH": {
+      "code": 77,
+      "yaml_id": 116901
+    },
+    "syntax/ESCAPE_SEQUENCES_IN_AS": {
+      "code": 78,
+      "yaml_id": 108
+    },
+    "syntax/ESCAPE_SEQUENCES_IN_KEYWORD": {
+      "code": 79,
+      "yaml_id": 271
+    },
+    "syntax/EVAL_OR_ARGUMENTS_IN_STRICT_MODE": {
+      "code": 80,
+      "yaml_id": 207
+    },
+    "syntax/EXPECTED_ARROW_SAME_LINE": {
+      "code": 81,
+      "yaml_id": 195
+    },
+    "syntax/EXPECTED_BRACKETS_IN_INDEX": {
+      "code": 82,
+      "yaml_id": 19
+    },
+    "syntax/EXPECTED_EXPRESSION_GOT_ARROW": {
+      "code": 83,
+      "yaml_id": 52
+    },
+    "syntax/EXPECTED_PARAM_GOT_PARAM": {
+      "code": 84,
+      "yaml_id": 230
+    },
+    "syntax/EXPLICIT_PARAM_TYPE": {
+      "code": 85,
+      "yaml_id": 194
+    },
+    "syntax/EXPORT_DEFAULT_NO_REEXPORT": {
+      "code": 86,
+      "yaml_id": 244
+    },
+    "syntax/EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER": {
+      "code": 87,
+      "yaml_id": 5
+    },
+    "syntax/EXPORT_NON_DECLARATION": {
+      "code": 88,
+      "yaml_id": 43
+    },
+    "syntax/EXPORT_WITHOUT_DECLARE_IN_DECL_MODULE": {
+      "code": 89,
+      "yaml_id": 296
+    },
+    "syntax/EXTENSION_ACCESSOR_RECEIVER": {
+      "code": 90,
+      "yaml_id": 146
+    },
+    "syntax/EXTENSION_GETTER_WRONG_PARAM": {
+      "code": 91,
+      "yaml_id": 22
+    },
+    "syntax/EXTENSION_SETTER_WRONG_PARAM": {
+      "code": 92,
+      "yaml_id": 23
+    },
+    "syntax/FIELD_IN_PARAM": {
+      "code": 93,
+      "yaml_id": 319
+    },
+    "syntax/FIELD_TYPE_ANNOTATION_MISSING": {
+      "code": 94,
+      "yaml_id": 121
+    },
+    "syntax/FOR_AWAIT_OF_VAR_NOT_INIT": {
+      "code": 95,
+      "yaml_id": 97
+    },
+    "syntax/FOR_IN_LOOP_HAS_INIT": {
+      "code": 96,
+      "yaml_id": 164
+    },
+    "syntax/FOR_OF_LOOP_HAS_INIT": {
+      "code": 97,
+      "yaml_id": 168
+    },
+    "syntax/FUNCTION_OVERLOADED_NAME_MUST_QUALIFIED_NAME": {
+      "code": 98,
+      "yaml_id": 325
+    },
+    "syntax/FUNC_EXPR": {
+      "code": 99,
+      "yaml_id": 320
+    },
+    "syntax/FUNC_PARAM_THIS_FIRST": {
+      "code": 100,
+      "yaml_id": 158
+    },
+    "syntax/FUN_PARAM_THIS_MISSING_TYPE": {
+      "code": 101,
+      "yaml_id": 99
+    },
+    "syntax/GENERATORS_ONLY_TOP_LEVEL_OR_INSIDE_BLOCK": {
+      "code": 102,
+      "yaml_id": 173
+    },
+    "syntax/GENERATOR_FUNCTION": {
+      "code": 103,
+      "yaml_id": 314
+    },
+    "syntax/GENERIC_LAMBDA_NOT_SUPPORTED": {
+      "code": 104,
+      "yaml_id": 12842
+    },
+    "syntax/GETTER_FORMAL_PARAMS": {
+      "code": 105,
+      "yaml_id": 58
+    },
+    "syntax/GETTER_SETTER_NOT_ABSTRACT": {
+      "code": 106,
+      "yaml_id": 31
+    },
+    "syntax/GET_ACCESSOR_MUST_BE_AT_LEAST_AS_ACCESSIBLE": {
+      "code": 107,
+      "yaml_id": 205
+    },
+    "syntax/HARD_KEYWORD_IDENT": {
+      "code": 108,
+      "yaml_id": 316
+    },
+    "syntax/HEXADECIMAL_EXPECTED": {
+      "code": 109,
+      "yaml_id": 248
+    },
+    "syntax/IDENTIFIER_EXPECTED": {
+      "code": 110,
+      "yaml_id": 131
+    },
+    "syntax/IDENTIFIER_EXPECTED_HERE": {
+      "code": 111,
+      "yaml_id": 224
+    },
+    "syntax/ID_EXPECTED": {
+      "code": 112,
+      "yaml_id": 122
+    },
+    "syntax/ILLEGALE_CONTINUE": {
+      "code": 113,
+      "yaml_id": 165
+    },
+    "syntax/ILLEGAL_AWAIT_IN_ASYNC_FUN": {
+      "code": 114,
+      "yaml_id": 65
+    },
+    "syntax/ILLEGAL_BREAK": {
+      "code": 115,
+      "yaml_id": 209
+    },
+    "syntax/ILLEGAL_EXPRESSION_WRAP": {
+      "code": 116,
+      "yaml_id": 196
+    },
+    "syntax/ILLEGAL_NEW_LINE": {
+      "code": 117,
+      "yaml_id": 172
+    },
+    "syntax/ILLEGAL_START_STRUCT_CLASS": {
+      "code": 118,
+      "yaml_id": 40
+    },
+    "syntax/ILLEGAL_USE_STRICT": {
+      "code": 119,
+      "yaml_id": 199
+    },
+    "syntax/IMPLEMENTATION_IN_AMBIENT_CONTEXT": {
+      "code": 120,
+      "yaml_id": 331
+    },
+    "syntax/IMPLEMENTS_CLAUSE_EMPTY": {
+      "code": 121,
+      "yaml_id": 185
+    },
+    "syntax/IMPLICIT_OCTAL_NOT_ALLOWED": {
+      "code": 122,
+      "yaml_id": 257
+    },
+    "syntax/IMPORT_EXPORT_ONLY_AT_TOP_LEVEL": {
+      "code": 123,
+      "yaml_id": 166
+    },
+    "syntax/IMPORT_ITSELF": {
+      "code": 124,
+      "yaml_id": 175127
+    },
+    "syntax/IMPORT_META_DIRECT_EVAL": {
+      "code": 125,
+      "yaml_id": 48
+    },
+    "syntax/IMPORT_META_ONLY_MODULE": {
+      "code": 126,
+      "yaml_id": 69
+    },
+    "syntax/IMPORT_TOP_LEVEL": {
+      "code": 127,
+      "yaml_id": 226
+    },
+    "syntax/IMPORT_TYPE_NOT_ALLOWED": {
+      "code": 128,
+      "yaml_id": 7095
+    },
+    "syntax/IMPROPER_NESTING_CLASS": {
+      "code": 129,
+      "yaml_id": 233
+    },
+    "syntax/IMPROPER_NESTING_INTERFACE": {
+      "code": 130,
+      "yaml_id": 234
+    },
+    "syntax/INDEXED_ACCESS_TYPE": {
+      "code": 131,
+      "yaml_id": 49888
+    },
+    "syntax/INDEX_MISSING_IDENTIFIER": {
+      "code": 132,
+      "yaml_id": 21
+    },
+    "syntax/INDEX_MISSING_TYPE": {
+      "code": 133,
+      "yaml_id": 20
+    },
+    "syntax/INDEX_TYPE_EXPECTED": {
+      "code": 134,
+      "yaml_id": 17
+    },
+    "syntax/INDEX_TYPE_NOT_NUMBER": {
+      "code": 135,
+      "yaml_id": 18
+    },
+    "syntax/INSERT_NODE_ABSENT": {
+      "code": 136,
+      "yaml_id": 10
+    },
+    "syntax/INSTANCEOF_ERASED": {
+      "code": 137,
+      "yaml_id": 18871
+    },
+    "syntax/INSUFFICIENT_PARAM_IN_ARROW_FUN": {
+      "code": 138,
+      "yaml_id": 64
+    },
+    "syntax/INTERFACE_DEC_IMPLEMENTS": {
+      "code": 139,
+      "yaml_id": 177
+    },
+    "syntax/INTERFACE_DEFINITE_ASSIGNMENT_NOT_ALLOWED": {
+      "code": 140,
+      "yaml_id": 162966
+    },
+    "syntax/INTERFACE_FIELDS_TYPE_ANNOTATION": {
+      "code": 141,
+      "yaml_id": 119
+    },
+    "syntax/INTERFACE_MEMBER_INIT_NOT_ALLOWED": {
+      "code": 142,
+      "yaml_id": 180
+    },
+    "syntax/INTERSECTION_TYPES": {
+      "code": 143,
+      "yaml_id": 145527
+    },
+    "syntax/INVALIDE_CHAR_CLASS": {
+      "code": 144,
+      "yaml_id": 79
+    },
+    "syntax/INVALID_ACCESSOR": {
+      "code": 145,
+      "yaml_id": 159
+    },
+    "syntax/INVALID_ANNOTATION_NAME": {
+      "code": 146,
+      "yaml_id": 329
+    },
+    "syntax/INVALID_ARGUMENT_ETSNOLINT": {
+      "code": 147,
+      "yaml_id": 278
+    },
+    "syntax/INVALID_ARGUMENT_PASSED": {
+      "code": 148,
+      "yaml_id": 26
+    },
+    "syntax/INVALID_ASSERT": {
+      "code": 149,
+      "yaml_id": 93
+    },
+    "syntax/INVALID_BIGINT": {
+      "code": 150,
+      "yaml_id": 255
+    },
+    "syntax/INVALID_CAPTURING_GROUP": {
+      "code": 151,
+      "yaml_id": 76
+    },
+    "syntax/INVALID_CHAR": {
+      "code": 152,
+      "yaml_id": 77
+    },
+    "syntax/INVALID_CHAR_ESCAPE": {
+      "code": 153,
+      "yaml_id": 258
+    },
+    "syntax/INVALID_CLASS_FIELD": {
+      "code": 154,
+      "yaml_id": 12
+    },
+    "syntax/INVALID_CLASS_METHOD": {
+      "code": 155,
+      "yaml_id": 13
+    },
+    "syntax/INVALID_CLOSING_PARENTHESIS": {
+      "code": 156,
+      "yaml_id": 75
+    },
+    "syntax/INVALID_CONTROL_ESCAPE": {
+      "code": 157,
+      "yaml_id": 92
+    },
+    "syntax/INVALID_DECIMAL_ESCAPE": {
+      "code": 158,
+      "yaml_id": 81
+    },
+    "syntax/INVALID_DECORATOR_CONSTRUCTOR": {
+      "code": 159,
+      "yaml_id": 201
+    },
+    "syntax/INVALID_DESTRUCTURING_INIT_SIZE": {
+      "code": 160,
+      "yaml_id": 82935
+    },
+    "syntax/INVALID_DESTRUCTURING_TARGET": {
+      "code": 161,
+      "yaml_id": 49
+    },
+    "syntax/INVALID_DIGIT": {
+      "code": 162,
+      "yaml_id": 266
+    },
+    "syntax/INVALID_ENUM_TYPE": {
+      "code": 163,
+      "yaml_id": 35
+    },
+    "syntax/INVALID_ESCAPE": {
+      "code": 164,
+      "yaml_id": 87
+    },
+    "syntax/INVALID_EXPORT_DEFAULT": {
+      "code": 165,
+      "yaml_id": 42
+    },
+    "syntax/INVALID_GROUP": {
+      "code": 166,
+      "yaml_id": 85
+    },
+    "syntax/INVALID_GROUP_NAME": {
+      "code": 167,
+      "yaml_id": 84
+    },
+    "syntax/INVALID_HEX_ESCAPE": {
+      "code": 168,
+      "yaml_id": 83
+    },
+    "syntax/INVALID_IDENTIFIER_PART": {
+      "code": 169,
+      "yaml_id": 263
+    },
+    "syntax/INVALID_INIT_IN_PACKAGE": {
+      "code": 170,
+      "yaml_id": 288
+    },
+    "syntax/INVALID_INSERT_NODE": {
+      "code": 171,
+      "yaml_id": 11
+    },
+    "syntax/INVALID_LEFT_FOR_IN": {
+      "code": 172,
+      "yaml_id": 174
+    },
+    "syntax/INVALID_LEFT_FOR_IN_OF": {
+      "code": 173,
+      "yaml_id": 167
+    },
+    "syntax/INVALID_LEFT_HAND_IN_FOR_OF": {
+      "code": 174,
+      "yaml_id": 211
+    },
+    "syntax/INVALID_LEFT_IN_PREFIX": {
+      "code": 175,
+      "yaml_id": 71
+    },
+    "syntax/INVALID_LEFT_SIDE_ARRAY_DESTRUCTURING": {
+      "code": 176,
+      "yaml_id": 204
+    },
+    "syntax/INVALID_LEFT_SIDE_IN_ASSIGNMENT": {
+      "code": 177,
+      "yaml_id": 72
+    },
+    "syntax/INVALID_LEFT_SITE_OPERATOR": {
+      "code": 178,
+      "yaml_id": 53
+    },
+    "syntax/INVALID_NAME_BACKREFERENCE": {
+      "code": 179,
+      "yaml_id": 89
+    },
+    "syntax/INVALID_NODE_NUMBER": {
+      "code": 180,
+      "yaml_id": 8
+    },
+    "syntax/INVALID_NODE_TYPE": {
+      "code": 181,
+      "yaml_id": 9
+    },
+    "syntax/INVALID_NON_CAPTURING_GROUP": {
+      "code": 182,
+      "yaml_id": 90
+    },
+    "syntax/INVALID_NUM": {
+      "code": 183,
+      "yaml_id": 249
+    },
+    "syntax/INVALID_NUMERIC_LIT": {
+      "code": 184,
+      "yaml_id": 251
+    },
+    "syntax/INVALID_NUMERIC_SEP": {
+      "code": 185,
+      "yaml_id": 254
+    },
+    "syntax/INVALID_NUMERIC_SEP_AT_END_OF_NUM": {
+      "code": 186,
+      "yaml_id": 250
+    },
+    "syntax/INVALID_OCTAL_DIGIT": {
+      "code": 187,
+      "yaml_id": 239
+    },
+    "syntax/INVALID_PACKAGE_TOP_LEVEL_STMT": {
+      "code": 188,
+      "yaml_id": 291
+    },
+    "syntax/INVALID_QUANTIFIER": {
+      "code": 189,
+      "yaml_id": 88
+    },
+    "syntax/INVALID_REGEX_FLAG": {
+      "code": 190,
+      "yaml_id": 246
+    },
+    "syntax/INVALID_REST_ELEMENT": {
+      "code": 191,
+      "yaml_id": 55
+    },
+    "syntax/INVALID_RIGHT_INSTANCEOF": {
+      "code": 192,
+      "yaml_id": 130
+    },
+    "syntax/INVALID_SHORTHAND_PROPERTY_INITIALIZER": {
+      "code": 193,
+      "yaml_id": 18822
+    },
+    "syntax/INVALID_TYPE": {
+      "code": 194,
+      "yaml_id": 138
+    },
+    "syntax/INVALID_TYPE_ANNOTATION_IN_FOR": {
+      "code": 195,
+      "yaml_id": 212
+    },
+    "syntax/INVALID_UNICODE_ESCAPE": {
+      "code": 196,
+      "yaml_id": 91
+    },
+    "syntax/INVALID_UNICODE_PROP_ESCAPE": {
+      "code": 197,
+      "yaml_id": 94
+    },
+    "syntax/INVALID_VAL_ANNOTATION_FIELD": {
+      "code": 198,
+      "yaml_id": 27
+    },
+    "syntax/KEYWORD_CONTAINS_ESCAPED_CHARS": {
+      "code": 199,
+      "yaml_id": 117
+    },
+    "syntax/LABEL_ALREADY_DECLARED": {
+      "code": 200,
+      "yaml_id": 214
+    },
+    "syntax/LATE_INITIALIZATION_FIELD_HAS_DEFAULT_VALUE": {
+      "code": 201,
+      "yaml_id": 304
+    },
+    "syntax/LATE_INITIALIZATION_FIELD_INVALID_MODIFIER": {
+      "code": 202,
+      "yaml_id": 139768
+    },
+    "syntax/LEXICAL_DEC_NOT_ALLOWED_IN_SINGLE_STATEMENT_CONTEXT": {
+      "code": 203,
+      "yaml_id": 175
+    },
+    "syntax/LITERAL_VALUE_IDENT": {
+      "code": 204,
+      "yaml_id": 315
+    },
+    "syntax/LOCAL_CLASS_ACCESS_MOD": {
+      "code": 205,
+      "yaml_id": 30
+    },
+    "syntax/META_PROP_FOR_IMPORT": {
+      "code": 206,
+      "yaml_id": 68
+    },
+    "syntax/MISSING_CATCH_OR_FINALLY": {
+      "code": 207,
+      "yaml_id": 169
+    },
+    "syntax/MISSING_CATCH_OR_FINALLY_AFTER_TRY": {
+      "code": 208,
+      "yaml_id": 39
+    },
+    "syntax/MISSING_INIT_FOR_CONST_PACKAGE_PROP": {
+      "code": 209,
+      "yaml_id": 294
+    },
+    "syntax/MISSING_INIT_IN_DEST_DEC": {
+      "code": 210,
+      "yaml_id": 186
+    },
+    "syntax/MISSING_INIT_OR_CONST_DEC": {
+      "code": 211,
+      "yaml_id": 100
+    },
+    "syntax/MISSING_INIT_OR_TYPE": {
+      "code": 212,
+      "yaml_id": 105
+    },
+    "syntax/MISSING_LOOP_AFTER_LABEL": {
+      "code": 213,
+      "yaml_id": 38
+    },
+    "syntax/MISSING_LOOP_BODY": {
+      "code": 214,
+      "yaml_id": 300
+    },
+    "syntax/MISSING_LOOP_CONDITION": {
+      "code": 215,
+      "yaml_id": 301
+    },
+    "syntax/MODIFIERS_OF_GET_SET_LIMITED": {
+      "code": 216,
+      "yaml_id": 107
+    },
+    "syntax/MORE_INDEXER": {
+      "code": 217,
+      "yaml_id": 326
+    },
+    "syntax/MULTIDIM_ARRAY_NOT_SUPPORTED": {
+      "code": 218,
+      "yaml_id": 97506
+    },
+    "syntax/MULTIPLE_CONSTRUCTOR_IMPLEMENTATIONS": {
+      "code": 219,
+      "yaml_id": 206
+    },
+    "syntax/MULTIPLE_DEFAULT": {
+      "code": 220,
+      "yaml_id": 171
+    },
+    "syntax/MULTIPLE_STATIC_BLOCK": {
+      "code": 221,
+      "yaml_id": 34
+    },
+    "syntax/NAMESPACE_ANNOTATION_CONFLICT": {
+      "code": 222,
+      "yaml_id": 7
+    },
+    "syntax/NAMESPACE_MERGE_ERROR": {
+      "code": 223,
+      "yaml_id": 6
+    },
+    "syntax/NAMESPACE_ONLY_TOP_OR_IN_NAMESPACE": {
+      "code": 224,
+      "yaml_id": 134
+    },
+    "syntax/NATIVE_FLAG_ONLY_FOR_TOP_FUN": {
+      "code": 225,
+      "yaml_id": 203
+    },
+    "syntax/NATIVE_METHOD_ASYNC": {
+      "code": 226,
+      "yaml_id": 116
+    },
+    "syntax/NESTED_FUNCTIONS_NOT_ALLOWED": {
+      "code": 227,
+      "yaml_id": 135
+    },
+    "syntax/NEWLINE_NOT_ALLOWED_IN_STRING": {
+      "code": 228,
+      "yaml_id": 265
+    },
+    "syntax/NEW_TARGET_IS_NOT_ALLOWED": {
+      "code": 229,
+      "yaml_id": 73
+    },
+    "syntax/NEW_WITH_IMPORT": {
+      "code": 230,
+      "yaml_id": 60
+    },
+    "syntax/NON_OCTAL_DECIAML_INTEGER_LIT_IN_STRICT_MODE": {
+      "code": 231,
+      "yaml_id": 256
+    },
+    "syntax/NOT_ALLOWED_USER_DEFINED_TYPE": {
+      "code": 232,
+      "yaml_id": 145
+    },
+    "syntax/NOT_AS_OBJECT": {
+      "code": 233,
+      "yaml_id": 318
+    },
+    "syntax/NO_DEFAULT_FOR_REST": {
+      "code": 234,
+      "yaml_id": 192
+    },
+    "syntax/NULLISH_COALESCING_MISSING_PARENS": {
+      "code": 235,
+      "yaml_id": 59
+    },
+    "syntax/NUMERIC_SEP_UNDERSCORE_IN_NUMBER": {
+      "code": 236,
+      "yaml_id": 252
+    },
+    "syntax/OBJECT_PATTER_CONTAIN_METHODS": {
+      "code": 237,
+      "yaml_id": 62
+    },
+    "syntax/OCTAL_ESCAPE_IN_TEMPLATE_STRINGS": {
+      "code": 238,
+      "yaml_id": 247
+    },
+    "syntax/OMITTED_ELEMENTS_NOT_SUPPORTED_IN_ARRAYS": {
+      "code": 239,
+      "yaml_id": 167720
+    },
+    "syntax/ONLY_AMBIENT_MODULES_QUOTED_NAMES": {
+      "code": 240,
+      "yaml_id": 181
+    },
+    "syntax/ONLY_ARRAY_OR_TUPLE_FOR_REST": {
+      "code": 241,
+      "yaml_id": 193
+    },
+    "syntax/ONLY_SPREAD_AT_LAST_INDEX": {
+      "code": 242,
+      "yaml_id": 143
+    },
+    "syntax/ONLY_STRING_LITERAL_IN_INIT_MODULE": {
+      "code": 243,
+      "yaml_id": 321
+    },
+    "syntax/OPTIONAL_METHOD": {
+      "code": 244,
+      "yaml_id": 129375
+    },
+    "syntax/OPTIONAL_VARIABLE": {
+      "code": 245,
+      "yaml_id": 306
+    },
+    "syntax/OPTIONAL_VAR_IN_FOR_OF": {
+      "code": 246,
+      "yaml_id": 96
+    },
+    "syntax/OVERLOAD_MODIFIERS": {
+      "code": 247,
+      "yaml_id": 323
+    },
+    "syntax/OVERRIDE_IN_INTERFACE": {
+      "code": 248,
+      "yaml_id": 189
+    },
+    "syntax/OVERRIDE_NOT_STATIC": {
+      "code": 249,
+      "yaml_id": 69198
+    },
+    "syntax/PACKAGE_DEPRECATED": {
+      "code": 250,
+      "yaml_id": 139148
+    },
+    "syntax/PACKAGE_MODULE_IMPORT_OWN_PACKAGE": {
+      "code": 251,
+      "yaml_id": 3
+    },
+    "syntax/PACKAGE_MULTIPLE_STATIC_BLOCK": {
+      "code": 252,
+      "yaml_id": 289
+    },
+    "syntax/PARAM_CANNOT_HAVE_QUESTION_MARK": {
+      "code": 253,
+      "yaml_id": 216
+    },
+    "syntax/PARAM_MODIFIER_CANNOT_APPEAR_ON_PARAMETER": {
+      "code": 254,
+      "yaml_id": 232
+    },
+    "syntax/PREDEFINED_TYPE_AS_IDENTIFIER": {
+      "code": 255,
+      "yaml_id": 295
+    },
+    "syntax/PRIMITIVE_NOT_ALLOWED": {
+      "code": 256,
+      "yaml_id": 137
+    },
+    "syntax/PRIVATE_FIELD_MISMATCH": {
+      "code": 257,
+      "yaml_id": 302
+    },
+    "syntax/PRIVATE_FIELD_REDEC": {
+      "code": 258,
+      "yaml_id": 154
+    },
+    "syntax/PRIVATE_IDENTIFIER_NOT_CONSTRUCTOR": {
+      "code": 259,
+      "yaml_id": 267
+    },
+    "syntax/PRIVATE_IDENTIFIER_NUMBER": {
+      "code": 260,
+      "yaml_id": 269
+    },
+    "syntax/PRIVATE_IDENTIFIER_STRING": {
+      "code": 261,
+      "yaml_id": 268
+    },
+    "syntax/PRIVATE_INTERFACE_MISSING_BODY": {
+      "code": 262,
+      "yaml_id": 32
+    },
+    "syntax/PROHIBITED_ACCESS_MODIFIER_IN_AMBIENT_CLASS": {
+      "code": 263,
+      "yaml_id": 238
+    },
+    "syntax/PROTOTYPE_ACCESS": {
+      "code": 264,
+      "yaml_id": 30818
+    },
+    "syntax/QUANTIFIER_OUT_OF_ORDER": {
+      "code": 265,
+      "yaml_id": 78
+    },
+    "syntax/READONLY_INTERFACE_METHOD": {
+      "code": 266,
+      "yaml_id": 33
+    },
+    "syntax/READONLY_ONLY_ON_ARRAY_OR_TUPLE": {
+      "code": 267,
+      "yaml_id": 141
+    },
+    "syntax/READONLY_TYPE_EXPECTED": {
+      "code": 268,
+      "yaml_id": 237
+    },
+    "syntax/REPEATED_TYPE_KEYWORD": {
+      "code": 269,
+      "yaml_id": 135857
+    },
+    "syntax/REQUIRED_PARAM_AFTER_DEFAULT": {
+      "code": 270,
+      "yaml_id": 14
+    },
+    "syntax/REQUIRED_PARAM_AFTER_OPTIONAL": {
+      "code": 271,
+      "yaml_id": 219
+    },
+    "syntax/REQUIRED_TYPE_PARAM_AFTER_OPTIONAL": {
+      "code": 272,
+      "yaml_id": 179
+    },
+    "syntax/RESTPARAM_ID_IN_DEC_CONTEXT": {
+      "code": 273,
+      "yaml_id": 156
+    },
+    "syntax/REST_AND_DEFAULT_SAME_TIME": {
+      "code": 274,
+      "yaml_id": 15
+    },
+    "syntax/REST_PARAM_NOT_LAST": {
+      "code": 275,
+      "yaml_id": 67
+    },
+    "syntax/REST_UNSUPPORTED_IN_DESTRUCTURING": {
+      "code": 276,
+      "yaml_id": 165518
+    },
+    "syntax/RETURN_IN_FUN_BODY": {
+      "code": 277,
+      "yaml_id": 163
+    },
+    "syntax/RETURN_WITH_VALUE": {
+      "code": 278,
+      "yaml_id": 287
+    },
+    "syntax/RE_EXPORTING_LOCAL_BINDINGS_IS_NOT_ALLOWED": {
+      "code": 279,
+      "yaml_id": 138237
+    },
+    "syntax/SETTER_FORMAL_PARAMS": {
+      "code": 280,
+      "yaml_id": 63
+    },
+    "syntax/SETTER_NO_RETURN_TYPE": {
+      "code": 281,
+      "yaml_id": 241
+    },
+    "syntax/SETTER_OPTIONAL_PARAM": {
+      "code": 282,
+      "yaml_id": 13534
+    },
+    "syntax/SETTER_REST_PARAM": {
+      "code": 283,
+      "yaml_id": 36775
+    },
+    "syntax/SPECIAL_METHOD_CONSTRUCTOR": {
+      "code": 284,
+      "yaml_id": 149
+    },
+    "syntax/SPECIAL_PREDEFINED_METHOD_CANNOT_BE_ASYNC": {
+      "code": 285,
+      "yaml_id": 220
+    },
+    "syntax/SPECIAL_PREDEFINED_METHOD_SHOULD_HAVE_ONE_PARAM": {
+      "code": 286,
+      "yaml_id": 221
+    },
+    "syntax/SPECIAL_PREDEFINED_METHOD_SHOULD_HAVE_TWO_PARAMS": {
+      "code": 287,
+      "yaml_id": 222
+    },
+    "syntax/SPECIAL_PREDEFINED_METHOD_SHOULD_NOT_HAVE_PARAMS": {
+      "code": 288,
+      "yaml_id": 223
+    },
+    "syntax/SPREAD_MUST_BE_LAST_IN_TUPLE": {
+      "code": 289,
+      "yaml_id": 136
+    },
+    "syntax/STATIC_LATE_INITIALIZATION_FIELD_INVALID_MODIFIER": {
+      "code": 290,
+      "yaml_id": 303
+    },
+    "syntax/STATIC_PROPERTY_PROTOTYPE": {
+      "code": 291,
+      "yaml_id": 155
+    },
+    "syntax/STRICT_MODE_FUNC_DECL": {
+      "code": 292,
+      "yaml_id": 198
+    },
+    "syntax/TAGGED_TEMPLATE_LITERALS_IN_OPTIONALCHAIN": {
+      "code": 293,
+      "yaml_id": 56
+    },
+    "syntax/THIS_IN_NON_STATIC_METHOD": {
+      "code": 294,
+      "yaml_id": 44
+    },
+    "syntax/THIS_OPTIONAL_CHAIN_NOT_SUPPORTED": {
+      "code": 295,
+      "yaml_id": 115549
+    },
+    "syntax/TOO_LARGE_NUM": {
+      "code": 296,
+      "yaml_id": 262
+    },
+    "syntax/TRAILING_COMMA_NOT_ALLOWED": {
+      "code": 297,
+      "yaml_id": 150
+    },
+    "syntax/TS_TYPE_ASSERTION": {
+      "code": 298,
+      "yaml_id": 178094
+    },
+    "syntax/TYPEOF_IN_ANNOTATION": {
+      "code": 299,
+      "yaml_id": 309
+    },
+    "syntax/TYPE_ALIAS_INVALID_NAME": {
+      "code": 300,
+      "yaml_id": 225
+    },
+    "syntax/TYPE_ALIAS_ONLY_TOP_LEVEL": {
+      "code": 301,
+      "yaml_id": 129
+    },
+    "syntax/TYPE_ANNOTATION_FOR_CONSTRUCTOR": {
+      "code": 302,
+      "yaml_id": 140
+    },
+    "syntax/TYPE_ARGUMENT_LIST_EMPTY": {
+      "code": 303,
+      "yaml_id": 31671
+    },
+    "syntax/TYPE_EXPECTED": {
+      "code": 304,
+      "yaml_id": 188
+    },
+    "syntax/TYPE_PARAM_DEC_EXPECTED": {
+      "code": 305,
+      "yaml_id": 176
+    },
+    "syntax/TYPE_PARAM_LIST_EMPTY": {
+      "code": 306,
+      "yaml_id": 191
+    },
+    "syntax/UNDEFINED_LABEL": {
+      "code": 307,
+      "yaml_id": 162
+    },
+    "syntax/UNEXPECTED_ARROWPARAM_ELEMENT": {
+      "code": 308,
+      "yaml_id": 148
+    },
+    "syntax/UNEXPECTED_CHAR_ETSNOLINT": {
+      "code": 309,
+      "yaml_id": 277
+    },
+    "syntax/UNEXPECTED_CHAR_PRIVATE_IDENTIFIER": {
+      "code": 310,
+      "yaml_id": 270
+    },
+    "syntax/UNEXPECTED_ID": {
+      "code": 311,
+      "yaml_id": 45
+    },
+    "syntax/UNEXPECTED_MODIFIER": {
+      "code": 312,
+      "yaml_id": 153
+    },
+    "syntax/UNEXPECTED_PRIVATE": {
+      "code": 313,
+      "yaml_id": 47
+    },
+    "syntax/UNEXPECTED_QUESTIONMARK": {
+      "code": 314,
+      "yaml_id": 172384
+    },
+    "syntax/UNEXPECTED_STRICT_MODE_RESERVED_KEYWORD": {
+      "code": 315,
+      "yaml_id": 264
+    },
+    "syntax/UNEXPECTED_SUPER": {
+      "code": 316,
+      "yaml_id": 61
+    },
+    "syntax/UNEXPECTED_THIS": {
+      "code": 317,
+      "yaml_id": 240
+    },
+    "syntax/UNEXPECTED_TOKEN": {
+      "code": 318,
+      "yaml_id": 16
+    },
+    "syntax/UNEXPECTED_TOKEN_AS": {
+      "code": 319,
+      "yaml_id": 95
+    },
+    "syntax/UNEXPECTED_TOKEN_ENUM": {
+      "code": 320,
+      "yaml_id": 178
+    },
+    "syntax/UNEXPECTED_TOKEN_EXPECTED_BACKTICK_OR_DOLLAR_LBRACE": {
+      "code": 321,
+      "yaml_id": 259
+    },
+    "syntax/UNEXPECTED_TOKEN_EXPECTED_PARAM": {
+      "code": 322,
+      "yaml_id": 228
+    },
+    "syntax/UNEXPECTED_TOKEN_EXPECTED_PARAM_OR_PARAM": {
+      "code": 323,
+      "yaml_id": 229
+    },
+    "syntax/UNEXPECTED_TOKEN_FOR_PARAM": {
+      "code": 324,
+      "yaml_id": 187
+    },
+    "syntax/UNEXPECTED_TOKEN_ID": {
+      "code": 325,
+      "yaml_id": 112
+    },
+    "syntax/UNEXPECTED_TOKEN_ID_FUN": {
+      "code": 326,
+      "yaml_id": 147
+    },
+    "syntax/UNEXPECTED_TOKEN_IN_PRIVATE": {
+      "code": 327,
+      "yaml_id": 160
+    },
+    "syntax/UNEXPECTED_TOKEN_PARAM": {
+      "code": 328,
+      "yaml_id": 227
+    },
+    "syntax/UNEXPECTED_TOKEN_PARAM_EXPECTED_CASE_OR_DEFAULT": {
+      "code": 329,
+      "yaml_id": 231
+    },
+    "syntax/UNEXPECTED_TOKEN_STRING_LITERAL": {
+      "code": 330,
+      "yaml_id": 151
+    },
+    "syntax/UNEXPECTED_TOKEN_WHILE": {
+      "code": 331,
+      "yaml_id": 170
+    },
+    "syntax/UNHANDLED_THROW_IN_INITIALIZER": {
+      "code": 332,
+      "yaml_id": 243
+    },
+    "syntax/UNSUPPORTED_CHAR_LIT": {
+      "code": 333,
+      "yaml_id": 261
+    },
+    "syntax/UNSUPPORTED_ENUM_TYPE": {
+      "code": 334,
+      "yaml_id": 327
+    },
+    "syntax/UNSUPPORTED_IN_OPERATOR_TYPE": {
+      "code": 335,
+      "yaml_id": 58212
+    },
+    "syntax/UNTERMINATED_MULTI_LINE_COMMENT": {
+      "code": 336,
+      "yaml_id": 245
+    },
+    "syntax/UNTERMINATED_REGEX": {
+      "code": 337,
+      "yaml_id": 260
+    },
+    "syntax/UNTERMINATED_STRING": {
+      "code": 338,
+      "yaml_id": 253
+    },
+    "syntax/UNTERMINATED_UNICODE_PROP_ESCAPE": {
+      "code": 339,
+      "yaml_id": 86
+    },
+    "syntax/USING_RESERVED_NAME_AS_VARIABLE_OR_TYPE_NAME": {
+      "code": 340,
+      "yaml_id": 242
+    },
+    "syntax/VALUE_IS_NOT_SET": {
+      "code": 341,
+      "yaml_id": 128
+    },
+    "syntax/VARIANCE_NOD_ALLOWED": {
+      "code": 342,
+      "yaml_id": 98
+    },
+    "syntax/VAR_DEC_EXPECTED": {
+      "code": 343,
+      "yaml_id": 126
+    },
+    "syntax/WITH_DEPRECATED": {
+      "code": 344,
+      "yaml_id": 161
+    },
+    "syntax/WRONG_ENUM_TYPE": {
+      "code": 345,
+      "yaml_id": 56791
+    },
+    "syntax/WRONG_LEFT_OF_INSTANCEOF": {
+      "code": 346,
+      "yaml_id": 310
+    },
+    "syntax/YIELD_IN_ARROW_FUN_PARAM": {
+      "code": 347,
+      "yaml_id": 66
+    },
+    "syntax/YIELD_IN_GENERATOR_PARAM": {
+      "code": 348,
+      "yaml_id": 54
+    },
+    "warning/AMBIENT_NON_AMBIENT_MIXED": {
+      "code": 1,
+      "yaml_id": 293075
+    },
+    "warning/ANNOTATION_UNUSED_GENERIC_ALIAS_WARN": {
+      "code": 2,
+      "yaml_id": 9
+    },
+    "warning/ASSIGN_TO_READONLY": {
+      "code": 3,
+      "yaml_id": 16
+    },
+    "warning/AWAIT_ASYNC_USAGE": {
+      "code": 4,
+      "yaml_id": 67
+    },
+    "warning/BOOST_EQUALITY_STATEMENT": {
+      "code": 5,
+      "yaml_id": 4
+    },
+    "warning/CLASS_COMPOSITE_KEY_USE_STRING": {
+      "code": 6,
+      "yaml_id": 98268
+    },
+    "warning/CONFLICTING_INTERFACE_OVERRIDE_OF_SAME_SUPER_METHOD": {
+      "code": 7,
+      "strict": true,
+      "yaml_id": 602430
+    },
+    "warning/DEPRECATED_PUBLIC_API": {
+      "code": 8,
+      "yaml_id": 32597
+    },
+    "warning/DIFFERENT_ENUM_EQUALITY": {
+      "code": 9,
+      "yaml_id": 65002
+    },
+    "warning/DUPLICATE_ALIAS": {
+      "code": 10,
+      "yaml_id": 32596
+    },
+    "warning/DUPLICATE_EXPORT_ALIASES": {
+      "code": 11,
+      "yaml_id": 73
+    },
+    "warning/DUPLICATE_IMPORT": {
+      "code": 12,
+      "yaml_id": 125428
+    },
+    "warning/DUPLICATE_SIGS": {
+      "code": 13,
+      "yaml_id": 12
+    },
+    "warning/EMPTY_EXPORT_SPECIFIER_LIST": {
+      "code": 14,
+      "yaml_id": 3614
+    },
+    "warning/EMPTY_SOURCE_FILE": {
+      "code": 15,
+      "yaml_id": 20000
+    },
+    "warning/EQUALITY_EXPRESSION_ALWAYS_FALSE": {
+      "code": 16,
+      "yaml_id": 65001
+    },
+    "warning/EQUALITY_EXPRESSION_ALWAYS_TRUE": {
+      "code": 17,
+      "yaml_id": 65000
+    },
+    "warning/ERROR_NO_ENUM_MIXED_TYPES": {
+      "code": 18,
+      "strict": true,
+      "yaml_id": 2501
+    },
+    "warning/EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO": {
+      "code": 19,
+      "strict": true,
+      "yaml_id": 71336
+    },
+    "warning/EXTENSION_MISMATCH": {
+      "code": 20,
+      "yaml_id": 25
+    },
+    "warning/EXTENSION_NONPUBLIC_COLLISION": {
+      "code": 21,
+      "yaml_id": 13
+    },
+    "warning/FINALLY_CANT_COMPLETE": {
+      "code": 22,
+      "yaml_id": 21
+    },
+    "warning/FUNCTION_ASM_SIG_COLLISION": {
+      "code": 23,
+      "yaml_id": 22
+    },
+    "warning/GENERIC_TYPE_CAST": {
+      "code": 24,
+      "yaml_id": 369037
+    },
+    "warning/GEN_STDLIB_DECLS": {
+      "code": 25,
+      "yaml_id": 2002
+    },
+    "warning/GETTER_LOOP": {
+      "code": 26,
+      "yaml_id": 23
+    },
+    "warning/IMPLICIT_BOXING_TO": {
+      "code": 27,
+      "yaml_id": 7
+    },
+    "warning/IMPLICIT_UNBOXING_TO": {
+      "code": 28,
+      "yaml_id": 8
+    },
+    "warning/INCOMPATIBLE_TYPE_FOR_OVERRIDE": {
+      "code": 29,
+      "strict": true,
+      "yaml_id": 52491
+    },
+    "warning/INITIALIZERS_IN_AMBIENT_CONTEXTS": {
+      "code": 30,
+      "strict": true,
+      "yaml_id": 125125
+    },
+    "warning/INSTANCEOF_ALWAYS_KNOWN": {
+      "code": 31,
+      "yaml_id": 1001506
+    },
+    "warning/INTERFACE_METHOD_COLLISION": {
+      "code": 32,
+      "yaml_id": 90187
+    },
+    "warning/INVALID_CAST": {
+      "code": 33,
+      "yaml_id": 326
+    },
+    "warning/MAYBE_FALLTHROUGH": {
+      "code": 34,
+      "yaml_id": 20
+    },
+    "warning/MAYBE_REASSIGNED": {
+      "code": 35,
+      "yaml_id": 17
+    },
+    "warning/MISSING_TYPE_ANNOTATION": {
+      "code": 36,
+      "strict": true,
+      "yaml_id": 1111
+    },
+    "warning/NON_NULLISH_OPERAND": {
+      "code": 37,
+      "yaml_id": 15
+    },
+    "warning/NO_OHMURL": {
+      "code": 38,
+      "yaml_id": 11
+    },
+    "warning/NULLISH_CAST_TO_NONNULLISH": {
+      "code": 39,
+      "yaml_id": 304
+    },
+    "warning/NULLISH_COALESCING_ALWAYS_LEFT": {
+      "code": 40,
+      "yaml_id": 971874
+    },
+    "warning/NULLISH_COALESCING_ALWAYS_RIGHT": {
+      "code": 41,
+      "yaml_id": 1068706
+    },
+    "warning/NULLISH_OPERAND": {
+      "code": 42,
+      "yaml_id": 14
+    },
+    "warning/OVERLOAD_UNREACHABLE_WARNING": {
+      "code": 43,
+      "yaml_id": 2323
+    },
+    "warning/OVERRIDE_FIELD_MUST_HAVE_INITIALIZER": {
+      "code": 44,
+      "strict": true,
+      "yaml_id": 1049305
+    },
+    "warning/PACKAGE_DEPRECATED_WARNING": {
+      "code": 45,
+      "yaml_id": 163154
+    },
+    "warning/PROHIBIT_TOP_LEVEL_STATEMENTS": {
+      "code": 46,
+      "yaml_id": 3
+    },
+    "warning/REPLACE_ASYNC_FUNCTION_WITH_COROUTINE": {
+      "code": 47,
+      "yaml_id": 5
+    },
+    "warning/REPLACE_LAMBDA_FUNCTION_WITH_REGULAR_FUNCTION": {
+      "code": 48,
+      "yaml_id": 6
+    },
+    "warning/REWRITE_OUTPUT_IN_CLI": {
+      "code": 49,
+      "yaml_id": 77069
+    },
+    "warning/SETTER_LOOP": {
+      "code": 50,
+      "yaml_id": 24
+    },
+    "warning/SIMULTANEOUS_INCREMENTAL_OUTPUT": {
+      "code": 51,
+      "yaml_id": 19
+    },
+    "warning/SUGGEST_FINAL_MODIFIER_FOR_CLASS": {
+      "code": 52,
+      "yaml_id": 1
+    },
+    "warning/SUGGEST_FINAL_MODIFIER_FOR_METHOD": {
+      "code": 53,
+      "yaml_id": 2
+    },
+    "warning/THIS_OR_SUPER_IN_FIELD_INITIALIZER": {
+      "code": 54,
+      "yaml_id": 10
+    },
+    "warning/TRIVIAL_CAST": {
+      "code": 55,
+      "yaml_id": 670214
+    },
+    "warning/UNREACHABLE_STMT": {
+      "code": 56,
+      "yaml_id": 26
+    },
+    "warning/UNSUPPORTED_CONST_ENUM": {
+      "code": 57,
+      "strict": true,
+      "yaml_id": 440
+    },
+    "warning/UNUSED_LOOP_LABEL": {
+      "code": 58,
+      "yaml_id": 1284101
+    },
+    "warning/UNUSED_SYMBOL": {
+      "code": 59,
+      "yaml_id": 289743
+    },
+    "warning/USED_TYPE_IS_NOT_EXPORTED": {
+      "code": 60,
+      "strict": true,
+      "yaml_id": 1236581
+    }
+  },
+  "retired": {
+    "semantic/AMBIGUOUS_UNION_VALUE": {
+      "code": 26,
+      "yaml_id": 101680
+    }
+  },
+  "schema": 1
+}

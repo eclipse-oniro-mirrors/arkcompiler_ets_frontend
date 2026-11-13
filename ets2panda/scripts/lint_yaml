@@ -83,11 +83,26 @@ def main():
         params = [p for p in params if p != "--all"]
         for path in known_file_paths():
             params.append(path)
-    passed = True
+    passed = check_stable_map()
     for path in params:
         print("Processing", path)
         passed = passed and check_graveyard(Path(path))
     sys.exit(0 if passed else 1)
+
+def check_stable_map() -> bool:
+    script = Path(posixpath.dirname(os.path.abspath(sys.argv[0]))) / "sync_stable_map"
+    proc = subprocess.run(
+        [sys.executable, str(script), "--check"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    output = proc.stdout.decode()
+    if output:
+        print(output, end="")
+    if proc.returncode != 0:
+        print(f"stable_map.json is not in sync; run '{script}' locally and commit the updated file")
+        return False
+    return True
 
 if __name__ == "__main__":
     main()

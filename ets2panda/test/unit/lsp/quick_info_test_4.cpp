@@ -49,8 +49,8 @@ std::vector<SymbolDisplayPart> MakeParts(const std::vector<std::pair<std::string
 
 // A variable annotated with a union of every numeric/boolean primitive keyword
 // expands each constituent through PrimitiveTypeToName in the hover display.
-// The initializer comes from a byte-typed function because a direct literal is
-// ambiguous across the numeric union members (ESE101680).
+// The initializer comes from a byte-typed function because a direct literal
+// is ambiguous across the numeric union members (Rule Ambiguous-Widening).
 TEST_F(LspQuickInfo4Tests, WidePrimitiveUnionVariableDisplay)
 {
     const std::string source =

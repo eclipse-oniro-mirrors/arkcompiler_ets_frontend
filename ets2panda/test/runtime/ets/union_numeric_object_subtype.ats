@@ -1,0 +1,67 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Object subtype matching: default inferred type (int) is a subtype of Object
+// (a non-numeric union member). Previously, GetAppropriatePreferredType selected
+// the sole numeric member (byte/short/long) via constant folding. Now the default
+// type (int) is used, which is a subtype of Object → OK with Integer runtime type.
+
+function main(): void {
+    // byte|Object: was OK (byte), now OK (int) — Int <: Object
+    let a1: byte | Object = 1
+    arktest.assertTrue(a1 instanceof int)
+
+    let a2: byte | Object = 127
+    arktest.assertTrue(a2 instanceof int)
+
+    // short|Object: was OK (short), now OK (int)
+    let b1: short | Object = 1
+    arktest.assertTrue(b1 instanceof int)
+
+    let b2: short | Object = 127
+    arktest.assertTrue(b2 instanceof int)
+
+    let b3: short | Object = 128
+    arktest.assertTrue(b3 instanceof int)
+
+    // long|Object: was OK (long), now OK (int)
+    let c1: long | Object = 1
+    arktest.assertTrue(c1 instanceof int)
+
+    // Three-way with Object: int not in union but Int <: Object
+    let d1: byte | long | Object = 1
+    arktest.assertTrue(d1 instanceof int)
+
+    let d2: short | long | Object = 1
+    arktest.assertTrue(d2 instanceof int)
+
+    let d3: byte | short | Object = 1
+    arktest.assertTrue(d3 instanceof int)
+
+    // byte|Object=128: 128 doesn't fit byte, was already OK (int) via default type
+    let e1: byte | Object = 128
+    arktest.assertTrue(e1 instanceof int)
+
+    // Scenario consistency
+    let s1: byte | Object = 0 as byte
+    s1 = 127
+    arktest.assertTrue(s1 instanceof int)
+
+    arktest.assertTrue(retByteObject() instanceof int)
+    arktest.assertTrue(passByteObject(127) instanceof int)
+}
+
+function retByteObject(): byte | Object { return 127 }
+function passByteObject(p: byte | Object): byte | Object { return p }

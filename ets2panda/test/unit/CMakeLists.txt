@@ -38,6 +38,11 @@ ets2panda_add_gtest(es2panda_api_version_tests
     CPP_SOURCES api_version_test.cpp
 )
 
+ets2panda_add_gtest(es2panda_stable_code_map_tests
+    CPP_SOURCES stable_code_map_test.cpp
+)
+add_dependencies(es2panda_stable_code_map_tests es2panda_stable_map_sync)
+
 ets2panda_add_gtest(es2panda_astdumper_tests
     CPP_SOURCES ast_dumper_test.cpp
 )

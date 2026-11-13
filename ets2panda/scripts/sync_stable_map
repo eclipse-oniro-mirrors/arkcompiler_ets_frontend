@@ -1,0 +1,430 @@
+#!/usr/bin/env python3
+# Copyright (c) 2026 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Stable code map for es2panda diagnostics.
+
+Maintains `util/diagnostic/stable_map.json`, a registry that assigns a stable
+sequential code (per diagnostic category, starting from 1) to every diagnostic
+defined in the diagnostic YAMLs. The registry is append-only:
+
+* a NEW diagnostic gets the next unused code of its category (tail append);
+* a RENAMED diagnostic (same YAML `id`, new `name`) keeps its code;
+* a DELETED diagnostic must put its YAML `id` into the YAML `graveyard`
+  first, otherwise the sync fails; the registry entry then moves to
+  `retired` and its code is never reused;
+* codes already assigned never change and never depend on YAML file order
+  (the YAMLs are name-sorted by `normalize_yaml`, which would otherwise
+  shift every positional mapping on each insertion);
+* a `strict: true` WARNING is dual-registered: besides its `warning/<name>`
+  entry it also gets a mirrored `semantic/<name>` entry (with a code from the
+  semantic counter) marked `"strict": true`. At runtime such a warning can be
+  escalated to a semantic error (soft/hard path lists, `ES2PANDA_STRICT`
+  builds), so the same diagnostic can surface as W#### or ESE####; the dual
+  registration lets tooling resolve both forms. The mirror lifecycle follows
+  the warning side: it is renamed, retired or orphan-error together with it;
+  removing `strict: true` retires the mirror (its code is never reused).
+
+The sync runs at build time (see the `es2panda_stable_map_sync` target in
+ets2panda/CMakeLists.txt) and can be run manually:
+
+    scripts/sync_stable_map            # sync (writes the json if needed)
+    scripts/sync_stable_map --check    # verify only, never writes (for CI)
+
+The output is deterministic: sorted keys, fixed indentation, so consecutive
+runs are byte-identical unless the registry content actually changed.
+"""
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+import yaml
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+DEFAULT_ROOT = SCRIPT_DIR.parent
+
+# Category (as in YAML top-level key) -> YAML file, relative to ets2panda root.
+# Matches the `panda_gen(es2panda_diagnostic_gen ...)` DATA list.
+CATEGORY_FILES = {
+    "fatal": "util/diagnostic/fatal.yaml",
+    "syntax": "util/diagnostic/syntax.yaml",
+    "semantic": "util/diagnostic/semantic.yaml",
+    "warning": "util/diagnostic/warning.yaml",
+    "arkts_config_error": "util/diagnostic/arktsconfig_error.yaml",
+    "declgen_ets2ts_error": "declgen_ets2ts/declgen_ets2ts_error.yaml",
+    "declgen_ets2ts_warning": "declgen_ets2ts/declgen_ets2ts_warning.yaml",
+    "isolated_declgen": "declgen_ets2ts/isolated_declgen.yaml",
+}
+
+MAP_REL = "util/diagnostic/stable_map.json"
+SCHEMA = 1
+
+# Category order for the generated C++ table (stableCodeMap.h must agree).
+CATEGORY_ORDER = list(CATEGORY_FILES.keys())
+
+
+def emit_header(map_path, header_path):
+    """Emit a self-contained C++ table from stable_map.json.
+
+    Live entries only (retired codes are dead and never emitted). The table
+    is sorted by (category, yamlId) so the C++ side can binary-search it;
+    (category, yamlId) is unique among live entries (a strict warning and
+    its semantic mirror share the yamlId but differ in category).
+    """
+    data = json.loads(map_path.read_text())
+    if data.get("schema") != SCHEMA:
+        raise SyncError(
+            f"{map_path}: unsupported schema {data.get('schema')!r} "
+            f"(expected {SCHEMA}); regenerate the map with scripts/sync_stable_map"
+        )
+    entries = []
+    for key, rec in data["map"].items():
+        cat, name = key.split("/", 1)
+        if cat not in CATEGORY_ORDER:
+            raise SyncError(f"{map_path}: unknown category '{cat}' for key '{key}'")
+        entries.append({
+            "category": CATEGORY_ORDER.index(cat),
+            "yaml_id": rec["yaml_id"],
+            "code": rec["code"],
+            "strict": rec.get("strict") is True,
+            "name": name,
+        })
+    entries.sort(key=lambda e: (e["category"], e["yaml_id"]))
+    for prev, cur in zip(entries, entries[1:]):
+        if (prev["category"], prev["yaml_id"]) == (cur["category"], cur["yaml_id"]):
+            raise SyncError(
+                f"{map_path}: duplicate (category, yamlId) for yaml id "
+                f"{cur['yaml_id']} in category {CATEGORY_ORDER[cur['category']]}"
+            )
+
+    lines = []
+    lines.append("// Autogenerated from util/diagnostic/stable_map.json by")
+    lines.append("// scripts/sync_stable_map --emit-header -- DO NOT EDIT!")
+    lines.append("//")
+    lines.append("// One entry per live diagnostic, sorted by (category, yamlId).")
+    lines.append("// category ids (see util/stableCodeMap.h Category):")
+    for i, cat in enumerate(CATEGORY_ORDER):
+        lines.append(f"//   {i} = {cat}")
+    lines.append("")
+    lines.append("#ifndef ES2PANDA_GENERATED_STABLE_MAP_H")
+    lines.append("#define ES2PANDA_GENERATED_STABLE_MAP_H")
+    lines.append("")
+    lines.append("#include <array>")
+    lines.append("#include <cstddef>")
+    lines.append("#include <cstdint>")
+    lines.append("")
+    lines.append("namespace ark::es2panda::diagnostic {")
+    lines.append("")
+    lines.append("struct StableCodeEntry {")
+    lines.append("    uint8_t category;")
+    lines.append("    uint32_t yamlId;")
+    lines.append("    uint32_t code;")
+    lines.append("    bool strict;")
+    lines.append("};")
+    lines.append("")
+    lines.append(f"constexpr std::size_t STABLE_CODE_MAP_SIZE = {len(entries)};")
+    lines.append("")
+    lines.append(f"constexpr std::array<StableCodeEntry, STABLE_CODE_MAP_SIZE> STABLE_CODE_MAP = {{{{")
+    for e in entries:
+        strict = "true" if e["strict"] else "false"
+        lines.append(
+            f"    {{{e['category']}, {e['yaml_id']}, {e['code']}, {strict}}},"
+            f"  // {CATEGORY_ORDER[e['category']]}/{e['name']}"
+        )
+    lines.append("}};")
+    lines.append("")
+    lines.append("}  // namespace ark::es2panda::diagnostic")
+    lines.append("")
+    lines.append("#endif  // ES2PANDA_GENERATED_STABLE_MAP_H")
+    lines.append("")
+    header_path.parent.mkdir(parents=True, exist_ok=True)
+    header_path.write_text("\n".join(lines))
+
+
+class SyncError(Exception):
+    pass
+
+
+def fail(message: str) -> None:
+    """Report a sync failure with a uniform greppable 'error:' prefix."""
+    print(f"error: stable_map: {message}", file=sys.stderr)
+
+
+def load_category(yaml_path, category):
+    doc = yaml.safe_load(yaml_path.read_text())
+    if not isinstance(doc, dict):
+        raise SyncError(f"{yaml_path}: not a diagnostic YAML document")
+    graveyard = doc.get("graveyard") or []
+    entries = doc.get(category)
+    if entries is None:
+        raise SyncError(f"{yaml_path}: missing '{category}' section")
+    live = {}
+    strict = set()
+    for entry in entries:
+        name = entry.get("name")
+        diag_id = entry.get("id")
+        if name is None or diag_id is None:
+            raise SyncError(
+                f"{yaml_path}: diagnostic {name or '<unnamed>'} misses 'name' or 'id' "
+                "(run scripts/normalize_yaml first)"
+            )
+        if name in live:
+            raise SyncError(f"{yaml_path}: duplicate name '{name}'")
+        if diag_id in [v for k, v in live.items() if k != name]:
+            raise SyncError(f"{yaml_path}: duplicate id '{diag_id}'")
+        live[name] = diag_id
+        if entry.get("strict") is True:
+            strict.add(name)
+    return live, set(graveyard), strict
+
+
+def load_map(map_path):
+    if not map_path.exists():
+        return {}, {}
+    data = json.loads(map_path.read_text())
+    if data.get("schema") != SCHEMA:
+        raise SyncError(f"{map_path}: unsupported schema {data.get('schema')!r}")
+    return data.get("map", {}), data.get("retired", {})
+
+
+def category_of(key):
+    return key.split("/", 1)[0]
+
+
+def name_of(key):
+    return key.split("/", 1)[1]
+
+
+def sync(root, write=True):
+    """Recompute the registry; return (errors, updated_text, old_text)."""
+    errors = []
+    map_path = root / MAP_REL
+    old_map, old_retired = load_map(map_path)
+    new_map = dict(old_map)
+    new_retired = dict(old_retired)
+
+    cat_state = {}
+
+    for cat, rel in CATEGORY_FILES.items():
+        yaml_path = root / rel
+        if not yaml_path.exists():
+            errors.append(f"missing diagnostic YAML: {rel}")
+            cat_state[cat] = ({}, set(), set())
+            continue
+        live, graveyard, strict = load_category(yaml_path, cat)
+        cat_state[cat] = (live, graveyard, strict)
+
+        # 1. Vanished names: rename (same yaml id reappears), retire
+        #    (yaml id in graveyard) or hard error (undeclared deletion).
+        #    Strict-warning mirrors (semantic/<name> records marked strict)
+        #    are managed by the mirror pass below, not by the semantic
+        #    section of semantic.yaml.
+        live_ids = set(live.values())
+        vanished = sorted(
+            key for key in new_map
+            if category_of(key) == cat and name_of(key) not in live
+            and not (cat == "semantic" and new_map[key].get("strict") is True)
+        )
+        for key in vanished:
+            record = new_map.pop(key)
+            diag_id = record["yaml_id"]
+            if diag_id in live_ids:
+                new_name = next(n for n, i in live.items() if i == diag_id)
+                new_map[f"{cat}/{new_name}"] = {"code": record["code"], "yaml_id": diag_id}
+            elif diag_id in graveyard:
+                new_retired[key] = record
+            else:
+                errors.append(
+                    f"{cat}/{name_of(key)} disappeared from {rel} without a graveyard "
+                    f"entry for its id {diag_id}; deletions must move the id to the "
+                    "YAML 'graveyard' section"
+                )
+
+        # 2. New names: tail append, sorted by name for determinism.
+        used = {
+            rec["code"] for key, rec in {**new_map, **new_retired}.items()
+            if category_of(key) == cat
+        }
+        next_code = max(used, default=0) + 1
+        for name in sorted(n for n in live if f"{cat}/{n}" not in new_map):
+            new_map[f"{cat}/{name}"] = {"code": next_code, "yaml_id": live[name]}
+            next_code += 1
+
+    # 3. Strict-warning mirrors. A `strict: true` warning can be escalated to
+    #    a semantic error at runtime (soft/hard path lists, ES2PANDA_STRICT
+    #    builds), so it is dual-registered under both categories. The mirror
+    #    lifecycle follows the warning side, which has already been processed
+    #    by pass 1/2 above.
+    live_warn, warn_graveyard, warn_strict = cat_state.get("warning", ({}, set(), set()))
+    warn_ids = set(live_warn.values())
+    strict_ids = {live_warn[n] for n in warn_strict}
+
+    # Backfill the strict marker on warning-side records.
+    for name in sorted(warn_strict):
+        rec = new_map.get(f"warning/{name}")
+        if rec is not None and rec.get("strict") is not True:
+            rec["strict"] = True
+
+    # Drop the marker from live warnings that are no longer strict.
+    for key in sorted(k for k in new_map if category_of(k) == "warning"):
+        name = name_of(key)
+        rec = new_map[key]
+        if rec.get("strict") is True and name not in warn_strict and name in live_warn:
+            del rec["strict"]
+
+    # Maintain existing mirrors: rename, retire or orphan-error.
+    mirrors = {
+        name_of(key): rec for key, rec in new_map.items()
+        if category_of(key) == "semantic" and rec.get("strict") is True
+    }
+    for name in sorted(mirrors):
+        if name in warn_strict:
+            continue
+        rec = new_map.pop(f"semantic/{name}")
+        diag_id = rec["yaml_id"]
+        if diag_id in strict_ids:
+            # Renamed strict warning: the mirror keeps its code under the new name.
+            new_name = next(n for n in warn_strict if live_warn[n] == diag_id)
+            target = f"semantic/{new_name}"
+            if target in new_map and new_map[target].get("strict") is not True:
+                errors.append(
+                    f"{target}: name collides with a semantic.yaml diagnostic; "
+                    "cannot rename the strict-warning mirror"
+                )
+            else:
+                new_map[target] = rec
+        elif diag_id in warn_ids or diag_id in warn_graveyard:
+            # De-strictified (still a live warning) or deleted: retire the mirror.
+            new_retired[f"semantic/{name}"] = rec
+        else:
+            errors.append(
+                f"semantic/{name}: orphaned strict mirror (yaml id {diag_id} is neither "
+                "a live warning nor in the warning graveyard)"
+            )
+
+    # Create missing mirrors at the tail of the semantic counter.
+    used_sem = {
+        rec["code"] for key, rec in {**new_map, **new_retired}.items()
+        if category_of(key) == "semantic"
+    }
+    next_code = max(used_sem, default=0) + 1
+    for name in sorted(warn_strict):
+        key = f"semantic/{name}"
+        if key in new_map:
+            if new_map[key].get("strict") is not True:
+                errors.append(
+                    f"{key}: name collides with a semantic.yaml diagnostic; "
+                    "cannot register the strict-warning mirror"
+                )
+            continue
+        new_map[key] = {
+            "code": next_code, "yaml_id": live_warn[name], "strict": True,
+        }
+        next_code += 1
+
+    data = {
+        "schema": SCHEMA,
+        "map": new_map,
+        "retired": new_retired,
+    }
+    text = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    old_text = map_path.read_text() if map_path.exists() else None
+    return errors, text, old_text
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Sync the diagnostic stable code map")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="verify the map is up-to-date; never write (for CI)",
+    )
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=DEFAULT_ROOT,
+        help="ets2panda source root (default: autodetected)",
+    )
+    parser.add_argument(
+        "--emit-header",
+        type=Path,
+        metavar="PATH",
+        default=None,
+        help="emit a self-contained C++ lookup table (generated/stableMap.h) "
+        "from stable_map.json instead of syncing",
+    )
+    args = parser.parse_args()
+
+    if args.emit_header is not None:
+        # Refuse to emit from a stale registry: validate the json against
+        # the YAMLs first (same check as --check), so a manually emitted
+        # table can never drift from the committed diagnostics.
+        try:
+            errors, text, old_text = sync(args.root, write=False)
+        except SyncError as err:
+            fail(str(err))
+            return 1
+        if errors:
+            for err in errors:
+                fail(err)
+            return 1
+        if text != old_text:
+            fail(
+                "util/diagnostic/stable_map.json is out of date; "
+                "run scripts/sync_stable_map locally and commit the updated file"
+            )
+            return 1
+        try:
+            emit_header(args.root / MAP_REL, args.emit_header)
+        except SyncError as err:
+            fail(str(err))
+            return 1
+        return 0
+
+    try:
+        errors, text, old_text = sync(args.root, write=not args.check)
+    except SyncError as err:
+        fail(str(err))
+        return 1
+
+    if errors:
+        for err in errors:
+            fail(err)
+        return 1
+
+    if text == old_text:
+        return 0
+
+    if args.check:
+        fail(
+            "util/diagnostic/stable_map.json is out of date; "
+            "run scripts/sync_stable_map locally and commit the updated file"
+        )
+        return 1
+
+    try:
+        (args.root / MAP_REL).write_text(text)
+    except OSError:
+        fail(
+            "cannot write util/diagnostic/stable_map.json (read-only source "
+            "tree?); the registry is out of date - run scripts/sync_stable_map "
+            "locally and commit the updated file"
+        )
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

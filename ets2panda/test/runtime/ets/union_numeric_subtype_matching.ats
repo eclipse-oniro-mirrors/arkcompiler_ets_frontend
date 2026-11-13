@@ -1,0 +1,88 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Subtype matching: default inferred type (int) is in the union → exact match → OK (int)
+// These cases were CTE in variable declaration / assignment / return / default param
+// due to IsAmbiguousUnionInit value-level check (fits > 1 integer type).
+// Now consistent across all scenarios — OK (int) everywhere.
+
+function main(): void {
+    // byte|int: int is default type, in union → OK (int)
+    let a1: byte | int = 1
+    arktest.assertTrue(a1 instanceof int)
+
+    let a2: byte | int = 127
+    arktest.assertTrue(a2 instanceof int)
+
+    let a3: byte | int = 128
+    arktest.assertTrue(a3 instanceof int)
+
+    // short|int: same pattern
+    let b1: short | int = 1
+    arktest.assertTrue(b1 instanceof int)
+
+    let b2: short | int = 127
+    arktest.assertTrue(b2 instanceof int)
+
+    let b3: short | int = 128
+    arktest.assertTrue(b3 instanceof int)
+
+    // int|long: int is default type, in union → OK (int)
+    let c1: int | long = 1
+    arktest.assertTrue(c1 instanceof int)
+
+    let c2: int | long = 127
+    arktest.assertTrue(c2 instanceof int)
+
+    let c3: int | long = 128
+    arktest.assertTrue(c3 instanceof int)
+
+    let c4: int | long = 2147483647
+    arktest.assertTrue(c4 instanceof int)
+
+    // int|float, int|double: int is in union → OK (int)
+    let d1: int | float = 1
+    arktest.assertTrue(d1 instanceof int)
+
+    let d2: int | double = 1
+    arktest.assertTrue(d2 instanceof int)
+
+    // Three-way unions with int present
+    let e1: byte | int | string = 1
+    arktest.assertTrue(e1 instanceof int)
+
+    let e2: int | long | string = 1
+    arktest.assertTrue(e2 instanceof int)
+
+    let e3: byte | short | int = 1
+    arktest.assertTrue(e3 instanceof int)
+
+    // Scenario consistency: all scenarios give same result
+    let s1: int | long = 1
+    let s2: int | long = 0 as int
+    s2 = 1
+    arktest.assertTrue(s2 instanceof int)
+    arktest.assertTrue(retIntLong() instanceof int)
+    arktest.assertTrue(passIntLong(1) instanceof int)
+    let s5 = new ClsIntLong()
+    arktest.assertTrue(s5.x instanceof int)
+}
+
+function retIntLong(): int | long { return 1 }
+function passIntLong(p: int | long): int | long { return p }
+
+class ClsIntLong {
+    x: int | long = 1
+}

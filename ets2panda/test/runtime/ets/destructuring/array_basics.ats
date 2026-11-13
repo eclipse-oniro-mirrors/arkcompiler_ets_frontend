@@ -80,7 +80,7 @@ function testTooFewVariables() {
 
 function testUnionTypes() {
   let a: number|undefined, b: number, c: number, d: number;
-  [a, b, c] = [1, 2, 3];
+  [a, b, c] = [1.0, 2.0, 3.0];
 
   arktest.assertEQ(a, 1);
   arktest.assertEQ(b, 2);

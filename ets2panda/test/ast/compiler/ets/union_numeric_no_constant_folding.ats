@@ -1,0 +1,161 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*---
+desc: Constant folding (value range checking) is no longer applied for union
+  target types. An integer literal with default type 'int' cannot be assigned
+  to a union of byte|short + non-numeric, because int-to-byte and int-to-short
+  are narrowing conversions (not widening), and int is not a subtype of byte,
+  short, string, or boolean.
+name: union_numeric_no_constant_folding
+tags:
+- compile-only
+- negative
+---*/
+
+// === Variable declaration ===
+let a1: byte | string = /* @@ e1 */ 1
+let a2: byte | string = /* @@ e2 */ 127
+let a3: byte | boolean = /* @@ e3 */ 1
+let a4: short | string = /* @@ e4 */ 1
+let a5: short | string = /* @@ e5 */ 127
+let a6: short | string = /* @@ e6 */ 128
+let a7: short | boolean = /* @@ e7 */ 1
+
+// === Assignment ===
+let b1: byte | string = ""
+b1 = /* @@ e8 */ 127
+
+let b2: short | string = ""
+b2 = /* @@ e9 */ 128
+
+// === Return statement ===
+function ret1(): byte | string { return /* @@ e10 */ 127 }
+function ret2(): short | string { return /* @@ e11 */ 128 }
+
+// === Function parameter ===
+function fp1(p: byte | string): void {}
+fp1(/* @@ e12 */ 127)
+
+function fp2(p: short | string): void {}
+fp2(/* @@ e13 */ 128)
+
+// === Class property ===
+class C1 {
+    x: byte | string = /* @@ e14 */ 127
+}
+
+class C2 {
+    x: short | string = /* @@ e15 */ 128
+}
+
+// === Default parameter ===
+function dp1(p: byte | string = /* @@ e16 */ 127): void {}
+function dp2(p: short | string = /* @@ e17 */ 128): void {}
+
+// === Array element ===
+let arr1: (byte | string)[] = [/* @@ e18 */ 127]
+let arr2: (short | string)[] = [/* @@ e19 */ 128]
+
+// === Object literal property ===
+interface I1 { x: byte | string }
+let o1: I1 = { x: /* @@ e20 */ 127 }
+
+interface I2 { x: short | string }
+let o2: I2 = { x: /* @@ e21 */ 128 }
+
+// === Cast expression ===
+let c1 = /* @@ e22 */ 127 as byte | string
+let c2 = /* @@ e23 */ 128 as short | string
+
+/* @@@ e1 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte|String' */
+/* @@@ e2 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte|String' */
+/* @@@ e3 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte|Boolean' */
+/* @@@ e4 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short|String' */
+/* @@@ e5 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short|String' */
+/* @@@ e6 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short|String' */
+/* @@@ e7 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short|Boolean' */
+/* @@@ e8 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte|String' */
+/* @@@ e9 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short|String' */
+/* @@@ e10 Error Semantic error ESE0091: Type 'Int' is not compatible with the enclosing method's return type 'Byte|String' */
+/* @@@ e11 Error Semantic error ESE0091: Type 'Int' is not compatible with the enclosing method's return type 'Short|String' */
+/* @@@ e12 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'Byte|String' at index 1 */
+/* @@? 50:1 Error Semantic error ESE0127: No matching call signature for fp1(Int) */
+/* @@@ e13 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'Short|String' at index 1 */
+/* @@? 53:1 Error Semantic error ESE0127: No matching call signature for fp2(Int) */
+/* @@@ e14 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte|String' */
+/* @@@ e15 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short|String' */
+/* @@@ e16 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte|String' */
+/* @@@ e17 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Short|String' */
+/* @@@ e18 Error Semantic error ESE0227: Array element at index 0 with type 'Int' is not compatible with the target array element type 'Byte|String' */
+/* @@@ e19 Error Semantic error ESE0227: Array element at index 0 with type 'Int' is not compatible with the target array element type 'Short|String' */
+/* @@@ e20 Error Semantic error ESE0319: Type 'Int' is not compatible with type 'Byte|String' at property 'x' */
+/* @@@ e21 Error Semantic error ESE0319: Type 'Int' is not compatible with type 'Short|String' at property 'x' */
+/* @@@ e22 Error Semantic error ESE0326: Cannot cast number literal to 'Byte|String' */
+/* @@@ e23 Error Semantic error ESE0326: Cannot cast number literal to 'Short|String' */
+
+// === Rule Ambiguous-Widening ===
+let a24: long | double = 1
+let a25: float | double = 1
+let a26: long | float = 1
+let a27: long | float | double = 1
+
+// === Rule Ambiguous-Widening: assignment ===
+let b10: long | double = 1 as long
+b10 = 1
+
+let b11: float | double = 1.0
+b11 = 1
+
+// === Rule Ambiguous-Widening: return statement ===
+function ret5(): long | float { return 1 }
+function ret6(): float | double { return 1 }
+
+// === Rule Ambiguous-Widening: function parameter ===
+function fp3(p: long | double): void {}
+fp3(1)
+function fp4(p: float | double): void {}
+fp4(1)
+
+// === Rule Ambiguous-Widening: cast expression ===
+let c3 = 1 as long | double
+let c4 = 1 as float | double
+
+/* @@? 110:26 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 110:26 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Long|Double' */
+/* @@? 111:27 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 111:27 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Float|Double' */
+/* @@? 112:25 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 112:25 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Long|Float' */
+/* @@? 113:34 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 113:34 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Long|Float|Double' */
+/* @@? 117:7 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 117:7 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Long|Double' */
+/* @@? 120:7 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 120:7 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Float|Double' */
+/* @@? 123:40 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 123:40 Error Semantic error ESE0091: Type 'Int' is not compatible with the enclosing method's return type 'Long|Float' */
+/* @@? 124:42 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 124:42 Error Semantic error ESE0091: Type 'Int' is not compatible with the enclosing method's return type 'Float|Double' */
+/* @@? 128:1 Error Semantic error ESE0127: No matching call signature for fp3(Int) */
+/* @@? 128:5 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 128:5 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'Long|Double' at index 1 */
+/* @@? 130:1 Error Semantic error ESE0127: No matching call signature for fp4(Int) */
+/* @@? 130:5 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 130:5 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'Float|Double' at index 1 */
+/* @@? 133:10 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 133:10 Error Semantic error ESE0326: Cannot cast number literal to 'Long|Double' */
+/* @@? 134:10 Error Semantic error ESE0255: Ambiguous union type operation */
+/* @@? 134:10 Error Semantic error ESE0326: Cannot cast number literal to 'Float|Double' */
