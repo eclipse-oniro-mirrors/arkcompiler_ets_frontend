@@ -53,11 +53,11 @@ build_system_sources = [
   "./src/util/ets2panda.ts",
   "./src/util/graph.ts",
   "./src/util/koala_wrapper.ts",
+  "./src/util/logger_util.ts",
   "./src/util/record_time_mem.ts",
   "./src/util/statsRecorder.ts",
   "./src/util/utils.ts",
   "./src/util/worker_exit_handler.ts",
-  "./src/util/logger_util.ts",
 ]
 
 action("build_build_system") {
@@ -72,17 +72,17 @@ action("build_build_system") {
     "--work_dir",
     rebase_path("$target_out_dir"),
     "--output_path",
-    rebase_path("$target_gen_dir"),
+    rebase_path("$target_gen_dir/build-system"),
     "--npm",
     rebase_path(npm_path),
   ]
 
-  outputs = [ "$target_gen_dir" ]
+  outputs = [ "$target_gen_dir/build-system" ]
 }
 
 ohos_copy("ets2panda_build_system") {
   deps = [ ":build_build_system" ]
-  sources = [ rebase_path("$target_gen_dir") ]
+  sources = [ rebase_path("$target_gen_dir/build-system") ]
   outputs = [ target_out_dir + "/$target_name" ]
   module_source_dir = target_out_dir + "/$target_name"
   module_install_name = ""
@@ -93,7 +93,7 @@ ohos_copy("ets2panda_build_system") {
 ohos_copy("ohos_ets_build_system") {
   deps = [ ":build_build_system" ]
   external_deps = [ "runtime_core:ohos_ets_etsstdlib_abc" ]
-  sources = [ rebase_path("$target_gen_dir") ]
+  sources = [ rebase_path("$target_gen_dir/build-system") ]
   outputs = [ ohos_ets_build_system_path ]
   part_name = "ets_frontend"
   subsystem_name = "arkcompiler"
