@@ -374,7 +374,8 @@ describe('BaseMode', () => {
                     mergeArktsConfig: jest.fn(),
                     mergeArktsConfigByDependencies: jest.fn(),
                     object: {}
-                }))
+                })),
+                addExternalDeclPackages: jest.fn()
             }))
         }));
         const BaseModeModule = require('../../../src/build/base_mode');
@@ -1149,7 +1150,8 @@ describe('BaseMode', () => {
 
         const genInstance = {
             generateArkTSConfigFile: jest.fn(),
-            getArktsConfigByPackageName: jest.fn((pkg: string) => (pkg === 'B' ? arktsB : arktsA))
+            getArktsConfigByPackageName: jest.fn((pkg: string) => (pkg === 'B' ? arktsB : arktsA)),
+            addExternalDeclPackages: jest.fn()
         };
 
         jest.doMock('../../../src/build/generate_arktsconfig', () => ({
@@ -1180,8 +1182,142 @@ describe('BaseMode', () => {
         expect(genInstance.getArktsConfigByPackageName).toHaveBeenCalledWith('B');
         // merging: A should recurse into its dependencies
         expect(arktsA.mergeArktsConfigByDependencies).toHaveBeenCalled();
+        // external decl packages are populated for every module
+        expect(genInstance.addExternalDeclPackages).toHaveBeenCalledTimes(2);
+        expect(genInstance.addExternalDeclPackages).toHaveBeenCalledWith(moduleA, arktsA);
+        expect(genInstance.addExternalDeclPackages).toHaveBeenCalledWith(moduleB, arktsB);
         // at least one write happened (configs flushed)
         expect(fs.writeFileSync).toHaveBeenCalled();
+    });
+
+    test('generateArkTSConfigForModules populates externalDeclPackages for every module', () => {
+        jest.resetModules();
+
+        const arktsA = { mergeArktsConfig: jest.fn(), mergeArktsConfigByDependencies: jest.fn(), object: { a: 1 } };
+        const arktsB = { mergeArktsConfig: jest.fn(), mergeArktsConfigByDependencies: jest.fn(), object: { b: 2 } };
+
+        const genInstance = {
+            generateArkTSConfigFile: jest.fn(),
+            getArktsConfigByPackageName: jest.fn((pkg: string) => (pkg === 'B' ? arktsB : arktsA)),
+            addExternalDeclPackages: jest.fn()
+        };
+
+        jest.doMock('../../../src/build/generate_arktsconfig', () => ({
+            ArkTSConfigGenerator: jest.fn(() => genInstance)
+        }));
+
+        const BaseModeModule = require('../../../src/build/base_mode');
+        const BaseModeClass = BaseModeModule.BaseMode;
+        const fn = (BaseModeClass as any).prototype.generateArkTSConfigForModules;
+
+        const moduleA = createMockModuleInfo({ packageName: 'A', dependencies: ['B'], arktsConfigFile: '/tmp/A.json' });
+        const moduleB = createMockModuleInfo({ packageName: 'B', dependencies: [], arktsConfigFile: '/tmp/B.json' });
+
+        const ctx: any = {
+            buildConfig: createMockBuildConfig(),
+            moduleInfos: new Map<string, any>([['A', moduleA], ['B', moduleB]]),
+            enableDeclgenEts2Ts: false,
+            logger: require('../../../src/logger').Logger.getInstance(),
+            arktsConfigGenerator: genInstance,
+            generateDependencyOhmUrlMap: jest.fn(),
+        };
+
+        fn.call(ctx);
+
+        // each module config is populated with its external decl packages
+        expect(genInstance.addExternalDeclPackages).toHaveBeenCalledTimes(2);
+        expect(genInstance.addExternalDeclPackages).toHaveBeenNthCalledWith(1, moduleA, arktsA);
+        expect(genInstance.addExternalDeclPackages).toHaveBeenNthCalledWith(2, moduleB, arktsB);
+    });
+
+    test('generateArkTSConfigForModules skips externalDeclPackages for modules without arktsconfig', () => {
+        jest.resetModules();
+
+        const arktsA = { mergeArktsConfig: jest.fn(), mergeArktsConfigByDependencies: jest.fn(), object: { a: 1 } };
+        // minimal config only used by the flush loop, so a module without a
+        // generated config can pass through it
+        const arktsBFlushOnly = { object: {} };
+        let lookupCountForB = 0;
+
+        const genInstance = {
+            generateArkTSConfigFile: jest.fn(),
+            getArktsConfigByPackageName: jest.fn((pkg: string) => {
+                if (pkg !== 'B') {
+                    return arktsA;
+                }
+                lookupCountForB++;
+                // the first lookup of 'B' happens during externalDeclPackages
+                // population: module B has no config and must be skipped gracefully
+                return lookupCountForB === 1 ? undefined : arktsBFlushOnly;
+            }),
+            addExternalDeclPackages: jest.fn()
+        };
+
+        jest.doMock('../../../src/build/generate_arktsconfig', () => ({
+            ArkTSConfigGenerator: jest.fn(() => genInstance)
+        }));
+
+        const BaseModeModule = require('../../../src/build/base_mode');
+        const BaseModeClass = BaseModeModule.BaseMode;
+        const fn = (BaseModeClass as any).prototype.generateArkTSConfigForModules;
+
+        const moduleA = createMockModuleInfo({ packageName: 'A', dependencies: [], arktsConfigFile: '/tmp/A.json' });
+        const moduleB = createMockModuleInfo({ packageName: 'B', dependencies: [], arktsConfigFile: '/tmp/B.json' });
+
+        const ctx: any = {
+            buildConfig: createMockBuildConfig(),
+            moduleInfos: new Map<string, any>([['A', moduleA], ['B', moduleB]]),
+            mainPackageName: 'A',
+            enableDeclgenEts2Ts: false,
+            logger: require('../../../src/logger').Logger.getInstance(),
+            arktsConfigGenerator: genInstance,
+            generateDependencyOhmUrlMap: jest.fn(),
+        };
+
+        fn.call(ctx);
+
+        // only module A has an arktsconfig, module B is skipped without throwing
+        expect(genInstance.addExternalDeclPackages).toHaveBeenCalledTimes(1);
+        expect(genInstance.addExternalDeclPackages).toHaveBeenCalledWith(moduleA, arktsA);
+    });
+
+    test('generateArkTSConfigForModules populates externalDeclPackages after merging paths', () => {
+        jest.resetModules();
+
+        const arktsA = { mergeArktsConfig: jest.fn(), mergeArktsConfigByDependencies: jest.fn(), object: { a: 1 } };
+
+        const genInstance = {
+            generateArkTSConfigFile: jest.fn(),
+            getArktsConfigByPackageName: jest.fn(() => arktsA),
+            addExternalDeclPackages: jest.fn()
+        };
+
+        jest.doMock('../../../src/build/generate_arktsconfig', () => ({
+            ArkTSConfigGenerator: jest.fn(() => genInstance)
+        }));
+
+        const BaseModeModule = require('../../../src/build/base_mode');
+        const BaseModeClass = BaseModeModule.BaseMode;
+        const fn = (BaseModeClass as any).prototype.generateArkTSConfigForModules;
+
+        const moduleA = createMockModuleInfo({ packageName: 'A', dependencies: [], arktsConfigFile: '/tmp/A.json' });
+
+        const ctx: any = {
+            buildConfig: createMockBuildConfig(),
+            moduleInfos: new Map<string, any>([['A', moduleA]]),
+            enableDeclgenEts2Ts: false,
+            logger: require('../../../src/logger').Logger.getInstance(),
+            arktsConfigGenerator: genInstance,
+            generateDependencyOhmUrlMap: jest.fn(),
+        };
+
+        fn.call(ctx);
+
+        // path merging happens first, external decl packages are populated with merged paths afterwards
+        expect(arktsA.mergeArktsConfigByDependencies).toHaveBeenCalled();
+        expect(genInstance.addExternalDeclPackages).toHaveBeenCalled();
+        expect(genInstance.addExternalDeclPackages.mock.invocationCallOrder[0])
+            .toBeGreaterThan(arktsA.mergeArktsConfigByDependencies.mock.invocationCallOrder[0]);
     });
 
     test('run calls compile and mergeAbcFiles on success', async () => {

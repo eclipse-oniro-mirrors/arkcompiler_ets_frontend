@@ -241,6 +241,13 @@ public:
         return FindInDependencies(std::string_view {importString});
     }
 
+    bool IsExternalDeclPackage(std::string_view moduleName) const
+    {
+        std::string key(moduleName);
+        std::replace(key.begin(), key.end(), '.', '/');
+        return externalDeclPackages_.find(key) != externalDeclPackages_.end();
+    }
+
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     const std::vector<Pattern> &Include() const
     {
@@ -271,12 +278,14 @@ private:
                            std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
     bool ParseMockList(const JsonObject::JsonObjPointer *options,
                        std::map<std::string, std::string, std::less<>> &mockMap, const std::string &baseUrl);
+    void ParseExternalDeclPackages(const JsonObject::JsonObjPointer *options);
     template <class Collection, class Function>
     bool ParseCollection(const JsonObject *config, Collection &out, const std::string &target, Function &&constructor);
     std::optional<std::string> ReadConfig(const std::string &path);
     std::vector<std::string> ParseStringArray(const std::unique_ptr<ark::JsonObject> *alias, std::string_view key);
 
 private:
+    static constexpr const char *externalDeclPackages = "externalDeclPackages";
     static constexpr const char *PACKAGE = "package";  // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
     static constexpr const char *BASE_URL = "baseUrl";
     static constexpr const char *COMPILER_OPTIONS = "compilerOptions";
@@ -323,6 +332,7 @@ private:
     std::map<std::string, std::string, std::less<>> mocks_ {};
     std::set<std::string, std::less<>> mockSources_ {};
     std::vector<std::string> files_ {};
+    std::set<std::string, std::less<>> externalDeclPackages_ {};
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     std::vector<Pattern> include_ {};
     std::vector<Pattern> exclude_ {};

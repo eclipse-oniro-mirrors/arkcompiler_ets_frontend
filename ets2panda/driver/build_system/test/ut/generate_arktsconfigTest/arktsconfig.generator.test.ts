@@ -1994,6 +1994,79 @@ describe('ArkTSConfigGenerator - ATS source packages', () => {
         expect(config.pathSection['testModule/Index']).toBeUndefined();
     });
 
+    test.each([true, false])(
+        'uses searchPath route when byteCodeHar is %s without abcPath', (byteCodeHar) => {
+            const module = createMockModuleInfo({
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                byteCodeHar,
+                staticFiles: ['/test/module/src/Foo.ats']
+            });
+            const generator = new ArkTSConfigGenerator(createMockBuildConfig({
+                compileFiles: ['/test/module/src/Foo.ats']
+            }));
+            const config = generator.generateArkTSConfigFile(module, false);
+            expect(config.compilerOptions.atsDependencies?.testModule).toEqual({
+                searchPath: ['/test/module/src', '/test/module'],
+                moduleRoot: '/test/module',
+                entryFile: '/test/module/entry.ts'
+            });
+            expect(config.pathSection['testModule/src/Foo']).toBeUndefined();
+        }
+    );
+
+    test('uses searchPath route when only abcPath is set', () => {
+        const module = createMockModuleInfo({
+            language: LANGUAGE_VERSION.ARKTS_1_2,
+            abcPath: '/test/output/testModule.abc'
+        });
+        const config = new ArkTSConfigGenerator(createMockBuildConfig()).generateArkTSConfigFile(module, false);
+        expect(config.compilerOptions.atsDependencies?.testModule.moduleRoot).toBe('/test/module');
+        expect(config.pathSection['testModule/src/Foo']).toBeUndefined();
+    });
+
+    test('falls back to per-file paths for external har with byteCodeHar true and abcPath', () => {
+        const module = createMockModuleInfo({
+            language: LANGUAGE_VERSION.ARKTS_1_2,
+            byteCodeHar: true,
+            abcPath: '/test/output/testModule.abc',
+            staticFiles: ['/test/module/src/Foo.ats']
+        });
+        const generator = new ArkTSConfigGenerator(createMockBuildConfig({
+            compileFiles: ['/test/module/src/Foo.ats']
+        }));
+        const config = generator.generateArkTSConfigFile(module, false);
+        expect(config.compilerOptions.atsDependencies).toBeUndefined();
+        expect(config.pathSection['testModule/src/Foo']).toEqual(['/test/module/src/Foo.ats']);
+        expect(config.pathSection['testModule/Index']).toEqual(['/test/module/entry.ts']);
+    });
+
+    test('falls back to per-file paths for external hsp with byteCodeHar false and abcPath', () => {
+        const module = createMockModuleInfo({
+            language: LANGUAGE_VERSION.ARKTS_1_2,
+            byteCodeHar: false,
+            abcPath: '/test/output/testModule.abc',
+            staticFiles: ['/test/module/src/Foo.ats']
+        });
+        const generator = new ArkTSConfigGenerator(createMockBuildConfig({
+            compileFiles: ['/test/module/src/Foo.ats']
+        }));
+        const config = generator.generateArkTSConfigFile(module, false);
+        expect(config.compilerOptions.atsDependencies).toBeUndefined();
+        expect(config.pathSection['testModule/src/Foo']).toEqual(['/test/module/src/Foo.ats']);
+        expect(config.pathSection['testModule/Index']).toEqual(['/test/module/entry.ts']);
+    });
+
+    test('uses searchPath route when abcPath is an empty string', () => {
+        const module = createMockModuleInfo({
+            language: LANGUAGE_VERSION.ARKTS_1_2,
+            byteCodeHar: true,
+            abcPath: ''
+        });
+        const config = new ArkTSConfigGenerator(createMockBuildConfig()).generateArkTSConfigFile(module, false);
+        expect(config.compilerOptions.atsDependencies?.testModule.moduleRoot).toBe('/test/module');
+        expect(config.pathSection['testModule/src/Foo']).toBeUndefined();
+    });
+
     test('retains legacy mappings for hybrid packages', () => {
         const module = createMockModuleInfo({
             language: LANGUAGE_VERSION.ARKTS_HYBRID,

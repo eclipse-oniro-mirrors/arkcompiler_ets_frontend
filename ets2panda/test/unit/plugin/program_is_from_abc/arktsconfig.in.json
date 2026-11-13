@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "rootDir": "${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin",
+        "cacheDir": "${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin${DELIM}cache",
+        "paths": {
+            "std": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}std"],
+            "escompat": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}escompat"],
+            "libhar": ["${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin${DELIM}program_is_from_abc${DELIM}libhar"],
+            "otherlib": ["${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin${DELIM}program_is_from_abc${DELIM}otherlib"]
+        },
+        "externalDeclPackages": {
+            "libhar": { "paths": ["${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin${DELIM}program_is_from_abc${DELIM}libhar"] },
+            "libhar/Index": { "paths": ["${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin${DELIM}program_is_from_abc${DELIM}libhar${DELIM}Index.ats"] }
+        }
+    }
+}

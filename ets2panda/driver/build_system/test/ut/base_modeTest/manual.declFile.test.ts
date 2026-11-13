@@ -83,7 +83,8 @@ jest.mock('../../../src/build/generate_arktsconfig',
             addDependenciesSection: jest.fn(),
             addCompilerOptionsSection: jest.fn(),
             addReferencesSection: jest.fn(),
-            mergeArktsConfigByDependencies: jest.fn()
+            mergeArktsConfigByDependencies: jest.fn(),
+            addExternalDeclPackages: jest.fn()
         }))
     })
 );

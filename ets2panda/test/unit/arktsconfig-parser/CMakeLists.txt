@@ -14,3 +14,7 @@
 ets2panda_add_gtest(es2panda_arktsconfig_parser_test
     CPP_SOURCES arktsconfig_include.cpp ats_dependencies.cpp
 )
+
+ets2panda_add_gtest(es2panda_arktsconfig_external_decl_packages_test
+    CPP_SOURCES arktsconfig_external_decl_packages.cpp
+)
