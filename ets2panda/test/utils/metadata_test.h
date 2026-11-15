@@ -61,7 +61,7 @@ protected:
         auto diagnosticEngine = util::DiagnosticEngine();
         auto options = std::make_unique<util::Options>(workingDir, diagnosticEngine);
         const auto outputParam = "--output=" + abcPath;
-        std::vector args = {{"--extension=ets", outputParam.c_str(), sourceFilePath.c_str()}};
+        std::vector args = {{"--extension=ats", outputParam.c_str(), sourceFilePath.c_str()}};
         if constexpr (METADATA_EMITTING_ENABLED) {
             args.emplace_back("--emit-metadata");
         }

@@ -390,7 +390,7 @@ void MetadataDeserializationPhase::SetupGlobalClass() const
     const auto binderDecl = EAllocator::New<varbinder::ClassDecl>(curProgram->GlobalClass()->Ident()->Name());
     binderDecl->BindNode(curProgram->GlobalClass());
     curProgram->GlobalClass()->Ident()->SetVariable(
-        curProgram->GlobalScope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS));
+        curProgram->GlobalScope()->AddDecl(allocator, binderDecl, ScriptExtension::ATS));
 }
 
 void MetadataDeserializationPhase::AddExtends(const Metadata::InterfaceDecl *fbInterfaceDecl,
@@ -596,7 +596,7 @@ public:
         auto *const binderDecl = ArenaAllocator::New<varbinder::ClassDecl>(classId->Name());
         binderDecl->BindNode(classDefLocal);
         auto *const staticDeclScope = parentScope_->AsClassScope()->StaticDeclScope();
-        auto *const var = staticDeclScope->AddDecl(allocator, binderDecl, ScriptExtension::ETS);
+        auto *const var = staticDeclScope->AddDecl(allocator, binderDecl, ScriptExtension::ATS);
         classId->SetVariable(var);
         classDefLocal->SetVariable(var);
         var->AddFlag(varbinder::VariableFlags::CLASS);
@@ -798,7 +798,7 @@ ir::ClassProperty *MetadataDeserializationPhase::AddSyntheticEnumProperty(
     prop->SetParent(classDef);
     auto *binderDecl = EAllocator::New<varbinder::PropertyDecl>(ident->Name());
     binderDecl->BindNode(prop);
-    auto *var = Scope()->AsClassScope()->StaticFieldScope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS);
+    auto *var = Scope()->AsClassScope()->StaticFieldScope()->AddDecl(allocator, binderDecl, ScriptExtension::ATS);
     var->AddFlag(varbinder::VariableFlags::PROPERTY);
     var->AddFlag(varbinder::VariableFlags::STATIC);
     ident->SetVariable(var);
@@ -874,7 +874,7 @@ void MetadataDeserializationPhase::EnsureConstructorExists(ir::ClassDefinition *
     const auto binderDecl = EAllocator::New<varbinder::MethodDecl>(ctor->Id()->Name());
     binderDecl->BindNode(ctor);
     auto *var =
-        Scope()->AsClassScope()->StaticMethodScope()->AddDecl(Context()->Allocator(), binderDecl, ScriptExtension::ETS);
+        Scope()->AsClassScope()->StaticMethodScope()->AddDecl(Context()->Allocator(), binderDecl, ScriptExtension::ATS);
     if (var == nullptr) {
         var = Scope()->AsClassScope()->StaticMethodScope()->Find(binderDecl->Name()).variable;
         var->Declaration()->Node()->AsMethodDefinition()->OverloadsForUpdate().emplace_back(ctor);
@@ -1104,7 +1104,7 @@ ir::TSTypeParameterDeclaration *MetadataDeserializationPhase::CreateTypeParams(
         const auto binderTypeParamDecl = EAllocator::New<varbinder::TypeParameterDecl>(id->Name());
         binderTypeParamDecl->BindNode(typeParam);
         typeParams.emplace_back(typeParam);
-        const auto var = typeParamScope->AddDecl(allocator, binderTypeParamDecl, ScriptExtension::ETS);
+        const auto var = typeParamScope->AddDecl(allocator, binderTypeParamDecl, ScriptExtension::ATS);
         checkerTypeParam->SetVariable(var);
         checkerTypeParam->SetConstraintType(checker->GlobalETSAnyType());
         var->SetTsType(checkerTypeParam);
@@ -1381,7 +1381,7 @@ ir::MethodDefinition *MetadataDeserializationPhase::RegisterMethodInScope(ir::Me
         EAllocator::New<varbinder::FunctionDecl>(ctx->Allocator(), methodDef->Id()->Name(), methodDef);
     const auto scopeToAdd =
         isStatic ? Scope()->AsClassScope()->StaticMethodScope() : Scope()->AsClassScope()->InstanceMethodScope();
-    auto *var = scopeToAdd->AddDecl(ctx->Allocator(), binderDecl, ScriptExtension::ETS);
+    auto *var = scopeToAdd->AddDecl(ctx->Allocator(), binderDecl, ScriptExtension::ATS);
     if (var == nullptr) {
         var = scopeToAdd->Find(binderDecl->Name()).variable;
         var->Declaration()->Node()->AsMethodDefinition()->OverloadsForUpdate().emplace_back(methodDef);
@@ -1472,7 +1472,7 @@ ir::ClassProperty *MetadataDeserializationPhase::CreatePropertyDecl(const Metada
     binderDecl->BindNode(propDecl);
     const auto scopeToAdd = fbPropDecl->is_static() ? Scope()->AsClassScope()->StaticFieldScope()
                                                     : Scope()->AsClassScope()->InstanceFieldScope();
-    const auto var = scopeToAdd->AddDecl(allocator, binderDecl, ScriptExtension::ETS);
+    const auto var = scopeToAdd->AddDecl(allocator, binderDecl, ScriptExtension::ATS);
 
     var->AddFlag(varbinder::VariableFlags::PROPERTY);
     var->AddFlag(varbinder::VariableFlags::INITIALIZED);
@@ -1544,7 +1544,7 @@ ir::ClassProperty *MetadataDeserializationPhase::CreateAnnotationPropertyDecl(
 
     const auto binderDecl = EAllocator::New<varbinder::LetDecl>(propDecl->Id()->Name());
     binderDecl->BindNode(propDecl);
-    propDecl->Id()->SetVariable(Scope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS));
+    propDecl->Id()->SetVariable(Scope()->AddDecl(allocator, binderDecl, ScriptExtension::ATS));
 
     return propDecl;
 }
@@ -1682,7 +1682,7 @@ ir::AnnotationDeclaration *MetadataDeserializationPhase::CreateAnnotationDecl(
 
     const auto binderDecl = allocator->New<varbinder::AnnotationDecl>(annotationDecl->GetBaseName()->Name());
     binderDecl->BindNode(annotationDecl);
-    annotationDecl->GetBaseName()->SetVariable(Scope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS));
+    annotationDecl->GetBaseName()->SetVariable(Scope()->AddDecl(allocator, binderDecl, ScriptExtension::ATS));
 
     if (!isNested) {
         annotationDecl->SetParent(curProgram->Ast());
@@ -1755,7 +1755,7 @@ std::vector<ir::TSTypeAliasDeclaration *> MetadataDeserializationPhase::CreateTy
         typeId->SetParent(typeDecl);
         auto *const binderDecl = EAllocator::New<varbinder::TypeAliasDecl>(name);
         binderDecl->BindNode(typeDecl);
-        auto *const variable = Scope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS);
+        auto *const variable = Scope()->AddDecl(allocator, binderDecl, ScriptExtension::ATS);
         ES2PANDA_ASSERT(variable != nullptr);
         variable->AddFlag(varbinder::VariableFlags::TYPE_ALIAS);
         typeId->SetVariable(variable);

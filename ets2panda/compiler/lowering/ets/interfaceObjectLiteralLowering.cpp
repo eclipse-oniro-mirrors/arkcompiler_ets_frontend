@@ -669,7 +669,7 @@ static void TransformMethodBody(public_lib::Context *ctx, ir::AstNode *const bod
 
             // Process captured variables.
             if (node->IsIdentifier() && node->Variable() != nullptr &&
-                node->AsIdentifier()->IsReference(ScriptExtension::ETS)) {
+                node->AsIdentifier()->IsReference(ScriptExtension::ATS)) {
                 return TransformIdentifier(ctx, node->AsIdentifier(), functionScope, capturedVariables);
             }
 

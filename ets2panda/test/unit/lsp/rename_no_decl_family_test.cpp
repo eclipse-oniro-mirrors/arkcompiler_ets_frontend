@@ -67,7 +67,7 @@ public:
     }
 
     // Label scenario used by the flow tests below. ETS labelled statements parse and check
-    // (verified with es2panda --extension=ets); "outer" is used by both continue and break.
+    // (verified with es2panda --extension=ats); "outer" is used by both continue and break.
     static std::string LabelSource()
     {
         return "let n: number = 0;\n"                            // line 1

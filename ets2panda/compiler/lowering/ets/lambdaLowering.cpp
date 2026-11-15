@@ -1651,7 +1651,7 @@ static ir::ScriptFunction *GetWrappingLambdaParentFunction(public_lib::Context *
     for (auto *p : func->Params()) {
         ir::Identifier *clone = p->AsETSParameterExpression()->Ident()->Clone(allocator, nullptr);
         ES2PANDA_ASSERT(clone != nullptr);
-        if (clone->IsIdentifier() && (clone->IsReference(ScriptExtension::ETS)) &&
+        if (clone->IsIdentifier() && (clone->IsReference(ScriptExtension::ATS)) &&
             (clone->TypeAnnotation() != nullptr)) {
             clone->SetTsTypeAnnotation(nullptr);
         }
@@ -1984,7 +1984,7 @@ static bool IsConvertibleFunctionReference(const ir::AstNode *node)
         auto *var = id->Variable();
         // We are running this lowering only for ETS files
         // so it is correct to pass ETS extension here to isReference()
-        return (id->IsReference(ScriptExtension::ETS) && id->TsType() != nullptr && id->TsType()->IsETSFunctionType() &&
+        return (id->IsReference(ScriptExtension::ATS) && id->TsType() != nullptr && id->TsType()->IsETSFunctionType() &&
                 !IsInCalleePosition(id) && !IsEnumFunctionCall(id) && IsValidFunctionDeclVar(var) &&
                 !IsOverloadedName(id));
     }

@@ -513,7 +513,7 @@ static void InitializeContext(Context *res)
 {
     parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
     parser::ImportCache<parser::CacheType::METADATA>::ActivateCache();
-    res->phaseManager = new compiler::PhaseManager(res, ScriptExtension::ETS, res->allocator);
+    res->phaseManager = new compiler::PhaseManager(res, ScriptExtension::ATS, res->allocator);
     res->queue = new compiler::CompileQueue(res->config->options->GetThread());
 
     res->parser = new parser::ETSParser(res, parser::ParserStatus::NO_OPTS);
@@ -537,8 +537,8 @@ static Context *InitContext(es2panda_Config *config)
         return res;
     }
 
-    if (cfg->options->GetExtension() != ScriptExtension::ETS) {
-        res->errorMessage = "Invalid extension. Plugin API supports only ETS.";
+    if (cfg->options->GetExtension() != ScriptExtension::ATS) {
+        res->errorMessage = "Invalid extension. Plugin API supports only ATS.";
         res->state = ES2PANDA_STATE_ERROR;
         res->diagnosticEngine = cfg->diagnosticEngine;
         return res;

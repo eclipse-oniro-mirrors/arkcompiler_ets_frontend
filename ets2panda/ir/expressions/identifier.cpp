@@ -78,7 +78,7 @@ Identifier *Identifier::CloneReference(ArenaAllocator *const allocator, AstNode 
 {
     auto *const clone = Clone(allocator, parent);
     ES2PANDA_ASSERT(clone != nullptr);
-    if (clone->IsReference(ScriptExtension::ETS)) {
+    if (clone->IsReference(ScriptExtension::ATS)) {
         clone->SetTsTypeAnnotation(nullptr);
     }
     return clone;

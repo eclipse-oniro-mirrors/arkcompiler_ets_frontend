@@ -1756,7 +1756,7 @@ void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, std::ve
                                    ->Scope()
                                    ->AsClassScope()
                                    ->InstanceFieldScope()
-                                   ->AddDecl(ProgramAllocator(), newFieldDecl, ScriptExtension::ETS)
+                                   ->AddDecl(ProgramAllocator(), newFieldDecl, ScriptExtension::ATS)
                                    ->AsLocalVariable();
             newFieldVar->AddFlag(varbinder::VariableFlags::PROPERTY);
             newFieldVar->AddFlag(varbinder::VariableFlags::PUBLIC);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -89,7 +89,7 @@ TEST_F(ASTVerifierTest, DISABLED_ScopeTest)  // #31976
     LocalScope scope(Allocator(), nullptr);
     FunctionScope parentScope(Allocator(), nullptr);
     scope.SetParent(&parentScope);
-    scope.AddDecl(Allocator(), &decl, ScriptExtension::ETS);
+    scope.AddDecl(Allocator(), &decl, ScriptExtension::ATS);
     scope.BindNode(&ident);
 
     local.SetScope(&scope);
@@ -107,7 +107,7 @@ TEST_F(ASTVerifierTest, DISABLED_ScopeNodeTest)  // #31976
     LocalScope scope(Allocator(), nullptr);
     FunctionScope parentScope(Allocator(), nullptr);
     scope.SetParent(&parentScope);
-    scope.AddDecl(Allocator(), &decl, ScriptExtension::ETS);
+    scope.AddDecl(Allocator(), &decl, ScriptExtension::ATS);
     scope.BindNode(&ident);
     parentScope.BindNode(&ident);
 

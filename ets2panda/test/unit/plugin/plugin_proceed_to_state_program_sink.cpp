@@ -124,7 +124,7 @@ bool CompileMain(const std::string &dir, const std::string &arktsconfig, es2pand
 {
     std::string sourcePath = dir + "/main.ats";
     std::vector<std::string> argStorage = {"es2panda",
-                                           "--extension=ets",
+                                           "--extension=ats",
                                            "--simultaneous",
                                            "--incremental",
                                            "--opt-level=0",
@@ -146,7 +146,7 @@ bool CompileMain(const std::string &dir, const std::string &arktsconfig, es2pand
     std::string source = ReadSource(sourcePath);
     std::string output = options.GetOutput();
     es2panda::SourceFile input(sourcePath, source, options.IsModule(), output);
-    es2panda::Compiler compiler(ScriptExtension::ETS, options.GetThread());
+    es2panda::Compiler compiler(ScriptExtension::ATS, options.GetThread());
     *programs =
         sink == nullptr ? compiler.Compile(input, options, *de) : compiler.Compile(input, options, *de, 0, *sink);
     return true;

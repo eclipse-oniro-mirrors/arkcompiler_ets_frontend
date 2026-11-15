@@ -33,7 +33,7 @@ def run_tests_benchmarks(args: argparse.Namespace, work_dir: Path) -> None:
 
         new_perf_path = work_dir / f"{test_file.stem}-current-perf.txt"
         output = work_dir / f"{test_file.stem}-current.abc"
-        es2panda_args = ["--dump-perf-metrics", "--extension=ets", f"--output={output}", f"{test_file}"]
+        es2panda_args = ["--dump-perf-metrics", "--extension=ats", f"--output={output}", f"{test_file}"]
 
         benchmark_runner.run_benchmark_for_file([f"{args.es2panda}"] + es2panda_args, args.runs, new_perf_path)
 
@@ -60,7 +60,7 @@ def run_stdlib_benchmark(args: argparse.Namespace, work_dir: Path) -> None:
 
     es2panda_args = [
         "--dump-perf-metrics",
-        "--extension=ets",
+        "--extension=ats",
         "--gen-stdlib=true",
         f"--output={output}",
         "etsstdlib",

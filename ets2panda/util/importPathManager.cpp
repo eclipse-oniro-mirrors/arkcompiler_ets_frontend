@@ -572,7 +572,7 @@ static constexpr auto SIMULT_MAIN_PROG_NAME = "<simult>";
 void ImportPathManager::SetupGlobalProgram()
 {
     if (Context()->config->options->GetCompilationMode() == CompilationMode::GEN_STD_LIB) {
-        ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
+        ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ATS);
         util::ImportInfo importInfo {*this, STDLIB_MAIN_PROG_NAME};
         importInfo.SetData<ModuleKind::MODULE, false>(STDLIB_MAIN_PROG_NAME, "");
         Context()->parserProgram = IntroduceProgram<ModuleKind::MODULE, varbinder::ETSBinder>(importInfo);
@@ -583,7 +583,7 @@ void ImportPathManager::SetupGlobalProgram()
             return SetupGlobalProgram<varbinder::TSBinder, Language::Id::TS>(Context());
         case ScriptExtension::AS:
             return SetupGlobalProgram<varbinder::ASBinder, Language::Id::AS>(Context());
-        case ScriptExtension::ETS:
+        case ScriptExtension::ATS:
             return SetupGlobalProgram<varbinder::ETSBinder, Language::Id::ETS>(Context());
         case ScriptExtension::JS:
             return SetupGlobalProgram<varbinder::JSBinder, Language::Id::JS>(Context());
@@ -1480,7 +1480,7 @@ void ImportPathManager::InitParseQueueForSimult()
     srcPos_.SetProgram(Context()->parserProgram);
 
     ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() >= CompilationMode::SIMULTANEOUS);
-    ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
+    ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ATS);
     for (auto &sourceName : Context()->sourceFileNames) {
         // Build of `importInfo` should be refined.
         const std::string sourcePath {sourceName};

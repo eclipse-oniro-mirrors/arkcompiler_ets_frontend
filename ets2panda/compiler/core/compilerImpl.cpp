@@ -351,7 +351,7 @@ static bool ParseAndRunPhases(public_lib::Context *context)
     ES2PANDA_PERF_SCOPE("@phases");
 
     if (context->config->options->GetCompilationMode() >= CompilationMode::SIMULTANEOUS &&
-        context->config->options->GetExtension() == ScriptExtension::ETS) {
+        context->config->options->GetExtension() == ScriptExtension::ATS) {
         if (!context->sourceFile->filePath.empty()) {
             context->sourceFileNames.emplace_back(os::GetAbsolutePath(context->sourceFile->filePath));
         } else if (auto compilationList = FindProjectSources(context->config->options->ArkTSConfig());
@@ -374,7 +374,7 @@ static bool ParseAndRunPhases(public_lib::Context *context)
     //  We have to check the return status of 'RunVerifierAndPhase` and 'RunPhases` separately because there can be
     //  some internal errors (say, in Post-Conditional check) or terminate options (say in 'CheckOptionsAfterPhase')
     //  that were not reported to the log.
-    if (context->parserProgram->VarBinder()->Extension() == ScriptExtension::ETS) {
+    if (context->parserProgram->VarBinder()->Extension() == ScriptExtension::ATS) {
         if (!RunVerifierAndPhases(context)) {
             return false;
         }
@@ -497,7 +497,7 @@ std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> CompilerImpl:
                                      compiler::PandaGen, compiler::DynamicRegSpiller, compiler::JSFunctionEmitter,
                                      compiler::JSEmitter>(unit, this, context);
         }
-        case ScriptExtension::ETS: {
+        case ScriptExtension::ATS: {
             return compiler::Compile<parser::ETSParser, checker::ETSChecker, checker::ETSAnalyzer,
                                      compiler::ETSCompiler, compiler::ETSGen, compiler::StaticRegSpiller,
                                      compiler::ETSFunctionEmitter, compiler::ETSEmitter>(unit, this, context);

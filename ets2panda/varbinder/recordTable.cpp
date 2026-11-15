@@ -145,7 +145,7 @@ util::StringView BoundContext::FormRecordName() const
         }
 
         recordName.Append(recordTable_->program_->ModulePrefix());
-        if (recordName.Empty() && recordTable_->program_->VarBinder()->Extension() == ScriptExtension::ETS) {
+        if (recordName.Empty() && recordTable_->program_->VarBinder()->Extension() == ScriptExtension::ATS) {
             getFileName(recordName);
         }
 

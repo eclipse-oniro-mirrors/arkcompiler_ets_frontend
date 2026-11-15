@@ -168,7 +168,7 @@ bool Options::ParseInputOutput()
         return false;
     }
 
-    if (compilationMode_ == CompilationMode::SINGLE_FILE || GetExtension() != ScriptExtension::ETS) {
+    if (compilationMode_ == CompilationMode::SINGLE_FILE || GetExtension() != ScriptExtension::ATS) {
 #if defined(PANDA_TARGET_WINDOWS)
         std::ifstream inputStream {ark::os::file::File::GetExtendedFilePath(SourceFileName())};
 #else
@@ -237,7 +237,7 @@ bool Options::Parse(Span<const char *const> args)
         return false;
     }
 
-    if ((WasSetDumpEtsSrcBeforePhases() || WasSetDumpEtsSrcAfterPhases()) && extension_ != ScriptExtension::ETS) {
+    if ((WasSetDumpEtsSrcBeforePhases() || WasSetDumpEtsSrcAfterPhases()) && extension_ != ScriptExtension::ATS) {
         diagnosticEngine_.LogDiagnostic(diagnostic::DUMP_ETS_INVALID_EXT, DiagnosticMessageParams {});
         return false;
     }
@@ -344,22 +344,25 @@ void Options::InitializeWarnings()
 bool Options::DetermineExtension()
 {
     if (compilationMode_ == CompilationMode::PROJECT) {
-        if (WasSetExtension() && gen::Options::GetExtension() != "ets") {
+        if (WasSetExtension() && gen::Options::GetExtension() != "ets" && gen::Options::GetExtension() != "ats") {
             diagnosticEngine_.LogDiagnostic(diagnostic::PROJECT_EXT_NOT_ETS, DiagnosticMessageParams {});
             return false;
         }
-        extension_ = ScriptExtension::ETS;
+        extension_ = ScriptExtension::ATS;
         return true;
     }
-    std::string sourceFileExtension = SourceFileName().substr(SourceFileName().find_last_of('.') + 1);
-    // Note: the file suffix `.ats` is a valid suffix for compiler, which is equivalent to `.ets`
-    sourceFileExtension = sourceFileExtension == "ats" ? "ets" : sourceFileExtension;
-    if (!SourceFileName().empty() && WasSetExtension() && gen::Options::GetExtension() != sourceFileExtension) {
+    std::string rawSourceFileExtension = SourceFileName().substr(SourceFileName().find_last_of('.') + 1);
+    // Note: the file suffix `.ets` is a legacy alias for the canonical `.ats` suffix
+    std::string sourceFileExtension = rawSourceFileExtension == "ats" ? "ets" : rawSourceFileExtension;
+    std::string requestedExtension = WasSetExtension() ? gen::Options::GetExtension() : rawSourceFileExtension;
+    requestedExtension = requestedExtension == "ets" ? "ats" : requestedExtension;
+    if (!SourceFileName().empty() && WasSetExtension() && gen::Options::GetExtension() != rawSourceFileExtension &&
+        gen::Options::GetExtension() != sourceFileExtension) {
         diagnosticEngine_.LogDiagnostic(diagnostic::EXTENSION_MISMATCH,
-                                        DiagnosticMessageParams {std::string_view(sourceFileExtension),
+                                        DiagnosticMessageParams {std::string_view(rawSourceFileExtension),
                                                                  std::string_view(gen::Options::GetExtension())});
     }
-    auto tempExtension = WasSetExtension() ? gen::Options::GetExtension() : sourceFileExtension;
+    auto tempExtension = requestedExtension;
     if (gen::extension::FromString(tempExtension) == ScriptExtension::INVALID) {
         diagnosticEngine_.LogDiagnostic(diagnostic::UNKNOWN_EXT, DiagnosticMessageParams {});
         return false;
@@ -373,7 +376,7 @@ bool Options::DetermineExtension()
             return false;
         }
 #endif
-        case ScriptExtension::ETS: {
+        case ScriptExtension::ATS: {
 #if defined(PANDA_TARGET_WINDOWS)
             std::ifstream inputStream {ark::os::file::File::GetExtendedFilePath(GetArktsconfig())};
 #else
@@ -393,7 +396,7 @@ bool Options::DetermineExtension()
 
 bool Options::ProcessEtsSpecificOptions()
 {
-    if (GetExtension() != ScriptExtension::ETS) {
+    if (GetExtension() != ScriptExtension::ATS) {
         return true;
     }
 

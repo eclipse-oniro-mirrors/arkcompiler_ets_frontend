@@ -26,7 +26,7 @@ public:
     UnionNormalizationTest()
         : allocator_(EHeap::NewAllocator()),
           publicContext_ {std::make_unique<public_lib::Context>()},
-          phaseManager_ {ScriptExtension::ETS, Allocator()},
+          phaseManager_ {ScriptExtension::ATS, Allocator()},
           checker_ {Allocator(), diagnosticEngine_}
     {
     }

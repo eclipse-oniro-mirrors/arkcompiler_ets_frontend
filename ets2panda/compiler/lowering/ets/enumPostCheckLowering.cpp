@@ -479,7 +479,7 @@ ir::AstNode *EnumPostCheckLoweringPhase::BuildEnumCasting(ir::AstNode *const nod
 
 bool EnumPostCheckLoweringPhase::PerformForProgram(parser::Program *program)
 {
-    if (program->Extension() != ScriptExtension::ETS) {
+    if (program->Extension() != ScriptExtension::ATS) {
         return true;
     }
 

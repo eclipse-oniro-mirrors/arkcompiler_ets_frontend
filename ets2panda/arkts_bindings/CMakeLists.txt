@@ -22,7 +22,7 @@ set(ABC_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/arkts_bindings.abc)
 
 set(COMPILER_OPTIONS
     --ets-module
-    --extension=ets
+    --extension=ats
     --simultaneous
     --arktsconfig ${ETS_CONFIG}
     --emit-declaration

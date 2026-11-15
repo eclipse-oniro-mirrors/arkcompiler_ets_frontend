@@ -23,7 +23,7 @@
 namespace ark::es2panda::staexpr2abc {
 
 static constexpr char BASE64_INPUT_PREFIX[] = "--base64Input=";
-static constexpr char EXTENSION_ARG[] = "--extension=ets";
+static constexpr char EXTENSION_ARG[] = "--extension=ats";
 
 static void PrintUsage()
 {
@@ -35,7 +35,7 @@ static void PrintUsage()
 }
 
 // Extracts the --base64Input value, filters tool-only arguments out of the
-// CreateConfig passthrough list and injects --extension=ets when missing.
+// CreateConfig passthrough list and injects --extension=ats when missing.
 // Returns false when --help was requested or no expression was given.
 static bool FilterArgs(int argc, const char *const *argv, std::string &base64Value, std::vector<const char *> &filtered)
 {

@@ -71,7 +71,7 @@ foreach(TEST_DATA IN ITEMS ${PLUGIN_UT_TESTS})
         COMMAND ${CMAKE_COMMAND} -E env
             LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
             ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} $<TARGET_FILE:es2panda>
-            --extension=ets --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.abc"
+            --extension=ats --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.abc"
             "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_STS_FILE}" > "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.out" 2>&1
     )
 

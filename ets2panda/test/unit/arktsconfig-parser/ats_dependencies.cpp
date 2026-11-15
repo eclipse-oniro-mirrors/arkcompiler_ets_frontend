@@ -25,6 +25,7 @@
 #include "public/public.h"
 #include "util/arktsconfig.h"
 #include "util/diagnosticEngine.h"
+#include "util/options.h"
 
 namespace {
 namespace fs = std::filesystem;
@@ -72,6 +73,31 @@ protected:
     static constexpr const char *ats = R"("atsDependencies": {
         "har": {"searchPath": ["src/target", "src/main", "."], "moduleRoot": "har"}
     })";
+
+    void CheckSingleFileExtension(const std::string &fileName, const std::string &extension, bool expectMismatch)
+    {
+        Write(fileName, "function main(): void {}");
+        const auto extensionOption = "--extension=" + extension;
+        const auto configOption = "--arktsconfig=" + Configure(ats);
+        auto sourcePath = root_;
+        sourcePath.append(fileName);
+        const auto sourcePathStr = sourcePath.string();
+        const std::array args = {ES2PANDA_BIN_PATH, extensionOption.c_str(), configOption.c_str(), sourcePath.c_str()};
+        ark::es2panda::util::Options options {ES2PANDA_BIN_PATH, diagnostics_};
+        ASSERT_TRUE(options.Parse({args.data(), args.size()}));
+        EXPECT_EQ(options.GetExtension(), ark::es2panda::ScriptExtension::ATS);
+
+        const auto &warnings = diagnostics_.GetDiagnosticStorage(ark::es2panda::util::DiagnosticType::WARNING);
+        if (!expectMismatch) {
+            EXPECT_TRUE(warnings.empty());
+            return;
+        }
+        ASSERT_EQ(warnings.size(), 1U);
+        const auto sourceExtension = fs::path(fileName).extension().string().substr(1);
+        EXPECT_EQ(warnings.front()->Message(),
+                  "Not matching extensions! Sourcefile: " + sourceExtension + ", Manual(used): " + extension);
+    }
+
     fs::path root_;
     ark::es2panda::util::DiagnosticEngine diagnostics_;
 };
@@ -88,7 +114,7 @@ protected:
     {
         const auto *impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
         const auto configOption = "--arktsconfig=" + Configure(options);
-        const std::array args = {ES2PANDA_BIN_PATH, "--extension=ets", configOption.c_str()};
+        const std::array args = {ES2PANDA_BIN_PATH, "--extension=ats", configOption.c_str()};
         std::unique_ptr<es2panda_Config, decltype(impl->DestroyConfig)> config {
             impl->CreateConfig(args.size(), args.data()), impl->DestroyConfig};
         ASSERT_NE(config, nullptr);
@@ -110,6 +136,21 @@ protected:
         EXPECT_FALSE(ctx->diagnosticEngine->IsAnyError());
     }
 };
+
+TEST_F(AtsDependenciesTest, ExplicitAtsExtensionMatchesAtsSource)
+{
+    CheckSingleFileExtension("Main.ats", "ats", false);
+}
+
+TEST_F(AtsDependenciesTest, LegacyEtsExtensionMatchesAtsSource)
+{
+    CheckSingleFileExtension("Main.ats", "ets", false);
+}
+
+TEST_F(AtsDependenciesTest, ExplicitAtsExtensionWithEtsSourceWarns)
+{
+    CheckSingleFileExtension("Main.ets", "ats", true);
+}
 
 TEST_F(AtsImportResolutionTest, LegacyDirectoryIndexAfterAtsMiss)
 {

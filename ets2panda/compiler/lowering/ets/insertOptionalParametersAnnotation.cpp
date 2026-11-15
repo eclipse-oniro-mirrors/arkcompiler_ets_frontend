@@ -107,7 +107,7 @@ static void TryInsertDefaultAnnotation(public_lib::Context *ctx, ir::AstNode *no
 
 bool InsertOptionalParametersAnnotation::PerformForProgram(parser::Program *program)
 {
-    if (program->Extension() != ScriptExtension::ETS) {
+    if (program->Extension() != ScriptExtension::ATS) {
         return true;
     }
 

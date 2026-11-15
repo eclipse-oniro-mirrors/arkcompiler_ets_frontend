@@ -774,7 +774,7 @@ checker::AstNodePtr EnumLoweringPhase::TransformEnumChildrenRecursively(checker:
 
 bool EnumLoweringPhase::PerformForProgram(parser::Program *program)
 {
-    if (program->Extension() != ScriptExtension::ETS) {
+    if (program->Extension() != ScriptExtension::ATS) {
         return true;
     }
 

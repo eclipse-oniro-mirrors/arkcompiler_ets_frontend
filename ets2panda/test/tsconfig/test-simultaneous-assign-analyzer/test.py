@@ -36,7 +36,7 @@ def es2panda_command(es2panda_path, stdlib_path, arktsconfig_path, output_path):
         *str(es2panda_path).split(),
         '--opt-level=2',
         '--thread=0',
-        '--extension=ets',
+        '--extension=ats',
         '--simultaneous=true',
         '--stdlib', stdlib_path,
         '--arktsconfig', arktsconfig_path

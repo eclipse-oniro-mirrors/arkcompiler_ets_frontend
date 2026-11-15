@@ -27,7 +27,7 @@ std::vector<Location> GetImplementationLocationAtPosition(es2panda_Context *cont
     auto sourceFiles = options->ArkTSConfig().Files();
     std::vector<Location> locations;
 
-    if (options->GetExtension() != ScriptExtension::ETS) {
+    if (options->GetExtension() != ScriptExtension::ATS) {
         return locations;
     }
 

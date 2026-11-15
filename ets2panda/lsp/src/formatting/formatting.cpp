@@ -203,7 +203,7 @@ static void AdvanceTokens(lexer::Lexer &lex, lexer::Token &prev, lexer::Token &c
 static std::unique_ptr<lexer::Lexer> CreateLexer(parser::ParserContext *parserCtx, util::DiagnosticEngine &diagEngine,
                                                  ScriptExtension extension)
 {
-    if (extension == ScriptExtension::ETS) {
+    if (extension == ScriptExtension::ATS) {
         return std::make_unique<lexer::ETSLexer>(parserCtx, diagEngine);
     }
     return std::make_unique<lexer::Lexer>(parserCtx, diagEngine);

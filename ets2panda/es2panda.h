@@ -76,7 +76,7 @@ inline Language ToLanguage(ScriptExtension ext)
             return Language(Language::Id::TS);
         case ScriptExtension::AS:
             return Language(Language::Id::AS);
-        case ScriptExtension::ETS:
+        case ScriptExtension::ATS:
             return Language(Language::Id::ETS);
         default:
             ES2PANDA_UNREACHABLE();

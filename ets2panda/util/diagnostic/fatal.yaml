@@ -95,7 +95,7 @@ fatal:
 
 - name: PROJECT_EXT_NOT_ETS
   id: 9
-  message: "Error: only '--extension=ets' is supported for project compilation mode."
+  message: "Error: only '--extension=ets' and '--extension=ats' are supported for project compilation mode."
 
 - name: PROJ_COMP_WITH_OUTPUT
   id: 6
@@ -116,7 +116,7 @@ fatal:
 - name: UNKNOWN_EXT
   id: 10
   message: "Unknown extension of sourcefile, set the '--extension' option or change the file extension (available options:
-    js, ts, as, ets)"
+    js, ts, as, ets, ats)"
 
 - name: UNRESOLVED_MODULE
   id: 14
