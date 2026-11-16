@@ -127,4 +127,17 @@ TEST_F(DepAnalyzerTest, ParsesReExports)
     ASSERT(GetTestFileDirectDependants() == dependentsExpected);
 }
 
+TEST_F(DepAnalyzerTest, HandlesIllegalExport)
+{
+    size_t testFolderNum = 6;
+    RunDepAnalyzer(testFolderNum);
+    DirectDepsMap dependenciesExpected;
+    DirectDepsMap dependentsExpected;
+    std::string file1 = test::utils::DepAnalyzerTestsPathGet(6, 1);
+    std::string file2 = test::utils::DepAnalyzerTestsPathGet(6, 2);
+    dependenciesExpected[file1] = {file2};
+    dependentsExpected[file2] = {file1};
+    ASSERT(GetTestFileDirectDependencies() == dependenciesExpected);
+    ASSERT(GetTestFileDirectDependants() == dependentsExpected);
+}
 }  // namespace
