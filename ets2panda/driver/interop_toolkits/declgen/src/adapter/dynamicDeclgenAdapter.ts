@@ -105,19 +105,8 @@ export class DynamicDeclgenAdapter extends DeclgenAdapter {
     };
   }
 
-  getLibFiles(): string[] {
-    const libFiles: string[] = [];
-    fs.readdirSync(this.libFilesPath).forEach((file) => {
-      if (/\.d\.ts$/.test(file)) {
-        libFiles.push(common.fileUtils.normalizePath(path.resolve(this.libFilesPath, file)));
-      }
-    });
-    return libFiles;
-  }
-
   async run(entryFiles: string[]): Promise<void> {
     const declgenOptions: dyn.DeclgenOptions = {
-      libFiles: this.getLibFiles(),
       inputFiles: entryFiles,
       rootDir: this.buildConfig.projectRootPath,
       features: {
