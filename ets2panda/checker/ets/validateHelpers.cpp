@@ -162,6 +162,9 @@ void ETSChecker::ValidateNewClassInstanceIdentifier(ir::Identifier *const ident)
 void ETSChecker::ValidateMemberIdentifier(ir::Identifier *const ident)
 {
     auto const resolved = ident->Variable();
+    if (resolved == nullptr) {
+        return;
+    }
     // Handles Enum[enumVar] MemberExpression
     if (resolved->Declaration()->Node()->IsClassDefinition() &&
         resolved->Declaration()->Node()->AsClassDefinition()->TsType()->IsETSEnumType() &&
@@ -169,7 +172,7 @@ void ETSChecker::ValidateMemberIdentifier(ir::Identifier *const ident)
         return;
     }
     if (ident->Parent()->AsMemberExpression()->IsComputed()) {
-        if ((resolved != nullptr) && !resolved->Declaration()->PossibleTDZ()) {
+        if (!resolved->Declaration()->PossibleTDZ()) {
             WrongContextErrorClassifyByType(ident);
         }
         return;
@@ -179,7 +182,7 @@ void ETSChecker::ValidateMemberIdentifier(ir::Identifier *const ident)
 void ETSChecker::ValidateAssignmentIdentifier(ir::Identifier *const ident, Type *const type)
 {
     auto const resolved = ident->Variable();
-    auto const resovledType = resolved->TsType();
+    auto const resovledType = resolved == nullptr ? nullptr : resolved->TsType();
     const auto *const assignmentExpr = ident->Parent()->AsAssignmentExpression();
     if (assignmentExpr->Left() == ident && resovledType != nullptr &&
         resovledType->HasTypeFlag(checker::TypeFlag::GETTER) && !resovledType->HasTypeFlag(checker::TypeFlag::SETTER)) {
@@ -233,7 +236,7 @@ bool ETSChecker::ValidateBinaryExpressionIdentifier(ir::Identifier *const ident,
 void ETSChecker::ValidateResolvedIdentifier(ir::Identifier *const ident)
 {
     varbinder::Variable *const resolved = ident->Variable();
-    if (resolved->Declaration()->IsAnnotationDecl() && !ident->IsAnnotationUsage()) {
+    if (resolved != nullptr && resolved->Declaration()->IsAnnotationDecl() && !ident->IsAnnotationUsage()) {
         LogError(diagnostic::ANNOT_WITHOUT_AT, {}, ident->Start());
     }
 

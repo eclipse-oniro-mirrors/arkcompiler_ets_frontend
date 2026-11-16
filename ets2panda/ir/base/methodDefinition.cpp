@@ -337,7 +337,7 @@ static void DumpSingleOverload(const ir::MethodDefinition *m, ir::SrcDumper *dum
     }
 
     auto value = m->Value();
-    if (value->AsFunctionExpression()->Function()->HasAnnotations()) {
+    if (value != nullptr && value->AsFunctionExpression()->Function()->HasAnnotations()) {
         for (auto *anno : value->AsFunctionExpression()->Function()->Annotations()) {
             // NOTE(zhelyapov): workaround, see #26031
             if (anno->GetBaseName()->Name() != compiler::Signatures::DEFAULT_ANNO_FOR_FUNC) {
