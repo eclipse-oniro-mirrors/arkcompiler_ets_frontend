@@ -113,6 +113,7 @@ import { clearHistoryUnobfuscatedMap, historyAllUnobfuscatedNamesMap } from './i
 import { MemoryDottingDefine } from './utils/MemoryDottingDefine';
 import { nodeSymbolMap } from './utils/ScopeAnalyzer';
 import { clearUnobfuscationNamesObj } from './initialization/CommonObject';
+import { setMonitorDiagnosticLogger } from './utils/MonitorUtils';
 export { UnobfuscationCollections } from './utils/CommonCollections';
 export * as ProjectCollections from './utils/ProjectCollections';
 export { separateUniversalReservedItem, containWildcards, wildcardTransformer } from './utils/TransformUtil';
@@ -175,6 +176,7 @@ export let performanceTimeAndMemPrinter: PerformanceTimeAndMemPrinter = {
 
 // When the module is compiled, call this function to clear global collections.
 export function clearGlobalCaches(): void {
+  setMonitorDiagnosticLogger(undefined);
   PropCollections.clearPropsCollections();
   UnobfuscationCollections.clear();
   LocalVariableCollections.clear();
