@@ -20,6 +20,7 @@
 #include <functional>
 #include <memory>
 #include <unordered_map>
+#include <unordered_set>
 #include <string_view>
 #include "public/es2panda_lib.h"
 
@@ -205,6 +206,7 @@ struct Context {
     bool isExternal = false;
     bool isLspUsage = false;
     bool lazyCheck = true;
+    std::unordered_set<const parser::Program *> lspFullyAnalyzedPrograms;
     std::vector<std::string> sourceFileNames;
     panda_file::MetadataByPackages metadata;
     std::function<void(ir::AstNode *)> materializeMembers;

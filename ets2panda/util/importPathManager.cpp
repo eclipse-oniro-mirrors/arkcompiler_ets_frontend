@@ -687,10 +687,11 @@ void ImportPathManager::PrepareParseQueueForProgram(parser::Program *program)
 
 std::unordered_set<std::string> ImportPathManager::CollectReverseDependencies(std::string_view root) const
 {
+    auto normalizedRoot = NormalizeDriveLetter(root);
     std::unordered_set<std::string> visited {};
     visited.reserve(reverseFileDependencies_.size());
     std::queue<std::string_view> queue {};
-    queue.emplace(root);
+    queue.emplace(normalizedRoot);
     while (!queue.empty()) {
         auto current = queue.front();
         queue.pop();
@@ -700,7 +701,7 @@ std::unordered_set<std::string> ImportPathManager::CollectReverseDependencies(st
         }
         for (const auto &dependant : it->second) {
             auto dependantView = std::string_view {dependant.data(), dependant.size()};
-            if (dependantView == root || !visited.emplace(dependantView).second) {
+            if (dependantView == normalizedRoot || !visited.emplace(dependantView).second) {
                 continue;
             }
             queue.push(dependantView);
@@ -709,9 +710,30 @@ std::unordered_set<std::string> ImportPathManager::CollectReverseDependencies(st
     return visited;
 }
 
+void ImportPathManager::AddFileDependencies(std::string_view file, std::string_view depFile)
+{
+    if (ctx_.isLspUsage) {
+        auto normalizedFile = NormalizeDriveLetter(file);
+        auto normalizedDep = NormalizeDriveLetter(depFile);
+        auto fileKey = ArenaString {normalizedFile};
+        auto depKey = ArenaString {normalizedDep};
+        fileDependencies_[fileKey].emplace(depKey);
+        reverseFileDependencies_[depKey].emplace(fileKey);
+        return;
+    }
+    auto fileKey = ArenaString {file};
+    auto depKey = ArenaString {depFile};
+    fileDependencies_[fileKey].emplace(depKey);
+    reverseFileDependencies_[depKey].emplace(fileKey);
+}
+
 void ImportPathManager::RemoveFileDependencies(std::string_view file)
 {
-    auto fileKey = ArenaString {file};
+    if (file.empty()) {
+        return;
+    }
+    auto normalizedFile = NormalizeDriveLetter(file);
+    auto fileKey = ArenaString {normalizedFile};
     auto depsIt = fileDependencies_.find(fileKey);
     if (depsIt == fileDependencies_.end()) {
         return;
@@ -742,14 +764,17 @@ void ImportPathManager::RemoveProgramsFromFileDependencies(const std::unordered_
         return;
     }
 
+    std::vector<std::string> normalizedFiles {};
+    normalizedFiles.reserve(files.size());
     std::unordered_set<std::string_view> deletedFiles {};
     deletedFiles.reserve(files.size());
     for (const auto &file : files) {
         if (file.empty()) {
             continue;
         }
-        deletedFiles.insert(file);
-        RemoveFileDependencies(file);
+        normalizedFiles.emplace_back(NormalizeDriveLetter(file));
+        deletedFiles.insert(normalizedFiles.back());
+        RemoveFileDependencies(normalizedFiles.back());
     }
 
     RemoveDependenciesToFiles(deletedFiles);
@@ -873,9 +898,9 @@ parser::Program *ImportPathManager::LookupProgramCaches(const ImportInfo &import
     parser::Program *cachedProg = nullptr;
     auto key = std::string(importInfo.Key());
     const auto &cachedExtProgs = Context()->globalContext->cachedExternalPrograms;
-    if (cachedExtProgs.find(key) != cachedExtProgs.end()) {
-        cachedProg = cachedExtProgs.at(key);
-        ES2PANDA_ASSERT(key == cachedProg->GetImportInfo().Key());
+    if (auto it = cachedExtProgs.find(key); it != cachedExtProgs.end()) {
+        cachedProg = it->second;
+        ES2PANDA_ASSERT(cachedProg == nullptr || key == cachedProg->GetImportInfo().Key());
     } else if (auto *cachedStdlib = Context()->globalContext->stdLibAstCache; cachedStdlib != nullptr) {
         cachedStdlib->Visit<false>([&cachedProg, &key](auto *prog) {
             if (prog->GetImportInfo().Key() == key) {
@@ -1427,12 +1452,72 @@ public:
 
     void RemoveProgramFromResolvedSources(const ArenaString &filename)
     {
-        progsByResolvedPath_.erase(filename);
-        exactProgsByResolvedPath_.erase(filename);
-        modules_.erase(filename);
+        parser::Program *program = nullptr;
+        if (auto exactIt = exactProgsByResolvedPath_.find(filename); exactIt != exactProgsByResolvedPath_.end()) {
+            program = exactIt->second;
+        } else if (auto effectiveIt = progsByResolvedPath_.find(filename); effectiveIt != progsByResolvedPath_.end()) {
+            program = effectiveIt->second;
+        }
+
+        EraseResolvedPathEntry(filename);
+        if (program == nullptr) {
+            return;
+        }
+
+        if (program->Is<ModuleKind::PACKAGE>()) {
+            ArenaString pkgName {program->ModuleName()};
+            EraseResolvedPathEntryIfMatching(pkgName, program);
+        }
+        UnregisterFromModules(program);
     }
 
 private:
+    void EraseResolvedPathEntry(const ArenaString &key)
+    {
+        progsByResolvedPath_.erase(key);
+        exactProgsByResolvedPath_.erase(key);
+    }
+
+    void EraseResolvedPathEntryIfMatching(const ArenaString &key, const parser::Program *program)
+    {
+        if (auto it = progsByResolvedPath_.find(key); it != progsByResolvedPath_.end() && it->second == program) {
+            progsByResolvedPath_.erase(it);
+        }
+        if (auto it = exactProgsByResolvedPath_.find(key);
+            it != exactProgsByResolvedPath_.end() && it->second == program) {
+            exactProgsByResolvedPath_.erase(it);
+        }
+    }
+
+    void UnregisterFromModules(const parser::Program *program)
+    {
+        ArenaString mname {program->GetImportInfo().ModuleName()};
+        auto modIt = modules_.find(mname);
+        if (modIt == modules_.end()) {
+            return;
+        }
+
+        auto &modulePrograms = modIt->second;
+        if (program->IsDeclarationModule()) {
+            auto &declProgs = modulePrograms.declProgs;
+            declProgs.erase(std::remove(declProgs.begin(), declProgs.end(), program), declProgs.end());
+        } else if (modulePrograms.implProg == program) {
+            modulePrograms.implProg = nullptr;
+            // Restore effective lookups that previously pointed to this implProg back to each declProg.
+            for (auto *declProg : modulePrograms.declProgs) {
+                ArenaString declKey {declProg->GetImportInfo().Key()};
+                if (auto it = progsByResolvedPath_.find(declKey);
+                    it != progsByResolvedPath_.end() && it->second == program) {
+                    it->second = declProg;
+                }
+            }
+        }
+
+        if (modulePrograms.implProg == nullptr && modulePrograms.declProgs.empty()) {
+            modules_.erase(modIt);
+        }
+    }
+
     static bool AlreadyInExternalSources(const parser::Program *newProg,
                                          const parser::Program::ExternalPrograms *extPrograms)
     {
@@ -1535,12 +1620,29 @@ bool ImportPathManager::IsReplacedExactSource(const parser::Program *program) co
 
 void ImportPathManager::RemoveProgramFromResolvedSources(const ArenaString &filename)
 {
-    resolvedSources_.RemoveProgramFromResolvedSources(filename);
+    auto normalized = NormalizeDriveLetter(std::string_view {filename.data(), filename.size()});
+    resolvedSources_.RemoveProgramFromResolvedSources(ArenaString {normalized});
+#ifdef PANDA_TARGET_WINDOWS
+    if (auto alt = AlternateWindowsDriveLetter(normalized); !alt.empty()) {
+        resolvedSources_.RemoveProgramFromResolvedSources(ArenaString {alt});
+    }
+#endif
 }
 
 parser::Program *ImportPathManager::FindOrIntroduceProgramForIncremental(std::string_view absolutePath)
 {
-    return FindOrIntroduceProgram<false>(absolutePath);
+    auto normalized = NormalizeDriveLetter(absolutePath);
+#ifdef PANDA_TARGET_WINDOWS
+    if (auto *existing = SearchResolved(ImportInfo {*this, normalized, Language::Id::ETS}); existing != nullptr) {
+        return existing;
+    }
+    if (auto alt = AlternateWindowsDriveLetter(normalized); !alt.empty()) {
+        if (auto *existing = SearchResolved(ImportInfo {*this, alt, Language::Id::ETS}); existing != nullptr) {
+            return existing;
+        }
+    }
+#endif
+    return FindOrIntroduceProgram<false>(normalized);
 }
 
 template <bool ATTACH_TO_GLOBAL_EXTERNAL_SOURCES>

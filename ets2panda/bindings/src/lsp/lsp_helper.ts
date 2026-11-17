@@ -157,10 +157,11 @@ export class Lsp {
   private defaultArkTsConfig: string;
   private defaultBuildConfig: BuildConfig;
   private fileDependencies: string;
-  private pendingInvalidationRoot?: string;
+  private pendingInvalidationRoots: Set<string> = new Set<string>();
   private compiledFileHashes: Map<string, string> = new Map<string, string>();
   private diagnosticFiles: Set<string> = new Set<string>();
   private pendingInitialDiagnosticFiles: Set<string> = new Set<string>();
+  private diagnosticsOwnerFile: string | undefined = undefined;
   private inMemoryFileContents: Map<string, string> = new Map<string, string>();
   private buildConfigs: Record<string, BuildConfig>; // Map<moduleName, build_config.json>
   private moduleInfos: Record<string, ModuleInfo>; // Map<fileName, ModuleInfo>
@@ -248,7 +249,7 @@ export class Lsp {
     this.filesMap = new Map<string, mainFileCache>();
     this.getFileContent = getContentCallback || ((path: string): string => fs.readFileSync(path, 'utf8'));
     this.buildConfigs = generateBuildConfigs(pathConfig, modules ? modules : [], plugins);
-    this.moduleInfos = generateArkTsConfigs(this.buildConfigs, this.kitFiles);
+    this.moduleInfos = this.normalizeModuleInfosKeys(generateArkTsConfigs(this.buildConfigs, this.kitFiles));
     this.reverseModuleDeps = this.buildReverseModuleDeps();
     this.pathConfig = pathConfig;
     this.defaultArkTsConfig = Object.values(this.moduleInfos)[0].arktsConfigFile;
@@ -267,10 +268,11 @@ export class Lsp {
 
   // Partially update for new file
   updateModuleInfos(module: ModuleDescriptor, newFilePath: String): void {
+    const normalizedPath = this.normalizeDriveLetter(newFilePath.valueOf());
     let buildConfig = this.buildConfigs[module.name];
-    buildConfig.compileFiles.push(newFilePath.valueOf());
+    buildConfig.compileFiles.push(normalizedPath);
     let moduleInfo = generateModuleInfo(this.buildConfigs, buildConfig);
-    this.moduleInfos[newFilePath.valueOf()] = moduleInfo;
+    this.moduleInfos[normalizedPath] = moduleInfo;
   }
 
   // Full update for `Sync Now`
@@ -285,7 +287,7 @@ export class Lsp {
     const prevBuildConfigs = this.buildConfigs;
     const prevReverseModuleDeps = this.reverseModuleDeps;
     const nextBuildConfigs = generateBuildConfigs(this.pathConfig, modules);
-    const nextModuleInfos = generateArkTsConfigs(nextBuildConfigs);
+    const nextModuleInfos = this.normalizeModuleInfosKeys(generateArkTsConfigs(nextBuildConfigs));
     const invalidationRoots = this.collectInvalidationRoots(prevBuildConfigs, nextBuildConfigs);
 
     this.buildConfigs = nextBuildConfigs;
@@ -443,6 +445,8 @@ export class Lsp {
       if (changedConfigFiles.has(activeEntry[1].arktsConfigPath)) {
         this.destroyContext(activeEntry[1].fileConfig, activeEntry[1].fileContext);
         this.filesMap.clear();
+        this.pendingInvalidationRoots.clear();
+        this.diagnosticsOwnerFile = undefined;
       } else if (changedDecls.length > 0) {
         // Same-config declaration refresh: force-recompile the active consumer so the checker
         // and the symbol index observe the new content.
@@ -453,6 +457,7 @@ export class Lsp {
   }
 
   deleteFile(fileName: string): void {
+    fileName = this.normalizeDriveLetter(fileName);
     this.inMemoryFileContents.delete(fileName);
     if (this.isDynamicDeclFile(fileName) && this.hasExternalProgramRefreshSupport()) {
       // A removed declaration must invalidate its consumers the same way a change does; the
@@ -473,13 +478,12 @@ export class Lsp {
       this.compiledFileHashes.delete(fileName);
       this.diagnosticFiles.delete(fileName);
       this.pendingInitialDiagnosticFiles.delete(fileName);
-      if (this.pendingInvalidationRoot === fileName) {
-        this.pendingInvalidationRoot = undefined;
-      }
+      this.pendingInvalidationRoots.delete(fileName);
     }
   }
 
   modifyFilesMap(fileName: string, fileContent: TextDocumentChangeInfo): void {
+    fileName = this.normalizeDriveLetter(fileName);
     this.inMemoryFileContents.set(fileName, fileContent.newDoc);
     if (this.isDynamicDeclFile(fileName) && this.hasExternalProgramRefreshSupport()) {
       // A declaration edit is not a project source edit: it must not become the active file
@@ -494,7 +498,11 @@ export class Lsp {
     }
     this.consecutiveEditsCount++;
     this.checkAndProactivelyRecycleBeforeEdit();
-    this.prepareFileCache(fileName, fileContent, true);
+    const wasEmpty = this.filesMap.size === 0;
+    const fileCache = this.prepareFileCache(fileName, fileContent, true);
+    if (wasEmpty && fileCache !== undefined) {
+      this.prepareFileCacheFromActiveContext(fileName, fileCache.fileContent, fileCache.fileHash, true);
+    }
     this.scheduleIdleContextRecycle();
   }
 
@@ -731,8 +739,34 @@ export class Lsp {
     return process.platform === 'win32' ? normalizedPath.toLowerCase() : normalizedPath;
   }
 
+  private normalizeDriveLetter(fileName: string): string {
+    if (
+      typeof process !== 'undefined' &&
+      process.platform === 'win32' &&
+      fileName.length >= 2 &&
+      fileName[1] === ':'
+    ) {
+      const drive = fileName[0];
+      if (drive >= 'a' && drive <= 'z') {
+        return drive.toUpperCase() + fileName.slice(1);
+      }
+    }
+    return fileName;
+  }
+
+  private normalizeModuleInfosKeys(infos: Record<string, ModuleInfo>): Record<string, ModuleInfo> {
+    if (typeof process === 'undefined' || process.platform !== 'win32') {
+      return infos;
+    }
+    const normalized: Record<string, ModuleInfo> = {};
+    for (const [k, v] of Object.entries(infos)) {
+      normalized[this.normalizeDriveLetter(k)] = v;
+    }
+    return normalized;
+  }
+
   private getModuleInfo(fileName: string): ModuleInfo | undefined {
-    const filePath = path.resolve(fileName);
+    const filePath = this.normalizeDriveLetter(path.resolve(fileName));
     const moduleInfo = this.moduleInfos[filePath];
     if (moduleInfo || process.platform !== 'win32') {
       return moduleInfo;
@@ -793,8 +827,9 @@ export class Lsp {
   }
 
   private ensureFileCacheForQuery(fileName: string, forceRecompile: boolean = false): mainFileCache | undefined {
+    fileName = this.normalizeDriveLetter(fileName);
     const fileCache = this.filesMap.get(fileName);
-    if (fileCache && !forceRecompile) {
+    if (fileCache && !forceRecompile && !this.hasPendingInvalidationFor(fileName)) {
       return fileCache;
     }
 
@@ -807,6 +842,8 @@ export class Lsp {
   }
 
   private restoreFileCacheForQuery(fileName: string, fileCache: mainFileCache): void {
+    fileName = this.normalizeDriveLetter(fileName);
+    this.invalidatePendingDependants(fileCache.fileContext, fileName);
     const ret = global.es2pandaPublic._IncrementalPrepareProgram(
       fileCache.fileContext,
       fileName,
@@ -818,8 +855,10 @@ export class Lsp {
       return;
     }
     if (ret === 0) {
+      this.diagnosticsOwnerFile = fileName;
       this.proceedPreparedContext(fileName, fileCache.fileContext, true);
       this.tryBuildSymbolReferenceIndexWithExternal(fileName, fileCache.fileContext);
+      this.updateDiagnosticFilesForContext(fileName, fileCache.fileContext);
     }
     this.recordCompilationState(fileName, fileCache.fileHash, ret === 0);
     this.filesMap.clear();
@@ -844,7 +883,7 @@ export class Lsp {
     if (this.pendingDeclIndexByPath.size > 0) {
       this.flushPendingDeclIndex();
     }
-    const fileName = filename.valueOf();
+    const fileName = this.normalizeDriveLetter(filename.valueOf());
     const activeFileEntry = Array.from(this.filesMap.entries())[0];
     const shouldRestoreActiveFile = activeFileEntry !== undefined && activeFileEntry[0] !== fileName;
 
@@ -877,6 +916,7 @@ export class Lsp {
     preferModuleArkTsConfig: boolean = false,
     forceRecompile: boolean = false
   ): mainFileCache | undefined {
+    fileName = this.normalizeDriveLetter(fileName);
     if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
       return undefined;
     }
@@ -891,7 +931,8 @@ export class Lsp {
       cachedFile.fileHash === hash &&
       (targetModuleArkTsConfig === undefined ||
         this.hasSameArkTsConfig(cachedFile.arktsConfigPath, targetArkTsConfig)) &&
-      !forceRecompile
+      !forceRecompile &&
+      !this.hasPendingInvalidationFor(fileName)
     ) {
       return cachedFile;
     }
@@ -904,6 +945,7 @@ export class Lsp {
       if (!activeConfigMatches) {
         this.destroyContext(activeFileCache.fileConfig, activeFileCache.fileContext);
         this.filesMap.clear();
+        this.pendingInvalidationRoots.clear();
         const newCache = this.createFileCache(fileName, fileSource, hash, preferModuleArkTsConfig);
         // createFileCache compiles the file into a bare context: the dependency
         // programs stay unregistered in its external sources and the checker's
@@ -928,16 +970,14 @@ export class Lsp {
     hash: string,
     forceRecompile: boolean = false
   ): mainFileCache | undefined {
-    const [activeFilePath, activeFileCache] = Array.from(this.filesMap.entries())[0];
-    if (activeFilePath !== fileName && this.shouldInvalidateDependantsOnSwitch(activeFilePath)) {
-      this.invalidatePendingDependants(activeFileCache.fileContext);
-    }
+    fileName = this.normalizeDriveLetter(fileName);
+    const [, activeFileCache] = Array.from(this.filesMap.entries())[0];
+    this.invalidatePendingDependants(activeFileCache.fileContext, fileName);
 
     const previousCompiledHash = this.compiledFileHashes.get(fileName);
-    const diskHash = previousCompiledHash === undefined ? this.readDiskHash(fileName) : undefined;
-    const isChanged = previousCompiledHash !== undefined
-      ? previousCompiledHash !== hash
-      : diskHash !== undefined ? diskHash !== hash : true;
+    // An unknown compiled hash means we cannot prove the file is unchanged: treat it as changed
+    // instead of letting the native side reuse a possibly stale AST.
+    const isChanged = previousCompiledHash === undefined || previousCompiledHash !== hash;
     const shouldRecompile = forceRecompile || isChanged || this.diagnosticFiles.has(fileName);
     const ret = global.es2pandaPublic._IncrementalPrepareProgram(
       activeFileCache.fileContext,
@@ -950,6 +990,7 @@ export class Lsp {
       return undefined;
     }
     if (ret === 0) {
+      this.diagnosticsOwnerFile = fileName;
       this.proceedPreparedContext(fileName, activeFileCache.fileContext, true);
       this.tryBuildSymbolReferenceIndexWithExternal(fileName, activeFileCache.fileContext);
       this.updateDiagnosticFilesForContext(fileName, activeFileCache.fileContext);
@@ -983,7 +1024,8 @@ export class Lsp {
     }
 
     this.tryBuildSymbolReferenceIndexWithExternal(fileName, ctx);
-    this.recordCompilationState(fileName, hash);
+    this.diagnosticsOwnerFile = fileName;
+    this.recordCompilationState(fileName, hash, false);
     const newFileCache = {
       fileContent: fileSource,
       fileConfig: cfg,
@@ -996,6 +1038,7 @@ export class Lsp {
   }
 
   deleteFromFilesMap(fileName: string): void {
+    fileName = this.normalizeDriveLetter(fileName);
     let fileCache = this.filesMap.get(fileName);
     if (fileCache) {
       this.destroyContext(fileCache.fileConfig, fileCache.fileContext);
@@ -1003,6 +1046,7 @@ export class Lsp {
       this.pendingInitialDiagnosticFiles.delete(fileName);
       if (this.filesMap.size === 0) {
         this.clearIdleRecycleTimer();
+        this.diagnosticsOwnerFile = undefined;
       }
     }
   }
@@ -1046,6 +1090,7 @@ export class Lsp {
   }
 
   private getFileSource(filePath: string): string {
+    filePath = this.normalizeDriveLetter(filePath);
     const getSource =
       this.filesMap.get(filePath)?.fileContent ||
       this.inMemoryFileContents.get(filePath) ||
@@ -1057,45 +1102,57 @@ export class Lsp {
     return getSource.replace(/\r\n/g, '\n');
   }
 
-  private readDiskHash(fileName: string): string | undefined {
-    try {
-      const diskSource = fs.readFileSync(fileName, 'utf8');
-      return this.computeContentHash(diskSource);
-    } catch (error) {
-      logger.warn(`readDiskHash failed for ${fileName}: ${String(error)}`);
-      return undefined;
-    }
-  }
-
   private computeContentHash(fileSource: string): string {
     return createHash(fileSource.replace(/\r\n/g, '\n'));
-  }
-
-  private shouldInvalidateDependantsOnSwitch(activeFilePath: string): boolean {
-    return this.pendingInvalidationRoot === activeFilePath;
   }
 
   private recordCompilationState(
     fileName: string,
     hash: string,
-    allowDiskBaseline: boolean = true
+    didRecompile: boolean = false
   ): void {
     const previousHash = this.compiledFileHashes.get(fileName);
-    const baselineHash = previousHash ?? (allowDiskBaseline ? this.readDiskHash(fileName) : undefined);
-    if (baselineHash !== undefined && baselineHash !== hash) {
-      this.pendingInvalidationRoot = fileName;
+    if (didRecompile && previousHash !== hash) {
+      if (!this.pendingInvalidationRoots) {
+        this.pendingInvalidationRoots = new Set<string>();
+      }
+      this.pendingInvalidationRoots.add(fileName);
     }
 
     this.compiledFileHashes.set(fileName, hash);
   }
 
-  private invalidatePendingDependants(context: KNativePointer): void {
-    if (!this.pendingInvalidationRoot) {
+  private shouldRefreshDiagnosticsFor(fileName: string): boolean {
+    return (
+      (this.pendingInitialDiagnosticFiles?.has(fileName) ?? false) ||
+      ((this.diagnosticFiles?.has(fileName) ?? false) && this.diagnosticsOwnerFile !== fileName)
+    );
+  }
+
+  private hasPendingInvalidationFor(targetFilePath: string): boolean {
+    if (!this.pendingInvalidationRoots || this.pendingInvalidationRoots.size === 0) {
+      return false;
+    }
+    for (const root of Array.from(this.pendingInvalidationRoots)) {
+      if (root !== targetFilePath) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private invalidatePendingDependants(context: KNativePointer, targetFilePath: string): void {
+    if (!this.pendingInvalidationRoots || this.pendingInvalidationRoots.size === 0) {
       return;
     }
 
-    this.invalidateDependantsByRoot(context, this.pendingInvalidationRoot);
-    this.pendingInvalidationRoot = undefined;
+    for (const root of Array.from(this.pendingInvalidationRoots)) {
+      if (root === targetFilePath) {
+        continue;
+      }
+      this.invalidateDependantsByRoot(context, root);
+      this.pendingInvalidationRoots.delete(root);
+    }
   }
 
   private invalidateDependantsByRoot(
@@ -1119,6 +1176,7 @@ export class Lsp {
       return;
     }
 
+    this.diagnosticsOwnerFile = fileName;
     this.diagnosticFiles.delete(fileName);
     const semanticDiagnostics = new LspDiagsNode(global.es2panda._getSemanticDiagnostics(context));
     const syntacticDiagnostics = new LspDiagsNode(global.es2panda._getSyntacticDiagnostics(context));
@@ -1128,9 +1186,7 @@ export class Lsp {
   }
 
   private proceedPreparedContext(filePath: string, context: KNativePointer, processToCheck: boolean = true): void {
-    const packageName = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
-      ? this.moduleInfos[filePath].packageName
-      : undefined;
+    const packageName = this.getModuleInfo(filePath)?.packageName;
     const buildConfig = packageName ? this.buildConfigs[packageName] : this.defaultBuildConfig;
     const pluginDriver = PluginDriver.getInstance();
     pluginDriver.initPlugins(buildConfig);
@@ -1175,7 +1231,7 @@ export class Lsp {
     fileSource: string | undefined,
     preferModuleArkTsConfig: boolean
   ): [Config, KNativePointer] | undefined {
-    const filePath = path.resolve(filename.valueOf());
+    const filePath = this.normalizeDriveLetter(path.resolve(filename.valueOf()));
     const arktsconfig = this.getArkTsConfigPath(filePath, preferModuleArkTsConfig);
 
     const ets2pandaCmd = [...ets2pandaCmdPrefix, arktsconfig, ...LSP_OPTIONS];
@@ -1234,7 +1290,7 @@ export class Lsp {
   private generateDeclFile(filePath: string): void {
     const fileSource = this.getFileSource(filePath);
     if (getFileLanguageVersion(fileSource) === LANGUAGE_VERSION.ARKTS_1_2) {
-      const fileCache = this.filesMap.get(filePath);
+      const fileCache = this.filesMap.get(this.normalizeDriveLetter(filePath));
       if (fileCache) {
         this.generateDeclFileByContext(fileCache.fileContext, filePath);
       } else {
@@ -1348,6 +1404,7 @@ export class Lsp {
   }
 
   private getTextChangeSource(filePath: string): string | undefined {
+    filePath = this.normalizeDriveLetter(filePath);
     const cachedSource = this.filesMap.get(filePath)?.fileContent || this.inMemoryFileContents.get(filePath);
     if (cachedSource !== undefined) {
       return cachedSource.replace(/\r\n/g, '\n');
@@ -1649,9 +1706,9 @@ export class Lsp {
 
   getSemanticDiagnostics(filename: String): LspDiagsNode | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSemanticDiagnostics', this.perfMetricLogFilePath) : undefined;
-    const fileName = filename.valueOf();
-    const shouldRefreshInitialDiagnostics = this.pendingInitialDiagnosticFiles.has(fileName);
-    const result = this.withFileCacheForQuery(filename, (fileCache) => {
+    const fileName = this.normalizeDriveLetter(filename.valueOf());
+    const shouldRefreshDiagnostics = this.shouldRefreshDiagnosticsFor(fileName);
+    const result = this.withFileCacheForQuery(fileName, (fileCache) => {
       try {
         const diagnostics = new LspDiagsNode(global.es2panda._getSemanticDiagnostics(fileCache.fileContext));
         this.convertDiagnosticsToUtf16(fileCache.fileContent, diagnostics);
@@ -1661,7 +1718,7 @@ export class Lsp {
         logger.error('failed to getSemanticDiagnostics by fileCache', error);
         return undefined;
       }
-    }, shouldRefreshInitialDiagnostics);
+    }, shouldRefreshDiagnostics);
     if (result) {
       this.pendingInitialDiagnosticFiles.delete(fileName);
     }
@@ -1714,7 +1771,7 @@ export class Lsp {
 
   getFileReferences(filename: String): LspReferenceData[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getFileReferences', this.perfMetricLogFilePath) : undefined;
-    let searchFileCache = this.filesMap.get(filename.valueOf());
+    let searchFileCache = this.filesMap.get(this.normalizeDriveLetter(filename.valueOf()));
     let ptr: KPointer;
     const isWindows = typeof process !== 'undefined' && process.platform === 'win32';
     filename = isWindows ? filename.replace(/\//g, '\\') : filename;
@@ -2163,7 +2220,7 @@ export class Lsp {
         fileName.startsWith(this.buildConfigs[moduleName].interopApiPath!))
     ) {
       let ptr: KPointer;
-      let fileCache = this.filesMap.get(paramFileName.valueOf());
+      let fileCache = this.filesMap.get(this.normalizeDriveLetter(paramFileName.valueOf()));
       if (fileCache) {
         try {
           ptr = global.es2panda._getNodeInfosByDefinitionData(fileCache.fileContext, fileName, start);
@@ -2223,7 +2280,7 @@ export class Lsp {
         sourceFilePath = path.normalize(unifiedPath);
       }
     }
-    let fileCache = this.filesMap.get(sourceFilePath.valueOf());
+    let fileCache = this.filesMap.get(this.normalizeDriveLetter(sourceFilePath.valueOf()));
     if (fileCache) {
       try {
         if (type === 'renameLocation') {
@@ -2272,7 +2329,7 @@ export class Lsp {
     let mainCtx: KPointer | undefined;
 
     try {
-      let fileCache = this.filesMap.get(filename.valueOf());
+      let fileCache = this.filesMap.get(this.normalizeDriveLetter(filename.valueOf()));
       if (fileCache) {
         try {
           ctxFile = fileCache.fileContext;
@@ -2303,7 +2360,7 @@ export class Lsp {
       let compileFiles = this.getMergedCompileFilesCrossModule(filename);
       for (let i = 0; i < compileFiles.length; i++) {
         let searchPtr: KPointer;
-        let searchFileCache = this.filesMap.get(compileFiles[i].valueOf());
+        let searchFileCache = this.filesMap.get(this.normalizeDriveLetter(compileFiles[i].valueOf()));
         if (searchFileCache) {
           try {
             searchPtr = global.es2panda._getTypeHierarchies(searchFileCache.fileContext, ctxFile, offset);
@@ -2358,7 +2415,7 @@ export class Lsp {
   getClassHierarchyInfo(filename: String, offset: number): LspClassHierarchy | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassHierarchyInfo', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
+    let fileCache = this.filesMap.get(this.normalizeDriveLetter(filename.valueOf()));
     if (fileCache) {
       try {
         ptr = global.es2panda._getClassHierarchyInfo(fileCache.fileContext, offset);
@@ -2401,7 +2458,7 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassHierarchies', this.perfMetricLogFilePath) : undefined;
     let contextList = [];
     let nativeContextList: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
+    let fileCache = this.filesMap.get(this.normalizeDriveLetter(filename.valueOf()));
     if (fileCache) {
       nativeContextList = global.es2panda._pushBackToNativeContextVector(fileCache.fileContext, fileCache.fileContext, 1)
     } else {
@@ -2417,7 +2474,7 @@ export class Lsp {
         continue;
       }
 
-      let searchFileCache = this.filesMap.get(filePath);
+      let searchFileCache = this.filesMap.get(this.normalizeDriveLetter(filePath));
       if (searchFileCache) {
         global.es2panda._pushBackToNativeContextVector(searchFileCache.fileContext, nativeContextList, 0);
       } else {
@@ -2444,7 +2501,7 @@ export class Lsp {
   ): LspClassPropertyInfo | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassPropertyInfo', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
+    let fileCache = this.filesMap.get(this.normalizeDriveLetter(filename.valueOf()));
     if (fileCache) {
       try {
         ptr = global.es2panda._getClassPropertyInfo(fileCache.fileContext, offset, shouldCollectInherited);
@@ -2488,7 +2545,7 @@ export class Lsp {
   findSafeDeleteLocation(filename: String, offset: number): LspSafeDeleteLocationInfo[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('findSafeDeleteLocation', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
-    const fileCache = this.filesMap.get(filename.valueOf());
+    const fileCache = this.filesMap.get(this.normalizeDriveLetter(filename.valueOf()));
     if (fileCache) {
       try {
         ptr = global.es2panda._findSafeDeleteLocation(fileCache.fileContext, offset);
@@ -2651,8 +2708,9 @@ export class Lsp {
 
   getSyntacticDiagnostics(filename: String): LspDiagsNode | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSyntacticDiagnostics', this.perfMetricLogFilePath) : undefined;
+    const fileName = this.normalizeDriveLetter(filename.valueOf());
     let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
+    let fileCache = this.filesMap.get(fileName);
     if (fileCache) {
       try {
         ptr = global.es2panda._getSyntacticDiagnostics(fileCache.fileContext);
@@ -2661,7 +2719,7 @@ export class Lsp {
         return;
       }
     } else {
-      const [cfg, ctx] = this.createContext(filename, false) ?? [];
+      const [cfg, ctx] = this.createContext(fileName, false) ?? [];
       if (!cfg || !ctx) { return; }
       try {
         ptr = global.es2panda._getSyntacticDiagnostics(ctx);
@@ -2673,8 +2731,8 @@ export class Lsp {
       }
     }
     const result = new LspDiagsNode(ptr);
-    this.convertDiagnosticsToUtf16(this.getFileSource(filename.valueOf()), result);
-    this.markDiagnosticFile(filename.valueOf(), result);
+    this.convertDiagnosticsToUtf16(this.getFileSource(fileName), result);
+    this.markDiagnosticFile(fileName, result);
     perfScope?.end();
     return result;
   }
@@ -2711,13 +2769,14 @@ export class Lsp {
 
   getDocumentHighlights(filename: String, offset: number): LspDocumentHighlightsReferences | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getDocumentHighlights', this.perfMetricLogFilePath) : undefined;
-    const source = this.getFileSource(filename.valueOf());
+    const fileName = this.normalizeDriveLetter(filename.valueOf());
+    const source = this.getFileSource(fileName);
     const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(source, offset);
     if (codePointOffset === undefined) {
       return undefined;
     }
     let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
+    let fileCache = this.filesMap.get(fileName);
     if (fileCache) {
       try {
         ptr = global.es2panda._getDocumentHighlights(fileCache.fileContext, codePointOffset);
@@ -2726,7 +2785,7 @@ export class Lsp {
         return;
       }
     } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
+      const [cfg, ctx] = this.createContext(fileName) ?? [];
       if (!cfg || !ctx) {
         return;
       }
@@ -2846,7 +2905,7 @@ export class Lsp {
     let ptr: KPointer;
     const isWindows = typeof process !== 'undefined' && process.platform === 'win32';
     filename = isWindows ? filename.replace(/\//g, '\\') : filename;
-    const fileCache = this.filesMap.get(filename.valueOf());
+    const fileCache = this.filesMap.get(this.normalizeDriveLetter(filename.valueOf()));
     if (fileCache) {
       const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, offset);
       if (codePointOffset === undefined) {
@@ -3378,7 +3437,7 @@ export class Lsp {
   // SDK validation keeps one simultaneous context per diagnostic state and
   // switches the active declaration file through the incremental API.
   public initSdkValidatorCache(validationFiles: string[], targetState: Es2pandaContextState): void {
-    const files = Array.from(new Set(validationFiles.map((file) => path.resolve(file))));
+    const files = Array.from(new Set(validationFiles.map((file) => this.normalizeDriveLetter(path.resolve(file)))));
     if (files.length === 0) {
       throw new Error('SDK validation files not found.');
     }
@@ -3406,7 +3465,7 @@ export class Lsp {
         this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, ctx);
         PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
       }
-      const content = this.getFileSource(files[0]);
+      const content = fs.readFileSync(files[0], 'utf8');
       const ret = global.es2pandaPublic._IncrementalPrepareProgram(ctx, files[0], content, 0);
       if (ret !== 1) {
         throw new Error(`Failed to select SDK declaration file: ${files[0]}`);
@@ -3435,8 +3494,8 @@ export class Lsp {
     if (this.filesMap.size !== 1) {
       throw new Error('SDK validator cache is not initialized.');
     }
-    const filePath = path.resolve(fileName);
-    const source = this.getFileSource(filePath);
+    const filePath = this.normalizeDriveLetter(path.resolve(fileName));
+    const source = fs.readFileSync(filePath, 'utf8');
     const hash = this.computeContentHash(source);
     const [activeFilePath, activeFileCache] = Array.from(this.filesMap.entries())[0];
     if (activeFilePath === filePath && activeFileCache.fileHash === hash) {
@@ -3461,7 +3520,7 @@ export class Lsp {
   public initAstCache(): void {
     // Collect all the exported API in the SDK.
     this.compileKits(this.kitFiles);
-    let files: string[] = Array.from(Object.keys(this.moduleInfos));
+    let files: string[] = Array.from(Object.keys(this.moduleInfos)).map((file) => this.normalizeDriveLetter(file));
     const ets2pandaCmd: string[] = formEts2pandaCmd(this.defaultArkTsConfig, files[0], true, LSP_OPTIONS);
     let lspDriverHelper = new LspDriverHelper();
     let config = lspDriverHelper.createCfg(ets2pandaCmd, files[0]);
@@ -3509,6 +3568,7 @@ export class Lsp {
       fileHash: this.computeContentHash(content),
       arktsConfigPath: this.defaultArkTsConfig
     });
+    this.diagnosticsOwnerFile = files[0];
     // The AST cache and the main-file warm-up above are expected steady-state
     // residents: record them into the baseline so the memory guard only measures
     // growth beyond the warm state instead of re-counting the cache on every check.
@@ -3808,6 +3868,8 @@ export class Lsp {
     this.filesMap.clear();
     this.compiledFileHashes.clear();
     this.diagnosticFiles.clear();
+    this.pendingInvalidationRoots.clear();
+    this.diagnosticsOwnerFile = undefined;
 
     try {
       if (contexts.size > 0) {

@@ -1393,7 +1393,8 @@ std::vector<TextChange> GetFormattingEditsAfterKeystroke(es2panda_Context *conte
 }
 
 static int BatchDeleteProgramsForFiles(public_lib::Context *ctx,
-                                       const std::unordered_set<std::string> &uniqueDeleteNames)
+                                       const std::unordered_set<std::string> &uniqueDeleteNames,
+                                       bool removeDependencyGraphEntries)
 {
     if (uniqueDeleteNames.empty()) {
         return 0;
@@ -1407,7 +1408,9 @@ static int BatchDeleteProgramsForFiles(public_lib::Context *ctx,
         ArenaString key {file};
         importPathManager->RemoveProgramFromResolvedSources(key);
     }
-    importPathManager->RemoveProgramsFromFileDependencies(uniqueDeleteNames);
+    if (removeDependencyGraphEntries) {
+        importPathManager->RemoveProgramsFromFileDependencies(uniqueDeleteNames);
+    }
     importPathManager->ClearResolutionCaches();
     return 0;
 }
@@ -1420,7 +1423,7 @@ int DeleteProgramForFile(es2panda_Context *context, const char *fileName)
 
     std::unordered_set<std::string> filesToDelete {};
     filesToDelete.emplace(fileName);
-    return BatchDeleteProgramsForFiles(reinterpret_cast<public_lib::Context *>(context), filesToDelete);
+    return BatchDeleteProgramsForFiles(reinterpret_cast<public_lib::Context *>(context), filesToDelete, true);
 }
 
 int DeleteDependantProgramsForFiles(es2panda_Context *context, const char *fileName)
@@ -1430,7 +1433,8 @@ int DeleteDependantProgramsForFiles(es2panda_Context *context, const char *fileN
     }
 
     auto *ctx = reinterpret_cast<public_lib::Context *>(context);
-    return BatchDeleteProgramsForFiles(ctx, ctx->parser->GetImportPathManager()->CollectReverseDependencies(fileName));
+    return BatchDeleteProgramsForFiles(ctx, ctx->parser->GetImportPathManager()->CollectReverseDependencies(fileName),
+                                       false);
 }
 
 // Refreshes an external (non active) program source - a dynamic interop declaration file - after

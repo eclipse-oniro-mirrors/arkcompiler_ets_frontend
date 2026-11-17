@@ -265,7 +265,17 @@ void ETSParser::IncrementalParse()
     ES2PANDA_ASSERT(GetImportPathManager()->GetParseQueue().front().program == GetProgram());
 
     DoSomethingSpecificToMainProgram(this);
-    ParseSources();
+    auto &parseQueue = GetImportPathManager()->GetParseQueue();
+    // NOLINTNEXTLINE(modernize-loop-convert)
+    for (size_t i = 0; i < parseQueue.size(); i++) {
+        if (!parseQueue[i].isParsed) {
+            auto absName = parseQueue[i].program->AbsoluteName().Utf8();
+            if (!absName.empty()) {
+                GetImportPathManager()->RemoveFileDependencies(absName);
+            }
+            ParseNotParsed(&parseQueue[i]);
+        }
+    }
 }
 
 void ETSParser::ParseInSimultMode()
