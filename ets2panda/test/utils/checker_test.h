@@ -44,7 +44,7 @@ public:
     CheckerTest()
         : allocator_(ark::es2panda::EHeap::NewAllocator()),
           publicContext_ {std::make_unique<plib_alias::Context>()},
-          phaseManager_ {ark::es2panda::ScriptExtension::ETS, Allocator()},
+          phaseManager_ {ark::es2panda::ScriptExtension::ATS, Allocator()},
           es2pandaPath_ {PandaExecutablePathGetter::Get()[0]},
           checker_(allocator_.get(), diagnosticEngine_)
     {

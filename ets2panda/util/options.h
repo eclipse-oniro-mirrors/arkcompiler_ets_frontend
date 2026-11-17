@@ -122,7 +122,7 @@ public:
 
     bool IsDynamic() const
     {
-        return extension_ != ScriptExtension::ETS;
+        return extension_ != ScriptExtension::ATS;
     }
 
     const std::array<bool, gen::ast_verifier::COUNT> &GetAstVerifierWarnings() const

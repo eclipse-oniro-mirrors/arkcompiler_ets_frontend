@@ -202,11 +202,11 @@ def _asm_check(es2panda, opt_level, tmpdir, work_name, mod, case_dir):
         cfg = _simult_asm_arktsconfig(es2panda, tmpdir)
         if cfg is None:
             return "ASM CHECK FAILED: default arktsconfig.json not found next to es2panda"
-        cmd = [es2panda, f'--opt-level={opt_level}', '--extension=ets',
+        cmd = [es2panda, f'--opt-level={opt_level}', '--extension=ats',
                '--simultaneous=true', '--arktsconfig=' + cfg,
                '--dump-assembly', '--output=' + asm_abc]
     else:
-        cmd = [es2panda, f'--opt-level={opt_level}', '--extension=ets',
+        cmd = [es2panda, f'--opt-level={opt_level}', '--extension=ats',
                '--dump-assembly', '--output=' + asm_abc, work_name]
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=tmpdir)
     asm = result.stdout + result.stderr

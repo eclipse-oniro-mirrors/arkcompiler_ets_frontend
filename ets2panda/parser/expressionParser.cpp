@@ -1796,7 +1796,7 @@ ir::MemberExpression *ParserImpl::ParsePrivatePropertyAccess(ir::Expression *pri
 
     auto *privateIdent = AllocNode<ir::Identifier>(lexer_->GetToken().Ident(), Allocator());
     ES2PANDA_ASSERT(privateIdent != nullptr);
-    if (program_->Extension() == util::gen::extension::ETS && privateIdent->Name().Is("prototype")) {
+    if (program_->Extension() == util::gen::extension::ATS && privateIdent->Name().Is("prototype")) {
         LogError(diagnostic::PROTOTYPE_ACCESS);
     }
     privateIdent->SetRange({memberStart, lexer_->GetToken().End()});
@@ -1815,7 +1815,7 @@ ir::MemberExpression *ParserImpl::ParsePropertyAccess(ir::Expression *primaryExp
 {
     ir::Identifier *ident = ExpectIdentifier(true);
     ident->SetRange({periodPos, ident->Range().end});
-    if (program_->Extension() == util::gen::extension::ETS && ident->Name().Is("prototype")) {
+    if (program_->Extension() == util::gen::extension::ATS && ident->Name().Is("prototype")) {
         LogError(diagnostic::PROTOTYPE_ACCESS);
     }
     auto *memberExpr = AllocNode<ir::MemberExpression>(primaryExpr, ident, ir::MemberExpressionKind::PROPERTY_ACCESS,

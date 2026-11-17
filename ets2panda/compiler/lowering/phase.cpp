@@ -279,7 +279,7 @@ bool Phase::Apply(public_lib::Context *ctx)
 
 PhaseManager::~PhaseManager()
 {
-    if (ScriptExtension::ETS == ext_) {
+    if (ScriptExtension::ATS == ext_) {
         DestoryETSPhaseList(phases_);
     }
 }
@@ -287,7 +287,7 @@ PhaseManager::~PhaseManager()
 void PhaseManager::InitializePhases()
 {
     switch (ext_) {
-        case ScriptExtension::ETS:
+        case ScriptExtension::ATS:
             phases_ = GetETSPhaseList();
             break;
         case ScriptExtension::AS:

@@ -154,18 +154,18 @@ public:
 
     [[nodiscard]] bool IsETSBinder() const noexcept
     {
-        return Extension() == ScriptExtension::ETS;
+        return Extension() == ScriptExtension::ATS;
     }
 
     [[nodiscard]] const ETSBinder *AsETSBinder() const
     {
-        ES2PANDA_ASSERT(Extension() == ScriptExtension::ETS);
+        ES2PANDA_ASSERT(Extension() == ScriptExtension::ATS);
         return reinterpret_cast<const ETSBinder *>(this);
     }
 
     [[nodiscard]] ETSBinder *AsETSBinder()
     {
-        ES2PANDA_ASSERT(Extension() == ScriptExtension::ETS);
+        ES2PANDA_ASSERT(Extension() == ScriptExtension::ATS);
         return reinterpret_cast<ETSBinder *>(this);
     }
 

@@ -247,16 +247,16 @@ All commands run from repository root.
 cmake --build <out_dir> -j8    # es2panda (covers all frontend stages)
 
 # Parser tests (syntax, AST construction)
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier parser --extension=ets --load-runtimes=ets --force-generate --processes=all
+runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier parser --extension=ats --load-runtimes=ets --force-generate --processes=all
 
 # Runtime tests (compile + verify + execute)
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-runtime --extension=ets --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
+runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-runtime --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
 
 # AST checker tests (diagnostics, semantic errors)
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier astchecker --extension=ets --load-runtimes=ets --force-generate --processes=all
+runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier astchecker --extension=ats --load-runtimes=ets --force-generate --processes=all
 
 # CTS tests (spec compliance, broad regression)
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-cts --extension=ets --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
+runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-cts --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
 ```
 
 ### Verification By Change Type

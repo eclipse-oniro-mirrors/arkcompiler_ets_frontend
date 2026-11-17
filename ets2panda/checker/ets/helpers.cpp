@@ -3486,7 +3486,7 @@ void ETSChecker::GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *origin
     auto *const methodScope = scope->InstanceMethodScope();
     auto *const decl = ProgramAllocator()->New<varbinder::FunctionDecl>(ProgramAllocator(), name, getter);
 
-    auto *var = methodScope->AddDecl(ProgramAllocator(), decl, ScriptExtension::ETS);
+    auto *var = methodScope->AddDecl(ProgramAllocator(), decl, ScriptExtension::ATS);
     if (var == nullptr) {
         auto *const prevDecl = methodScope->FindDecl(name);
         for (const auto &method : {getter, setter}) {

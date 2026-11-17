@@ -107,7 +107,7 @@ foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS_ISOLATED})
             COMMAND ${CMAKE_COMMAND} -E env
                 LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
                 ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} $<TARGET_FILE:es2panda>
-                --extension=ets --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.abc"
+                --extension=ats --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.abc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_ETS_FILE}" > "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.out" 2>&1
         )
         add_dependencies(declgen-ets2ts-plugin-test-compile-isolated-${FILE_NAME} es2panda ${TEST_NAME} es2panda-lib)
@@ -134,7 +134,7 @@ foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
             COMMAND ${CMAKE_COMMAND} -E env
                 LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
                 ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} $<TARGET_FILE:es2panda>
-                --extension=ets --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.abc"
+                --extension=ats --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.abc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_ETS_FILE}" > "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.out" 2>&1
         )
         add_dependencies(declgen-ets2ts-plugin-test-compile-${FILE_NAME} es2panda ${TEST_NAME} es2panda-lib)

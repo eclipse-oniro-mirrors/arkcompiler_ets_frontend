@@ -128,7 +128,7 @@ using AstNodePtr = ir::AstNode *;
 
 bool ExtensionAccessorPhase::PerformForProgram(parser::Program *program)
 {
-    if (program->Extension() != ScriptExtension::ETS) {
+    if (program->Extension() != ScriptExtension::ATS) {
         return true;
     }
 

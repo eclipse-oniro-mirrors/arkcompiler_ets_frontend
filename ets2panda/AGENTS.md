@@ -56,7 +56,7 @@ The patch is blocked if any of the following is true:
 Run from the build directory that contains `./bin`:
 
 ```bash
-./bin/es2panda --extension=ets --opt-level=0 --output=out.abc fault.ets
+./bin/es2panda --extension=ats --opt-level=0 --output=out.abc fault.ets
 ./bin/verifier --boot-panda-files=./plugins/ets/etsstdlib.abc --load-runtimes=ets out.abc
 ./bin/ark --boot-panda-files=./plugins/ets/etsstdlib.abc --load-runtimes=ets --panda-files=out.abc out.abc fault.ETSGLOBAL::main
 ```

@@ -54,7 +54,7 @@ std::unique_ptr<ark::pandasm::Program> CompileEtsModuleFile(const std::string &a
 {
     std::string optCfg = std::string("--arktsconfig=") + arktsconfigPath;
     std::vector<std::string> storage = {
-        ES2PANDA_BIN_PATH, "--extension=ets", "--ets-module=true", "--opt-level=0", std::move(optCfg),
+        ES2PANDA_BIN_PATH, "--extension=ats", "--ets-module=true", "--opt-level=0", std::move(optCfg),
     };
     std::vector<const char *> argv;
     argv.reserve(storage.size());

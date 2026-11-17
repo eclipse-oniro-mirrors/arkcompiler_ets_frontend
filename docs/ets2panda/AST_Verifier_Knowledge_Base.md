@@ -115,13 +115,13 @@ cmake --build <out_dir> -j8    # es2panda including ast_verifier
 Test commands:
 ```sh
 # AST checker / verifier unit tests
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier astchecker --extension=ets --load-runtimes=ets --force-generate --processes=all
+runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier astchecker --extension=ats --load-runtimes=ets --force-generate --processes=all
 # Parser tests
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier parser --extension=ets --load-runtimes=ets --force-generate --processes=all
+runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier parser --extension=ats --load-runtimes=ets --force-generate --processes=all
 # Runtime tests
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-runtime --extension=ets --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
+runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-runtime --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
 # CTS tests
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-cts --extension=ets --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
+runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-cts --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
 ```
 
 New files must be added to both `CMakeLists.txt` and `BUILD.gn`.

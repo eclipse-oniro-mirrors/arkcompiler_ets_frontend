@@ -193,7 +193,7 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     auto const &name = field->Key()->AsIdentifier()->Name();
     auto methodIdent = Context()->AllocNode<ir::Identifier>(name, Context()->Allocator());
     auto *decl = Context()->Allocator()->New<varbinder::VarDecl>(name);
-    auto var = functionScope->AddDecl(Context()->Allocator(), decl, ScriptExtension::ETS);
+    auto var = functionScope->AddDecl(Context()->Allocator(), decl, ScriptExtension::ATS);
     ES2PANDA_ASSERT(var != nullptr);
     methodIdent->SetVariable(var);
     methodIdent->SetRange(field->Key()->Range());
@@ -289,7 +289,7 @@ ir::Expression *InterfacePropertyDeclarationsPhase::UpdateInterfaceProperties(ir
         auto name = getter->Key()->AsIdentifier()->Name();
 
         auto *decl = Context()->Allocator()->New<varbinder::FunctionDecl>(Context()->Allocator(), name, getter);
-        auto *variable = methodScope->AddDecl(Context()->Allocator(), decl, ScriptExtension::ETS);
+        auto *variable = methodScope->AddDecl(Context()->Allocator(), decl, ScriptExtension::ATS);
 
         if (variable == nullptr) {
             auto prevDecl = methodScope->FindDecl(name);

@@ -36,7 +36,7 @@ function (compile_arkts_bindings_test ABC_TARGET ETS_SOURCES OUTPUT_DIR ABC_FILE
         set(ES2PANDA_ARGUMENTS
             --opt-level=2
             --thread=0
-            --extension=ets
+            --extension=ats
             --output=${SOURCE_ABC}
             --stdlib="${PANDA_ROOT}/plugins/ets/stdlib"
             ${ARG_COMPILER_EXTRA_OPTIONS}

@@ -40,7 +40,7 @@ void CheckerPhase::Setup()
 
     // for ast-cache using
     // NOTE(dkofanov): If present, the whole cache should be restored at once, at program-restoration. To be moved.
-    if (Context()->parserProgram->VarBinder()->Extension() != ScriptExtension::ETS) {
+    if (Context()->parserProgram->VarBinder()->Extension() != ScriptExtension::ATS) {
         return;
     }
     Context()->GetChecker()->AsETSChecker()->ReputCheckerData();
@@ -62,7 +62,7 @@ bool CheckerPhase::Perform()
     });
     MarkStatementsNoCleanup(Context()->parserProgram);
 
-    if (Context()->parserProgram->Extension() == ScriptExtension::ETS) {
+    if (Context()->parserProgram->Extension() == ScriptExtension::ATS) {
         try {
             Context()->GetChecker()->StartChecker(Context()->parserProgram->VarBinder(), *Context()->config->options);
         } catch (std::exception &e) {

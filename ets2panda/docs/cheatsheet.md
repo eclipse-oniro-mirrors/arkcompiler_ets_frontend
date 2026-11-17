@@ -16,8 +16,8 @@ and execution commands will be the same and look like this:
 
 ```bash
 # compilation of separate module and library
-./bin/es2panda --extension=ets --output=out.abc --opt-level=2 x.ats
-./bin/es2panda --extension=ets --output=etsstdlib.abc --opt-level=2 --gen-stdlib=true
+./bin/es2panda --extension=ats --output=out.abc --opt-level=2 x.ats
+./bin/es2panda --extension=ats --output=etsstdlib.abc --opt-level=2 --gen-stdlib=true
 # execution command
 ./bin/ark --boot-panda-files=etsstdlib.abc --load-runtimes=ets out.abc ETSGLOBAL::main
 ```
@@ -75,7 +75,7 @@ For more details see *./bin/ark --help*.
 The library module is compiled the same way as a regular module:
 
 ```bash
-./bin/es2panda --extension=ets --output=out.abc --opt-level=2 --gen-stdlib=false /path/to/module/folder
+./bin/es2panda --extension=ats --output=out.abc --opt-level=2 --gen-stdlib=false /path/to/module/folder
 ```
 
 *Notes:*
@@ -151,7 +151,7 @@ In additional, implicitly imported paths can be added. After that, your custom c
 should be passed to the appropriate option:
 
 ```bash
-./bin/es2panda --extension=ets --output=out.abc --opt-level=2 --gen-stdlib=false \
+./bin/es2panda --extension=ats --output=out.abc --opt-level=2 --gen-stdlib=false \
 --arktsconfig=/path/to/arktsconfig.json x.ats
 ```
 
@@ -221,8 +221,8 @@ export function foo(): int {return 54}
 
 ```bash
 # compilation of separate module 
-./bin/es2panda --extension=ets --output=b.abc --opt-level=2  --ets-module y.ats 
-./bin/es2panda --extension=ets --output=a.abc --opt-level=2  x.ats 
+./bin/es2panda --extension=ats --output=b.abc --opt-level=2  --ets-module y.ats
+./bin/es2panda --extension=ats --output=a.abc --opt-level=2  x.ats
 # linkage of binary files
 ./bin/ark_link --output out.abc -- a.abc b.abc       
 

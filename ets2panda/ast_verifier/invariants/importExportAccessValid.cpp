@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -119,7 +119,7 @@ bool ImportExportAccessValid::HandleImportExportIdentifier(std::unordered_set<st
                                                            const ir::Identifier *ident, const ir::AstNode *callExpr)
 {
     // We are running AST verifier only for ETS files so it is correct to pass ETS extension here
-    if (ident->IsReference(ScriptExtension::ETS)) {
+    if (ident->IsReference(ScriptExtension::ATS)) {
         const auto *var = ident->Variable();
         if (var != nullptr) {
             if (var->HasFlag(varbinder::VariableFlags::METHOD) && callExpr != nullptr) {

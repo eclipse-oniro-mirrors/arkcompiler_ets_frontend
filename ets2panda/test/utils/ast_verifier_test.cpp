@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ AstVerifierTest::AstVerifierTest()
     std::array argv = {es2pandaPath};
     cfg_ = impl_->CreateConfig(argv.size(), argv.data());
     allocator_ = ark::es2panda::EHeap::NewAllocator().release();
-    phaseManager_ = new ark::es2panda::compiler::PhaseManager(nullptr, ark::es2panda::ScriptExtension::ETS, allocator_);
+    phaseManager_ = new ark::es2panda::compiler::PhaseManager(nullptr, ark::es2panda::ScriptExtension::ATS, allocator_);
 }
 
 AstVerifierTest::~AstVerifierTest()

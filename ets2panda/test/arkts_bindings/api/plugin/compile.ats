@@ -91,7 +91,7 @@ function formCommand(args: ParsedArguments): string[] {
     const ets2pandaCmd: string[] = [
         '_',
         '--extension',
-        'ets',
+        'ats',
         '--arktsconfig',
         args.arktsConfig,
         args.srcFile

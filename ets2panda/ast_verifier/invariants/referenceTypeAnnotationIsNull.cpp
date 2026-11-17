@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ CheckResult ReferenceTypeAnnotationIsNull::operator()(const ir::AstNode *ast)
 
     // We are running AST verifier only for ETS files so it is correct to pass ETS extension here
     auto const *const id = ast->AsIdentifier();
-    if (id->IsReference(ScriptExtension::ETS) && id->TypeAnnotation() != nullptr) {
+    if (id->IsReference(ScriptExtension::ATS) && id->TypeAnnotation() != nullptr) {
         AddCheckMessage("TYPE_ANNOTATION_NOT_NULLPTR", *ast);
         return {CheckDecision::INCORRECT, CheckAction::CONTINUE};
     }
