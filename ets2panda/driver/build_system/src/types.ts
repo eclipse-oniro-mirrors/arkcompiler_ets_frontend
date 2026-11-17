@@ -577,6 +577,7 @@ export interface CompilerOptions {
     cacheDir?: string;
     declgenV2OutPath?: string;
     mock?: Record<string, { source: string }>;
+    internalPaths?: string[];
 }
 
 export interface ArkTSConfigObject {

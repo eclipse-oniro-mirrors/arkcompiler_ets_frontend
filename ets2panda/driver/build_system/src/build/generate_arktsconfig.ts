@@ -162,6 +162,10 @@ export class ArkTSConfig {
         this.object.compilerOptions.useEmptyPackage = value;
     }
 
+    public set internalPaths(value: string[]) {
+        this.object.compilerOptions.internalPaths = value;
+    }
+
     mergeArktsConfig(source: ArkTSConfig | undefined): void {
         if (!source) {
             return;
@@ -237,6 +241,7 @@ export class ArkTSConfigGenerator {
     private logger: Logger;
     private systemPathSection: Record<string, string[]>;
     private systemDependenciesSection: Record<string, DependencyItem>;
+    private systemInternalPaths: string[];
     private arktsconfigs: Map<string, ArkTSConfig>;
 
     public constructor(buildConfig: BuildConfig) {
@@ -249,6 +254,7 @@ export class ArkTSConfigGenerator {
 
         this.systemPathSection = {}
         this.systemDependenciesSection = {};
+        this.systemInternalPaths = [];
         this.arktsconfigs = new Map();
 
         this.initPathInfo();
@@ -270,6 +276,9 @@ export class ArkTSConfigGenerator {
         return this.systemPathSection;
     }
 
+    public get systemInternalSdkPaths(): string[] {
+        return this.systemInternalPaths;
+    }
 
     private generateSystemSdkPathSection(pathSection: Record<string, string[]>): void {
         function traverse(currentDir: string, relativePath: string = '', isExcludedDir: boolean = false, allowedExtensions: string[] = ['.d.ets']): void {
@@ -316,6 +325,12 @@ export class ArkTSConfigGenerator {
             let kitsPath: string = path.resolve(this.systemSdkPath, 'kits');
             fs.existsSync(kitsPath) ? traverse(kitsPath) : this.logger.printWarn(`sdk path ${kitsPath} not exist.`);
         }
+        // Any module whose name starts with '@' is exposed in a public form and treated as a public SDK module;
+        // any other module collected by the SDK scan (e.g. 'arkui.component.builder' from the
+        // 'arkui/runtime-api' directory) is an internal SDK module.
+        this.systemInternalPaths = Object.keys(pathSection)
+            .filter((key: string) => !key.startsWith('@'))
+            .sort();
     }
 
     private getAllModuleFilesToPathSection(moduleInfo: ModuleInfo, arktsConfig: ArkTSConfig): void {
@@ -639,6 +654,9 @@ export class ArkTSConfigGenerator {
             this.buildConfig.projectRootPath, this.buildConfig.declgenV2OutPath);
         this.arktsconfigs.set(moduleInfo.packageName, arktsConfig);
         this.addPathSection(moduleInfo, arktsConfig);
+        if (this.systemInternalPaths.length !== 0 && !this.buildConfig.frameworkMode) {
+            arktsConfig.internalPaths = this.systemInternalPaths;
+        }
         if (!enableDeclgenEts2Ts) {
             this.addDependenciesSection(moduleInfo, arktsConfig);
         }

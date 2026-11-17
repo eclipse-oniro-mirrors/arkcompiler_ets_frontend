@@ -2017,3 +2017,136 @@ describe('ArkTSConfigGenerator - ATS source packages', () => {
         expect(binaryConsumer.compilerOptions.atsDependencies?.testModule).toBeUndefined();
     });
 });
+
+/**
+ * Internal SDK Paths Collection
+ */
+describe('ArkTSConfigGenerator - Internal SDK Paths Collection', () => {
+    let mockLogger: any;
+
+    beforeEach(() => {
+        mockLogger = setupBasicMocks();
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    function setupSdkDirectoryMocks(): void {
+        (fs.existsSync as jest.Mock).mockReturnValue(true);
+        (fs.readdirSync as jest.Mock).mockImplementation((dir: string) => {
+            if (dir === '/mock/build/sdk/api') {
+                return ['@ohos.test.d.ets', 'arkui'];
+            }
+            if (dir === '/mock/build/sdk/api/arkui') {
+                return ['runtime-api'];
+            }
+            if (dir === '/mock/build/sdk/api/arkui/runtime-api') {
+                return [
+                    'arkui.component.builder.d.ets',
+                    'arkui.stateManagement.storage.localStorage.d.ets',
+                    '@koalaui.runtime.d.ets'
+                ];
+            }
+            if (dir === '/mock/build/sdk/arkts') {
+                return ['@arkts.test.d.ets'];
+            }
+            if (dir === '/mock/build/sdk/kits') {
+                return ['@kit.Test.d.ets'];
+            }
+            return [];
+        });
+        (fs.statSync as jest.Mock).mockImplementation((p: string) => {
+            if (p.endsWith('.d.ets')) {
+                return { isFile: () => true, isDirectory: () => false };
+            }
+            return { isFile: () => false, isDirectory: () => true };
+        });
+    }
+
+    describe('Internal Paths Recognition', () => {
+        test('should collect exactly the non-public modules from sdk scan', () => {
+            setupSdkDirectoryMocks();
+            const generator = new ArkTSConfigGenerator(createMockBuildConfig());
+
+            expect(generator.systemInternalSdkPaths).toEqual([
+                'arkui.component.builder',
+                'arkui.stateManagement.storage.localStorage'
+            ]);
+            expect(generator.systemApiPathSection['arkui.component.builder']).toBeDefined();
+            expect(generator.systemApiPathSection['@koalaui.runtime']).toBeDefined();
+        });
+    });
+
+    describe('Internal Paths in Generated Config', () => {
+        test('should write internalPaths into generated config', () => {
+            setupSdkDirectoryMocks();
+            const generator = new ArkTSConfigGenerator(createMockBuildConfig());
+            const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+
+            expect(result.object.compilerOptions.internalPaths).toEqual([
+                'arkui.component.builder',
+                'arkui.stateManagement.storage.localStorage'
+            ]);
+        });
+
+        test('should omit internalPaths when sdk has no internal modules', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readdirSync as jest.Mock).mockReturnValue(['@ohos.test.d.ets']);
+            (fs.statSync as jest.Mock).mockReturnValue({ isFile: () => true, isDirectory: () => false });
+
+            const generator = new ArkTSConfigGenerator(createMockBuildConfig());
+            const moduleInfo = createMockModuleInfo();
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+
+            expect(result.object.compilerOptions.internalPaths).toBeUndefined();
+        });
+
+        test('should omit internalPaths in framework mode', () => {
+            setupSdkDirectoryMocks();
+            const generator = new ArkTSConfigGenerator(createMockBuildConfig({ frameworkMode: true }));
+            const moduleInfo = createMockModuleInfo();
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+
+            expect(result.object.compilerOptions.internalPaths).toBeUndefined();
+            expect(generator.systemInternalSdkPaths).toContain('arkui.component.builder');
+        });
+    });
+
+    describe('Internal Paths with externalApiPaths', () => {
+        test('should collect internal paths from externalApiPaths scan', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readdirSync as jest.Mock).mockImplementation((dir: string) => {
+                if (dir === '/ext/sdk') {
+                    return ['@ohos.ext.d.ets', 'arkui'];
+                }
+                if (dir === '/ext/sdk/arkui') {
+                    return ['runtime-api'];
+                }
+                if (dir === '/ext/sdk/arkui/runtime-api') {
+                    return ['arkui.component.customComponent.d.ets'];
+                }
+                return [];
+            });
+            (fs.statSync as jest.Mock).mockImplementation((p: string) => {
+                if (p.endsWith('.d.ets')) {
+                    return { isFile: () => true, isDirectory: () => false };
+                }
+                return { isFile: () => false, isDirectory: () => true };
+            });
+
+            const config = createMockBuildConfig({ externalApiPaths: ['/ext/sdk'] });
+            const generator = new ArkTSConfigGenerator(config);
+            const moduleInfo = createMockModuleInfo();
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+
+            expect(result.pathSection['@ohos.ext']).toBeDefined();
+            expect(result.object.compilerOptions.internalPaths).toEqual(['arkui.component.customComponent']);
+        });
+    });
+});

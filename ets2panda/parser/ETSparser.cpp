@@ -1191,8 +1191,18 @@ ir::ETSImportDeclaration *ETSParser::ParseImportPathBuildImport(ArenaVector<ir::
     ES2PANDA_ASSERT(importPathStringLiteral != nullptr);
     importPathStringLiteral->SetRange(Lexer()->GetToken().Loc());
     Lexer()->NextToken();
-    auto *const importDeclaration = BuildImportDeclaration(importKind, std::move(specifiers), importPathStringLiteral,
-                                                           const_cast<parser::Program *>(GetContext().GetProgram()));
+    ir::ETSImportDeclaration *importDeclaration {nullptr};
+    if (GetImportPathManager()->ShouldRejectInternalImport(GetProgram(), pathToResolve)) {
+        LogError(diagnostic::IMPORT_CANT_FIND_PREFIX,
+                 util::DiagnosticMessageParams {pathToResolve,
+                                                util::StringView(GetImportPathManager()->ArkTSConfig().ConfigPath())},
+                 importPathStringLiteral->Start());
+        importDeclaration =
+            AllocNode<ir::ETSImportDeclaration>(importPathStringLiteral, std::move(specifiers), importKind);
+    } else {
+        importDeclaration = BuildImportDeclaration(importKind, std::move(specifiers), importPathStringLiteral,
+                                                   const_cast<parser::Program *>(GetContext().GetProgram()));
+    }
     ES2PANDA_ASSERT(importDeclaration != nullptr);
     importDeclaration->SetRange({startLoc, importPathStringLiteral->End()});
     if (Lexer()->GetToken().Ident().Is("assert")) {
