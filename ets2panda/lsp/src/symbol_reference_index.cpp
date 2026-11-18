@@ -1682,21 +1682,21 @@ bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &s
         return false;
     }
     const auto entryDeclFile = FindModuleEntryDeclFile(file, lookupCache);
-    // The entry files are known, so their indexed data is found by direct lookups over the
-    // module file extensions instead of stripping every indexed file's path - a full
-    // g_fileIndices iteration allocated one string per file for the path comparison.
-    static constexpr std::string_view MODULE_FILE_EXTENSIONS[] = {".d.ets", ".d.ats", ".ets", ".ats", ".ts"};
+    // The indexed file names keep the raw program separators (backslashes on Windows) while
+    // the entry paths above come from the normalized arktsconfig, so an exact g_fileIndices
+    // lookup with the entry key misses on Windows. The comparison therefore goes through
+    // StripModuleFileExtension (which normalizes) over the index; the two targets and the
+    // name filter keep the scan short.
     for (const auto &targetFile : {entryFile, entryDeclFile}) {
         if (targetFile.empty()) {
             continue;
         }
-        for (const auto &extension : MODULE_FILE_EXTENSIONS) {
-            const auto fileIt = g_fileIndices.find(targetFile + std::string(extension));
-            if (fileIt == g_fileIndices.end()) {
+        for (const auto &[indexedFile, fileData] : g_fileIndices) {
+            if (StripModuleFileExtension(indexedFile) != targetFile) {
                 continue;
             }
-            if (HasDirectExportFromFile(targetFile, symbolName, fileIt->second) ||
-                HasReExportOfName(fileIt->second.source, symbolName)) {
+            if (HasDirectExportFromFile(targetFile, symbolName, fileData) ||
+                HasReExportOfName(fileData.source, symbolName)) {
                 return true;
             }
         }

@@ -310,7 +310,18 @@ export class ArkTSConfigGenerator {
       }
       return;
     }
-    let declFilesObject = JSON.parse(fs.readFileSync(moduleInfo.declFilesPath, 'utf-8'));
+    let declFilesObject: { files: Record<string, { declPath: string; filePath?: string; ohmUrl?: string }> };
+    try {
+      declFilesObject = JSON.parse(fs.readFileSync(moduleInfo.declFilesPath, 'utf-8'));
+    } catch (error) {
+      // A malformed manifest (e.g. a truncated write between the declgen and interop-context
+      // tasks) must not break the whole config regeneration; it is skipped like a missing one.
+      logger.warn(
+        `Module ${consumerName} depends on dynamic module ${moduleInfo.packageName}, ` +
+        `but decl file ${moduleInfo.declFilesPath} cannot be parsed: ${String(error)}`
+      );
+      return;
+    }
     Object.keys(declFilesObject.files).forEach((file: string) => {
       const fileEntry = declFilesObject.files[file];
       // Follows the build system: 'filePath' records the module source file behind the
