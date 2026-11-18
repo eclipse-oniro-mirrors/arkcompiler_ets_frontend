@@ -2890,9 +2890,10 @@ static std::vector<CompletionEntry> GetSymbolIndexedApiCompletions(const std::st
     // same module specifier; both definitions would produce identical import statements, so
     // only the first definition per (name, module specifier) pair is kept.
     std::unordered_set<std::string> seenModuleSpecifiers;
+    const ArkTsConfigLookupCache lookupCache(arkTsConfig);
     auto defs = FindExportSymbolDefinitionsByPrefix(prefix, fileName);
     for (const auto &def : defs) {
-        auto modulePath = ComputeRelativeImportPath(fileName, def.fileName, arkTsConfig);
+        auto modulePath = lookupCache.ComputeRelativeImportPath(fileName, def.fileName);
         if (modulePath.empty()) {
             continue;
         }
@@ -2908,8 +2909,8 @@ static std::vector<CompletionEntry> GetSymbolIndexedApiCompletions(const std::st
             continue;
         }
         std::vector<std::string> modulePaths {modulePath};
-        if (IsSymbolExportedByModuleEntry(def.fileName, def.symbolName, arkTsConfig)) {
-            auto moduleAlias = ComputeModuleImportPath(def.fileName, arkTsConfig);
+        if (IsSymbolExportedByModuleEntry(def.fileName, def.symbolName, lookupCache)) {
+            auto moduleAlias = lookupCache.ComputeModuleImportPath(def.fileName);
             if (!moduleAlias.empty() && moduleAlias != modulePath) {
                 modulePaths.push_back(std::move(moduleAlias));
             }

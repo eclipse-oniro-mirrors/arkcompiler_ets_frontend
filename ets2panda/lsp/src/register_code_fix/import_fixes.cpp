@@ -182,7 +182,7 @@ std::vector<CodeFixAction> ImportFixes::GetCodeActions(const CodeFixContext &con
         return actions;
     }
 
-    const auto *arkTsConfig = GetArkTsConfigOrNull(ctx);
+    const ArkTsConfigLookupCache lookupCache(GetArkTsConfigOrNull(ctx));
     std::unordered_set<std::string> seenModules;
     auto addActionForModule = [&](const SymbolDefSearchResult &def, const std::string &moduleName) {
         if (moduleName.empty() || !seenModules.insert(moduleName).second) {
@@ -196,19 +196,18 @@ std::vector<CodeFixAction> ImportFixes::GetCodeActions(const CodeFixContext &con
         }
     };
 
-    for (const auto &def : FindExportSymbolDefinitionsByPrefix(unresolvedName, ctx->sourceFileName)) {
-        if (def.symbolName != unresolvedName) {
-            continue;
-        }
-
+    // The exact-name search replaces the prefix search: the unresolved name is known, and
+    // the prefix scan iterated the whole export index with a lowercase transform per
+    // entry only for the caller to filter back to the exact name.
+    for (const auto &def : FindSymbolDefinitionsByName(unresolvedName, ctx->sourceFileName)) {
         // Keep both import forms: the entry/module alias form ('library', 'dynlib') and the
         // file-level form ('library/utils/Foo', 'dynlib/Utils'). The file-level form keeps
         // inner-file exports importable; the module alias is the form users expect when the
         // module entry exports the symbol.
-        if (IsSymbolExportedByModuleEntry(def.fileName, unresolvedName, arkTsConfig)) {
-            addActionForModule(def, ComputeModuleImportPath(def.fileName, arkTsConfig));
+        if (IsSymbolExportedByModuleEntry(def.fileName, unresolvedName, lookupCache)) {
+            addActionForModule(def, lookupCache.ComputeModuleImportPath(def.fileName));
         }
-        addActionForModule(def, ComputeRelativeImportPath(ctx->sourceFileName, def.fileName, arkTsConfig));
+        addActionForModule(def, lookupCache.ComputeRelativeImportPath(ctx->sourceFileName, def.fileName));
     }
     return actions;
 }

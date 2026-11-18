@@ -257,15 +257,21 @@ describe('getQuickInfoAtPositionTest', () => {
   });
 
   describe('With UI Plugins', () => {
-    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    let uiLsp: ReturnType<typeof getLspWithUi> | undefined;
+    const getUiLspInstance = (): ReturnType<typeof getLspWithUi> => {
+      if (uiLsp === undefined) {
+        uiLsp = getLspWithUi(moduleName);
+      }
+      return uiLsp;
+    };
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_003', () => {
-      const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition4.ets'), 710);
+      const res = getUiLspInstance().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition4.ets'), 710);
       expect(res).toMatchObject(EXPECT_003);
       expect(res?.documentation).toMatchObject(EXPECT_003.documentation);
       expect(res?.tags).toMatchObject(EXPECT_003.tags);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_004', () => {
-      const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition5.ets'), 701);
+      const res = getUiLspInstance().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition5.ets'), 701);
       expect(res).toMatchObject(EXPECT_004);
       expect(res?.documentation).toMatchObject([]);
       expect(res?.tags).toMatchObject([]);

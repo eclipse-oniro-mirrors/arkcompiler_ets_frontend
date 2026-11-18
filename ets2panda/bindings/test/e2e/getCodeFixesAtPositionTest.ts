@@ -55,11 +55,20 @@ describe('getCodeFixesAtPositionTest', () => {
   describe('No UI Plugins', () => {});
 
   describe('With UI Plugins', () => {
-    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    // One shared instance with one AST cache serves every case of the suite (the lazy
+    // singleton pattern of the other e2e suites); building the cache per case doubles
+    // the suite time for no coverage gain.
+    let uiLsp: ReturnType<typeof getLspWithUi> | undefined;
+    const getUiLspInstance = (): ReturnType<typeof getLspWithUi> => {
+      if (uiLsp === undefined) {
+        uiLsp = getLspWithUi(moduleName);
+        uiLsp.initAstCache();
+      }
+      return uiLsp;
+    };
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCodeFixesAtPosition_000', () => {
       const file = getRealPath(moduleName, 'getCodeFixesAtPosition1.ets');
-      const lsp = getUiLsp();
-      lsp.initAstCache();
+      const lsp = getUiLspInstance();
       lsp.modifyFilesMap(file, { newDoc: `${fs.readFileSync(file, 'utf8')}\n` });
 
       const res = lsp.getCodeFixesAtPosition(file, 999, 1000, [4000]);
@@ -74,8 +83,7 @@ describe('getCodeFixesAtPositionTest', () => {
       const emojiComment = '// 😀😀😀😀😀😀😀😀😀\n';
       const source = originalSource.slice(0, duplicateEntry) + emojiComment + originalSource.slice(duplicateEntry);
       const entryStart = source.lastIndexOf('@Entry');
-      const lsp = getUiLsp();
-      lsp.initAstCache();
+      const lsp = getUiLspInstance();
       lsp.modifyFilesMap(file, { newDoc: source });
 
       const res = lsp.getCodeFixesAtPosition(file, entryStart + 3, entryStart + 4, [4000]);

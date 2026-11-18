@@ -164,9 +164,15 @@ describe('getReferencesAtPositionTest', () => {
   });
 
   describe('With UI Plugins', () => {
-    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    let uiLsp: ReturnType<typeof getLspWithUi> | undefined;
+    const getUiLspInstance = (): ReturnType<typeof getLspWithUi> => {
+      if (uiLsp === undefined) {
+        uiLsp = getLspWithUi(moduleName);
+      }
+      return uiLsp;
+    };
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getReferencesAtPosition_003', () => {
-      const res = getUiLsp().getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition6.ets'), 697);
+      const res = getUiLspInstance().getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition6.ets'), 697);
       expect(res?.length).toBe(3);
       const length = res ? res.length : 0;
       for (let i = 0; i < length; i++) {

@@ -480,19 +480,25 @@ describe('getDocumentHighlightsTest', () => {
   });
 
   describe('With UI Plugins', () => {
-    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    let uiLsp: ReturnType<typeof getLspWithUi> | undefined;
+    const getUiLspInstance = (): ReturnType<typeof getLspWithUi> => {
+      if (uiLsp === undefined) {
+        uiLsp = getLspWithUi(moduleName);
+      }
+      return uiLsp;
+    };
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_007', () => {
-      const res = getUiLsp().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights8.ets'), 677);
+      const res = getUiLspInstance().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights8.ets'), 677);
       expect(res?.documentHighlights.length).toBe(1);
       expect(res).toMatchObject(EXPECT_007);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_008', () => {
-      const res = getUiLsp().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights9.ets'), 620);
+      const res = getUiLspInstance().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights9.ets'), 620);
       expect(res?.documentHighlights.length).toBe(1);
       expect(res).toMatchObject(EXPECT_008);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_009', () => {
-      const res = getUiLsp().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights10.ets'), 967);
+      const res = getUiLspInstance().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights10.ets'), 967);
       expect(res?.documentHighlights.length).toBe(1);
       expect(res).toMatchObject(EXPECT_009);
     });

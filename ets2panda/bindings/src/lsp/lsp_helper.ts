@@ -186,7 +186,7 @@ export class Lsp {
   private idleRecyclePostponeCount: number = 0;
   private lastRecycleTimestamp: number = 0;
 
-  public static idleRecycleDelayMs: number = 5000;
+  public static idleRecycleDelayMs: number = 60000;
   public static highMemoryRecycleDelayMs: number = 3000;
   public static queryActivityQuietWindowMs: number = 2000;
   public static consecutiveEditsThreshold: number = 25;
@@ -194,7 +194,7 @@ export class Lsp {
   public static memoryGrowthThresholdMB: number = 1024;
   public static maxProcessRssLimitMB: number = 4096;
   public static maxIdleRecyclePostponeCount: number = 3;
-  public static minRecycleIntervalMs: number = 30000;
+  public static minRecycleIntervalMs: number = 90000;
 
   constructor(
     pathConfig: PathConfig,
@@ -437,6 +437,13 @@ export class Lsp {
     }
     const recreateStart = Date.now();
     const newCache = this.createFileCache(activeFilePath, fileSource, hash, true);
+    // The fresh context only holds the active file and its direct imports; the
+    // incremental prepare resolves the full import chain and caches the diagnostics,
+    // making the first query after the recycle as fast as after an edit (an edit
+    // runs the same path through prepareFileCacheFromActiveContext).
+    if (newCache !== undefined) {
+      this.prepareFileCacheFromActiveContext(activeFilePath, fileSource, hash, true);
+    }
     const createCost = Date.now() - recreateStart;
 
     const afterRssMB = this.refreshBaselineRss('idle context recycle completed').toFixed(1);
@@ -603,6 +610,11 @@ export class Lsp {
     forceRecompile: boolean = false
   ): T | undefined {
     this.lastQueryTimestamp = Date.now();
+    // Every language service call counts as user interaction: the idle recycle must not
+    // fire while the user keeps navigating (quick info, go to definition) without
+    // editing, so the timer is re-armed here as well - idle means neither edits nor
+    // queries.
+    this.scheduleIdleContextRecycle();
     const fileName = filename.valueOf();
     const activeFileEntry = Array.from(this.filesMap.entries())[0];
     const shouldRestoreActiveFile = activeFileEntry !== undefined && activeFileEntry[0] !== fileName;
@@ -663,7 +675,18 @@ export class Lsp {
       if (!activeConfigMatches) {
         this.destroyContext(activeFileCache.fileConfig, activeFileCache.fileContext);
         this.filesMap.clear();
-        return this.createFileCache(fileName, fileSource, hash, preferModuleArkTsConfig);
+        const newCache = this.createFileCache(fileName, fileSource, hash, preferModuleArkTsConfig);
+        // createFileCache compiles the file into a bare context: the dependency
+        // programs stay unregistered in its external sources and the checker's
+        // export/import caches stay unprepared (both are only done by the
+        // incremental prepare), so every codefix query re-derives that work until
+        // an edit runs the prepare. Prepare here so switching modules leaves the
+        // context as warm as after an edit (mirroring rebuildActiveContext).
+        if (newCache !== undefined) {
+          const prepared = this.prepareFileCacheFromActiveContext(fileName, fileSource, hash, true);
+          return prepared ?? newCache;
+        }
+        return newCache;
       }
       return this.prepareFileCacheFromActiveContext(fileName, fileSource, hash, forceRecompile);
     }

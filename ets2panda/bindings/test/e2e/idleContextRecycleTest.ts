@@ -14,8 +14,9 @@
  */
 
 import fs from 'fs';
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getMultiModuleLsp, getRealPath } from '../utils';
 import { Lsp } from '../../src/lsp/lsp_helper';
+import { ModuleDescriptor } from '../../src/lsp/generateBuildConfig';
 
 describe('idleContextRecycleTest', () => {
   const moduleName = 'getReferencesAtPosition';
@@ -48,7 +49,7 @@ describe('idleContextRecycleTest', () => {
     try {
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
 
-      // 1. Modify document: should start idle timer (3s)
+      // 1. Modify document: should start idle timer (idleRecycleDelayMs)
       lsp.modifyFilesMap(testFile, { newDoc: source });
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
@@ -60,7 +61,9 @@ describe('idleContextRecycleTest', () => {
       const references = lsp.getReferencesAtPosition(testFile, 635);
       expect(references).toBeDefined();
       expect(references!.length).toBeGreaterThan(0);
-      expect(references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)).toBe(true);
+      expect(
+        references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)
+      ).toBe(true);
     } finally {
       lsp.dispose();
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
@@ -120,7 +123,7 @@ describe('idleContextRecycleTest', () => {
     expect(lsp.isIdleRecycleTimerActive()).toBe(false);
   });
 
-  test('active foreground query defers idle recycle timer', () => {
+  test('a foreground query re-arms the idle recycle timer', () => {
     jest.useFakeTimers();
     process.env.FORCE_LSP_IDLE_RECYCLE = 'true';
 
@@ -136,25 +139,27 @@ describe('idleContextRecycleTest', () => {
       jest.advanceTimersByTime(Lsp.idleRecycleDelayMs - 500);
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Foreground query occurs just before idle expiry
+      // A foreground query re-arms the timer: navigating (quick info, go to definition)
+      // without editing counts as user interaction and must not lose the warm context.
       const preRecycleRefs = lsp.getReferencesAtPosition(testFile, 635);
       expect(preRecycleRefs).toBeDefined();
       expect(preRecycleRefs!.length).toBeGreaterThan(0);
 
-      // Advance 500ms to reach the original timer
+      // The original expiry passes without the recycle firing
       jest.advanceTimersByTime(500);
-      // The recent query postpones the timer by the quiet window
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Advance the remaining quiet window; idle recycle completes and timer clears
-      jest.advanceTimersByTime(Lsp.queryActivityQuietWindowMs);
+      // The recycle only fires after the full idle delay since the query
+      jest.advanceTimersByTime(Lsp.idleRecycleDelayMs);
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
 
-      // Verify query still works normally after deferred recycle
+      // Verify query still works normally after the recycle
       const references = lsp.getReferencesAtPosition(testFile, 635);
       expect(references).toBeDefined();
       expect(references!.length).toBeGreaterThan(0);
-      expect(references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)).toBe(true);
+      expect(
+        references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)
+      ).toBe(true);
     } finally {
       lsp.dispose();
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
@@ -180,7 +185,9 @@ describe('idleContextRecycleTest', () => {
       const references = lsp.getReferencesAtPosition(testFile, 635);
       expect(references).toBeDefined();
       expect(references!.length).toBeGreaterThan(0);
-      expect(references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)).toBe(true);
+      expect(
+        references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)
+      ).toBe(true);
     } finally {
       lsp.dispose();
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
@@ -223,7 +230,9 @@ describe('idleContextRecycleTest', () => {
       const references = lsp.getReferencesAtPosition(testFile, 635);
       expect(references).toBeDefined();
       expect(references!.length).toBeGreaterThan(0);
-      expect(references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)).toBe(true);
+      expect(
+        references!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)
+      ).toBe(true);
     } finally {
       lsp.dispose();
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
@@ -390,14 +399,16 @@ describe('idleContextRecycleTest', () => {
       const updatedRefs = lsp.getReferencesAtPosition(testFile, 635);
       expect(updatedRefs).toBeDefined();
       expect(updatedRefs!.length).toBe(initialCount + 1);
-      expect(updatedRefs!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)).toBe(true);
+      expect(
+        updatedRefs!.some((ref) => ref.fileName.includes('getReferencesAtPosition2.ets') && ref.start === 635)
+      ).toBe(true);
     } finally {
       lsp.dispose();
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
     }
   });
 
-  test('consecutive query postponements are capped at maxIdleRecyclePostponeCount to prevent starvation', () => {
+  test('consecutive quiet-window stamps are capped at maxIdleRecyclePostponeCount', () => {
     jest.useFakeTimers();
     process.env.FORCE_LSP_IDLE_RECYCLE = 'true';
 
@@ -409,21 +420,22 @@ describe('idleContextRecycleTest', () => {
       lsp.modifyFilesMap(testFile, { newDoc: source });
       expect(lsp.isIdleRecycleTimerActive()).toBe(true);
 
-      // Postponement can occur at most Lsp.maxIdleRecyclePostponeCount (3) times
+      // A query path that stamps the last-query timestamp without re-arming the timer is
+      // postponed by the quiet window at expiry, at most maxIdleRecyclePostponeCount times.
       for (let i = 0; i < Lsp.maxIdleRecyclePostponeCount; i++) {
         const advanceBeforeExpiry = (i === 0 ? Lsp.idleRecycleDelayMs : Lsp.queryActivityQuietWindowMs) - 500;
         jest.advanceTimersByTime(advanceBeforeExpiry);
-        // Active foreground query within quiet window
-        lsp.getReferencesAtPosition(testFile, 635);
+        // Stamp the last-query timestamp without re-arming the timer (quiet-window guard path)
+        lsp.setLastQueryTimestampForTest(Date.now());
         // Advance 500ms to timer expiry
         jest.advanceTimersByTime(500);
         expect(lsp.isIdleRecycleTimerActive()).toBe(true);
         expect(lsp.getIdleRecyclePostponeCount()).toBe(i + 1);
       }
 
-      // Next timer expiry: quiet window query happens, but postpone count is already at max (3)
+      // Next timer expiry: the stamp is recent but the postpone count is already at max (3)
       jest.advanceTimersByTime(Lsp.queryActivityQuietWindowMs - 500);
-      lsp.getReferencesAtPosition(testFile, 635);
+      lsp.setLastQueryTimestampForTest(Date.now());
       jest.advanceTimersByTime(500);
 
       // Idle recycle is forced through, timer cleared and postpone count reset
@@ -491,6 +503,57 @@ describe('idleContextRecycleTest', () => {
       const res = lsp.getQuickInfoAtPosition(testFile, 639);
       expect(res).toBeDefined();
       expect(res?.kind).toBe('enum member');
+    } finally {
+      lsp.dispose();
+      expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+    }
+  });
+
+  // The post-recycle warm-up must not re-run the full initAstCache: the import-fix
+  // candidates live in global registries (kit API info from compileKits, the symbol
+  // reference index), and the codefix itself only needs the active file prepared
+  // through the same incremental path an edit takes - the light warm-up in
+  // rebuildActiveContext provides exactly that.
+  test('codefix works after idle recycle without rebuilding the full AST cache', () => {
+    jest.useFakeTimers();
+    process.env.FORCE_LSP_IDLE_RECYCLE = 'true';
+
+    const importFixProjectName = 'getSubpathImportFix';
+    const modules: ModuleDescriptor[] = [
+      { name: 'entry', moduleType: 'har', srcPath: 'entry' },
+      { name: 'library', moduleType: 'har', srcPath: 'library' }
+    ];
+    const lsp = getMultiModuleLsp(importFixProjectName, modules, []);
+    const file = getRealPath(importFixProjectName, 'entry/Page.ets');
+    const source = fs.readFileSync(file, 'utf8');
+
+    try {
+      // 1. Startup warm-up: the full AST cache populates the global side effects the
+      //    import fix consumes (kit API info, project-wide symbol index).
+      lsp.initAstCache();
+
+      // 2. The IDE opens/edits Page.ets: it becomes the active cache entry.
+      lsp.modifyFilesMap(file, { newDoc: source });
+      expect(lsp.isIdleRecycleTimerActive()).toBe(true);
+
+      // 3. Idle recycle destroys every context, the full AST cache included. No
+      //    initAstCache re-run follows: the light warm-up re-prepares only the active
+      //    file, and the diagnostics it caches land in diagnosticFiles.
+      jest.advanceTimersByTime(Lsp.idleRecycleDelayMs);
+      expect(lsp.isIdleRecycleTimerActive()).toBe(false);
+      const diagnosticFiles = (lsp as unknown as { diagnosticFiles: Set<string> }).diagnosticFiles;
+      expect(diagnosticFiles.has(file)).toBe(true);
+
+      // 4. Codefix right after the recycle must still find the import fix: the symbol
+      //    index survives the recycle and the active-file context is already warm.
+      const offset = source.indexOf('new Foo()') + 'new '.length;
+      const res = lsp.getCodeFixesAtPosition(file, offset, offset + 'Foo'.length, [1005]);
+      expect(res).toBeDefined();
+      const importFix = (res ?? []).find(
+        (action) => String(action.description.valueOf()) === "Add import {Foo} from 'library/utils/Foo'"
+      );
+      expect(importFix).toBeDefined();
+      expect(String(importFix!.changes[0].textChanges[0].newText)).toBe("import { Foo } from 'library/utils/Foo';\n");
     } finally {
       lsp.dispose();
       expect(lsp.isIdleRecycleTimerActive()).toBe(false);
@@ -573,4 +636,3 @@ describe('idleContextRecycleTest', () => {
     }
   });
 });
-
