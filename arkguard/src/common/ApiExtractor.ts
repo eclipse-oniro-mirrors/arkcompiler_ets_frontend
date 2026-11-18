@@ -105,6 +105,7 @@ import {
   getTypeAliasProperties,
   isParameterPropertyModifier,
   objectPropsSet,
+  structPropsSet,
 } from '../utils/OhsUtil';
 import { scanProjectConfig } from './ApiReader';
 import { enumPropsSet } from '../utils/OhsUtil';
@@ -118,6 +119,7 @@ import {
 } from '../utils/ProjectCollections';
 import { AtKeepCollections, BytecodeObfuscationCollections } from '../utils/CommonCollections';
 import { hasExportModifier } from '../utils/NodeUtils';
+import { collectMonitorProperties, reportMonitorDiagnostic } from '../utils/MonitorUtils';
 
 export namespace ApiExtractor {
   interface KeywordInfo {
@@ -671,6 +673,17 @@ export namespace ApiExtractor {
    * @param astNode
    */
   const visitProjectNode = function (astNode): void {
+    if (scanProjectConfig.mPropertyObfuscation && isDecorator(astNode)) {
+      const monitor = collectMonitorProperties(astNode);
+      if (monitor) {
+        addToSet(structPropsSet, monitor.properties);
+        const fileProperties = projectWhiteListManager?.fileWhiteListInfo?.fileKeepInfo.structProperties;
+        if (fileProperties) {
+          addToSet(fileProperties, monitor.properties);
+        }
+        monitor.diagnostics.forEach(diagnostic => reportMonitorDiagnostic(monitor.decorator, diagnostic));
+      }
+    }
     const currentPropsSet: Set<string> = new Set();
     let nodeName: string | undefined = astNode.name?.text;
     if ((isClassDeclaration(astNode) || isStructDeclaration(astNode))) {

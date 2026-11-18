@@ -22,6 +22,7 @@ import { type IOptions } from '../configs/IOptions';
 import type { HvigorErrorInfo } from '../common/type';
 import { blockTimeAndMemPrinter, getObfuscationCacheDir } from '../utils/PrinterTimeAndMemUtils';
 import { FileUtils } from '../utils/FileUtils';
+import { setMonitorDiagnosticLogger } from '../utils/MonitorUtils';
 
 // Record all unobfuscated properties and reasons.
 export const historyUnobfuscatedPropMap: Map<string, string[]> = new Map<string, string[]>();
@@ -54,6 +55,7 @@ export const printerTimeAndMemDataConfig = {
 
 
 export function initObfuscationConfig(projectConfig: any, arkProjectConfig: any, printObfLogger: Function): void {
+  setMonitorDiagnosticLogger(undefined);
   FileUtils.setCachedFileInfo(arkProjectConfig.getCachedFileInfo ?? undefined);
   const obConfig: ObConfigResolver = new ObConfigResolver(projectConfig, printObfLogger, true);
   let mergedObConfig: MergedConfig = obConfig.resolveObfuscationConfigs();
@@ -66,6 +68,7 @@ export function initObfuscationConfig(projectConfig: any, arkProjectConfig: any,
     blockTimeAndMemPrinter();
     return;
   }
+  setMonitorDiagnosticLogger(message => printObfLogger(message, message, 'warn'));
   getObfuscationCacheDir(projectConfig);
   /**
    * Only one of bytecode obfuscation and source code obfuscation will take effect.

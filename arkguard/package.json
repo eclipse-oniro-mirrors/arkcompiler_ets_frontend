@@ -14,11 +14,11 @@
     "format": "git status --porcelain=v1 | grep -E \"^( M|A |\\?\\?)\" | awk '{print $2}' | sed 's|^arkguard/||' | grep '\\.ts$' | xargs -I {} npx --prefix ./test prettier --config ./test/.prettierrc --write {}",
     "pre_run_test": "cd ./test && npm install --legacy-peer-deps && cd ..",
     "test": "npm run test:ut && npm run test:grammar",
-    "test:ut": "npm run pre_run_test && node --expose-gc ./node_modules/mocha/bin/mocha --require ts-node/register --timeout=10000 ./test/ut/**/*.ts",
+    "test:ut": "npm run pre_run_test && node --expose-gc ./node_modules/mocha/bin/mocha.js --require ts-node/register --timeout=10000 ./test/ut/**/*.ts",
     "test:grammar": "python3 scripts/grammar_test.py",
     "coverage": "nyc npm run test",
     "coverage_ut": "nyc npm run test:ut",
-    "benchmark": "cd ./test && npm install && cd ../ && node --expose-gc ./node_modules/mocha/bin/mocha --require ts-node/register --timeout=5000 ./test/benchmark/**/*.ts",
+    "benchmark": "cd ./test && npm install && cd ../ && node --expose-gc ./node_modules/mocha/bin/mocha.js --require ts-node/register --timeout=5000 ./test/benchmark/**/*.ts",
     "test:combinations": "python3 ./scripts/combination_test.py"
   },
   "keywords": [
