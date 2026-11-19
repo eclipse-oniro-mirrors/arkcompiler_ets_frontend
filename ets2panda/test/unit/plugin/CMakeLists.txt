@@ -36,6 +36,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/arktsconfig.in.json ${ETS_CONFIG_WITH
 set(SIMULT_DECLGEN_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/simult_declgen_arktsconfig.json)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simult_declgen/arktsconfig.in.json ${SIMULT_DECLGEN_CONFIG})
 
+# Custom arktsconfig for the DeclGenPhase annotation test (includes "package": "har3")
+set(DECLGEN_PHASE_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/declgen_phase_arktsconfig.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/declgen_phase/arktsconfig.in.json ${DECLGEN_PHASE_CONFIG})
+
 set(PLUGIN_TESTS
     #"test_name test_sts_file how_to_test_mode plugin_file_extension(c|cpp) how_to_compile_mode"
     "e2p_test_plugin_dump_json compile.ats ${RUNTIME_MODE} c ${LIBRARY_PLUGIN}"
@@ -160,6 +164,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_cold_reload_simult compile.ats ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_program_sink compile.ats ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_simult_declgen_test compile.ats ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN} ${SIMULT_DECLGEN_CONFIG}"
+    "plugin_declgen_phase_test compile.ats ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN} ${DECLGEN_PHASE_CONFIG}"
 )
 
 set(RUNTIME_ARGUMENTS

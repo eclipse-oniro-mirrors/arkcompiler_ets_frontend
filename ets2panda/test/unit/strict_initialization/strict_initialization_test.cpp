@@ -67,7 +67,7 @@ protected:
     void ExpectModeDiagnostics(std::initializer_list<const char *> options, const char *source,
                                std::initializer_list<uint32_t> expected)
     {
-        std::vector<const char *> args {::test::utils::PandaExecutablePathGetter::Get()[0], "--extension=ets"};
+        std::vector<const char *> args {::test::utils::PandaExecutablePathGetter::Get()[0], "--extension=ats"};
         args.insert(args.end(), options.begin(), options.end());
         auto *config = GetImpl()->CreateConfig(static_cast<int>(args.size()), args.data());
         ASSERT_NE(config, nullptr);
@@ -93,7 +93,7 @@ protected:
     void CheckStdlibMode(const char *option, bool strict)
     {
         const auto executable = ::test::utils::PandaExecutablePathGetter::Get()[0];
-        const std::array args {executable, "--extension=ets", "--gen-stdlib=true", option};
+        const std::array args {executable, "--extension=ats", "--gen-stdlib=true", option};
         auto *config = GetImpl()->CreateConfig(option == nullptr ? 3 : 4, args.data());
         ASSERT_NE(config, nullptr);
         EXPECT_EQ(reinterpret_cast<public_lib::ConfigImpl *>(config)->options->IsStrictMode(), strict);
@@ -108,7 +108,7 @@ protected:
         {
             auto *context = reinterpret_cast<public_lib::Context *>(GetContext());
             const auto executable = ::test::utils::PandaExecutablePathGetter::Get()[0];
-            const std::array args {executable, "--extension=ets", "--gen-stdlib=true",
+            const std::array args {executable, "--extension=ats", "--gen-stdlib=true",
                                    strict ? "--strict=true" : "--strict=false"};
             auto *config = GetImpl()->CreateConfig(args.size(), args.data());
             ASSERT_NE(config, nullptr);

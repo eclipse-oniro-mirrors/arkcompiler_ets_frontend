@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "baseUrl": "${ES2PANDA_PATH}${DELIM}test${DELIM}unit${DELIM}plugin${DELIM}declgen_phase",
+    "package": "har3",
+    "cacheDir": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls",
+    "paths": {
+      "@ohos.buffer": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.buffer.ats"],
+      "@ohos.util.ArrayList": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.ArrayList.ats"],
+      "@ohos.util.Deque": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.Deque.ats"],
+      "@ohos.util.HashMap": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.HashMap.ats"],
+      "@ohos.util.HashSet": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.HashSet.ats"],
+      "@ohos.util.LightWeightMap": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LightWeightMap.ats"],
+      "@ohos.util.LightWeightSet": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LightWeightSet.ats"],
+      "@ohos.util.LinkedList": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LinkedList.ats"],
+      "@ohos.util.List": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.List.ats"],
+      "@ohos.util.PlainArray": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.PlainArray.ats"],
+      "@ohos.util.Queue": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.Queue.ats"],
+      "@ohos.util.Stack": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.Stack.ats"],
+      "@ohos.util.stream": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.stream.ats"],
+      "@ohos.util": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.ats"],
+      "@ohos.util.TreeMap": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.TreeMap.ats"],
+      "@ohos.util.TreeSet": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.TreeSet.ats"],
+      "@ohos.uri": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.uri.ats"],
+      "@ohos.url": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.url.ats"],
+      "@ohos.xml": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.xml.ats"],
+      "@ohos.base": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.base.ats"],
+      "@arkts.math.Decimal": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}arkts${DELIM}@arkts.math.Decimal.ats"],
+      "@arkts.collections": ["${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}arkts${DELIM}@arkts.collections.ats"]
+    },
+    "dependencies": {
+      "std/core": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/math": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/math/consts": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/containers": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/interop/js": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/time": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/debug": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/debug/concurrency": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/dfx": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/testing": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/concurrency": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/annotations": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "std/interop": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "escompat": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" },
+      "arkruntime": { "path": "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc" }
+    }
+  }
+}

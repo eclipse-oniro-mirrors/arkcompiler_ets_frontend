@@ -31,6 +31,7 @@
 #include "ir/base/methodDefinition.h"
 #include "ir/ts/tsEnumMember.h"
 
+#include <algorithm>
 #include <unordered_set>
 
 namespace ark::es2panda::ir {
@@ -374,7 +375,9 @@ std::string Declgen::PackageQualifiedImportSource(const ir::ImportDeclaration *i
         return source;
     }
 
-    return moduleName.substr(0, separator) + '/' + moduleName.substr(separator + 1);
+    std::string packageQualifiedSource {moduleName};
+    std::replace(packageQualifiedSource.begin(), packageQualifiedSource.end(), '.', '/');
+    return packageQualifiedSource;
 }
 
 void Declgen::DumpImports(std::string &res)
