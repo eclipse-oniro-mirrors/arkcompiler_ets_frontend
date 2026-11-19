@@ -13,32 +13,32 @@
  * limitations under the License.
  */
 
-// Generates dynhar/decl-fileInfo.json with absolute paths into the OS tmp
-// directory, and prints the generated file path to stdout so that callers can
-// export it as INCREMENT_DYNAMIC_DEMO_DECL_FILEINFO. The build system locates
-// the file via "declFilesPath" in build_config.json. The tmp subdirectory is
-// derived from this demo's absolute path, so it stays stable within one build
-// chain while distinct checkouts do not collide.
+// Generates decl-fileInfo.json for the requested dynamic module with absolute
+// paths into the OS tmp directory, and prints the generated file path to stdout
+// so that callers can export it for "declFilesPath" in build_config.json. The
+// tmp subdirectory is derived from this demo's absolute path, so it stays
+// stable within one build chain while distinct checkouts do not collide.
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 
 const demoDir = __dirname;
+const packageName = process.argv[2] || 'dynhar';
 const tmpDir = path.join(
     os.tmpdir(),
     `increment-dynamic-demo-${crypto.createHash('md5').update(demoDir).digest('hex').slice(0, 8)}`
 );
-const outFile = path.join(tmpDir, 'decl-fileInfo.json');
+const outFile = path.join(tmpDir, `${packageName}-decl-fileInfo.json`);
 
 fs.mkdirSync(tmpDir, { recursive: true });
 fs.writeFileSync(outFile, JSON.stringify({
-    packageName: 'dynhar',
+    packageName,
     files: {
         index: {
-            declPath: path.join(demoDir, 'dynhar', 'index.d.ets'),
-            filePath: path.join(demoDir, 'dynhar', 'index.ets'),
-            ohmUrl: '@normalized:N&entry&com.example.incrementdynamic&dynhar/index&1.0.0'
+            declPath: path.join(demoDir, packageName, 'index.d.ets'),
+            filePath: path.join(demoDir, packageName, 'index.ets'),
+            ohmUrl: `@normalized:N&entry&com.example.incrementdynamic&${packageName}/index&1.0.0`
         }
     }
 }, null, 4) + '\n');

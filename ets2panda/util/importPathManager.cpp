@@ -210,7 +210,10 @@ parser::Program *ImportPathManager::GatherImportInfo(parser::Program *importer, 
         return nullptr;
     }
 
-    AddFileDependencies(importer->AbsoluteName().Utf8(), importInfo.ResolvedSource());
+    const auto importerName = IsDepAnalyzerMode() && importer->Is<ModuleKind::DECLLESS_DYNAMIC>()
+                                  ? importer->GetImportInfo().ResolvedSource()
+                                  : importer->AbsoluteName().Utf8();
+    AddFileDependencies(importerName, importInfo.ResolvedSource());
     AddOutputMatching(importInfo.ResolvedSource(), FormAbcFilePath(importInfo));
     LOG(DEBUG, ES2PANDA) << "[" << importer->ModuleInfo().moduleName << "] "
                          << "Import " << importPath->ToString() << " resolved to " << importInfo.ResolvedSource();
@@ -396,7 +399,8 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolveEtscacheRelativePat
 ImportPathManager::ResolvedPathRes ImportPathManager::ResolveDynamicRelativePath(parser::Program *importer,
                                                                                  std::string_view importPath) const
 {
-    if (!isDynamic_ || !importer->Is<ModuleKind::SOURCE_DECL>()) {
+    const bool isAnalyzerDynamicSource = IsDepAnalyzerMode() && importer->Is<ModuleKind::DECLLESS_DYNAMIC>();
+    if (!isDynamic_ || (!importer->Is<ModuleKind::SOURCE_DECL>() && !isAnalyzerDynamicSource)) {
         return {};
     }
 
@@ -1508,9 +1512,14 @@ void ImportPathManager::RegisterProgram(parser::Program *program)
     switch (program->GetModuleKind()) {
         case ModuleKind::PACKAGE:
         case ModuleKind::SIMULT_MAIN:
-        case ModuleKind::DECLLESS_DYNAMIC:
         case ModuleKind::METADATA_DECL:
             return;
+        case ModuleKind::DECLLESS_DYNAMIC:
+            // The analyzer parses non-empty dynamic sources for transitive imports only.
+            if (!IsDepAnalyzerMode() || program->SourceCode().empty()) {
+                return;
+            }
+            [[fallthrough]];
         default: {
             bool isParsed = program->Ast() != nullptr;
             parseQueue_.emplace_back(ParseInfo {isParsed, program});
@@ -1724,7 +1733,17 @@ void ImportPathManager::SetEtsTextFileByExtension(ImportInfo *importInfo, const 
 void ImportPathManager::LookupSourceFile(ImportInfo *importInfo)
 {
     if (IsDepAnalyzerMode() && Language(importInfo->Lang()).IsDynamic()) {
-        importInfo->SetData<ModuleKind::DECLLESS_DYNAMIC>(std::string(importInfo->ResolvedSource()), "");
+        std::string sourceFilePath = importInfo->extModuleData_ == nullptr
+                                         ? std::string(importInfo->ResolvedSource())
+                                         : std::string(importInfo->extModuleData_->SourceFilePath());
+        if (!sourceFilePath.empty() && ImportFileExists(*fsQueryCache_, sourceFilePath)) {
+            // Declarations hide nested dynamic imports. Read the physical source, but retain the logical dependency
+            // key as TextSource so that all graph edges use the same node identity.
+            importInfo->SetTextFile<ModuleKind::DECLLESS_DYNAMIC>(sourceFilePath, DE(),
+                                                                  std::string(importInfo->ResolvedSource()));
+        } else {
+            importInfo->SetData<ModuleKind::DECLLESS_DYNAMIC>(std::string(importInfo->ResolvedSource()), "");
+        }
         return;
     }
     if (importInfo->HasSpecifiedDeclPath() && !importInfo->ReferencesABC()) {

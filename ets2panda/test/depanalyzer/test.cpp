@@ -27,12 +27,12 @@ public:
     NO_COPY_SEMANTIC(DepAnalyzerTest);
     NO_MOVE_SEMANTIC(DepAnalyzerTest);
 
-    void RunDepAnalyzer(size_t testFolderNum)
+    void RunDepAnalyzer(size_t testFolderNum, const std::string &arktsConfig = "")
     {
         std::string binPath = test::utils::DepAnalyzerTestsBinPathGet();
         std::string testPath = test::utils::DepAnalyzerTestsPathGet(testFolderNum, 1);
 
-        depAnalyzer_.AnalyzeDeps(binPath, "", {testPath});
+        depAnalyzer_.AnalyzeDeps(binPath, arktsConfig, {testPath});
     }
 
     const auto &GetTestFileDirectDependencies() const
@@ -140,4 +140,22 @@ TEST_F(DepAnalyzerTest, HandlesIllegalExport)
     ASSERT(GetTestFileDirectDependencies() == dependenciesExpected);
     ASSERT(GetTestFileDirectDependants() == dependentsExpected);
 }
+
+TEST_F(DepAnalyzerTest, ParsesTransitiveDynamicDependencies)
+{
+    constexpr size_t TEST_FOLDER_NUM = 7;
+    const std::string file1 = test::utils::DepAnalyzerTestsPathGet(TEST_FOLDER_NUM, 1);
+    const auto configPath = std::filesystem::path(file1).parent_path() / "arktsconfig.json";
+    RunDepAnalyzer(TEST_FOLDER_NUM, configPath.string());
+
+    DirectDepsMap dependenciesExpected;
+    DirectDepsMap dependentsExpected;
+    dependenciesExpected[file1] = {"dyn1"};
+    dependenciesExpected["dyn1"] = {"dyn2"};
+    dependentsExpected["dyn1"] = {file1};
+    dependentsExpected["dyn2"] = {"dyn1"};
+    ASSERT(GetTestFileDirectDependencies() == dependenciesExpected);
+    ASSERT(GetTestFileDirectDependants() == dependentsExpected);
+}
+
 }  // namespace

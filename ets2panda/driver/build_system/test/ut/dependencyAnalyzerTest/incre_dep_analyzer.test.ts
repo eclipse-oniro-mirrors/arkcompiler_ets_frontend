@@ -85,6 +85,9 @@ const ENTRY_A = '/src/a.ets';
 const ENTRY_B = '/src/b.ets';
 const DYNAMIC_SOURCE = '/lib/index.ets';
 const DYNAMIC_DECL = '/lib/index.d.ets';
+const NESTED_DYNAMIC_KEY = 'nestedLib';
+const NESTED_DYNAMIC_SOURCE = '/lib/nested/index.ets';
+const NESTED_DYNAMIC_DECL = '/lib/nested/index.d.ets';
 const IMPORTER_ABC = '/out/a.abc';
 
 function createMockBuildConfig(overrides: Partial<BuildConfig> = {}): BuildConfig {
@@ -120,6 +123,12 @@ function setDynamicDependencyConfig(): void {
         },
         mergeArktsConfig: jest.fn(),
         object: { compilerOptions: { dependencies: {} } }
+    };
+}
+
+function addNestedDynamicDependencyConfig(): void {
+    generatorConfigs['testModule'].dependencies[NESTED_DYNAMIC_KEY] = {
+        language: 'js', path: NESTED_DYNAMIC_DECL, sourceFilePath: NESTED_DYNAMIC_SOURCE, ohmUrl: NESTED_DYNAMIC_KEY
     };
 }
 
@@ -226,6 +235,46 @@ describe('findImportersAffectedByDynamicInputs', () => {
         const affected: string[] = analyzer['findImportersAffectedByDynamicInputs'](modules, prevDepMap, entryFiles);
         expect(affected).toEqual([ENTRY_A]);
         expect(affected).not.toContain('/src/not-entry.ets');
+    });
+
+    test('returns static entries affected through a transitive dynamic dependency', () => {
+        addNestedDynamicDependencyConfig();
+        (fs.existsSync as jest.Mock).mockImplementation((p: string) => [
+            DYNAMIC_SOURCE, DYNAMIC_DECL, NESTED_DYNAMIC_SOURCE, NESTED_DYNAMIC_DECL
+        ].includes(p));
+        const transitiveDepMap = {
+            dependencies: { [ENTRY_A]: ['lib'], 'lib': [NESTED_DYNAMIC_KEY] },
+            dependants: { 'lib': [ENTRY_A], [NESTED_DYNAMIC_KEY]: ['lib'] },
+            outputMatching: { [ENTRY_A]: IMPORTER_ABC }
+        };
+        mockShouldBeUpdated.mockImplementation(
+            (input: string, output: string) => input === NESTED_DYNAMIC_SOURCE && output === IMPORTER_ABC
+        );
+        // @ts-ignore private access
+        const affected: string[] = analyzer['findImportersAffectedByDynamicInputs'](
+            modules, transitiveDepMap, entryFiles
+        );
+        expect(affected).toEqual([ENTRY_A]);
+        // @ts-ignore private access
+        expect(analyzer['filesChangeStatusCache'][ENTRY_A].abcOutdated).toEqual({ isSet: true, value: true });
+    });
+
+    test('handles dependant cycles and deduplicates affected static entries', () => {
+        addNestedDynamicDependencyConfig();
+        (fs.existsSync as jest.Mock).mockImplementation((p: string) => [
+            DYNAMIC_SOURCE, DYNAMIC_DECL, NESTED_DYNAMIC_SOURCE, NESTED_DYNAMIC_DECL
+        ].includes(p));
+        const cyclicDepMap = {
+            dependencies: { [ENTRY_A]: ['lib'], 'lib': [NESTED_DYNAMIC_KEY], [NESTED_DYNAMIC_KEY]: ['lib'] },
+            dependants: { 'lib': [ENTRY_A, NESTED_DYNAMIC_KEY], [NESTED_DYNAMIC_KEY]: ['lib'] },
+            outputMatching: { [ENTRY_A]: IMPORTER_ABC }
+        };
+        mockShouldBeUpdated.mockImplementation(
+            (input: string, output: string) => input === NESTED_DYNAMIC_SOURCE && output === IMPORTER_ABC
+        );
+        // @ts-ignore private access
+        const affected: string[] = analyzer['findImportersAffectedByDynamicInputs'](modules, cyclicDepMap, entryFiles);
+        expect(affected).toEqual([ENTRY_A]);
     });
 
     test('forced flag keeps an otherwise fresh node in filterGraph', () => {

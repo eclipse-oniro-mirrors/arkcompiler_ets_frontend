@@ -30,6 +30,19 @@
             "entryFile": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dynhar/index.ets",
             "declFilesPath": "${INCREMENT_DYNAMIC_DEMO_DECL_FILEINFO}",
             "language": "1.1",
+            "dependencies": ["dynhar2"]
+        },
+        {
+            "packageName": "dynhar2",
+            "moduleName": "dynhar2",
+            "moduleType": "har",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dynhar2",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dynhar2/index.ets",
+            "declFilesPath": "${INCREMENT_DYNAMIC_DEMO_DYNHAR2_DECL_FILEINFO}",
+            "language": "1.1",
             "dependencies": []
         }
     ],

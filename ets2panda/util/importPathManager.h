@@ -169,7 +169,7 @@ public:
 
 private:
     template <ModuleKind KIND, bool SHOULD_CACHE = true>
-    void SetTextFile(const std::string &file, util::DiagnosticEngine *de)
+    void SetTextFile(const std::string &file, util::DiagnosticEngine *de, std::string textSource = {})
     {
         static_assert(KIND != ModuleKind::METADATA_DECL);  // metadata is not stored as a text
 #if defined(PANDA_TARGET_WINDOWS)
@@ -188,7 +188,10 @@ private:
         if (text.empty()) {
             de->LogDiagnostic(diagnostic::EMPTY_SOURCE_FILE, util::DiagnosticMessageParams {file});
         }
-        SetData<KIND, SHOULD_CACHE>(file, std::move(text));
+        if (textSource.empty()) {
+            textSource = file;
+        }
+        SetData<KIND, SHOULD_CACHE>(std::move(textSource), std::move(text));
     }
 
     template <ModuleKind KIND, bool SHOULD_CACHE = true>

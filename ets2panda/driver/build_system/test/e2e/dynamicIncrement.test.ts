@@ -57,9 +57,9 @@ function isDynamicIncrementDemo(config: BuildConfig): boolean {
   return (config.dependencyModuleList || []).some((m: DependencyModuleConfig) => m.language === '1.1');
 }
 
-// Static files importing a dynamic module are found via the persisted
+// Static files affected by dynamic modules are found via the persisted
 // dependency graph: dependency keys with language 'js' in the generated
-// arktsconfig, then their dependants in dependency.json
+// arktsconfig, then their transitive dependants in dependency.json
 function collectDynamicImporters(config: BuildConfig): string[] {
   const arktsConfigPath = path.join(config.cachePath, config.packageName, 'arktsconfig.json');
   if (!fs.existsSync(arktsConfigPath)) {
@@ -76,14 +76,27 @@ function collectDynamicImporters(config: BuildConfig): string[] {
     return [];
   }
   const depMap = JSON.parse(fs.readFileSync(depFile, 'utf-8'));
+  const entryFiles = new Set<string>((config.compileFiles || []).map((file: string) => path.resolve(file)));
   const importers = new Set<string>();
-  for (const key of dynamicKeys) {
-    for (const importer of depMap.dependants?.[key] || []) {
-      importers.add(path.resolve(importer));
+  const pending: string[] = [...dynamicKeys];
+  const visited = new Set<string>();
+  for (let index = 0; index < pending.length; index++) {
+    const dependency = pending[index];
+    if (visited.has(dependency)) {
+      continue;
+    }
+    visited.add(dependency);
+    for (const dependant of depMap.dependants?.[dependency] || []) {
+      const resolvedDependant = path.resolve(dependant);
+      if (entryFiles.has(resolvedDependant)) {
+        importers.add(resolvedDependant);
+      }
+      if (!visited.has(dependant)) {
+        pending.push(dependant);
+      }
     }
   }
-  return [...importers].filter((importer: string) =>
-    (config.compileFiles || []).some((file: string) => path.resolve(file) === importer));
+  return [...importers];
 }
 
 function testHelper(testScriptName: string) {
@@ -97,6 +110,13 @@ function testHelper(testScriptName: string) {
       }
       const importers = collectDynamicImporters(config);
       expect(importers.length).toBeGreaterThan(0);
+
+      const dependencyFile = path.join(config.cachePath, 'dep_analyzer', 'dependency.json');
+      const dependencyMap = JSON.parse(fs.readFileSync(dependencyFile, 'utf-8'));
+      if ((config.dependencyModuleList || []).some(module => module.packageName === 'dynhar2')) {
+        expect(dependencyMap.dependencies?.dynhar || []).toContain('dynhar2');
+        expect(dependencyMap.dependants?.dynhar2 || []).toContain('dynhar');
+      }
 
       const increCompileFile = path.join(config.cachePath, 'dep_analyzer', INCRE_COMPILE_FILE);
       expect(fs.existsSync(increCompileFile)).toBe(true);
