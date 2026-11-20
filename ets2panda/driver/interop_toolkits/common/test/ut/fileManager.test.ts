@@ -188,6 +188,28 @@ describe('FileManager metadata', () => {
     expect(manager.queryInteropDeclarationFile(dynamicModuleFile)).toBeUndefined();
   });
 
+  it('strips the .js extension when mapping module sources to declaration files', () => {
+    const staticModuleFile = createFile('entry/src/static/Static.js');
+    const dynamicModuleFile = createFile('entry/src/dynamic/Dynamic.js');
+    const manager = new FileManagerBuilder()
+      .addModule({
+        packageName: 'entry.package',
+        modulePath: path.join(projectRootPath, 'entry'),
+        declgenV1OutPath: path.join(projectRootPath, 'declgen-v1'),
+        declgenV2OutPath: path.join(projectRootPath, 'declgen-v2'),
+        staticFiles: [staticModuleFile],
+        dynamicFiles: [dynamicModuleFile],
+      })
+      .build();
+
+    const staticDeclarationFile = path.join(projectRootPath, 'declgen-v1', 'src/static/Static.d.ets');
+    const dynamicDeclarationFile = path.join(projectRootPath, 'declgen-v2', 'src/dynamic/Dynamic.d.ets');
+    expect(manager.queryInteropDeclarationFile(staticModuleFile)).toBe(staticDeclarationFile);
+    expect(manager.queryInteropDeclarationFile(dynamicModuleFile)).toBe(dynamicDeclarationFile);
+    expect(manager.querySourceFile(staticDeclarationFile)).toBe(staticModuleFile);
+    expect(manager.querySourceFile(dynamicDeclarationFile)).toBe(dynamicModuleFile);
+  });
+
   it('rejects duplicate module package names', () => {
     const moduleConfig: FileManagerModuleInput = {
       packageName: 'entry.package',
