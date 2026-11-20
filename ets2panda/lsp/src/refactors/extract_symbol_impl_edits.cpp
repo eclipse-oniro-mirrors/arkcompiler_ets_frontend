@@ -926,41 +926,44 @@ static bool HasValidFunctionExtractionCandidate(const RefactorContext &context)
                        [](const FunctionExtraction &candidate) { return candidate.node != nullptr; });
 }
 
+static const varbinder::Variable *FindLeadingDeclaredVariable(const RefactorContext &context, TextRange selection)
+{
+    auto *node = GetTouchingToken(context.context, selection.pos, false);
+    for (auto *current = node; current != nullptr; current = current->Parent()) {
+        if (!current->IsVariableDeclaration() || current->Start().index != selection.pos) {
+            continue;
+        }
+        auto *declaration = current->AsVariableDeclaration();
+        const auto &declarators = declaration->Declarators();
+        if (declaration->Kind() == ir::VariableDeclaration::VariableDeclarationKind::VAR || declarators.empty()) {
+            return nullptr;
+        }
+        const auto *id = declarators.front()->Id();
+        return id != nullptr && id->IsIdentifier() && id->End().index <= selection.end ? id->Variable() : nullptr;
+    }
+    return nullptr;
+}
+
 static bool HasDeclarationLeadingExternalWriteUsage(const RefactorContext &context, public_lib::Context *ctx,
                                                     TextRange trimmedSpan)
 {
-    if (ctx == nullptr || ctx->sourceFile == nullptr || trimmedSpan.pos >= trimmedSpan.end ||
-        trimmedSpan.end > ctx->sourceFile->source.size()) {
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr ||
+        trimmedSpan.pos >= trimmedSpan.end) {
         return false;
     }
-    std::string_view selected(ctx->sourceFile->source.data() + trimmedSpan.pos, trimmedSpan.end - trimmedSpan.pos);
-    const bool startsWithDecl = selected.rfind("const ", 0) == 0 || selected.rfind("let ", 0) == 0;
-    if (!startsWithDecl) {
+    const auto *variable = FindLeadingDeclaredVariable(context, trimmedSpan);
+    if (variable == nullptr) {
         return false;
     }
-    size_t keywordLen =
-        selected.rfind("const ", 0) == 0 ? std::string_view("const ").size() : std::string_view("let ").size();
-    size_t i = keywordLen;
-    while (i < selected.size() && std::isspace(static_cast<unsigned char>(selected[i])) != 0) {
-        ++i;
-    }
-    size_t nameBegin = i;
-    while (i < selected.size()) {
-        const char ch = selected[i];
-        if (std::isalnum(static_cast<unsigned char>(ch)) == 0 && ch != '_' && ch != '$') {
-            break;
+    const auto *program = ctx->parserProgram;
+    const bool usedAfterSelection = program->Ast()->IsAnyChild([program, trimmedSpan, variable](ir::AstNode *node) {
+        if (!node->IsIdentifier() || node->Start().Program() != program || node->Start().index < trimmedSpan.end) {
+            return false;
         }
-        ++i;
-    }
-    const std::string declaredName = i > nameBegin ? std::string(selected.substr(nameBegin, i - nameBegin)) : "";
-    if (declaredName.empty() || trimmedSpan.end >= ctx->sourceFile->source.size()) {
-        return false;
-    }
-    const std::string_view suffix(ctx->sourceFile->source.data() + trimmedSpan.end,
-                                  ctx->sourceFile->source.size() - trimmedSpan.end);
-    const bool declaredVarUsedAfterSelection = ContainsIdentifierToken(suffix, declaredName);
-    FunctionIOInfo ioInfo = AnalyzeFunctionIO(context, trimmedSpan, true, nullptr, false);
-    return !ioInfo.hasReturnStatement && declaredVarUsedAfterSelection;
+        const auto *id = node->AsIdentifier();
+        return id->Variable() == variable && id->IsReference(program->Extension());
+    });
+    return usedAfterSelection && !AnalyzeFunctionIO(context, trimmedSpan, true, nullptr, false).hasReturnStatement;
 }
 
 static void RemoveActionByName(std::vector<RefactorAction> &actions, std::string_view name)
@@ -3055,9 +3058,23 @@ static std::optional<TextRange> GetRepeatedValueExtractionSearchRange(const Refa
     return GetRepeatedValueEncloseSearchRange(touchNode, trimmed);
 }
 
+static bool IsRepeatedIdentifierReference(const RefactorContext &context, TextRange range,
+                                          const ir::Identifier *selected, ScriptExtension extension)
+{
+    auto *node = GetTouchingTokenByRange(context.context, range, false);
+    if (node == nullptr || !node->IsIdentifier() || node->Start().index != range.pos ||
+        node->End().index != range.end) {
+        return false;
+    }
+    auto *ident = node->AsIdentifier();
+    return ident->IsReference(extension) && !IsMemberPropertyIdentifier(ident) && selected->Variable() != nullptr &&
+           ident->Variable() == selected->Variable();
+}
+
 static std::vector<TextRange> CollectRepeatedValueExtractionOccurrences(const RefactorContext &context,
                                                                         public_lib::Context *ctx,
-                                                                        const std::string &actionName)
+                                                                        const std::string &actionName,
+                                                                        const ir::Identifier *selectedIdentifier)
 {
     if (ctx == nullptr || ctx->sourceFile == nullptr) {
         return {};
@@ -3090,12 +3107,16 @@ static std::vector<TextRange> CollectRepeatedValueExtractionOccurrences(const Re
         if (found == std::string_view::npos || found + selectedText.size() > searchEnd) {
             break;
         }
+        searchPos = found + selectedText.size();
         if (!IsExpressionLikeRepeatedOccurrence(source, selectedText, found)) {
-            searchPos = found + selectedText.size();
             continue;
         }
-        occurrences.push_back({found, found + selectedText.size()});
-        searchPos = found + selectedText.size();
+        const TextRange occurrence {found, searchPos};
+        if (selectedIdentifier != nullptr &&
+            !IsRepeatedIdentifierReference(context, occurrence, selectedIdentifier, ctx->parserProgram->Extension())) {
+            continue;
+        }
+        occurrences.push_back(occurrence);
     }
     return occurrences;
 }
@@ -3762,7 +3783,7 @@ static void AdvanceBlockCommentScanState(char ch, char next, SourceScanState &st
     }
 }
 
-static bool IsSourcePositionInCode(std::string_view source, size_t pos)
+static SourceScanState GetSourceScanState(std::string_view source, size_t pos)
 {
     SourceScanState state = SourceScanState::CODE;
     bool escaped = false;
@@ -3790,7 +3811,7 @@ static bool IsSourcePositionInCode(std::string_view source, size_t pos)
                 break;
         }
     }
-    return state == SourceScanState::CODE;
+    return state;
 }
 
 static bool IsRepeatedOccurrenceBoundary(char ch)
@@ -3823,7 +3844,7 @@ static bool IsExpressionLikeRepeatedOccurrence(std::string_view source, std::str
     if (selectedText.empty() || pos > source.size() || pos + selectedText.size() > source.size()) {
         return false;
     }
-    if (!IsSourcePositionInCode(source, pos)) {
+    if (GetSourceScanState(source, pos) != SourceScanState::CODE) {
         return false;
     }
     if (!HasRepeatedOccurrenceAllowedPrefix(source, pos)) {
@@ -4508,7 +4529,18 @@ static void ResolveGlobalValueExtractionInsertPos(const RefactorContext &context
     if (IsClassPropertyInitializerRhsSelection(context, trimmedSpan)) {
         state.insertPos = globalInsertPos;
     }
-    state.insertPos = AdvanceInsertPosToBlankLineStart(ctx->sourceFile->source, state.insertPos);
+    const std::string_view source = ctx->sourceFile->source;
+    size_t lineEnd = state.insertPos;
+    if (lineEnd > 0 && lineEnd < source.size() && source[lineEnd] == LINE_FEED &&
+        source[lineEnd - 1] == CARRIAGE_RETURN) {
+        --lineEnd;
+    }
+    if (lineEnd < source.size() && IsLineBreakChar(source[lineEnd]) &&
+        GetSourceScanState(source, lineEnd) == SourceScanState::LINE_COMMENT) {
+        state.insertPos = SkipLineBreak(source, lineEnd);
+        return;
+    }
+    state.insertPos = AdvanceInsertPosToBlankLineStart(source, state.insertPos);
 }
 
 struct FinalizeValueExtractionTextInputs {
@@ -4676,20 +4708,124 @@ static size_t ResolveRepeatedValueExtractionInsertPos(const RepeatedValueExtract
     return FindLineStart(source, occurrences.front().pos);
 }
 
+static const ir::AstNode *FindStandaloneIdentifierInitializerDeclaration(const RefactorContext &context,
+                                                                         TextRange occurrence)
+{
+    const auto *node = GetTouchingTokenByRange(context.context, occurrence, false);
+    const auto *parent = node == nullptr ? nullptr : node->Parent();
+    if (parent == nullptr) {
+        return nullptr;
+    }
+    if (parent->IsClassProperty() && parent->AsClassProperty()->Value() == node) {
+        const auto *classDef = parent->Parent();
+        return classDef != nullptr && classDef->IsClassDefinition() && classDef->AsClassDefinition()->IsGlobal()
+                   ? parent
+                   : nullptr;
+    }
+    if (!parent->IsVariableDeclarator() || parent->AsVariableDeclarator()->Init() != node) {
+        return nullptr;
+    }
+    const auto *statement = parent->Parent();
+    if (statement == nullptr || !statement->IsVariableDeclaration() ||
+        statement->AsVariableDeclaration()->Declarators().size() != 1U) {
+        return nullptr;
+    }
+    return statement->AsVariableDeclaration();
+}
+
+static std::optional<size_t> FindIdentifierInitializerStart(std::string_view source, const ir::AstNode *declaration)
+{
+    const size_t start = declaration->Start().index;
+    if (!declaration->IsClassProperty()) {
+        return start;
+    }
+    const auto keyword = FindVariableDeclKeywordStart(source, start);
+    if (!keyword.has_value()) {
+        return std::nullopt;
+    }
+    const auto prefix = TrimAsciiWhitespace(source.substr(*keyword, start - *keyword));
+    return prefix == "let" || prefix == "const" || prefix == "var" ? keyword : std::nullopt;
+}
+
+static bool IsIdentifierInitializerGap(std::string_view gap)
+{
+    while (!gap.empty()) {
+        const size_t next = gap.find_first_not_of(" \t\r\n;");
+        if (next == std::string_view::npos) {
+            return true;
+        }
+        gap.remove_prefix(next);
+        if (gap.rfind("//", 0) == 0) {
+            const size_t lineEnd = gap.find_first_of("\r\n");
+            if (lineEnd == std::string_view::npos) {
+                return false;
+            }
+            gap.remove_prefix(lineEnd);
+        } else if (gap.rfind("/*", 0) == 0) {
+            const size_t end = gap.find("*/", 2U);
+            if (end == std::string_view::npos) {
+                return false;
+            }
+            gap.remove_prefix(end + 2U);
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Consecutive standalone initializers in one statement list can share a single read.
+static bool CanShareRepeatedIdentifierValue(const RefactorContext &context, const ir::Identifier *identifier,
+                                            const std::vector<TextRange> &occurrences, size_t insertPos,
+                                            std::string_view source)
+{
+    const auto *variable = identifier->Variable();
+    const auto *binding = variable == nullptr ? nullptr : variable->Declaration();
+    if (binding == nullptr || (!binding->IsLetOrConstDecl() && !binding->IsParameterDecl())) {
+        return false;
+    }
+    const ir::AstNode *scope = nullptr;
+    size_t previousEnd = insertPos;
+    for (const auto &occurrence : occurrences) {
+        const auto *declaration = FindStandaloneIdentifierInitializerDeclaration(context, occurrence);
+        if (declaration == nullptr || (scope != nullptr && scope != declaration->Parent())) {
+            return false;
+        }
+        const auto start = FindIdentifierInitializerStart(source, declaration);
+        if (!start.has_value() || *start < previousEnd || *start > occurrence.pos) {
+            return false;
+        }
+        const auto gap = source.substr(previousEnd, *start - previousEnd);
+        if (scope == nullptr ? !TrimAsciiWhitespace(gap).empty() : !IsIdentifierInitializerGap(gap)) {
+            return false;
+        }
+        scope = declaration->Parent();
+        previousEnd = occurrence.end;
+    }
+    return std::any_of(occurrences.begin(), occurrences.end(), [identifier](TextRange occurrence) {
+        return occurrence.pos == identifier->Start().index && occurrence.end == identifier->End().index;
+    });
+}
+
 static std::optional<RefactorEditInfo> BuildRepeatedValueExtractionEdits(const RepeatedValueExtractionEditInput &input)
 {
     auto *ctx = input.ctx;
     if (ctx == nullptr || ctx->sourceFile == nullptr || input.generatedText.empty()) {
         return std::nullopt;
     }
-    const std::vector<TextRange> occurrences =
-        CollectRepeatedValueExtractionOccurrences(input.context, ctx, input.actionName);
+    const auto *selectedIdentifier = FindIdentifierAtSelection(input.context, GetTrimmedSelectionSpan(input.context));
+    const auto occurrences =
+        CollectRepeatedValueExtractionOccurrences(input.context, ctx, input.actionName, selectedIdentifier);
     if (occurrences.size() < 2U) {
         return std::nullopt;
     }
 
     const std::string_view source = ctx->sourceFile->source;
     const size_t insertPos = ResolveRepeatedValueExtractionInsertPos(input, source, occurrences);
+    if (selectedIdentifier != nullptr &&
+        !CanShareRepeatedIdentifierValue(input.context, selectedIdentifier, occurrences, insertPos, source)) {
+        return std::nullopt;
+    }
     std::string repeatedGeneratedText =
         PrepareValueDeclarationInsertText(input.context, source, insertPos, std::string(input.generatedText));
     std::vector<TextChange> textChanges;
