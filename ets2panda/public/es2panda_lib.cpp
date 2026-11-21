@@ -1042,6 +1042,16 @@ extern "C" __attribute__((unused)) es2panda_Context *ProceedToState(es2panda_Con
     return reinterpret_cast<es2panda_Context *>(ctx);
 }
 
+static void ResetLineIndexCaches(Context *ctx)
+{
+    if (ctx->parserProgram == nullptr) {
+        return;
+    }
+
+    ctx->parserProgram->ResetLineIndexCache();
+    ctx->parserProgram->GetExternalPrograms()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
+}
+
 extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context)
 {
     auto *ctx = reinterpret_cast<Context *>(context);
@@ -1049,6 +1059,7 @@ extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context
         ctx->config->diagnosticEngine->EnsureLocations();
     }
     if (ctx->emitter != nullptr) {
+        ResetLineIndexCaches(ctx);
         FreeCompilerPartMemory(context);
     }
     ctx->patchFixHelper.reset();

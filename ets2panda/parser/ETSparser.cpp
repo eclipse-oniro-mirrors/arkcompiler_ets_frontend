@@ -208,7 +208,7 @@ ir::ETSModule *ETSParser::ParseImportsAndReExportOnly(lexer::SourcePosition star
 
     while (Lexer()->GetToken().Type() == lexer::TokenType::KEYW_EXPORT) {
         auto *statement = ParseTopLevelDeclStatement(StatementParsingFlags::ALLOW_LEXICAL);
-        if (statement->IsETSReExportDeclaration()) {
+        if (statement != nullptr && statement->IsETSReExportDeclaration()) {
             statements.emplace_back(statement);
         }
     }
