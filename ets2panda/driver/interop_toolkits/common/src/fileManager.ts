@@ -465,7 +465,7 @@ function normalizeOptionalPath(filePath: string | undefined): string {
 }
 
 function stripSourceExtension(filePath: string): string {
-  for (const extension of ['.d.ets', '.d.ts', '.ets', '.ts']) {
+  for (const extension of ['.d.ets', '.d.ts', '.ets', '.ts', '.js']) {
     if (filePath.endsWith(extension)) {
       return filePath.slice(0, -extension.length);
     }
