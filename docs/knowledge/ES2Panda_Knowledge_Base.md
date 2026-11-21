@@ -1,5 +1,11 @@
 # ES2Panda Knowledge Base
 
+Path setup and validation: `docs/knowledge/Build_Environment.md` (repository-relative).
+
+
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > [!NOTE]
 > Version: v2.1 | Updated: 2026-06-03
 > Scope: all project-specific knowledge for the `es2panda` dynamic compilation route
@@ -15,13 +21,13 @@
   → Do not cross-apply experience; do not port `ets2panda` checker/lowering logic to `es2panda`
 - Output binary: `es2abc`, namespace: `panda::es2panda`
 - No lowering main path — AST goes directly to bytecode generation
-- `ScriptExtension` enum: `JS | TS | AS(ArkTS) | ABC(recompilation)` — `es2panda/ir/astNode.h`
+- `ScriptExtension` enum: `JS | TS | AS(ArkTS) | ABC(recompilation)` — `es2panda/es2panda.h`
 - `ScriptKind` enum: `SCRIPT | MODULE | COMMONJS` — `es2panda/parser/program/program.h`
 
 ### 1.1 Compilation Pipeline
 
 ```
-source → lexer → parser → binder → [typescript/transformer] → compiler(PandaGen) → emitter → .abc
+source → lexer → parser → binder → [parser/transformer + rebinding] → compiler(PandaGen) → emitter → .abc
 ```
 
 Optional paths:
@@ -45,13 +51,13 @@ Optional paths:
 | Description | File |
 |-------------|------|
 | Program entry, full orchestration flow | `aot/main.cpp` |
-| `Options` class, parses ~50 CLI flags into `CompilerOptions` | `aot/options.cpp` |
+| `Options` class, parses the registered CLI flags into `CompilerOptions` | `aot/options.cpp` |
 | File emission hierarchy: `EmitFileQueue` / `EmitSingleAbcJob` / `EmitMergedAbcJob` / `EmitCacheJob`, all inherit `WorkerJob` | `aot/emitFiles.cpp` |
 | `DepsRelationResolver` — BFS tree-shaking | `aot/resolveDepsRelation.cpp` |
 | `Compiler` public API (`CompileFiles` / `Compile` / `CompileAbcFile`) | `es2panda.h` |
 
 **Facts:**
-- `MemManager` RAII wrapper initializes an **8 GB** Panda memory pool
+- `MemManager` initializes the Panda memory pool; inspect its constants and configuration in `es2panda/aot/main.cpp` for the current sizing policy
 - `--merge-abc` mode merges all programs into a single ABC; `EmitMergedAbcJob` waits for all dependencies before executing
 - `--compile-context-info` accepts a JSON file with: compile entries, HSP package names, version info, replace records
 - Hot-reload/patch modes: `--generate-patch` / `--hot-reload` / `--cold-reload` / `--cold-fix` + `--input-symbol-table`
@@ -67,7 +73,7 @@ Optional paths:
 | Description | File |
 |-------------|------|
 | `Lexer` class, scans source into token stream, manages `LineIndex` | `lexer/lexer.cpp` |
-| `Token` class, `Token::Type` enum | `lexer/token/token.cpp` |
+| `Token` class, `TokenType` enum | `lexer/token/token.cpp` |
 | `SourceLocation` / `SourceRange` source position tracking | `lexer/token/sourceLocation.h` |
 | Regex literal pattern/flags parsing | `lexer/regexp/regexp.cpp` |
 | Generates `keywords.h` (keyword token definitions) | `lexer/templates/keywords.h.erb` |
@@ -76,9 +82,9 @@ Optional paths:
 
 **Facts:**
 - Keyword generation pipeline: `keywords.rb` → `gen_keywords.sh` → `.erb` templates → `keywords.h` + `keywordsMap.h` → referenced by `lexer.cpp`
-- Adding a token requires updating `Token::Type` enum
+- Adding a token requires updating `TokenType` enum
 - `LineIndex` is built in Lexer and used by all subsequent stages for line/column lookup
-- **Regex vs division disambiguation**: lexer uses **previous token type** to determine whether `/` is division or regex start (context-dependent)
+- **Regex vs division disambiguation**: parsing context selects the regex route. In `parser/expressionParser.cpp`, the primary-expression handler for divide tokens invokes `Lexer::ScanRegExp()` and `RegExpParser`; ordinary division follows expression operator parsing. Preserve the parser/lexer contract rather than deciding every slash from the previous token alone.
 
 ---
 
@@ -87,9 +93,9 @@ Optional paths:
 
 | Description | File |
 |-------------|------|
-| `ParserImpl` recursive descent core (**~175KB internal hotspot**) | `parser/parserImpl.cpp` |
-| `ExpressionParser` — expression parsing, operator precedence | `parser/expressionParser.cpp` |
-| `StatementParser` — statement parsing, control flow and declarations | `parser/statementParser.cpp` |
+| `ParserImpl` recursive descent core | `parser/parserImpl.cpp` |
+| `ParserImpl` expression parsing implementation, operator precedence | `parser/expressionParser.cpp` |
+| `ParserImpl` statement parsing implementation, control flow and declarations | `parser/statementParser.cpp` |
 | `ParserContext` — manages parse flags and error collection | `parser/context/parserContext.cpp` |
 | TS AST → ES AST transformation (executes during parse stage) | `parser/transformer/transformer.cpp` |
 | CommonJS module wrapper (**independent from ES Module system**) | `parser/commonjs.cpp` |
@@ -99,8 +105,8 @@ Optional paths:
 **Facts:**
 - `ScriptKind::MODULE` triggers ES Module path, `ScriptKind::COMMONJS` triggers CommonJS path
 - `Program` is created at parser stage and spans the entire pipeline
-- TS transformer executes during parsing, lowering TS-specific nodes to JS equivalents
-- `ParserImpl` is an internal hotspot (~175KB, used by expression/statement/CommonJS parsers) — always assess global impact before modifying
+- TS transformation is orchestrated by `es2panda.cpp` after parsing and before bytecode compilation
+- `ParserImpl` is shared by expression, statement, and CommonJS parsing — always assess global impact before modifying
 
 ---
 
@@ -176,20 +182,11 @@ Defined in: `parser/program/program.h`
 ---
 
 **TAG: TS**
-## 8. TypeScript — Type Checking
+## 8. TypeScript — Transformation
 
-| Description | File |
-|-------------|------|
-| `Checker` class — TS type checking core entry | `typescript/checker.cpp` |
-| Type definitions (`Type` base + ObjectType / FunctionType / UnionType / IntersectionType / ConditionalType / TypeReference etc.) | `typescript/types/` |
-| Type relation and inference helpers (compatibility checking, inference engine, caching) | `typescript/core/` |
+The removed `es2panda/typescript` checker is not available in this checkout. TypeScript syntax remains supported by `parser/`, `ir/ts/`, and `parser/transformer/`.
 
-**Facts:**
-- TS type checking is **disabled by default**; requires `--enable-type-check`
-- `es2panda`'s TS checker and `ets2panda`'s static checker are **completely independent implementations**
-  → **Forbidden** to apply `ets2panda`'s `TypeRelation` / static type checking experience here
-  → **Forbidden** to implement `ets2panda`-style lowering logic in `es2panda`'s checker
-- TS full path: Parser creates TS AST (`ir/ts/*`, 50+ types) → Binder binds → **Transformer lowers (before Checker)** → Checker checks (optional) → Compiler compiles
+`es2panda.cpp` constructs `parser::Transformer` for TS input; `Compiler::ProcessAstForTS` transforms the AST and runs `Binder::IdentifierAnalysis` with `TS_AFTER_TRANSFORM`. Inspect this implementation and parser binding order before changing TS behavior. There is no supported `--enable-type-check` CLI flag or in-tree TS checker to debug.
 
 ---
 
@@ -198,14 +195,14 @@ Defined in: `parser/program/program.h`
 
 | Description | File / Directory |
 |-------------|-----------------|
-| `AstNode` base — **154** node type enums `AstNodeType`, `AstNodeFlags` / `ModifierFlags` / `ScriptFunctionFlags` | `ir/astNode.h` |
+| `AstNode` base — node kinds from `AstNodeType` and `ir/astNodeMapping.h`, `AstNodeFlags` / `ModifierFlags` / `ScriptFunctionFlags` | `ir/astNode.h` |
 | `AstDumper` class (used by `--dump-ast`) | `ir/astDump.cpp` |
 | `Expression` base (adds `grouped_` flag and type annotation support) | `ir/expression.h` |
-| 40+ expression node types | `ir/expressions/` |
-| 30+ statement node types | `ir/statements/` |
-| 50+ TypeScript-specific node types | `ir/ts/` |
+| Expression node types (current inventory in this directory) | `ir/expressions/` |
+| Statement node types (current inventory in this directory) | `ir/statements/` |
+| TypeScript-specific node types (current inventory in this directory) | `ir/ts/` |
 | ES module declaration nodes | `ir/module/` |
-| 7 literal node types (see next section) | `ir/expressions/literals/` |
+| Literal node types (see next section) | `ir/expressions/literals/` |
 
 **Facts:**
 - `AstNode::IsProgram()` returns true when `parent_ == nullptr` — root node's parent is null
@@ -247,7 +244,7 @@ Defined in: `parser/program/program.h`
 |-------------|------|
 | `CompilerImpl` — compilation orchestration, manages compilation context and parallel compilation | `compiler/core/compilerImpl.cpp` |
 | `PandaGen` — compilation core visitor, generates Panda IR instructions | `compiler/core/pandagen.cpp` |
-| `Emitter` — serialization: `Panda IR → pandasm::Program → AsmEmitter::Emit() → .abc` | `compiler/core/emitter.cpp` |
+| `Emitter` — serialization: `Panda IR → pandasm::Program → AsmEmitter::Emit() → .abc` | `compiler/core/emitter/emitter.cpp` |
 | `RegAllocator` — VReg allocation and release | `compiler/core/regAllocator.cpp` |
 | Compile-time function representation | `compiler/core/function.cpp` |
 | Parallel compilation queue | `compiler/core/compileQueue.cpp` |
@@ -357,8 +354,8 @@ All builders in `compiler/function/`
 |-------------|------|
 | Invokes Ruby `isa_gen` to generate ISA headers | `scripts/gen_isa.sh` |
 | Invokes `keywords.rb` to generate keyword headers | `scripts/gen_keywords.sh` |
-| Integration test runner — supports `--compiler` / `--bytecode` / `--tsc` / `--parser` / `--optimizer` / `--patch` / `--version-control` | `test/runner.py` |
-| API version mapping (**API 9–20**) | `test/config.py` |
+| Integration test runner — supports `--compiler` / `--bytecode` / `--tsc` / `--regression` / `--hotfix` / `--hotreload` / `--coldfix` / `--coldreload` / `--version-control` | `test/runner.py` |
+| API version mapping (supported versions in the current map) | `test/config.py` |
 
 **Facts:**
 - `runner.py --help` lists all test modes
@@ -383,7 +380,7 @@ All builders in `compiler/function/`
 | 5 | Do NOT bypass `LReference` for property assignment | Misses optional chaining / destructuring scenarios |
 | 6 | Do NOT manipulate VReg directly | Use `PandaGen`'s register management to avoid register corruption |
 | 7 | Do NOT assume `Tag() == NULL_VALUE` means "no value" | `NullLiteral`, `BigIntLiteral`, and `RegExpLiteral` all return `NULL_VALUE` with different semantics |
-| 8 | Do NOT implement type inference in parser/binder | That is the TypeScript checker's job; requires `--enable-type-check` |
+| 8 | Do NOT invent an in-tree TypeScript checker | This checkout supports TS parsing/transformation, without the removed checker |
 | 9 | Do NOT mix ES Module and CommonJS handling logic | Two independent module systems with different `ScriptKind` paths |
 | 10 | Do NOT let `StringView` outlive its backing data | Non-owning view; `Mutf8()` produces a new `std::string`, original view may become invalid |
 
@@ -392,18 +389,17 @@ All builders in `compiler/function/`
 
 - `LiteralTag` enum must stay in sync with `panda::panda_file::LiteralTag`
 - Auto-generated code (`.erb` template output) **must never be hand-edited** — always modify `.erb` source templates
-- `parserImpl.cpp` ~175KB internal hotspot — always assess global impact before modifying
+- `parserImpl.cpp` shared parser implementation — always assess global impact before modifying
 - ES Module and CommonJS are two independent module systems — do not mix their handling logic
-- TS checker disabled by default; requires `--enable-type-check`
-- `es2panda`'s TS checker and `ets2panda`'s static checker are completely independent
+- The removed dynamic TypeScript checker is unavailable; do not route changes to it
 - All AST nodes must be allocated via Program's `allocator_` arena
 
 ### Pitfalls
 
 - Porting `ets2panda` lowering/checker logic to `es2panda`
 - Editing template-generated output instead of `.erb` files
-- Treating all TS issues as parser issues — may be transformer or checker issues
-- Implementing type inference in parser/binder — that is the typescript checker's job
+- Treating all TS issues as parser issues — may be transformer or binder issues
+- Assuming TypeScript transformation performs full semantic type checking
 - Manipulating VReg directly instead of using PandaGen's register management
 - Bypassing LReference for property assignment
 - Using `reinterpret_cast` instead of `As##Type()` for node downcasting
@@ -427,9 +423,8 @@ All builders in `compiler/function/`
 |---------|------------|
 | Observe token sequence | `Lexer::NextToken()` |
 | Observe syntax parsing | `ParserImpl::ParseStatement()` / `ParseExpression()` |
-| Observe identifier resolution | `Binder::ResolveIdentifier` |
-| Observe type checking | `Checker::Check()` |
-| Observe instruction generation | `PandaGen::Compile()` |
+| Observe identifier resolution | `Binder::IdentifierAnalysis` |
+| Observe instruction generation | `CompilerImpl::Compile()` |
 | Observe literal compilation | `Literal::Compile()` |
 | Observe node structure | Node's `Dump()` method |
 | Observe child node traversal | `Iterate()` |
@@ -459,19 +454,13 @@ All builders in `compiler/function/`
 
 **Build and Test Commands:**
 
+Use `docs/knowledge/Build_Environment.md` to set/validate `OH_ROOT` and `FRONTEND_BUILD_DIR`. The complete ordered procedure, including all integration modes and external prerequisites, is in `docs/knowledge/ES2Panda_Testing.md`.
+
 ```bash
-# Build
+cd "$OH_ROOT"
 ./build.sh --product-name rk3568 --build-target ets_frontend_build
-
-# Unit tests
-./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests
-
-# Integration tests
-python3 es2panda/test/runner.py --compiler <build_dir>
-python3 es2panda/test/runner.py --bytecode <build_dir>
-python3 es2panda/test/runner.py --tsc <build_dir>
-python3 es2panda/test/runner.py --parser <build_dir>
-python3 es2panda/test/runner.py --patch <build_dir>
+cd "$OH_ROOT/arkcompiler/ets_frontend"
+python3 es2panda/test/runner.py --regression "$FRONTEND_BUILD_DIR"
 ```
 
 ---
@@ -490,7 +479,19 @@ python3 es2panda/test/runner.py --patch <build_dir>
 | Lexer | `arkcompiler/ets_frontend/es2panda/lexer/AGENTS.md` | `es2panda/lexer/AGENTS.md` |
 | Parser | `arkcompiler/ets_frontend/es2panda/parser/AGENTS.md` | `es2panda/parser/AGENTS.md` |
 | Binder | `arkcompiler/ets_frontend/es2panda/binder/AGENTS.md` | `es2panda/binder/AGENTS.md` |
-| TypeScript type checking | `arkcompiler/ets_frontend/es2panda/typescript/AGENTS.md` | `es2panda/typescript/AGENTS.md` |
 | Compiler | `arkcompiler/ets_frontend/es2panda/compiler/AGENTS.md` | `es2panda/compiler/AGENTS.md` |
 | IR node definitions | `arkcompiler/ets_frontend/es2panda/ir/AGENTS.md` | `es2panda/ir/AGENTS.md` |
 | Scripts | `arkcompiler/ets_frontend/es2panda/scripts/AGENTS.md` | `es2panda/scripts/AGENTS.md` |
+
+## 19. Repository-level regression routes
+
+Paths in this section are relative to `ets_frontend/`. These routes have different prerequisites and are not interchangeable.
+
+| Route | Entry / inputs | Validation and prerequisites |
+|---|---|---|
+| Dynamic regression | `es2panda/test/runner.py --regression "$FRONTEND_BUILD_DIR"` | Compare parser output with regression expectations; requires built `es2abc` |
+| TS conformance | `es2panda/test/runner.py --tsc "$FRONTEND_BUILD_DIR" --tsc-path <typescript_tree>` | Uses external TypeScript tests; inspect skip lists and report unexpected failures |
+| Legacy TestTs | `testTs/run_testTs.py`, `testTs/config.py` | Run from repository root with `--file <case.ts>` or `--dir <cases>` and `--ark_frontend_tool <index.js>`; requires legacy Node frontend and TS fixtures. The script invokes Node with `--output-type`, not native `es2abc`. Inspect outputs under `out/testTs/` and compare with `testTs/expect/`; report skips and failures |
+| ECMAScript optimizer fixture | `test_ecma_bcopt/test_bytecode_optimizer_for_js.js`, `test_ecma_bcopt/test_bytecode_optimizer_for_js.txt` | JS input plus historical assembly reference; no standalone runner or GN target is defined in this directory. Locate a compatible runtime optimizer/disassembler consumer before execution; compare optimized disassembly and behavior. Do not claim coverage from fixture presence or compare different bytecode versions blindly |
+
+For dynamic code changes, also run both Test262 modes (`test262/run_test262.py --es2022 all --ark-frontend=es2panda --ark-frontend-binary=<es2abc> --product-name=rk3568 --timeout=3000000`, with and without `--abc2program`). From the OpenHarmony root build `runtime_core_host_unittest`, `arkcompiler/runtime_core:verifier_host_unittest`, `arkcompiler/runtime_core:ark_host_linux_tools_packages` (disassembler build), and `arkcompiler/runtime_core/tests/fuzztest:fuzztest`. Run `python3 arkcompiler/runtime_core/isa/check_version.py` for instruction/ABC changes; this is a version check, not a compatibility test. Record unavailable runtime, fixtures, toolchains, and host branches explicitly.

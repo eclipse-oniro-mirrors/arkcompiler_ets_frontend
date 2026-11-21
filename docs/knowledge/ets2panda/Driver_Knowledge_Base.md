@@ -1,5 +1,8 @@
 # ETS2Panda Driver Knowledge Base
 
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > Document Version: v1.0
 > Last Updated: 2026-05-28
 > Scope: `ets_frontend` frontend compiler knowledge base entry
@@ -27,7 +30,7 @@
   - `plugins/` — Plugin system: `PluginDriver` (singleton, manages loading and execution hooks for AST transform plugins), `KitImportTransformer`
   - `obfuscation/` — Obfuscation config processing
 - `build_system/test/` — Test directory: `ut/` (unit tests), `e2e/` (end-to-end tests), `e2e_obfuscation/` (obfuscation E2E tests), demo projects (`demo_hap/`, `demo_mix_hap/`, etc.)
-- `build_system/docs/` — Config documentation: `build-config.en.md` (`BuildConfig` field descriptions), `target-build.en.md` (multi-target sourceRoots build documentation)
+- `docs/` — Driver config documentation: `ets2panda/driver/docs/build-config.en.md` (`BuildConfig` field descriptions), `ets2panda/driver/docs/target-build.en.md` (multi-target sourceRoots build documentation)
 - `dependency_analyzer/` — C++ file dependency analyzer: `dep_analyzer.h`/`dep_analyzer.cpp` (core implementation, analyzes import dependencies, outputs file path list sorted by import priority), `main.cpp` (CLI entry point)
 - `docs/` — Driver layer architecture documentation
 
@@ -40,11 +43,11 @@
 - `src/build/build_mode.ts` — `BuildMode`: dispatches to `runParallel`/`runConcurrent`/`runSimultaneous`/`run` based on `ES2PANDA_MODE`, and records statistics
 - `src/build/generate_arktsconfig.ts` — `ArkTSConfigGenerator`: generates `arktsconfig.json` for each module, handling paths (including sourceRoots multi-target priority mapping) and dependencies (two-phase transformed/remaining parsing of interop dependencies)
 - `src/util/ets2panda.ts` — `Ets2panda` singleton: wraps the full ets2panda compiler API call chain (parse → plugin(parse) → declgen → check → plugin(check) → emit)
-- `src/util/error.ts` — `ErrorCode` enum (`11410001`–`11410039`) and `DriverError` class, defining all errors reportable by the build system
+- `src/util/error.ts` — `ErrorCode` enum (current codes in this file) and `DriverError` class, defining all errors reportable by the build system
 - `src/util/graph.ts` — `Graph`/`GraphNode`: DAG directed graph for representing module dependency relationships and topological scheduling
 - `src/util/TaskManager.ts` — `TaskManager`: multi-process/multi-thread task scheduling, manages worker pool and task queue
 - `src/util/statsRecorder.ts` — `StatisticsRecorder`: event-level performance timing, outputs `bs_record_perf.csv` report
-- `src/plugins/plugins_driver.ts` — `PluginDriver` singleton: manages loading of external AST transform plugins (`BUILDSYSTEM_LOAD_PLUGIN_FAIL` 11410008) and hook execution
+- `src/plugins/plugins_driver.ts` — `PluginDriver` singleton: manages loading of external AST transform plugins (`BUILDSYSTEM_LOAD_PLUGIN_FAIL`) and hook execution
 - `dependency_analyzer/dep_analyzer.h` — `DepAnalyzer` class: analyzes `directDependencies_`, `directDependants_`, `outputMatching_`, and outputs the file path list
 
 ## Responsibility Boundaries
@@ -76,11 +79,11 @@ hvigor / CLI
 
 ## Knowledge Routing
 
-- `BuildConfig` field meanings and required fields → `docs/build-config.en.md`
-- sourceRoots multi-target build and paths generation algorithm → `docs/target-build.en.md`
-- Inter-file import dependency analysis → `dependency_analyzer/README.md`
+- `BuildConfig` field meanings and required fields → `ets2panda/driver/docs/build-config.en.md`
+- sourceRoots multi-target build and paths generation algorithm → `ets2panda/driver/docs/target-build.en.md`
+- Inter-file import dependency analysis → `ets2panda/driver/dependency_analyzer/README.md`
 - Compilation errors (type/semantic errors) → checker Knowledge Base
-- declgen declaration output issues → `DeclGen_ETS2TS_Knowledge_Base.md`
+- declgen declaration output issues → `docs/knowledge/ets2panda/DeclGen_ETS2TS_Knowledge_Base.md`
 - Plugin-related issues → `src/plugins/`
 - ErrorCode quick reference → `src/util/error.ts`
 - Performance analysis toggle and reports → `src/util/statsRecorder.ts` and README.md
@@ -102,6 +105,8 @@ hvigor / CLI
 
 ## Debugging and Verification
 
+Run npm commands from `ets2panda/driver/build_system/` (repository-relative). Dependency-analyzer targets run from the configured static frontend build directory.
+
 - Unit tests: `npm run ut_test` (`test/ut/`, Jest-based)
 - E2E tests: `TEST=${test_script_name} npm run build_system_Etest` (`test/e2e/`)
 - Full local test steps: see `README.md` (mock SDK → mock koala-wrapper → `npm run build` → `npm run demo_hap:gen_abc`)
@@ -118,12 +123,12 @@ hvigor / CLI
 
 ## Common Issues
 
-- `BUILDSYSTEM_SDK_NOT_EXIST_FAIL` (11410010): `pandaSdkPath`/`buildSdkPath` misconfigured or SDK not installed
-- `BUILDSYSTEM_LOAD_PLUGIN_FAIL` (11410008): koala-wrapper path is wrong or koala plugin is not properly configured
-- `BUILDSYSTEM_DEPENDENT_MODULE_INFO_NOT_CORRECT_FAIL` (11410006): `packageName`/`moduleType`/`sourceRoots` fields missing or inconsistent in the dependency module's `DependencyModuleConfig`
-- `BUILDSYSTEM_SOURCEROOTS_NOT_SET_FAIL` (11410003): `sourceRoots` field is not set or is empty
-- `BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL` (11410015): circular dependency detected or imported file not found during dependency analysis
-- `BUILDSYSTEM_DECLGEN_FAIL` (11410013) / `BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER` (11410027): declgen phase failed; check whether the input AST has reached the CHECKED state
+- `BUILDSYSTEM_SDK_NOT_EXIST_FAIL`: `pandaSdkPath`/`buildSdkPath` misconfigured or SDK not installed
+- `BUILDSYSTEM_LOAD_PLUGIN_FAIL`: koala-wrapper path is wrong or koala plugin is not properly configured
+- `BUILDSYSTEM_DEPENDENT_MODULE_INFO_NOT_CORRECT_FAIL`: `packageName`/`moduleType`/`sourceRoots` fields missing or inconsistent in the dependency module's `DependencyModuleConfig`
+- `BUILDSYSTEM_SOURCEROOTS_NOT_SET_FAIL`: `sourceRoots` field is not set or is empty
+- `BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL`: circular dependency detected or imported file not found during dependency analysis
+- `BUILDSYSTEM_DECLGEN_FAIL` / `BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER`: declgen phase failed; check whether the input AST has reached the CHECKED state
 - Incremental cache not invalidated after config change: check `isBuildConfigModified` and the contents of `project_build_config.json`
 
 ## Related Documents
@@ -133,4 +138,4 @@ hvigor / CLI
 - `ets2panda/driver/docs/build-config.en.md` -- full BuildConfig field descriptions
 - `ets2panda/driver/docs/target-build.en.md` -- sourceRoots multi-target build and paths generation algorithm
 - `ets2panda/driver/build_system/README.md` -- local run and test steps
-- `docs/ets2panda/DeclGen_ETS2TS_Knowledge_Base.md` -- declaration-generation downstream behavior
+- `docs/knowledge/ets2panda/DeclGen_ETS2TS_Knowledge_Base.md` -- declaration-generation downstream behavior

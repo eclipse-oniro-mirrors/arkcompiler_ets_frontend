@@ -1,8 +1,10 @@
 # LSP Agent Guide
 
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
+
 Use this file for work under `lsp/` (and related `bindings/` LSP glue) together with the repository-level `AGENTS.md`.
 
-## Core Metadata
+## 1. Core Metadata
 
 | Attribute | Value |
 |-----------|--------|
@@ -10,12 +12,12 @@ Use this file for work under `lsp/` (and related `bindings/` LSP glue) together 
 | **Purpose** | Language Server Protocol services for ArkTS/ETS/TypeScript, including navigation, diagnostics, and refactors. |
 | **Primary Language** | C++ (`lsp/`) and TypeScript (`bindings/`) |
 
-## Cross-Component Rules
+## 2. Cross-Component Rules
 
 - When LSP changes require frontend semantic/compiler changes, follow root `AGENTS.md` hard gates (spec-first, tests required, no assertion removal).
 - Keep parser/checker/lowering updates out of LSP unless the change genuinely belongs to compiler semantics.
 
-## Overview
+## 3. Overview
 
 The LSP module provides language services for ArkTS/ETS/TypeScript, including:
 - Code completion
@@ -32,7 +34,7 @@ The LSP functionality is split across two directories:
 - **`lsp/`** - C++ implementation with LSP API
 - **`bindings/`** - TypeScript/JavaScript Node.js bindings
 
-## Directory Structure
+## 4. Directory Structure
 
 ```
 ets2panda/
@@ -83,9 +85,9 @@ ets2panda/
     ├── lsp_rename_test.cpp
     └── ... (100+ test files)
 ```
-## Development Process
+## 5. Development Process
 
-### Adding a New LSP Method
+### 5.1 Adding a New LSP Method
 1. Add C++ implementation in `lsp/src/` with header in `lsp/include/`
 2. Add C wrapper in `lsp/src/api.cpp`
 3. Update `lsp/include/api.h` if external access needed
@@ -99,16 +101,16 @@ ets2panda/
 11. Add bindings test in `bindings/test/e2e` and `bindings/test/testcases`
 
 
-## Build
+## 6. Build
 
-### Build the LSP module
+### 6.1 Build the LSP module
 
 ```bash
 # Full build
 cmake --build {cmake-build-dir}
 ```
 
-### Build Bindings
+### 6.2 Build Bindings
 ```bash
 cd bindings
 
@@ -117,7 +119,7 @@ npm install
 npm run run
 ```
 
-### Code Generation
+### 6.3 Code Generation
 
 Code fix registration is auto-generated during build:
 
@@ -138,7 +140,7 @@ code_fix_register.rb
 ${GENERATED_DIR}/code_fix_register.h
 ```
 
-## Code Fix Registration
+## 7. Code Fix Registration
 
 Code fixes are auto-generated from diagnostic YAML files via `code_fix_register.rb`:
 - Input: YAML files in `util/diagnostic/`
@@ -150,9 +152,9 @@ To add a new code fix:
 2. Implement fix in `src/register_code_fix/`
 3. Rebuild to generate registration code
 
-## Test
+## 8. Test
 
-### GTest
+### 8.1 GTest
 `test/unit/lsp`
 The map from test suite to test files could refer to ets_frontend/ets2panda/test/unit/lsp/CMakeLists.txt
 ```bash
@@ -163,7 +165,7 @@ ninja {test_suite_name}
 ./bin-gtest/{test_suite_name}
 ```
 
-### Bindings Test
+### 8.2 Bindings Test
 `bindings/test`
 Need to have ets folder under `bindings/`
 ```bash
@@ -174,7 +176,7 @@ npm install
 npm run test
 ```
 
-## Code Check
+## 9. Code Check
 
 Aim to check the code style and detect potential bugs.
 ```bash
@@ -185,7 +187,7 @@ python {arkcompiler-dir}/runtime_core/static_core/scripts/clang-tidy/clang_tidy_
 bash {arkcompiler-dir}/runtime_core/static_core/scripts/code_style/run_code_style_tools.sh {modified-file}
 ```
 
-## Key Dependencies
+## 10. Key Dependencies
 
 C++ LSP module:
 - `ir/astNode.h` - AST node hierarchy

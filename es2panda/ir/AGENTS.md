@@ -1,333 +1,231 @@
 # IR Module - AGENTS.md
 
-## 模块职责
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**中间表示（IR）**：抽象语法树（AST）节点定义
+## 1. Module responsibilities
 
-**核心功能**：所有AST节点类型定义、AST节点基类和辅助方法、AST遍历和转换、AST转储（Dump）、节点类型映射
+IR defines AST node kinds, node classes, traversal/update operations, AST dumping, and node-specific compilation. Parser, binder, TS transformation, and bytecode compilation all depend on these structures.
 
----
+Read the repository `AGENTS.md`, `es2panda/AGENTS.md`, and `docs/knowledge/ES2Panda_Knowledge_Base.md`. Paths below are repository-relative.
 
-## 目录结构
+## 2. Directory structure
 
+```text
+es2panda/ir/
+├── astNode.h                 # Base node, enums, generated kind checks
+├── astNodeMapping.h          # Node-kind/class mappings
+├── expression.h              # Expression base
+├── statement.h               # Statement base
+├── astDump.cpp               # AST serialization support
+├── astDump.h                 # AstDumper interface
+├── base/                     # Shared node structures
+├── expressions/              # Expression nodes
+│   └── literals/             # Literal nodes
+├── statements/               # Statement nodes
+├── ts/                       # TypeScript syntax nodes
+└── module/                   # Module declarations
 ```
-ir/
-├── astNode.h               # AstNode基类和Type枚举
-├── expression.h/cpp        # Expression基类
-├── statement.h/cpp         # Statement基类
-├── astDump.cpp/h           # AST转储
-├── base/                   # 基础节点
-├── expressions/            # 表达式节点（40+）
-├── statements/             # 语句节点（30+）
-├── ts/                     # TypeScript节点（50+）
-└── module/                 # 模块节点
-```
 
----
+## 3. AstNode base class
 
-## AstNode基类
+### 3.1 Kinds and casts
+
+`AstNodeType` is a namespace-level enum populated from `AST_NODE_MAPPING` and related mappings in `astNodeMapping.h`. It is not an `AstNode::Type` nested enum.
+
+The mapping macros generate `IsX()` and checked `AsX()` operations. Check the node kind before downcasting; do not bypass the assertions with `reinterpret_cast`.
+
+### 3.2 Positions, parent, original node, and binding
+
+`Start()`, `End()`, and `Range()` expose `SourcePosition`/`SourceRange`. `Parent()`/`SetParent()` manage parent links; `Original()`/`SetOriginal()` track origin where used. `Variable()`/`SetVariable()` attach binder information.
+
+Preserve this metadata when constructing or replacing nodes. `IsProgram()` uses a null parent, so an unexpectedly detached node may be mistaken for a root by consumers.
+
+### 3.3 Required node operations
+
+Current abstract declarations from `astNode.h`:
 
 ```cpp
-class AstNode {
-public:
-    enum class Type {
-        // 语句：BLOCK_STATEMENT, IF_STATEMENT, WHILE_STATEMENT,
-        //       FOR_UPDATE_STATEMENT, VARIABLE_DECLARATION, FUNCTION_DECLARATION
-        // 表达式：IDENTIFIER, LITERAL, BINARY_EXPRESSION, CALL_EXPRESSION
-        // TypeScript：TS_TYPE_REFERENCE, TS_INTERFACE_DECLARATION, TS_ENUM_DECLARATION
-    };
-
-    explicit AstNode(AstNode::Type type);
-
-    // 类型查询
-    AstNode::Type Type() const;
-    virtual bool IsExpression() const;
-    virtual bool IsStatement() const;
-
-    // 类型转换
-    virtual Expression *AsExpression();
-    virtual Statement *AsStatement();
-    virtual ir::Identifier *AsIdentifier();
-
-    // 遍历和转换
-    virtual void Transform(const ArenaVector<AstNode *> &parents,
-                          std::function<void(AstNode *)> callback);
-    virtual AstNode *Clone(ArenaAllocator *allocator) const;
-
-    // 位置信息
-    const lexer::SourceLocation &GetRange() const;
-    AstNode *Parent() const;
-};
+    virtual void Iterate(const NodeTraverser &cb) const = 0;
+    virtual void Dump(ir::AstDumper *dumper) const = 0;
+    virtual void Compile([[maybe_unused]] compiler::PandaGen *pg) const = 0;
+    virtual void UpdateSelf([[maybe_unused]] const NodeUpdater &cb, [[maybe_unused]] binder::Binder *binder) = 0;
 ```
 
----
+There is no universal base `Clone`/recursive `Transform` API matching the former guide's examples. Inspect the actual node and transformer contracts before implementing a rewrite.
 
-## Expression基类
+## 4. Expression base class
 
-### Expression类
+`expression.h` defines the expression base and expression-specific state. TS annotations are syntax structures; there is no supported `typescript::Type *` checker payload as previously illustrated.
 
-```cpp
-class Expression : public AstNode {
-public:
-    explicit Expression(AstNode::Type type);
-    bool IsExpression() const override;
+Bindings belong to the actual AST/binder interfaces. Parenthesization/grouping and annotation fields must survive relevant parser/transformer operations without being confused with inferred semantic types.
 
-    // 类型信息（TypeScript）
-    typescript::Type *GetType() const;
-    void SetType(typescript::Type *type);
+### 4.1 Identifier
 
-    // 变量绑定
-    binder::Variable *GetVariable() const;
-    void SetVariable(binder::Variable *var);
+`expressions/identifier.h` owns identifier syntax and name access. A resolved variable is available through the node's binding interface. Distinguish references from declarations, property names, labels, and generated identifiers before changing binding behavior.
 
-    // 常量折叠
-    virtual bool IsConstant() const;
-    virtual Expression *GetConstantValue();
-};
-```
+### 4.2 Literals
 
-### 具体Expression类
+`expressions/literals/` contains string, number, boolean, null, BigInt, regex, and tagged literals. Read the concrete `Tag()` implementation before using it as a discriminator.
 
-#### Identifier
+`NULL_VALUE` does not mean an absent value: null, BigInt, and regex nodes can share that tag while having different semantics. Numbers may preserve their original source spelling; tagged literals encode method and affiliate data. Avoid forcing these into the old guide's invented nested `LiteralType` enum.
+
+### 4.3 BinaryExpression
+
+Current constructor and accessors begin as follows:
 
 ```cpp
-class Identifier : public Expression {
-public:
-    explicit Identifier(const util::StringView &name);
-    const util::StringView &Name() const;
-    binder::Variable *Variable() const;
-    void SetVariable(binder::Variable *var);
-};
-```
-
-#### Literal
-
-```cpp
-class Literal : public Expression {
-public:
-    enum class LiteralType { NUMBER, STRING, BOOLEAN, NULL_TYPE, UNDEFINED, BIGINT, REGEXP };
-    explicit Literal(LiteralType type);
-    LiteralType GetLiteralType() const;
-    bool IsConstant() const override;
-};
-```
-
-#### BinaryExpression
-
-```cpp
-class BinaryExpression : public Expression {
-public:
-    BinaryExpression(Expression *left, lexer::TokenType op, Expression *right);
-    Expression *GetLeft() const;
-    Expression *GetRight() const;
-    lexer::TokenType GetOperator() const;
-    bool IsConstant() const override;  // 支持常量折叠
-};
-```
-
-#### CallExpression
-
-```cpp
-class CallExpression : public Expression {
-public:
-    CallExpression(Expression *callee, ArenaVector<Expression *> &&arguments, bool optional = false);
-    Expression *GetCallee() const;
-    const ArenaVector<Expression *> &GetArguments() const;
-    bool IsOptional() const;  // 可选链调用 callee?.()
-    const ArenaVector<ir::TSTypeParameterInstantiation *> *GetTypeArgs() const;  // 泛型
-};
-```
-
----
-
-## Statement基类
-
-### Statement类
-
-```cpp
-class Statement : public AstNode {
-public:
-    explicit Statement(AstNode::Type type);
-    bool IsStatement() const override;
-};
-```
-
-### 具体Statement类
-
-#### BlockStatement
-
-```cpp
-class BlockStatement : public Statement {
-public:
-    explicit BlockStatement(ArenaVector<Statement *> &&statements);
-    const ArenaVector<Statement *> &Statements() const;
-    void AddStatement(Statement *stmt);
-};
-```
-
-#### IfStatement
-
-```cpp
-class IfStatement : public Statement {
-public:
-    IfStatement(Expression *test, Statement *consequent, Statement *alternate = nullptr);
-    Expression *GetTest() const;
-    Statement *GetConsequent() const;
-    Statement *GetAlternate() const;  // else分支
-};
-```
-
-#### VariableDeclaration
-
-```cpp
-class VariableDeclaration : public Statement {
-public:
-    enum class VariableDeclarationKind { VAR, LET, CONST };
-    VariableDeclaration(VariableDeclarationKind kind, ArenaVector<VariableDeclarator *> &&declarators);
-    VariableDeclarationKind GetKind() const;
-    const ArenaVector<VariableDeclarator *> &GetDeclarators() const;
-};
-```
-
-#### FunctionDeclaration
-
-```cpp
-class FunctionDeclaration : public Statement {
-public:
-    FunctionDeclaration(const util::StringView &name, ScriptFunction *function);
-    const util::StringView &GetName() const;
-    ScriptFunction *GetFunction() const;
-};
-```
-
----
-
-## TypeScript节点
-
-### TSTypeReference
-
-```cpp
-class TSTypeReference : public TypeNode {
-public:
-    explicit TSTypeReference(Expression *typeName, ArenaVector<TypeNode *> *typeArgs = nullptr);
-    Expression *GetTypeName() const;
-    const ArenaVector<TypeNode *> *GetTypeArgs() const;  // 泛型参数 <T, U>
-};
-```
-
-### TSInterfaceDeclaration
-
-```cpp
-class TSInterfaceDeclaration : public Statement {
-public:
-    TSInterfaceDeclaration(const util::StringView &name, TSInterfaceBody *body,
-                          ArenaVector<TSInterfaceHeritage *> *heritage = nullptr);
-    const util::StringView &GetName() const;
-    TSInterfaceBody *GetBody() const;
-    const ArenaVector<TSInterfaceHeritage *> *GetHeritage() const;  // 继承的接口
-};
-```
-
-### TSEnumDeclaration
-
-```cpp
-class TSEnumDeclaration : public Statement {
-public:
-    explicit TSEnumDeclaration(const util::StringView &name, ArenaVector<TSEnumMember *> &&members);
-    const util::StringView &GetName() const;
-    const ArenaVector<TSEnumMember *> &GetMembers() const;
-};
-```
-
----
-
-## AST遍历和转换
-
-```cpp
-void AstNode::Transform(const ArenaVector<AstNode *> &parents,
-                       std::function<void(AstNode *)> callback) {
-    parents.push_back(this);
-    callback(this);
-
-    // 遍历子节点
-    switch (Type()) {
-        case AstNode::Type::BLOCK_STATEMENT:
-            for (auto *stmt : AsBlockStatement()->Statements()) {
-                stmt->Transform(parents, callback);
-            }
-            break;
-        case AstNode::Type::BINARY_EXPRESSION:
-            AsBinaryExpression()->GetLeft()->Transform(parents, callback);
-            AsBinaryExpression()->GetRight()->Transform(parents, callback);
-            break;
+    explicit BinaryExpression(Expression *leftExpr, Expression *rightExpr, lexer::TokenType operatorType)
+        : Expression(AstNodeType::BINARY_EXPRESSION), left_(leftExpr), right_(rightExpr), operator_(operatorType)
+    {
+        if (right_->IsPrivateIdentifier()) {
+            throw Error{ErrorType::SYNTAX, "Unexpect private identifier", right_->Start().line, right_->Start().index};
+        }
     }
 
-    parents.pop_back();
-}
+    const Expression *Left() const
+    {
+        return left_;
+    }
+
+    Expression *Left()
+    {
+        return left_;
+    }
+
+    const Expression *Right() const
+    {
+        return right_;
+    }
+
+    Expression *Right()
+    {
+        return right_;
+    }
+
+    lexer::TokenType OperatorType() const
+    {
+        return operator_;
+    }
 ```
 
----
+The accessor names are `Left()`, `Right()`, and `OperatorType()`, not `GetLeft()`/`GetRight()`/`GetOperator()`. Preserve operand order and ranges in updates; do not infer general constant-folding support from a documentation example.
 
-## 添加新AST节点
+### 4.4 CallExpression
 
-### 步骤
+`expressions/callExpression.h` defines callee, argument, optional-call, and TS type-argument representation. Inspect its actual constructor and accessors rather than copying the old guide's abbreviated signature.
 
-1. **在 `astNode.h` 添加类型枚举**
+Calls must preserve receiver binding, argument evaluation order, spreads, optional-chain short circuiting, and type-only argument removal during TS transformation.
+
+## 5. Statement base class
+
+`statement.h` defines the statement base. Statement nodes implement the same traversal/dump/compile/update contract as expressions.
+
+### 5.1 BlockStatement
+
+`statements/blockStatement.h` owns the statement list and associated scope state. When inserting or replacing statements, preserve order, source metadata, scope ownership, and parent/update conventions.
+
+### 5.2 IfStatement
+
+`statements/ifStatement.h` defines the test, consequent, and optional alternate. Traversal and updates must include all present children; compilation must preserve branch behavior and evaluation order.
+
+### 5.3 VariableDeclaration
+
+Current declaration kind and constructor:
+
 ```cpp
-enum class Type { MY_NEW_STATEMENT };
+    enum class VariableDeclarationKind { CONST, LET, VAR };
+
+    explicit VariableDeclaration(VariableDeclarationKind kind, ArenaVector<VariableDeclarator *> &&declarators,
+                                 bool declare)
+        : Statement(AstNodeType::VARIABLE_DECLARATION),
+          kind_(kind),
+          declarators_(std::move(declarators)),
+          declare_(declare)
+    {
+    }
 ```
 
-2. **创建节点类文件**（如 `ir/statements/myStatement.h/cpp`）
-```cpp
-class MyStatement : public Statement {
-public:
-    explicit MyStatement(...);
-};
-```
+Use `Kind()`, `Declarators()`, and `Declare()` from the actual header. Distinguish declaration syntax, binder variable identity, initialization, hoisting, and runtime storage.
 
-3. **在 `parser/` 添加解析逻辑**
-```cpp
-Statement *ParserImpl::ParseMyStatement() {
-    return AllocNode<MyStatement>(...);
-}
-```
+### 5.4 FunctionDeclaration
 
-4. **在 `compiler/` 添加编译逻辑**
-```cpp
-void PandaGen::CompileMyStatement(const ir::MyStatement *stmt) {}
-```
+`statements/functionDeclaration.h` and the script-function representation coordinate name, parameters, body, flags, and scope. A function declaration is not adequately described by a standalone name-plus-body pseudo-constructor.
 
-5. **在 `astDump.cpp` 添加转储逻辑**
-```cpp
-void AstDumper::Visit(const ir::MyStatement *stmt) {}
-```
+Test anonymous/default export cases, nested declarations, async/generator flags, and TS-transformed functions when changing related structures.
 
----
+## 6. TypeScript nodes
 
-## AST转储
+### 6.1 TSTypeReference
 
-```cpp
-class AstDumper {
-public:
-    explicit AstDumper(const parser::Program *program);
-    void Dump();  // 转储整个AST
-private:
-    void Visit(const ir::AstNode *node);
-    void Visit(const ir::Identifier *ident);
-    void Visit(const ir::Literal *lit);
-};
-```
+`ts/tsTypeReference.h` represents a syntax reference and its type arguments. Check qualified names, generic instantiation, and traversal/update behavior. It is not a resolved semantic type object.
+
+### 6.2 TSInterfaceDeclaration
+
+`ts/tsInterfaceDeclaration.h` represents interface syntax, body, and heritage. Parser acceptance and transformed runtime erasure are separate verification points; an accepted interface must not accidentally emit runtime code.
+
+### 6.3 TSEnumDeclaration
+
+`ts/tsEnumDeclaration.h` represents enum declarations and members. Unlike interfaces, enums can require generated runtime structures and bindings. Verify member values, generated identifiers, exports, and rebinding after transformation.
+
+## 7. AST traversal and transformation
+
+`NodeTraverser` visits node children. `NodeUpdater` returns `UpdateNodes`, which can be a node pointer or a vector of nodes. Each concrete `Iterate`/`UpdateSelf` implementation determines how its children are visited or replaced.
+
+Do not treat `Iterate()` as an automatic recursive whole-tree traversal: callers must follow the actual traversal contract. Do not mutate a parent vector from a callback without considering replacement/insertion and allocator lifetime rules.
+
+A rewrite must preserve or deliberately update:
+
+- Node kind and flags.
+- Child order and optional children.
+- Parent links and source ranges.
+- Scope/binder associations.
+- Origin metadata where consumed.
+- Runtime evaluation order and side effects.
+
+## 8. Adding a new AST node
+
+1. Add the node kind/class mapping in `astNodeMapping.h` and inspect generated enum/check consumers in `astNode.h`.
+2. Add the node header/implementation in the appropriate IR directory.
+3. Implement `Iterate`, `Dump`, `Compile`, and `UpdateSelf` according to adjacent nodes.
+4. Update parser construction and binder handling where needed.
+5. Update TS transformation if the node is transformed or generated.
+6. Register compilation units in the actual build source list.
+7. Test dumps, traversal/update behavior, and emitted behavior.
+
+Do not renumber existing kinds casually. Check every consumer before claiming an enum change is serialization-safe or serialization-breaking; AST kinds and runtime bytecode tags are different contracts.
+
+## 9. AST dumping
+
+`astDump.h`/`astDump.cpp` provide `AstDumper` support, and concrete nodes implement `Dump(AstDumper *)`. Add the node's dump properties where adjacent node implementations do, rather than inventing `AstDumper::Visit` overloads.
 
 ```bash
 es2abc --dump-ast input.js
+es2abc --extension ts --dump-transformed-ast input.ts
 ```
 
----
+Compare expected child names, values, source-sensitive data, and nested structure. A correct dump alone does not prove binding or runtime correctness.
 
-## 相关模块
+## 10. Related modules
 
-**上游**：无（IR是数据结构定义）
+- Producers: `es2panda/parser/` and `es2panda/parser/transformer/`.
+- Consumers: `es2panda/binder/`, node compilation, and `es2panda/compiler/`.
+- Supporting types: lexer source locations, strings, and program-owned arena allocation.
+- The removed `es2panda/typescript/` checker is not a consumer in this checkout.
 
-**下游**：`parser/`、`binder/`、`typescript/`、`compiler/`
+## 11. Verification and evidence
 
-**依赖**：`util/arena.h`、`lexer/token/`
+Build the affected dynamic frontend target from the OpenHarmony source root before running behavior tests:
+
+```bash
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk
+./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests --no-prebuilt-sdk
+```
+
+Set and validate paths using `docs/knowledge/Build_Environment.md`. Prepare `RUNTIME_DIR` and `TEST_LD_LIBRARY_PATH` using `docs/knowledge/ES2Panda_Testing.md`, then run the relevant suite from the repository root:
+
+```bash
+python3 es2panda/test/runner.py --regression "$FRONTEND_BUILD_DIR"
+python3 es2panda/test/runner.py --compiler --js-runtime "$RUNTIME_DIR" --LD_LIBRARY_PATH "$TEST_LD_LIBRARY_PATH" "$FRONTEND_BUILD_DIR"
+```
+
+Use the complete dynamic-route verification procedure in `es2panda/AGENTS.md` for code changes. Record the build mode, commands, logs, unexpected failures, skipped cases, and missing prerequisites. Do not claim an unexecuted test passed. Changes to emitted bytecode require user notification and runtime/verifier coverage.

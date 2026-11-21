@@ -1,5 +1,8 @@
 # ArkGuard Source Obfuscation Knowledge Base
 
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > Scope: ArkGuard source obfuscation for agent code changes and troubleshooting (guardrails + code map).
 > Source trees: `arkcompiler/ets_frontend/arkguard` (engine) and `developtools/ace_ets2bundle/compiler` (Release build integration).
 
@@ -10,9 +13,9 @@
 | `-keep-*` / `obfuscation-rules.txt` / `nameCache.json` / `keptNames.json` / property or export obfuscation behavior | **Read this doc** (engine + rule mapping + cache lifecycle) |
 | Release-only obfuscation not applied, Hvigor `arkOptions.obfuscation`, ace Rollup plugin / `ObConfigResolver` merge issues | **Read this doc** (ACE Integration section) |
 | Runtime crash after obfuscated Release build (wrong symbol at runtime) | **Read this doc** (Cache / State + reserved-name tables), then verify `keptNames.json` and API cache |
-| General `ets_frontend` `./build.sh` targets, GN module wiring, or “how to build the repo” | **Do not start here** → `architecture/Build_Test_Knowledge_Base.md` |
+| General `ets_frontend` `./build.sh` targets, GN module wiring, or “how to build the repo” | **Do not start here** → the repository `AGENTS.md` build and verification section |
 | `es2panda` / `ets2panda` parser, checker, lowering, bytecode emission | **Do not start here** → matching compiler route knowledge base |
-| `merge_abc`, `.abc` merge, protobuf serialization | **Do not start here** → `architecture/Build_Test_Knowledge_Base.md` |
+| `merge_abc`, `.abc` merge, protobuf serialization | **Do not start here** → the repository `AGENTS.md` build and verification section |
 | Bytecode-only obfuscation enabled (source obfuscation skipped by design) | Skim **ACE Integration** mutual-exclusion notes only; engine AST path may not run |
 
 ---
@@ -27,12 +30,12 @@ In-repo obfuscation engine: rule parsing, AST transformers, name generation, whi
 
 | order | Plugin | Responsibility |
 |-------|--------|----------------|
-| `SHORTHAND_PROPERTY` | `ShorthandPropertyTransformer` | Expand shorthand properties |
-| `RENAME_IDENTIFIER` | `RenameIdentifierTransformer` | Identifiers / parameters / locals / toplevel names |
-| `VIRTUAL_CONSTRUCTOR` | `VirtualConstructorTransformer` | Constructor-related renaming |
-| `DISABLE_CONSOLE` | `DisableConsoleTransformer` | `-remove-log` |
-| `RENAME_PROPERTIES` | `RenamePropertiesTransformer` | Property name obfuscation |
-| `RENAME_FILE_NAME` | `RenameFileNameTransformer` | File name obfuscation |
+| `SHORTHAND_PROPERTY_TRANSFORMER` | `ShorthandPropertyTransformer` | Expand shorthand properties |
+| `RENAME_IDENTIFIER_TRANSFORMER` | `RenameIdentifierTransformer` | Identifiers / parameters / locals / toplevel names |
+| `VIRTUAL_CONSTRUCTOR_TRANSFORMER` | `VirtualConstructorTransformer` | Constructor-related renaming |
+| `DISABLE_CONSOLE_TRANSFORMER` | `DisableConsoleTransformer` | `-remove-log` |
+| `RENAME_PROPERTIES_TRANSFORMER` | `RenamePropertiesTransformer` | Property name obfuscation |
+| `RENAME_FILE_NAME_TRANSFORMER` | `RenameFileNameTransformer` | File name obfuscation |
 
 ### Core Concepts (Common Misuse)
 
@@ -49,12 +52,12 @@ In-repo obfuscation engine: rule parsing, AST transformers, name generation, whi
 
 | Dimension | Default | Enable option | Primary code |
 |-----------|---------|---------------|--------------|
-| Local / parameter names | **On** | `-keep-parameter-names` to keep | `arkcompiler/ets_frontend/arkguard/src/transformers/RenameIdentifierTransformer.ts` |
+| Local / parameter names | **On** | `-keep-parameter-names` to keep | `arkcompiler/ets_frontend/arkguard/src/transformers/rename/RenameIdentifierTransformer.ts` |
 | Toplevel names | Off | `-enable-toplevel-obfuscation` | Same as above |
-| Property names | Off | `-enable-property-obfuscation` | `arkcompiler/ets_frontend/arkguard/src/transformers/RenamePropertiesTransformer.ts` |
+| Property names | Off | `-enable-property-obfuscation` | `arkcompiler/ets_frontend/arkguard/src/transformers/rename/RenamePropertiesTransformer.ts` |
 | String properties | Kept | `-enable-string-property-obfuscation` | `mKeepStringProperty = false` |
 | Exported members | Off | `-enable-export-obfuscation` | Identifier + Properties together |
-| File names | Off | `-enable-filename-obfuscation` | `arkcompiler/ets_frontend/arkguard/src/transformers/RenameFileNameTransformer.ts`, ace `mangleFilePath` |
+| File names | Off | `-enable-filename-obfuscation` | `arkcompiler/ets_frontend/arkguard/src/transformers/rename/RenameFileNameTransformer.ts`, ace `mangleFilePath` |
 
 ### Reserved Name Sources (Common Misuse)
 
@@ -93,7 +96,7 @@ Merge policy (applied in ace `ObConfigResolver`): `enable` options OR-merge acro
 - Do not change `OptionType` without updating parsing, merge logic (ace + engine), and unit tests.
 - `-enable-string-property-obfuscation` applies **only** when property names are valid identifiers; do not enable for literals with special characters.
 - Do not enable property/toplevel obfuscation by default in unit test baselines.
-- `RENAME_IDENTIFIER` `order` **must** precede plugins that `factory.update*` the AST. Reason: cleared `NodeFlags` breaks `-keep-global-name` in `.d.ts` namespace scenarios.
+- `RENAME_IDENTIFIER_TRANSFORMER` `order` **must** precede plugins that `factory.update*` the AST. Reason: cleared `NodeFlags` breaks `-keep-global-name` in `.d.ts` namespace scenarios.
 - Do not add plugins with `order < RENAME_IDENTIFIER` that rewrite nodes.
 - Do not read rule files from disk inside Transformers; use `IOptions` / global collections only.
 - Struct collection belongs in ace `collectReservedNameForObf` (compiler plugin); do not rescan the whole project inside Properties transformer.
@@ -213,7 +216,8 @@ Interop builds mirror several files under `compiler/src/interop/src/fast_build/`
 # OpenHarmony full build (from OH source root)
 ./build.sh --product-name <product> --build-target //arkcompiler/ets_frontend/arkguard:build_arkguard
 
-# Engine module only (from arkcompiler/ets_frontend/arkguard/)
+# Engine module only: from the OpenHarmony source root, change directory first.
+cd arkcompiler/ets_frontend/arkguard
 npm install && npm run build    # compile src/ → lib/
 npm run test:ut                 # unit tests
 npm run test:grammar            # grammar regression
@@ -226,7 +230,7 @@ npm run test:combinations       # combination regression
 2. **ACE unit**: `developtools/ace_ets2bundle/compiler/test/ark_compiler_ut/` cases above
 3. **End-to-end**: Release HAP/HAR build with obfuscation enabled; validate `nameCache.json`, `keptNames.json`, obfuscated sources, and SourceMap under `obfuscationCacheDir`
 
-General frontend build routing (not obfuscation-specific): `architecture/Build_Test_Knowledge_Base.md`.
+General frontend build routing (not obfuscation-specific): the repository `AGENTS.md` build and verification section.
 
 ---
 
@@ -234,6 +238,6 @@ General frontend build routing (not obfuscation-specific): `architecture/Build_T
 
 | Item | Notes |
 |------|-------|
-| `arkcompiler/ets_frontend/arkguard/README-cn.md` | Unmaintained; on conflict with behavior, prefer official product docs + `ConfigResolver` / `ObConfigResolver` implementation |
+| `arkguard/README-cn.md` | Unmaintained; on conflict with behavior, prefer official product docs + `ConfigResolver` / `ObConfigResolver` implementation |
 | Interop duplicate sources | `compiler/src/fast_build/` vs `compiler/src/interop/src/fast_build/` — fixes may need both paths for interop-enabled projects |
 | Test filename typo | `process_obfucation_config.test.ts` (missing “s” in obfuscation) is the on-disk name; do not “fix” in docs only |

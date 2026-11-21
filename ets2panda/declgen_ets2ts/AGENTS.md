@@ -1,10 +1,14 @@
 # declgen_ets2ts Module
 
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
+
+Before planning or editing, read `docs/knowledge/ets2panda/DeclGen_ETS2TS_Knowledge_Base.md` (repository-relative) and follow the root verification/evidence rules.
+
 **Name**: declgen_ets2ts
 **Purpose**: Generates TypeScript declaration files (.d.ets) and glue code (.ets) from ArkTS/ETS source, enabling TypeScript ecosystem interoperability. Also provides isolated validation mode for high-performance, non-global type checking.
 **Primary Language**: C++
 
-## Directory Structure
+## 1. Directory Structure
 
 ```
 declgen_ets2ts/
@@ -20,9 +24,9 @@ declgen_ets2ts/
 └── isolated_declgen.yaml           # Isolated mode config
 ```
 
-## Architecture
+## 2. Architecture
 
-### Generation Pipeline
+### 2.1 Generation Pipeline
 
 The declaration generator operates on a Program AST after it reaches the CHECKED state:
 
@@ -34,7 +38,7 @@ The declaration generator operates on a Program AST after it reaches the CHECKED
 6. **Module Initialization** - Generate init module calls for glue code
 7. **Import Generation** - Generate import statements (last for proper ordering)
 
-### Key Components
+### 2.2 Key Components
 
 **TSDeclGen Class**
 - Main engine for generating TypeScript declarations and glue code
@@ -51,7 +55,7 @@ The declaration generator operates on a Program AST after it reaches the CHECKED
 - Command-line tool for standalone declaration generation
 - Integrates with es2panda library for parsing and checking
 
-## Running the Tool
+## 3. Running the Tool
 
 ```bash
 declgen_ets2ts [OPTIONS] [input]
@@ -63,7 +67,7 @@ Options:
   --help                    Print usage information
 ```
 
-## Dependencies
+## 4. Dependencies
 
 **Runtime:**
 - es2panda-public - Public API
@@ -79,9 +83,9 @@ Options:
 - util (diagnostics, options) - Utilities
 - ir - Intermediate representation
 
-## Development Notes
+## 5. Development Notes
 
-### Isolated Mode Validation
+### 5.1 Isolated Mode Validation
 
 Isolated mode validates that code is ready for declaration generation without requiring a full global symbol table. This enables:
 - High-performance validation for large codebases
@@ -95,7 +99,7 @@ Isolated mode validates that code is ready for declaration generation without re
 - Only const arrays (literals) can be inferred
 - Default exports cannot be inferred, must have explicit types
 
-### Error Handling
+### 5.2 Error Handling
 
 Errors and warnings are defined in YAML files:
 - `declgen_ets2ts_error.yaml` - Declaration generation errors

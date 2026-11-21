@@ -1,9 +1,12 @@
 # ETS2Panda LSP Knowledge Base
 
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > Document version: v1.2
 > Last updated: 2026-06-04
 > Scope: C++ language service implementation under `ets_frontend/ets2panda/lsp`, plus the TypeScript call chain under `ets2panda/bindings/src/lsp`
-> Read before modifying: `docs/AGENTS.md`, `ets2panda/AGENTS.md`, `ets2panda/lsp/AGENTS.md`; also read `ets2panda/bindings/Bindings_Knowledge_Base.md` when touching TypeScript wrappers
+> Read before modifying: `ets2panda/docs/AGENTS.md`, `ets2panda/AGENTS.md`, `ets2panda/lsp/AGENTS.md`; also read `docs/knowledge/ets2panda/Bindings_Knowledge_Base.md` when touching TypeScript wrappers
 
 ## Critical Boundary
 
@@ -56,8 +59,8 @@ These are the 10 entry points most likely to cause broad regressions. Review the
 
 ## Directory Explanation
 
-- `AGENTS.md`: development rules for this directory. It describes cross-component LSP / bindings changes, steps for adding LSP methods, and build/test guidance.
-- `CLAUDE.md`: directory-level helper context mainly for external assistant usage.
+- `ets2panda/lsp/AGENTS.md`: development rules for this directory. It describes cross-component LSP / bindings changes, steps for adding LSP methods, and build/test guidance.
+- `ets2panda/lsp/CLAUDE.md`: directory-level helper context mainly for external assistant usage.
 - `BUILD.gn`: OpenHarmony / GN build definition. `lsp_build_enable` controls `libes2panda_lsp`; `bindings_build_enable` controls bindings-related targets.
 - `CMakeLists.txt`: CMake build definition. It generates the code fix registration header and builds `${LSP_LIB}`.
 - `code_fix_register.rb`: reads diagnostic YAML files and generates code fix registration code through the ERB template.
@@ -183,13 +186,13 @@ These are the 10 entry points most likely to cause broad regressions. Review the
 ## Knowledge Routing
 
 - Editor-visible LSP behavior issues or native LSP API result issues -> this document.
-- TS-side call failures, cache / incremental compilation / module config / native bridge type mismatches -> `../bindings/Bindings_Knowledge_Base.md`; also inspect `bindings/src/lsp/lsp_helper.ts`.
-- `es2panda_Context` creation, state progression, or public C API changes -> `../public/Public_Knowledge_Base.md`.
-- AST node structure, source ranges, or parser program issues -> `../parser/AGENTS.md`, `../parser/`, and `../parser/program/`.
-- Type and checker result issues -> `../checker/AGENTS.md`, `../checker/`, `../checker/ets/`, `../checker/ts/`, and `../checker/types/`.
-- Symbol binding, declaration ownership, or scope lookup issues -> `../varbinder/AGENTS.md` and `../varbinder/`.
-- Diagnostic codes, error messages, or YAML definitions -> `../util/AGENTS.md`, `../util/diagnostic/`, and `../declgen_ets2ts/AGENTS.md`.
-- Build target issues or missing GN / CMake source entries -> `../../../architecture/Build_Test_Knowledge_Base.md` or this directory's `BUILD.gn` / `CMakeLists.txt`.
+- TS-side call failures, cache / incremental compilation / module config / native bridge type mismatches -> `docs/knowledge/ets2panda/Bindings_Knowledge_Base.md`; also inspect `bindings/src/lsp/lsp_helper.ts`.
+- `es2panda_Context` creation, state progression, or public C API changes -> `docs/knowledge/ets2panda/Public_Knowledge_Base.md`.
+- AST node structure, source ranges, or parser program issues -> `ets2panda/parser/AGENTS.md`, `../parser/`, and `../parser/program/`.
+- Type and checker result issues -> `ets2panda/checker/AGENTS.md`, `../checker/`, `../checker/ets/`, `../checker/ts/`, and `../checker/types/`.
+- Symbol binding, declaration ownership, or scope lookup issues -> `ets2panda/varbinder/AGENTS.md` and `../varbinder/`.
+- Diagnostic codes, error messages, or YAML definitions -> `ets2panda/util/AGENTS.md`, `../util/diagnostic/`, and `ets2panda/declgen_ets2ts/AGENTS.md`.
+- Build target issues or missing GN / CMake source entries -> the repository `AGENTS.md` verification section or this directory's `BUILD.gn` / `CMakeLists.txt`.
 
 ## Expert Notes
 
@@ -275,11 +278,11 @@ These are the 10 entry points most likely to cause broad regressions. Review the
 
 ## Related Documents
 
-- `../bindings/Bindings_Knowledge_Base.md`
-- `../public/Public_Knowledge_Base.md`
-- `../ETS2Panda_Overview_Knowledge_Base.md`
-- `SYMBOL_REFERENCE_INDEX_DESIGN.md`
-- `AGENTS.md`
-- `../bindings/README.md`
-- `../bindings/test/README.md`
-- `../../../architecture/Build_Test_Knowledge_Base.md`
+- `docs/knowledge/ets2panda/Bindings_Knowledge_Base.md`
+- `docs/knowledge/ets2panda/Public_Knowledge_Base.md`
+- `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md`
+- Symbol reference index: inspect the implementation in `ets2panda/bindings/src/lsp/lsp_helper.ts`; no separate index design document is present in this checkout.
+- `ets2panda/lsp/AGENTS.md`
+- `ets2panda/bindings/README.md`
+- `ets2panda/bindings/test/README.md`
+- the repository `AGENTS.md` verification section

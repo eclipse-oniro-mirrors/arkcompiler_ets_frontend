@@ -1,9 +1,15 @@
 # ETS2Panda Static Frontend Knowledge Base
 
+Path setup and validation: `docs/knowledge/Build_Environment.md` (repository-relative).
+
+
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > Document version: v1.0
 > Last updated: 2026-06-01
 > Scope: **Default document for all ets2panda parser, checker, varbinder, lowering, and compiler core tasks.** Covers IR (AST nodes), Lexer, Parser, VarBinder, Checker, Lowering, Compiler Core — per-stage hard boundaries, key constraints, anti-patterns, and code/test anchors.
-> NOT covered: `es2panda` dynamic path (see `../ES2Panda_Knowledge_Base.md`); `runtime_core/`; AST Verifier (see `AST_Verifier_Knowledge_Base.md`); Public API (see `Public_Knowledge_Base.md`); LSP; DeclGen; Driver; Linter.
+> NOT covered: `es2panda` dynamic path (see `docs/knowledge/ES2Panda_Knowledge_Base.md`); `runtime_core/`; AST Verifier (see `docs/knowledge/ets2panda/AST_Verifier_Knowledge_Base.md`); Public API (see `docs/knowledge/ets2panda/Public_Knowledge_Base.md`); LSP; DeclGen; Driver; Linter.
 > Read before modifying: `AGENTS.md`, `ets2panda/AGENTS.md`, and the per-stage `AGENTS.md` under each modified directory.
 
 ## Pipeline Model
@@ -11,7 +17,7 @@
 The ets2panda pipeline is strictly ordered:
 
 ```
-IR (AST node definitions) → Lexer (text→tokens) → Parser (tokens→AST, allocates IR nodes) → VarBinder (scope+identifier resolution) → Checker (type checking, writes metadata) → Lowering (~75 AST-to-AST phases) → Compiler Core (AST→bytecode)
+IR (AST node definitions) → Lexer (text→tokens) → Parser (tokens→AST, allocates IR nodes) → VarBinder (scope+identifier resolution) → Checker (type checking, writes metadata) → Lowering (ordered AST-to-AST phases) → Compiler Core (AST→bytecode)
 ```
 
 **Hard boundaries:**
@@ -23,8 +29,8 @@ IR (AST node definitions) → Lexer (text→tokens) → Parser (tokens→AST, al
 **Why checker/varbinder must not mutate AST:** VarBinder's sole responsibility is identifier binding. Checker's sole responsibility is type checking. AST mutation is not their job — it belongs to lowering. Mixing structural changes into binding or type-checking code breaks the single-responsibility boundary and makes every stage harder to reason about, test, and verify independently.
 
 **Conditional reads — only when triggered by the change type:**
-- If your change introduces new AST shapes or the AST verifier reports failures after your change, read `AST_Verifier_Knowledge_Base.md`.
-- If your change exposes a new C API or modifies the public plugin interface, read `Public_Knowledge_Base.md`.
+- If your change introduces new AST shapes or the AST verifier reports failures after your change, read `docs/knowledge/ets2panda/AST_Verifier_Knowledge_Base.md`.
+- If your change exposes a new C API or modifies the public plugin interface, read `docs/knowledge/ets2panda/Public_Knowledge_Base.md`.
 
 ---
 
@@ -119,7 +125,7 @@ Role: Performs semantic analysis — type checking, type inference, subtype/assi
 
 ### 5. Lowering
 
-`ets_frontend/ets2panda/compiler/lowering/` | **~75 ordered AST-to-AST phases. Source of truth: `GetETSPhaseList()` in `phase.cpp`.**
+`ets_frontend/ets2panda/compiler/lowering/` | **Ordered AST-to-AST phases. Source of truth: `GetETSPhaseList()` in `phase.cpp`.**
 
 Role: The ONLY stage permitted to mutate AST structure. Desugars language features into simpler forms the codegen can emit.
 
@@ -240,23 +246,26 @@ Forbidden without team confirmation:
 
 ## Verification Commands
 
-All commands run from repository root.
+Use absolute `OH_ROOT` and `STATIC_BUILD_DIR` values for the source checkout and configured static frontend build. Run the following parameterized recipe from the ets_frontend repository root; the runner resolves its companion resources relative to its own script location.
 
 ```sh
-# Build
-cmake --build <out_dir> -j8    # es2panda (covers all frontend stages)
+# Parameterized recipe: replace the absolute checkout path before running.
+: "${OH_ROOT:?Set and validate OH_ROOT using Build_Environment.md}"
+: "${STATIC_BUILD_DIR:?Set and validate the configured static output directory}"
+# Build the configured static frontend.
+cmake --build "$STATIC_BUILD_DIR" --target es2panda    # es2panda (covers all frontend stages)
 
 # Parser tests (syntax, AST construction)
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier parser --extension=ats --load-runtimes=ets --force-generate --processes=all
+"$OH_ROOT/arkcompiler/runtime_core/static_core/tests/tests-u-runner-2/runner.sh" es2panda-verifier parser --extension=ats --load-runtimes=ets --force-generate --processes=all
 
 # Runtime tests (compile + verify + execute)
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-runtime --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
+"$OH_ROOT/arkcompiler/runtime_core/static_core/tests/tests-u-runner-2/runner.sh" es2panda-verifier ets-runtime --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
 
 # AST checker tests (diagnostics, semantic errors)
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier astchecker --extension=ats --load-runtimes=ets --force-generate --processes=all
+"$OH_ROOT/arkcompiler/runtime_core/static_core/tests/tests-u-runner-2/runner.sh" es2panda-verifier astchecker --extension=ats --load-runtimes=ets --force-generate --processes=all
 
 # CTS tests (spec compliance, broad regression)
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-cts --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
+"$OH_ROOT/arkcompiler/runtime_core/static_core/tests/tests-u-runner-2/runner.sh" es2panda-verifier ets-cts --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
 ```
 
 ### Verification By Change Type
@@ -277,7 +286,7 @@ runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-
 ## Related Documents
 
 - `AGENTS.md` -- repository entry, routing rules, constraints, and verification expectations
-- `docs/ets2panda/AST_Verifier_Knowledge_Base.md` -- AST invariant validation
-- `docs/ets2panda/Public_Knowledge_Base.md` -- public C API and plugin interface
+- `docs/knowledge/ets2panda/AST_Verifier_Knowledge_Base.md` -- AST invariant validation
+- `docs/knowledge/ets2panda/Public_Knowledge_Base.md` -- public C API and plugin interface
 - `ets2panda/AGENTS.md` -- ets2panda route split and verification routing
 - `ets2panda/checker/AGENTS.md`, `ets2panda/parser/AGENTS.md`, `ets2panda/varbinder/AGENTS.md`, `ets2panda/compiler/lowering/AGENTS.md`, `ets2panda/compiler/core/AGENTS.md`, `ets2panda/lexer/AGENTS.md` — per-component rules

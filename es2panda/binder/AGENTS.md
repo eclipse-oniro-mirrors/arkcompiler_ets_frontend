@@ -1,354 +1,243 @@
 # Binder Module - AGENTS.md
 
-## 模块职责
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**绑定器（Binder）**：语义分析，变量声明绑定和作用域管理
+## 1. Module responsibilities
 
-**核心功能**：标识符解析、变量声明绑定、作用域构建、变量生命周期管理、Temp变量重绑定（闭包处理）、TypeScript类型绑定、函数作用域分析
+Binder resolves declarations and identifier references, builds scopes, tracks function scopes, and supplies binding information to bytecode compilation. It also handles TS declaration bindings and the binding changes needed after TS transformation.
 
----
+Read the repository `AGENTS.md`, `es2panda/AGENTS.md`, and `docs/knowledge/ES2Panda_Knowledge_Base.md`. This is the dynamic route; static `ets2panda/varbinder` and checker assumptions do not define its behavior.
 
-## 目录结构
+## 2. Directory structure
 
+```text
+es2panda/binder/
+├── binder.cpp             # Identifier and declaration analysis
+├── binder.h               # Binder interface and helpers
+├── scope.cpp              # Scope behavior and lookup
+├── scope.h                # Scope hierarchy and binding maps
+├── variable.cpp           # Variable behavior
+├── variable.h             # Variable hierarchy and storage bindings
+├── declaration.cpp        # Declaration behavior
+├── declaration.h          # Declaration kinds
+├── variableFlags.h        # Binding flags and scope-related enums
+├── tsBinding.h            # TypeScript binding helpers
+└── enumMemberResult.h     # Enum member evaluation results
 ```
-binder/
-├── binder.cpp/h       # 主绑定器
-├── scope.cpp/h        # 作用域实现
-├── variable.cpp/h     # 变量实现
-├── declaration.cpp/h   # 声明节点
-├── variableFlags.h    # 变量属性标志
-└── tsBinding.h        # TypeScript绑定辅助
-```
 
----
+## 3. Core classes and APIs
 
-## 核心类和API
+### 3.1 Binder
 
-### Binder类
+Selected current declarations from `binder.h`:
 
 ```cpp
-class Binder {
-public:
-    explicit Binder(parser::Program *program, ScriptExtension extension);
-
-    // 主入口
     void InitTopScope();
     void IdentifierAnalysis(ResolveBindingFlags flags = ResolveBindingFlags::ALL);
 
-    // 声明管理
-    template<typename T, typename... Args>
-    T *AddDecl(const lexer::SourcePosition &pos, bool isDeclare, Args&&... args);
+    template <typename T, typename... Args>
+    T *AddDecl(const lexer::SourcePosition &pos, bool isDeclare, Args &&... args);
 
-    // 作用域操作
-    binder::Scope *CurrentScope();
-    void PushScope(binder::Scope *scope);
-    binder::Scope *PopScope();
+    template <typename T, typename... Args>
+    T *AddDecl(const lexer::SourcePosition &pos, DeclarationFlags flag, bool isDeclare, Args &&... args);
 
-    // 变量查询
-    binder::Variable *FindVariable(const util::StringView &name);
-    binder::Variable *LookupVariable(const ir::Identifier *ident);
+    template <typename T, typename... Args>
+    T *AddTsDecl(const lexer::SourcePosition &pos, bool isDeclare, Args &&... args);
 
-    // 函数相关
-    util::StringView GetFunctionName(ir::ScriptFunction *func);
-    void AddFunctionName(ir::ScriptFunction *func, const util::StringView &name);
+    template <typename T, typename... Args>
+    T *AddTsDecl(const lexer::SourcePosition &pos, DeclarationFlags flag, bool isDeclare, Args &&... args);
 
-private:
-    parser::Program *program_;
-    binder::Scope *currentScope_;
-    ScriptExtension extension_;
-    ArenaVector<binder::Scope *> functionScopes_;
-    ArenaHashMap<util::StringView, binder::Variable *> variableNames_;
-};
+    ParameterDecl *AddParamDecl(const ir::AstNode *param);
+
+    Scope *GetScope() const
+    {
+        return scope_;
+    }
+
+    FunctionScope *TopScope() const
+    {
+        return topScope_;
+    }
 ```
 
-### Scope类
+`Binder` is constructed with a `parser::Program *` and `ScriptExtension`. Its allocator comes from the program. `GetScope()` returns the active scope; `TopScope()` returns the top function scope. Avoid adding documentation-only helpers such as `PushScope()` or `LookupVariable()` without checking whether they exist.
+
+### 3.2 Scope
+
+`scope.h` owns the scope hierarchy, parent relationships, and binding maps. Consult it for concrete scope constructors and lookup-result types. A scope lookup may carry more information than a variable pointer; callers must preserve that information.
+
+`VariableScope`, `FunctionScope`, `ModuleScope`, `BlockScope`, `CatchScope`, and loop-related scopes serve different purposes. Use the existing scope-management helpers rather than manually changing the binder's current-scope pointer.
+
+### 3.3 Variable
+
+`variable.h` distinguishes local, global, module, enum, namespace, and TS-specific variables. Selected current base-class operations:
 
 ```cpp
-class Scope {
-public:
-    enum class ScopeType {
-        GLOBAL, FUNCTION, BLOCK, CLASS, CATCH, WITH, FOR_VAR, MODULE,
-    };
+    Decl *Declaration() const
+    {
+        return decl_;
+    }
 
-    explicit Scope(ScopeType type, Scope *parent = nullptr);
+    VariableFlags Flags() const
+    {
+        return flags_;
+    }
 
-    // 变量操作
-    void AddBinding(binder::Variable *var);
-    binder::Variable *FindLocal(const util::StringView &name);
-    binder::Variable *Find(const util::StringView &name);
+    void AddFlag(VariableFlags flag)
+    {
+        flags_ |= flag;
+    }
 
-    // 作用域层级
-    Scope *Parent() const;
-    ScopeType Type() const;
-    size_t Depth() const;
+    bool HasFlag(VariableFlags flag) const
+    {
+        return (flags_ & flag) != 0;
+    }
 
-    // 查询
-    bool IsGlobal() const;
-    bool IsFunction() const;
-    bool IsBlock() const;
-    bool IsCatch() const;
+    void RemoveFlag(VariableFlags flag)
+    {
+        flags_ &= ~flag;
+    }
 
-private:
-    ScopeType type_;
-    Scope *parent_;
-    size_t depth_;
-    ArenaHashMap<util::StringView, binder::Variable *> bindings_;
-};
+    void Reset(Decl *decl, VariableFlags flags)
+    {
+        decl_ = decl;
+        flags_ = flags;
+    }
 ```
 
-### Variable类
+`LocalVariable` can bind a virtual register or a lexical-environment slot. `ModuleVariable` carries a module index. The variable's declaration, flags, and storage choice must remain consistent.
 
-```cpp
-class Variable {
-public:
-    enum class VariableFlags {
-        NONE = 0,
-        CONST = 1 << 0,    // const声明
-        LET = 1 << 1,      // let声明
-        VAR = 1 << 2,      // var声明
-        FUNCTION = 1 << 3, // 函数声明
-        CLASS = 1 << 4,    // class声明
-        PARAM = 1 << 5,    // 函数参数
-        IMPORT = 1 << 6,   // import导入
-        HOISTED = 1 << 7,  // 变量提升
-        TDZ = 1 << 8,      // 暂时性死区
-        INITED = 1 << 9,   // 已初始化
-        ASSIGNED = 1 << 10,// 已赋值
-        USED = 1 << 11,    // 已使用
-        CAPTURED = 1 << 12,// 被闭包捕获
-        INTERNAL = 1 << 13,// 内部变量
-    };
+Flags are defined in `variableFlags.h`; they are not the illustrative nested enum previously shown in this guide. Check existing flag meanings before adding a new one.
 
-    Variable(const util::StringView &name, VariableFlags flags,
-             binder::Scope *scope, const lexer::SourcePosition &pos);
+## 4. Identifier resolution flow
 
-    const util::StringView &Name() const;
-    binder::Scope *Scope() const;
-    const lexer::SourcePosition &Declaration() const;
-
-    bool IsConst() const;
-    bool IsLet() const;
-    bool IsVar() const;
-    bool IsHoisted() const;
-    bool IsCaptured() const;
-
-    void SetFlag(VariableFlags flag);
-};
+```text
+Parsing and declaration creation
+    → identifier analysis in scope context
+    → resolved variable references
+    → TS transformation and rebinding when applicable
+    → register / lexical / module access during compilation
 ```
 
----
-
-## 标识符解析流程
-
-### 解析阶段
-
-```
-Parse阶段 → Binder阶段 → Compile阶段
-AST        → Variable    → 字节码
-```
-
-### 解析示例
+### 4.1 Example to trace
 
 ```javascript
 let x = 1;
 function foo() {
     console.log(x);
     let y = x + 1;
+    return y;
 }
 ```
 
-```cpp
-// 标识符分析
-void Binder::IdentifierAnalysis() {
-    Program()->Ast()->Transform(this, [](ir::AstNode *node) {
-        if (node->IsIdentifier()) {
-            ir::Identifier *ident = node->AsIdentifier();
-            Variable *var = LookupVariable(ident);
-            ident->SetVariable(var);
-        }
-    });
-}
+For `x` inside `foo`, inspect the declaration's scope, the reference's scope chain, and whether the access crosses a function boundary. For `y`, inspect the local declaration and initialization order. Global `console` must not be treated as an ordinary captured local.
 
-// 变量查找
-Variable *Binder::LookupVariable(const ir::Identifier *ident) {
-    const util::StringView &name = ident->Name();
+`IdentifierAnalysis` is the real analysis entry. Trace its traversal and resolution helpers in `binder.cpp`; do not implement the former guide's simplistic recursive lookup that creates a global for every missing declaration.
 
-    // 1. 当前作用域查找
-    if (Variable *var = CurrentScope()->FindLocal(name)) {
-        return var;
-    }
+## 5. Scope categories and behavior
 
-    // 2. 向上遍历作用域链
-    Scope *scope = CurrentScope();
-    while (scope != nullptr) {
-        if (Variable *var = scope->Find(name)) {
-            if (var->HasFlag(VariableFlags::TDZ)) {
-                ThrowReferenceError(ident);
-            }
-            return var;
-        }
-        scope = scope->Parent();
-    }
+| Scope category | What to inspect |
+|---|---|
+| Global/top-level | Script bindings, global access, function declarations |
+| Function/parameters | Parameters, function-local declarations, `arguments`, nested functions |
+| Block | Lexical `let`/`const` declarations and visibility |
+| Class-related | Class names, private names, methods, and surrounding scopes |
+| Catch | Catch parameter and body visibility |
+| Loop | Per-iteration bindings and captured loop variables |
+| Module | Import/export bindings and module record indices |
 
-    // 3. 未找到，创建全局变量
-    return AddGlobalVariable(ident);
-}
-```
+Scope construction and declaration collection interact with parsing. A behavior change often needs both `parser/` and binder inspection.
 
----
+## 6. Hoisting
 
-## 作用域类型
-
-### 作用域类型
-
-```cpp
-enum class ScopeType {
-    GLOBAL,   // 全局作用域
-    FUNCTION, // 函数作用域
-    BLOCK,    // 块级作用域
-    CLASS,    // 类作用域
-    CATCH,    // catch子句作用域
-    WITH,     // with语句作用域
-    FOR_VAR,  // for循环var作用域
-    MODULE,   // 模块作用域
-};
-```
-
-### 特点
-
-- **全局作用域**：无父作用域，包含所有全局变量和函数声明，`var`声明绑定到全局作用域
-- **函数作用域**：包含函数参数、内部变量、嵌套函数，`arguments`对象绑定到函数作用域
-- **块级作用域**：`let`和`const`声明绑定到块级作用域，TDZ检查
-- **类作用域**：包含实例属性、静态属性、方法，私有字段（#field）
-- **Catch作用域**：catch参数绑定到catch作用域
-
----
-
-## 变量提升（Hoisting）
-
-### 提升规则
+### 6.1 Language examples
 
 ```javascript
-// var声明提升
-console.log(x);  // undefined
+console.log(x);  // undefined for an ordinary var declaration
 var x = 1;
 
-// 函数声明提升
-foo();  // 可以调用
+foo();          // ordinary function declaration can be called before its text
 function foo() {}
+```
 
-// let/const不提升（TDZ）
-console.log(y);  // ReferenceError
+```javascript
+console.log(y);  // temporal-dead-zone access
 let y = 2;
 ```
 
-### Binder实现
+Lexical declarations also participate in scope setup; saying they are simply absent until their declaration is misleading. Visibility, initialization state, and runtime access checks are distinct.
 
-```cpp
-void Binder::AnalyzeHoisting(ir::Statement *stmt) {
-    switch (stmt->Type()) {
-        case ir::AstNodeType::VARIABLE_DECLARATION:
-            // var声明提升到作用域顶部
-            if (stmt->AsVariableDeclaration()->Kind() == ir::VariableDeclarationKind::VAR) {
-                for (auto *decl : stmt->AsVariableDeclaration()->Declarators()) {
-                    Variable *var = AddVariable(decl);
-                    var->SetFlag(VariableFlags::HOISTED);
-                    var->SetFlag(VariableFlags::TDZ);
-                }
-            }
-            break;
+### 6.2 Implementation locations
 
-        case ir::AstNodeType::FUNCTION_DECLARATION:
-            // 函数声明提升
-            Variable *var = AddFunctionVariable(stmt->AsFunctionDeclaration());
-            var->SetFlag(VariableFlags::HOISTED);
-            var->ClearFlag(VariableFlags::TDZ);
-            break;
-    }
-}
-```
+Inspect declaration creation and scope insertion in `binder.cpp`/`scope.cpp`, then inspect `compiler/base/hoisting.cpp` and lexical-variable loads. Do not document all TDZ failures as binder-thrown errors: emitted checks and runtime behavior matter.
 
----
+Tests should cover `var`, function declarations, lexical declarations, nested scopes, shadowing, redeclarations, and accesses before initialization.
 
-## 闭包和变量捕获
-
-### 捕获检测
+## 7. Closures and captured variables
 
 ```javascript
 function outer() {
     let x = 1;
     return function inner() {
-        console.log(x);  // x被inner捕获
+        return x;
     };
 }
 ```
 
-### Binder实现
+The reference to `x` crosses a function boundary. Follow the resolution path and `LocalVariable::SetLexical`, then inspect lexical-environment allocation in `compiler/base/lexenv.cpp` and `compiler/core/envScope.cpp`.
 
-```cpp
-void Binder::DetectCaptures() {
-    for (auto *funcScope : functionScopes_) {
-        AnalyzeFunctionCaptures(funcScope);
-    }
-}
+Preserve the declaration identity while changing storage. Captured loop variables need per-iteration semantics; a change that passes the simple nested-function example may still break `for` loops, `catch`, arrows, or parameter defaults.
 
-void Binder::AnalyzeFunctionCaptures(Scope *funcScope) {
-    for (auto *var : funcScope->Bindings()) {
-        if (var->Scope() != funcScope && !var->IsGlobal()) {
-            var->SetFlag(VariableFlags::CAPTURED);
+## 8. TypeScript bindings
 
-            if (NeedsRebinding(var)) {
-                RebindVariable(var);
-            }
-        }
-    }
-}
+`tsBinding.h`, TS declarations in `declaration.h`, and TS-specific variables in `variable.h` support names such as enums and namespaces. They do not constitute a full TypeScript type checker.
+
+TS input is analyzed before transformation and rebound afterward. Inspect `ResolveBindingFlags::TS_BEFORE_TRANSFORM`, `TS_AFTER_TRANSFORM`, and `Compiler::ProcessAstForTS` in `es2panda.cpp`. Generated identifiers must resolve in their intended scope, and transformed enum/namespace bindings must remain stable.
+
+## 9. Modification guidance
+
+### 9.1 Add a variable or declaration kind
+
+1. Inspect the existing declaration, variable subclass, and flags.
+2. Update scope insertion and redeclaration rules.
+3. Update identifier resolution and storage allocation consumers.
+4. Cover local, captured, module, and TS-transformed uses as applicable.
+
+### 9.2 Change scope rules
+
+1. Locate scope construction and lookup callers before changing lookup behavior.
+2. Preserve shadowing and initialization-state handling.
+3. Test nested scopes, parameters, loops, catch bindings, and module exports.
+4. Check generated bytecode and runtime behavior if storage or access changes.
+
+### 9.3 Change TS bindings
+
+1. Update the actual helper in `tsBinding.h` or binder implementation.
+2. Keep the JS path intact.
+3. Test both pre-transform and post-transform identifiers.
+4. Include enums/namespaces and relevant export cases.
+
+## 10. Related modules
+
+- Upstream: `es2panda/parser/` creates AST nodes and declarations.
+- Downstream: `es2panda/parser/transformer/` and `es2panda/compiler/` consume bindings.
+- Shared structures: `es2panda/ir/`, program-owned arena allocation, and `es2panda/util/ustring.h`.
+- There is no downstream `es2panda/typescript/` checker in this checkout.
+
+## 11. Verification and evidence
+
+Build the affected dynamic frontend target from the OpenHarmony source root before running behavior tests:
+
+```bash
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk
+./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests --no-prebuilt-sdk
 ```
 
----
+Set and validate paths using `docs/knowledge/Build_Environment.md`. Prepare `RUNTIME_DIR` and `TEST_LD_LIBRARY_PATH` using `docs/knowledge/ES2Panda_Testing.md`, then run the relevant suite from the repository root:
 
-## TypeScript类型绑定
-
-```cpp
-void Binder::BindTypeNode(ir::TSType *type) {
-    if (type->IsTypeReference()) {
-        ir::TSTypeReference *ref = type->AsTypeReference();
-        Variable *typeVar = LookupType(ref->TypeName());
-        ref->SetVariable(typeVar);
-    } else if (type->IsTypeLiteral()) {
-        BindTypeLiteral(type->AsTypeLiteral());
-    }
-}
+```bash
+python3 es2panda/test/runner.py --regression "$FRONTEND_BUILD_DIR"
+python3 es2panda/test/runner.py --compiler --js-runtime "$RUNTIME_DIR" --LD_LIBRARY_PATH "$TEST_LD_LIBRARY_PATH" "$FRONTEND_BUILD_DIR"
 ```
 
----
-
-## 修改Binder的注意事项
-
-### 添加新变量类型
-
-1. 在 `VariableFlags` 添加新标志
-2. 在 `scope.cpp` 更新绑定逻辑
-3. 在 `binder.cpp` 更新解析逻辑
-
-### 修改作用域规则
-
-1. 在 `scope.cpp` 修改 `Find()` 逻辑
-2. 更新TDZ检查
-3. 测试作用域嵌套
-
-### TypeScript特性
-
-1. 在 `tsBinding.h` 添加辅助函数
-2. 在 `binder.cpp` 添加类型绑定调用
-3. 确保 `extension_ == ScriptExtension::TS`
-
----
-
-## 相关模块
-
-**上游**：`parser/` - AST输入
-
-**下游**：`typescript/`、`compiler/`
-
-**依赖**：`ir/`、`util/arena.h`、`util/ustring.h`
+Use the complete dynamic-route verification procedure in `es2panda/AGENTS.md` for code changes. Record the build mode, commands, logs, unexpected failures, skipped cases, and missing prerequisites. Do not claim an unexecuted test passed. Changes to emitted bytecode require user notification and runtime/verifier coverage.

@@ -1,8 +1,10 @@
 # Lowering Agent Guide
 
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
+
 Use this file for work under `compiler/lowering/` together with the repository-level `AGENTS.md`.
 
-## Core Metadata
+## 1. Core Metadata
 
 | Attribute | Value |
 |-----------|--------|
@@ -10,7 +12,7 @@ Use this file for work under `compiler/lowering/` together with the repository-l
 | **Purpose** | Transforms **high-level syntax** into **low-level syntax**; both input and output are **AST trees** (AST → AST). Desugaring (e.g. syntax sugar, lambdas) is implemented here. Phases are split into **pre-checker** and **post-checker** phases. |
 | **Primary Language** | C++ |
 
-## Directory Layout
+## 2. Directory Layout
 
 ```
 compiler/lowering/
@@ -24,7 +26,7 @@ compiler/lowering/
     └── Other helpers (capturedVariables, boxingForLocals, dynamicImport, etc.)
 ```
 
-## Ways to Create AST Nodes
+## 3. Ways to Create AST Nodes
 
 | Method | Description | Typical use |
 |--------|--------------|-------------|
@@ -35,7 +37,7 @@ compiler/lowering/
 
 Prefer **CreateFormatted*** + **Gensym** for full statements/expressions; use **AllocNode** / **ArenaAllocator::New** for single nodes or small trees. Set `SetParent`/`SetRange` on new nodes, then re-bind/re-check as needed (see below).
 
-## Re-binding and Re-checking New Nodes After Checker
+## 4. Re-binding and Re-checking New Nodes After Checker
 
 Post-checker phases that **create new AST nodes** must run **scope setup, identifier binding, and type checking** on them. Options (all in `compiler/lowering/util.h` / `util.cpp`):
 
@@ -49,7 +51,7 @@ Post-checker phases that **create new AST nodes** must run **scope setup, identi
 
 **RunExternalNode** builds scope for a new subtree; **ResolveReferencesForScope(WithContext)** resolves identifiers in that subtree; before **Check**, set correct Scope and CheckerStatus (e.g. IN_CLASS) via SavedCheckerContext/ScopeContext.
 
-## Phase: Core AST Transformation Mechanism
+## 5. Phase: Core AST Transformation Mechanism
 
 - **Phase**: Each phase is an **AST transformer**: input AST → (transform) → output AST. An ordered sequence of phases lowers high-level AST to a lower-level form.
 - **Execution**: Precondition → Perform → Postcondition. Ensures the phase can run and its output is valid for the next phase or compiler/core.
@@ -58,7 +60,7 @@ Post-checker phases that **create new AST nodes** must run **scope setup, identi
 - **Plugins**: plugins-after-parse, plugins-after-bind, plugins-after-check, plugins-after-lowering.
 - **Debug helper**: `--dump-ets-src-before-phases=PhaseId`, `--dump-ets-src-after-phases=PhaseId`; 
 
-## Placement and Execution Rules
+## 6. Placement and Execution Rules
 
 - **Before checker**: limit to syntax desugaring and structural simplification that does not require inferred types.
 - **After checker**: use for type-dependent transforms; re-bind/re-check created or rewritten subtrees.
@@ -67,7 +69,7 @@ Post-checker phases that **create new AST nodes** must run **scope setup, identi
   - If a lowering changes externally visible declarations, run it for main program and dependencies (`PhaseForDeclarations`).
 - **AST API usage**: prefer `Iterate*`/`TransformChildren*` traversal APIs, state explicit preconditions/postconditions, and keep checker free of structural AST mutations.
 
-### Phase Quick Reference
+### 6.1 Phase Quick Reference
 
 **1. Core**: TopLevelStatements, InitScopesPhaseETS, ResolveIdentifiers, CheckerPhase.  
 **2. Desugaring**: DefaultParametersLowering, OptionalLowering, OpAssignmentLowering, SpreadConstructionPhase, BinaryExpressionLowering, OptionalArgumentsLowering, RestArgsLowering.  
@@ -76,18 +78,18 @@ Post-checker phases that **create new AST nodes** must run **scope setup, identi
 **5. Special/optimization**: ConstantExpressionLowering, ResizableArrayConvert, StringConstantsLowering, DynamicImport, RelaxedAnyLoweringPhase, RestTupleConstructionPhase.  
 **6. Language features**: ObjectIndexLowering, ObjectIteratorLowering, LateInitializationConvert.
 
-## Responsibilities
+## 7. Responsibilities
 
 - **Phase ordering**: Pre-checker and post-checker phases; order and dependencies via phase/checkerPhase.
 - **High-level → low-level**: AST-to-AST transforms (desugaring, lambda, literals, rest/spread, optional args, enum, record, generic bridges).
 - **CFG and scope**: Post-checker phases (cfgBuilderPhase, scopesInit, savedBindingsCtx) feed compiler/core for register allocation and emission.
 
-## Dependencies
+## 8. Dependencies
 
 - **Used by**: compiler/core.
 - **Depends on**: checker, varbinder, ir (AST), util.
 
-## Extending or Modifying
+## 9. Extending or Modifying
 
 - **New phase**: Add `*Phase.cpp` under `ets/` or this dir; implement Precondition/Perform/Postcondition; register and set order (pre- vs post-checker).
 - **New syntax transform**: Implement AST→AST in the right `*Lowering.cpp` or in a phase’s Perform; keep consistency with checker type information.

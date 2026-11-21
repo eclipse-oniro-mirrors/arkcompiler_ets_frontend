@@ -1,8 +1,11 @@
 # ETS2Panda Public API Knowledge Base
 
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 **Version:** v1.0 | **Last updated:** 2026-06-01
 
-This document covers the C API code generation pipeline under `ets_frontend/ets2panda/public/`. It does NOT cover AST node semantics, checker internals, parser internals, varbinder, or lowering phases (see `Static_Frontend_Knowledge_Base.md`), nor LSP API behavior (see `LSP_Knowledge_Base.md`).
+This document covers the C API code generation pipeline under `ets_frontend/ets2panda/public/`. It does NOT cover AST node semantics, checker internals, parser internals, varbinder, or lowering phases (see `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md`), nor LSP API behavior (see `docs/knowledge/ets2panda/LSP_Knowledge_Base.md`).
 
 **Before modifying:** read `ets2panda/public/AGENTS.md` and `ets2panda/public/README.md`.
 
@@ -98,7 +101,7 @@ Source-of-truth priority when debugging a mismatch: 1) C++ header in `HEADERS_TO
 - [ ] Methods/constructors to hide: correct `ignoredAllowed.yaml` filters?
 - [ ] `es2panda_lib.h` changed: `es2panda_lib.idl.erb` updated in same patch?
 - [ ] `ninja gen_api` run and generated code compiles?
-- [ ] New methods have unit tests (`test/unit/public/e2p_test_plugin*`)?
+- [ ] New methods have relevant public gtests in `ets2panda/test/unit/public/` and plugin regressions in `ets2panda/test/unit/plugin/`?
 - [ ] `es2panda_lib.rb`/`enums.rb` modified: `ninja es2panda-plugin-test` passed?
 
 ## Code and Test Anchors
@@ -117,11 +120,19 @@ Source-of-truth priority when debugging a mismatch: 1) C++ header in `HEADERS_TO
 | Header parser entry | `ets_frontend/ets2panda/public/headers_parser/main.py` |
 | Generated output | `<build>/tools/es2panda/generated/es2panda_lib/` |
 
-### Test commands
+### Test sources and commands
+
+| Coverage | Repository-relative source | Target |
+|---|---|---|
+| Public C API gtests | `ets2panda/test/unit/public/` (`es2panda_public_test.cpp`, API result storage/lifecycle tests) | `es2panda_gtests` runs the registered frontend gtest group |
+| Plugin compile/runtime regressions | `ets2panda/test/unit/plugin/` | `es2panda-plugin-test` |
+
+Use the corresponding `CMakeLists.txt` to select or register cases. Unit tests require `PANDA_REGRESSION_TESTS`; public tests also have sanitizer/platform guards. Public gtests and plugin regressions cover different paths; report any disabled or unavailable cases explicitly.
 
 ```bash
-# From build directory
-ninja es2panda-plugin-test    # Unit tests for C API plugin
+# From the configured static frontend build directory
+ninja es2panda_gtests         # Frontend gtests, including enabled public API cases
+ninja es2panda-plugin-test    # Plugin compile/runtime regressions
 ninja gen_yamls               # Parse headers → YAML
 ninja gen_api                 # YAML → generated C/IDL
 ninja es2panda-public         # Compile generated C code
@@ -139,8 +150,8 @@ Parser logs: `<build>/tools/es2panda/generated/es2panda_lib/gen/logs/`.
 5. Update `es2panda_lib.idl.erb` if API surface changes.
 6. Run `ninja gen_api` from build directory → verify generated output.
 7. Run `ninja es2panda-public` → verify compilation.
-8. Add unit test in `test/unit/public/e2p_test_plugin*`.
-9. Run `ninja es2panda-plugin-test` → verify all plugin tests pass.
+8. Add the relevant public gtest in `ets2panda/test/unit/public/` and plugin regression in `ets2panda/test/unit/plugin/`; register each in its corresponding `CMakeLists.txt`.
+9. Run `ninja es2panda_gtests es2panda-plugin-test` → verify enabled public gtests and plugin regressions; report build-guard exclusions.
 
 ## Verification Commands
 
@@ -151,7 +162,7 @@ ninja gen_yamls && ninja gen_api && ninja es2panda-public
 
 **Release-grade** (before submitting):
 ```bash
-ninja gen_yamls && ninja gen_api && ninja es2panda-public && ninja es2panda-plugin-test
+ninja gen_yamls && ninja gen_api && ninja es2panda-public && ninja es2panda_gtests && ninja es2panda-plugin-test
 ```
 
 ### Done Definition
@@ -163,5 +174,5 @@ A public API task is done only when: (1) C++ header correctly expresses intended
 - `ets2panda/public/AGENTS.md` -- Directory development rules
 - `ets2panda/public/README.md` -- Detailed codegen docs and type-adding guide
 - `ets2panda/public/headers_parser/README.md` -- Header parser documentation
-- `docs/ets2panda/Static_Frontend_Knowledge_Base.md` -- Checker types exposed through C API
+- `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md` -- Checker types exposed through C API
 - `AGENTS.md` -- Repository-level routing, constraints, and verification expectations

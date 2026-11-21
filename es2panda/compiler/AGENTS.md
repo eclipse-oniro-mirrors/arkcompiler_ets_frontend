@@ -1,348 +1,217 @@
 # Compiler Module - AGENTS.md
 
-## 模块职责
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**编译器（Compiler）**：将AST转换为ARK字节码（.abc文件）
+## 1. Module responsibilities
 
-**核心功能**：AST → Panda字节码指令、寄存器分配、作用域和环境管理、控制流编译、函数编译、异常处理、模块系统、并行编译
+The dynamic compiler converts AST nodes and binder information into Panda instructions and assembled programs. It handles register allocation, lexical environments, control flow, functions, exceptions, module metadata, parallel compilation, and debug information.
 
----
+Read the repository `AGENTS.md`, `es2panda/AGENTS.md`, and `docs/knowledge/ES2Panda_Knowledge_Base.md`. Notify the user before implementing changes that may alter emitted bytecode.
 
-## 目录结构
+## 2. Directory structure
 
-```
-compiler/
-├── core/                          # 核心编译基础设施
-│   ├── compilerImpl.cpp/h         # CompilerImpl主入口
-│   ├── compilerContext.cpp/h      # CompilerContext上下文
-│   ├── pandagen.cpp/h             # PandaGen字节码生成器（核心）
-│   ├── emitter.cpp/h              # Emitter字节码序列化
-│   ├── regAllocator.cpp/h         # 寄存器分配器
-│   ├── regScope.cpp               # 寄存器作用域管理
-│   ├── compileQueue.cpp           # 并行编译队列
-│   ├── function.cpp               # 函数编译状态
-│   ├── labelTarget.cpp            # 跳转标签管理
-│   └── templates/isa.h.erb        # ISA模板文件
-├── base/                          # 编译模式
-│   ├── condition.cpp              # 条件表达式编译
-│   ├── iterators.cpp              # for-in/for-of迭代
-│   ├── destructuring.cpp          # 解构赋值
-│   ├── hoisting.cpp               # 变量提升
-│   ├── lexenv.cpp                 # 词法环境
-│   └── catchTable.cpp             # 异常表生成
-├── function/                      # 函数类型编译
-│   ├── functionBuilder.cpp        # 普通函数
-│   ├── asyncFunctionBuilder.cpp   # async函数
-│   ├── generatorFunctionBuilder.cpp   # generator函数
+```text
+es2panda/compiler/
+├── core/
+│   ├── compilerImpl.cpp        # Compilation orchestration
+│   ├── compilerContext.cpp     # Per-compilation context
+│   ├── pandagen.cpp            # Instruction generation helpers
+│   ├── emitter/               # Program, function, literal, and module emission
+│   ├── regAllocator.cpp        # Register allocation
+│   ├── regScope.cpp            # Register lifetime scopes
+│   ├── envScope.cpp            # Environment scopes
+│   ├── compileQueue.cpp        # Source/function/ABC class queues
+│   ├── function.cpp            # Function compilation state
+│   └── labelTarget.cpp         # Jump targets
+├── base/
+│   ├── condition.cpp          # Conditions and branches
+│   ├── iterators.cpp          # Iterator protocol
+│   ├── destructuring.cpp      # Destructuring
+│   ├── hoisting.cpp           # Declaration initialization
+│   ├── lexenv.cpp             # Lexical environments
+│   ├── lreference.cpp         # Assignment/reference handling
+│   └── catchTable.cpp         # Exception tables
+├── function/
+│   ├── functionBuilder.cpp
+│   ├── asyncFunctionBuilder.cpp
+│   ├── generatorFunctionBuilder.cpp
 │   └── asyncGeneratorFunctionBuilder.cpp
+├── templates/isa.h.erb         # Instruction classes
+├── templates/formats.h.erb     # Operand formats
 └── debugger/debuginfoDumper.cpp
 ```
 
----
+## 3. Core classes and APIs
 
-## 核心类和API
+### 3.1 CompilerImpl
 
-### CompilerImpl类
+`core/compilerImpl.h` declares `Compile`; the implementation creates a `CompilerContext`, schedules `CompileFuncQueue`, consumes work on the main thread, waits for workers, and finalizes the emitted program. Inspect the current arguments, including source/package metadata, before adding callers.
 
-```cpp
-class CompilerImpl {
-public:
-    explicit CompilerImpl(size_t threadCount);
-    panda::pandasm::Program *Compile(parser::Program *ast, const CompilerOptions &options);
-    void SetFileThreadCount(size_t count);
-    void SetFunctionThreadCount(size_t count);
-};
-```
-
-### CompilerContext类
+A selected current implementation excerpt:
 
 ```cpp
-class CompilerContext {
-public:
-    PandaGen *GetPandaGen() const;
-    Emitter *GetEmitter() const;
-    RegAllocator *GetRegAllocator() const;
-    bool IsDumpAssembly() const;
-    int OptLevel() const;
-};
+panda::pandasm::Program *CompilerImpl::Compile(parser::Program *program, const es2panda::CompilerOptions &options,
+    const std::string &debugInfoSourceFile, const std::string &pkgName)
+{
+    CompilerContext context(program->Binder(), options.isDebug, options.isDebuggerEvaluateExpressionMode,
+                            options.mergeAbc, false, options.recordDebugSource, debugInfoSourceFile, pkgName,
+                            program->RecordName(), patchFixHelper_, options.enableColumn, options.enableCallableName);
+
+    ArenaAllocator localAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+
+    queue_ = new CompileFuncQueue(threadCount_, &context);
+    queue_->Schedule();
+
+    /* Main thread can also be used instead of idling */
+    queue_->Consume();
+    queue_->Wait();
 ```
 
-### PandaGen类（核心）
+### 3.2 CompilerContext
 
-```cpp
-class PandaGen {
-public:
-    explicit PandaGen(compiler::CompilerContext *ctx, binder::Scope *scope);
-    void Compile();
-    void CompileStatement(const ir::Statement *stmt);
-    void CompileExpression(const ir::Expression *expr);
-    void Emit(BytecodeInstruction inst);
-    Reg AllocReg();
-    void FreeReg(Reg reg);
-};
+`core/compilerContext.h` owns the compilation context and exposes the emitter and compiler settings. It coordinates binder/program metadata, debug settings, merge mode, and patch helpers. Use existing context accessors rather than the old guide's speculative `GetPandaGen()`/`GetRegAllocator()` API.
+
+### 3.3 PandaGen
+
+`core/pandagen.h` defines the instruction-generation interface. AST nodes dispatch through their `Compile(PandaGen *)` implementations in `ir/`; PandaGen supplies loads, stores, calls, branches, register state, inline caches, and related helpers.
+
+Do not assume a single public `PandaGen::Compile()` visitor implements every node. Trace the concrete node's compilation method and the helpers it calls.
+
+### 3.4 Emitter
+
+The emitter lives in `core/emitter/`, not a flat `core/emitter.cpp`. `Emitter::Finalize(bool dumpDebugInfo, util::PatchFix *patchFixHelper)` produces the assembled program. Function, module, literal, and debug information have distinct emission paths.
+
+Preserve record names, source metadata, target API gates, and patch information. ABC serialization and compatibility changes require approval under the repository rules.
+
+## 4. Bytecode instruction generation
+
+### 4.1 Constants and binary operations
+
+Start with the corresponding node in `ir/expressions/` or `ir/expressions/literals/`, then follow PandaGen helpers and generated instruction classes.
+
+For a binary expression, preserve the language's operand evaluation order, intermediate value lifetime, conversion semantics, and exceptional behavior. Do not introduce a hand-written `Opcode` switch based on the former guide's illustrative API.
+
+### 4.2 Assignment and lvalues
+
+`base/lreference.cpp` centralizes variable/property assignment handling. Changes must account for property evaluation, compound assignment, destructuring, and optional-chain restrictions. Bypassing LReference can evaluate receivers or keys twice or lose side effects.
+
+### 4.3 Control flow
+
+`base/condition.cpp`, `core/labelTarget.cpp`, and statement-node implementations cooperate on conditional branches, loops, and jump targets.
+
+Test `if` with/without `else`, short-circuit expressions, nested loops, labeled jumps, `break`, and `continue`. A branch change also needs exceptional-path and lexical-scope checks.
+
+## 5. Register allocation
+
+`RegAllocator`, `VReg`, and register-scope helpers have different roles. `RegScope` is constructed with `PandaGen *`; it is not the old guide's container that exposes `AllocReg()`/`FreeReg()` around a bitmap.
+
+Use existing RAII scope patterns (`RegScope`, `LocalRegScope`, `LoopRegScope`, and `FunctionRegScope`) and the appropriate PandaGen allocation helpers. Review accumulator state, temporary lifetime, call-range registers, and register-width/format constraints.
+
+A change that works for a short function may fail when register indices cross an encoding boundary. Include a nearby high-register-count regression when allocation or operand encoding changes.
+
+## 6. Lexical environments
+
+`core/envScope.*` and `base/lexenv.*` translate binder decisions into runtime storage. Check closure capture, lexical depth, environment slots, scope entry/exit, and initialization checks together.
+
+Do not conflate binder declaration identity with storage location. Captured parameters, arrow functions, nested blocks, loops, and exception unwinding may require different environment behavior.
+
+## 7. Function compilation
+
+### 7.1 Builders
+
+| Builder | Responsibility |
+|---|---|
+| `FunctionBuilder` | Common function setup and cleanup |
+| `AsyncFunctionBuilder` | Async completion and suspension behavior |
+| `GeneratorFunctionBuilder` | Generator state and yield behavior |
+| `AsyncGeneratorFunctionBuilder` | Combined async/generator protocol |
+
+The common lifecycle uses `Prepare` and `CleanUp` around node/body compilation. Inspect `function/functionBuilder.h` and concrete builders before adding lifecycle methods.
+
+### 7.2 Parameters, return, await, and yield
+
+Preserve parameter initialization order, defaults, rest/destructuring, `this`/`super`, completion values, and exceptions. For async/generator changes, test ordinary completion, explicit return, throw, suspension/resumption, and cleanup in `finally`.
+
+## 8. Exception handling
+
+`base/catchTable.*`, dynamic-context helpers, and try/catch/finally node compilation cooperate on handlers and abrupt completions.
+
+A `CatchTable` is not the old guide's invented `BeginTry`/`EndTry` facade. Read the actual class before modifying handler boundaries. Cover nested handlers, rethrow, return/break/continue through `finally`, and lexical environment cleanup.
+
+## 9. ISA instruction system
+
+### 9.1 Source templates and generation
+
+```text
+es2panda/compiler/templates/isa.h.erb
+es2panda/compiler/templates/formats.h.erb
+    + runtime_core ISA data and helpers
+    → generated instruction classes and operand formats
 ```
 
-### Emitter类
+1. Identify the ISA/schema or template source of truth.
+2. Edit source inputs, not generated headers.
+3. Rebuild through GN so dependencies regenerate outputs.
+4. Compile and link the instruction consumers.
+5. Check register formats, inline caches, ranges, assembly, and runtime behavior.
 
-```cpp
-class Emitter {
-public:
-    explicit Emitter(CompilerContext *ctx);
-    panda::pandasm::Program *Finalize(bool generateArkMainFile, const std::string &packageName);
-    FunctionEmitter *CreateFunctionEmitter(const ir::ScriptFunction *func);
-    void Emit(BytecodeInstruction inst);
-};
+The generated directory depends on product/toolchain configuration. Locate the output through the GN action instead of assuming `arkcompiler/ets_frontend/out/gen/isa.h`.
+
+### 9.2 Instruction review points
+
+Review loads/stores, arithmetic, comparisons, branches, calls, returns, inline-cache operands, and range forms according to the current ISA. Instruction names and operand encodings must come from current schema/generated classes; the old uppercase pseudo-opcode list was not an API specification.
+
+## 10. Parallel compilation
+
+```text
+File compilation          → independent source/program work
+CompileFuncQueue          → function work within compilation
+CompileAbcClassQueue      → class work for ABC recompilation
 ```
 
----
+Use `--file-threads`, `--function-threads`, and `--abc-class-threads` to configure supported worker counts. Inspect queue ownership and dependencies before changing scheduling or sharing mutable state.
 
-## 字节码指令生成
+Check single-worker and multi-worker results for determinism. Merged output and cached programs must not be finalized before all required jobs complete.
 
-### 基本指令模式
+## 11. Modification guidance
 
-```cpp
-// 加载常量
-void EmitLoadConst(VReg v0, const ir::Literal *lit) {
-    switch (lit->Type()) {
-        case ir::LiteralType::NUMBER: Emit(Opcode::LDAI, lit->AsNumberLiteral()->Value()); break;
-        case ir::LiteralType::STRING: Emit(Opcode::LDA_STR, lit->AsStringLiteral()->Str()); break;
-        case ir::LiteralType::BOOLEAN: Emit(lit->AsBooleanLiteral()->Value() ? Opcode::LDA_TRUE : Opcode::LDA_FALSE); break;
-        case ir::LiteralType::NULL: Emit(Opcode::LDNULL); break;
-    }
-}
+### 11.1 Add an instruction
 
-// 二元运算
-void CompileBinary(const ir::BinaryExpression *expr) {
-    CompileExpression(expr->GetLeft());
-    Reg left = GetRegAllocator()->AllocReg();
-    EmitStoreAccumulator(left);
-    CompileExpression(expr->GetRight());
-    switch (expr->GetOperator()) {
-        case TokenType::ADD: Emit(Opcode::ADD, left); break;
-        case TokenType::SUB: Emit(Opcode::SUB, left); break;
-    }
-    GetRegAllocator()->FreeReg(left);
-}
+1. Verify the runtime instruction/schema and compatibility requirements.
+2. Update ISA/template inputs and regenerate through the build.
+3. Add or adapt PandaGen and node-compilation consumers.
+4. Update emission/format support only where required by the actual instruction.
+5. Run bytecode, runtime, verifier, and target-API regressions.
+
+### 11.2 Add AST compilation behavior
+
+1. Implement the node's real `Compile` method and required helpers.
+2. Preserve evaluation order and register/environment lifetimes.
+3. Handle control-flow and exception boundaries.
+4. Compare assembly and runtime results against the intended semantics.
+5. Include JS and TS-transformed cases where the same node can occur.
+
+## 12. Related modules
+
+- Upstream: `es2panda/parser/`, `es2panda/binder/`, and `parser/transformer/`.
+- Shared AST: `es2panda/ir/`.
+- Downstream: runtime assembler, bytecode optimizer, ABC consumers, and VM/verifier repositories.
+- There is no upstream in-tree TypeScript checker in this checkout.
+
+## 13. Verification and evidence
+
+Build the affected dynamic frontend target from the OpenHarmony source root before running behavior tests:
+
+```bash
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk
+./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests --no-prebuilt-sdk
 ```
 
-### 控制流指令
+Set and validate paths using `docs/knowledge/Build_Environment.md`. Prepare `RUNTIME_DIR` and `TEST_LD_LIBRARY_PATH` using `docs/knowledge/ES2Panda_Testing.md`, then run the relevant suite from the repository root:
 
-```cpp
-// If语句
-void CompileIf(const ir::IfStatement *stmt) {
-    CompileExpression(stmt->GetTest());
-    Reg testReg = AllocReg();
-    EmitStoreAccumulator(testReg);
-    Label elseLabel = labelTarget_->AllocLabel();
-    EmitWide(Opcode::JEQZ, elseLabel, testReg);
-    CompileStatement(stmt->GetConsequent());
-    Label endLabel = labelTarget_->AllocLabel();
-    Emit(Opcode::JMP, endLabel);
-    labelTarget_->SetLabel(elseLabel);
-    if (stmt->GetAlternate()) CompileStatement(stmt->GetAlternate());
-    labelTarget_->SetLabel(endLabel);
-    FreeReg(testReg);
-}
-
-// While循环
-void CompileWhile(const ir::WhileStatement *stmt) {
-    Label loopStart = labelTarget_->AllocLabel();
-    Label loopEnd = labelTarget_->AllocLabel();
-    labelTarget_->SetLabel(loopStart);
-    CompileExpression(stmt->GetTest());
-    Reg testReg = AllocReg();
-    EmitStoreAccumulator(testReg);
-    EmitWide(Opcode::JEQZ, loopEnd, testReg);
-    CompileStatement(stmt->GetBody());
-    Emit(Opcode::JMP, loopStart);
-    labelTarget_->SetLabel(loopEnd);
-    FreeReg(testReg);
-}
+```bash
+python3 es2panda/test/runner.py --regression "$FRONTEND_BUILD_DIR"
+python3 es2panda/test/runner.py --compiler --js-runtime "$RUNTIME_DIR" --LD_LIBRARY_PATH "$TEST_LD_LIBRARY_PATH" "$FRONTEND_BUILD_DIR"
 ```
 
----
-
-## 寄存器分配
-
-```cpp
-class RegAllocator {
-public:
-    explicit RegAllocator(size_t regCount);
-    Reg AllocReg();
-    void FreeReg(Reg reg);
-private:
-    std::vector<bool> regMap_;
-    size_t regCount_;
-};
-
-class RegScope {
-public:
-    explicit RegScope(RegAllocator *allocator);
-    ~RegScope();  // 自动释放所有寄存器
-    Reg AllocReg();
-private:
-    RegAllocator *allocator_;
-    std::vector<Reg> regs_;
-};
-```
-
----
-
-## LexicalEnvironment（词法环境）
-
-```cpp
-class EnvScope {
-public:
-    explicit EnvScope(PandaGen *pg, binder::Scope *scope);
-    void CreateBinding(const binder::Variable *var);
-    void InitializeBinding(const binder::Variable *var);
-    void SetBinding(const binder::Variable *var);
-    Reg GetBinding(const binder::Variable *var);
-    void PushEnv();
-    void PopEnv();
-};
-```
-
----
-
-## 函数编译
-
-```cpp
-class FunctionBuilder {
-public:
-    explicit FunctionBuilder(PandaGen *pg, const ir::ScriptFunction *func);
-    void Compile();
-    void CompileParameters();
-    void CompileBody();
-    void EmitReturn();
-};
-
-class AsyncFunctionBuilder : public FunctionBuilder {
-public:
-    void Compile() override;
-    void EmitCreatePromise();
-    void EmitResolvePromise(Reg result);
-    void EmitAwait(const ir::AwaitExpression *awaitExpr);
-};
-
-class GeneratorFunctionBuilder : public FunctionBuilder {
-public:
-    void Compile() override;
-    void EmitCreateGenerator();
-    void EmitYield(const ir::YieldExpression *yieldExpr);
-};
-```
-
----
-
-## 异常处理
-
-```cpp
-class CatchTable {
-public:
-    explicit CatchTable(PandaGen *pg);
-    void BeginTry(const ir::TryStatement *stmt);
-    void EndTry();
-    void BeginCatch(const ir::CatchClause *catchClause);
-    void EndCatch();
-    void BeginFinally(const ir::BlockStatement *finalizer);
-    void EndFinally();
-private:
-    PandaGen *pg_;
-    Label tryStart_, tryEnd_, catchStart_, finallyStart_;
-    Reg exceptionReg_;
-};
-
-void CompileTry(const ir::TryStatement *stmt) {
-    CatchTable catchTable(this);
-    catchTable.BeginTry(stmt);
-    CompileStatement(stmt->GetBlock());
-    catchTable.EndTry();
-    if (stmt->GetCatchClauses().size() > 0) {
-        catchTable.BeginCatch(stmt->GetCatchClauses()[0]);
-        CompileStatement(stmt->GetCatchClauses()[0]->GetBody());
-        catchTable.EndCatch();
-    }
-    if (stmt->GetFinalizer()) {
-        catchTable.BeginFinally(stmt->GetFinalizer());
-        CompileStatement(stmt->GetFinalizer());
-        catchTable.EndFinally();
-    }
-}
-```
-
----
-
-## ISA指令系统
-
-### 指令模板
-
-```
-compiler/core/templates/isa.h.erb    # ISA指令定义模板
-```
-
-**修改流程**：
-1. 编辑ERB模板：`compiler/templates/isa.h.erb`
-2. 重新构建：`./build.sh --product-name rk3568 --build-target ets_frontend_build`
-
-### 生成文件位置
-
-```
-arkcompiler/ets_frontend/out/gen/isa.h
-```
-
-### 指令示例
-
-```cpp
-// 加载: LDA, LDAI, LDA_STR, LDUNDEFINED, LDNULL
-// 运算: ADD, SUB, MUL, DIV, MOD
-// 比较: EQ, NEQ, LT, GT, LE, GE
-// 跳转: JMP, JEQZ, JNEZ
-// 调用: CALL, CALL_THIS, CALL_NEW
-// 返回: RETURN, RETURNUNDEF
-```
-
----
-
-## 并行编译
-
-```
-1. 文件级并行 (CompileQueue)   ──> 每个源文件独立编译
-2. 函数级并行 (CompileFuncQueue) ──> 每个函数独立编译
-3. 类级并行 (CompileAbcClassQueue) ──> 每个类独立编译
-```
-
-```cpp
-CompilerOptions options;
-options.fileThreadCount = 4;
-options.functionThreadCount = 8;
-options.abcClassThreadCount = 16;
-```
-
----
-
-## 修改Compiler的注意事项
-
-### 添加新字节码指令
-
-1. 修改 `compiler/templates/isa.h.erb`, `arkcompiler/runtime_core/isa/isa.yaml`
-2. 重新生成 `arkcompiler/ets_frontend/out/gen/isa.h`
-3. 在 `PandaGen` 添加发射方法
-4. 在 `Emitter` 添加序列化逻辑
-
-### 添加新AST节点编译
-
-1. 在 `compiler/core/pandagen.cpp` 添加 `CompileXxx()`
-2. 处理寄存器分配和释放
-3. 发射正确的字节码指令
-4. 处理异常边界（如果需要）
-
----
-
-## 相关模块
-
-**上游**：`parser/`、`binder/`、`typescript/`
-
-**下游**：`arkassembler`、`arkbytecodeopt`
-
-**依赖**：`ir/`、`binder/`、`util/arena.h`
+Use the complete dynamic-route verification procedure in `es2panda/AGENTS.md` for code changes. Record the build mode, commands, logs, unexpected failures, skipped cases, and missing prerequisites. Do not claim an unexecuted test passed. Changes to emitted bytecode require user notification and runtime/verifier coverage.

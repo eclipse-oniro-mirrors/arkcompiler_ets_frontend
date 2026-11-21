@@ -5,6 +5,9 @@ description: Reference knowledge base for ets2panda/linter migration tool. Use w
 
 # Linter Knowledge Base
 
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > Document version: v1.1
 > Last updated: 2026-07-31
 > Scope: `arkcompiler/ets_frontend/ets2panda/linter` (repo-relative path: ets2panda/linter)
@@ -25,10 +28,10 @@ description: Reference knowledge base for ets2panda/linter migration tool. Use w
 - Debugging npm install/build drift, `@types/node` conflicts, HomeCheck/ArkAnalyzer packaging, or lockfile behavior
 
 **When NOT to use:**
-- Compiler semantic changes → `ets2panda/Static_Frontend_Knowledge_Base.md`
+- Compiler semantic changes → `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md`
 - Parser/lexer issues → parser KB (if exists in repo structure)
-- LSP interaction → `ets2panda/LSP_Knowledge_Base.md`
-- Obfuscation tool → `ArkGuard_Knowledge_Base.md`
+- LSP interaction → `docs/knowledge/ets2panda/LSP_Knowledge_Base.md`
+- Obfuscation tool → `docs/knowledge/ArkGuard_Knowledge_Base.md`
 
 ## Overview
 
@@ -75,7 +78,7 @@ ets2panda/linter/
 └── test/                     # Test cases and expectations
 ```
 
-**Key files**: `TypeScriptLinter.ts` (core rules), `HomeCheck.ts` (adapter), `QuasiEditor.ts` (autofix), `Problems.ts` (FaultID), `CookBookMsg.ts` (messages), `rule-config.json` (IDE filtering), `homecheck/ruleSet.json` (16 migration rules).
+**Key files**: `TypeScriptLinter.ts` (core rules), `HomeCheck.ts` (adapter), `QuasiEditor.ts` (autofix), `Problems.ts` (FaultID), `CookBookMsg.ts` (messages), `rule-config.json` (IDE filtering), `homecheck/ruleSet.json` (rules registered in this file).
 
 ## Core Files And Responsibilities
 
@@ -91,7 +94,7 @@ ets2panda/linter/
 | `Autofixer.ts` | Tool for rules to generate replacements |
 | `LinterRunner.ts` | Main executor: file filtering, rule execution, migration |
 | `rule-config.json` | IDE/migration rule classification |
-| `homecheck/ruleSet.json` | HomeCheck rule set (16 rules currently) |
+| `homecheck/ruleSet.json` | HomeCheck rule set (current registered rules) |
 | `package.json` / `package-lock.json` | Reproducible npm dependency graph for linter, HomeCheck, ArkAnalyzer |
 | `scripts/install-ohos-typescript-and-homecheck.mjs` | Packs and installs ohos-typescript, ArkAnalyzer, HomeCheck into the linter package |
 
@@ -99,7 +102,7 @@ ets2panda/linter/
 
 **Responsible for**: rule checking, static analysis for migration, migration suggestions, autofix candidates, reports, statistics, IDE JSON protocol.
 
-**NOT responsible for**: real ArkTS-static type relations → `ets2panda/checker`; AST structural changes → `ets2panda/lowering` or `ets2panda/parser`; runtime semantics → companion runtime repos (outside this KB scope).
+**NOT responsible for**: real ArkTS-static type relations → `ets2panda/checker`; AST structural changes → `ets2panda/compiler/lowering` or `ets2panda/parser`; runtime semantics → companion runtime repos (outside this KB scope).
 
 **Do not copy complete compiler type system into linter layer.**
 
@@ -186,7 +189,7 @@ interface Autofix {
 
 ### HomeCheck Migration Flow
 
-1. `HomeCheck.ts` constructs config → `MigrationTool.buildCheckEntry()`
+1. `HomeCheck.ts` provides config; `src/cli/LinterCLI.ts` calls `MigrationTool.buildCheckEntry()`
 2. `checkEntryBuilder()` filters files → builds `Scene` → `inferTypes()` → scopes
 3. `CheckerIndex.ts` divides rules (file-level / project-level) → runs checkers
 4. `transferIssues2ProblemInfo()` converts to `ProblemInfo` → `QuasiEditor` writes files
@@ -204,8 +207,8 @@ interface Autofix {
 - HomeCheck rules → `homecheck/src/checker/migration/*`, `homecheck/src/utils/common/CheckerIndex.ts`
 - SDK paths, resolution → `src/lib/ts-compiler/ResolveSdks.ts`
 - Dependency drift, lockfiles, npm packaging → `package.json`, `package-lock.json`, `scripts/install-ohos-typescript-and-homecheck.mjs`
-- Compiler type system → `ets2panda/Static_Frontend_Knowledge_Base.md`
-- LSP interaction → `ets2panda/LSP_Knowledge_Base.md`
+- Compiler type system → `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md`
+- LSP interaction → `docs/knowledge/ets2panda/LSP_Knowledge_Base.md`
 - Build/test → see Build section below
 
 ## Output Protocol
@@ -223,7 +226,7 @@ interface Autofix {
 
 **TypeScriptLinter path**:
 ```
-FaultID (Problems.ts) → FaultAttrs[FaultID].cookBookRef → cookBookTag[recipe] (CookBookMsg.ts)
+FaultID (Problems.ts) → faultsAttrs[FaultID].cookBookRef → cookBookTag[recipe] (CookBookMsg.ts)
   → user-visible "rule" (final parentheses) → rule-config.json (IDE filtering)
 ```
 
@@ -465,6 +468,6 @@ When modifying linter rules or documentation:
 ## Related Documents
 
 - `AGENTS.md` -- repository-level routing and constraints
-- `ets2panda/Static_Frontend_Knowledge_Base.md` -- static frontend pipeline boundaries
-- `ets2panda/LSP_Knowledge_Base.md` -- LSP interaction surface and downstream consumers
-- `ArkGuard_Knowledge_Base.md` -- obfuscation and migration-adjacent tooling context
+- `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md` -- static frontend pipeline boundaries
+- `docs/knowledge/ets2panda/LSP_Knowledge_Base.md` -- LSP interaction surface and downstream consumers
+- `docs/knowledge/ArkGuard_Knowledge_Base.md` -- obfuscation and migration-adjacent tooling context

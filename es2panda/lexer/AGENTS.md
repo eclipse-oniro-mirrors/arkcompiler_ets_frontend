@@ -1,254 +1,230 @@
 # Lexer Module - AGENTS.md
 
-## 模块职责
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**词法分析器（Lexer）**：将JavaScript/TypeScript/ArkScript源代码转换为Token流
+## 1. Module responsibilities
 
-**核心功能**：字符流 → Token流、关键字识别、标识符/字面量/运算符解析、正则表达式词法分析、注释和空白字符处理、SourceLocation追踪
+The lexer converts JavaScript, TypeScript, and supported ArkTS-dynamic source syntax into tokens. It handles identifiers, keywords, literals, operators, comments, whitespace, template strings, regular expressions, and source positions.
 
----
+Read the repository `AGENTS.md`, `es2panda/AGENTS.md`, and `docs/knowledge/ES2Panda_Knowledge_Base.md` before changes. Paths below are repository-relative.
 
-## 目录结构
+## 2. Directory structure
 
+```text
+es2panda/lexer/
+├── lexer.cpp                   # Main scanner
+├── lexer.h                     # Lexer state and operations
+├── keywordsUtil.cpp            # Keyword helpers
+├── keywordsUtil.h              # Keyword helper declarations
+├── keywordString.h             # Keyword strings
+├── templates/keywords.h.erb     # Keyword definitions template
+├── templates/keywordsMap.h.erb  # Keyword lookup template
+├── scripts/keywords.rb          # Keyword generator and input definitions
+├── token/token.h               # Token payload and flags
+├── token/token.cpp             # Token helpers
+├── token/tokenType.h            # TokenType definitions
+├── token/sourceLocation.h       # Source ranges and line indexing
+└── regexp/regexp.cpp            # Regular-expression parsing
 ```
-lexer/
-├── lexer.cpp              # 主词法分析器实现
-├── lexer.h                # Lexer类定义
-├── keywordsUtil.cpp/h     # 关键字工具函数
-├── keywordString.h        # 关键字字符串映射
-├── templates/             # ERB模板，自动生成关键字
-│   ├── keywords.h.erb     # 生成 keywords.h
-│   └── keywordsMap.h.erb  # 生成 keywordsMap.h
-├── scripts/keywords.rb    # 关键字生成脚本
-├── token/                 # Token相关
-│   ├── token.h/cpp        # Token类定义
-│   └── sourceLocation.h   # 源码位置追踪
-└── regexp/regexp.cpp      # RegExp词法分析
-```
 
----
+## 3. Core classes and APIs
 
-## 核心类和API
+### 3.1 Lexer
 
-### Lexer类
+Selected declarations from the current `lexer.h`:
 
 ```cpp
-class Lexer {
-public:
-    Lexer(ArenaAllocator *allocator, const std::string &source,
-          ScriptExtension extension, parser::Program *program);
+    explicit Lexer(const parser::ParserContext *parserContext);
+    NO_COPY_SEMANTIC(Lexer);
+    NO_MOVE_SEMANTIC(Lexer);
+    ~Lexer() = default;
 
-    // 核心方法
-    Token NextToken();           // 获取下一个Token
-    void SetPosition(const LexerPosition &pos);
-    LexerPosition SavePosition();
+    void NextToken(LexerNextTokenFlags flags = LexerNextTokenFlags::NONE);
 
-    // 查询方法
-    const SourceFile &GetSourceFile() const;
-    ArenaAllocator *Allocator() const;
+    Token &GetToken();
+    const Token &GetToken() const;
+    size_t Line() const;
 
-private:
-    // 扫描方法
-    Token ScanToken();
-    Token ScanIdentifier();
-    Token ScanNumber();
-    Token ScanString();
-    Token ScanTemplate();
-    Token ScanRegExp();
+    LexerPosition Save() const;
+    void Rewind(const LexerPosition &pos);
+    void BackwardToken(TokenType type, size_t offset);
+    void ForwardToken(TokenType type, size_t offset);
 
-    // 辅助方法
-    char Peek() const;
-    char Advance();
-    bool Match(char expected);
-    void SkipWhitespace();
-    void SkipLineComment();
-    void SkipBlockComment();
-};
+    char32_t Lookahead();
+    bool CheckArrow();
+
+    RegExp ScanRegExp();
+    template <char32_t end>
+    void ScanString();
+    void ResetTokenEnd();
+    LexerTemplateString ScanTemplateString();
+    void ScanTemplateStringEnd();
+    void PushTemplateContext(TemplateLiteralParserContext *ctx);
+    void AssignTokenTaggedTemplate();
 ```
 
-### Token类
+`NextToken()` updates the lexer state and returns `void`; read the token with `GetToken()`. `Save()` and `Rewind()` handle speculative parsing. Do not use the old guide's nonexistent `PeekToken()`, `SavePosition()`, or token-returning `NextToken()` signatures.
+
+### 3.2 Token
+
+`token/token.h` defines token payload and source range. `TokenType` is declared separately in `token/tokenType.h`; it is not a nested `Token::TokenType` enum.
+
+Selected accessors:
 
 ```cpp
-class Token {
-public:
-    TokenType Type() const;
-    const util::StringView &Ident() const;
-    const SourceLocation &Loc() const;
+    TokenType Type() const
+    {
+        return type_;
+    }
 
-    enum class TokenType {
-        EOF_TOKEN,
-        IDENTIFIER,
-        KEYW_IF, KEYW_ELSE, KEYW_FUNCTION, ...  // 关键字
-        L_PAREN, R_PAREN, ...                   // 运算符
-        NUMBER, STRING, ...                     // 字面量
-    };
-};
+    TokenFlags Flags() const
+    {
+        return flags_;
+    }
+
+    void SetTokenType(TokenType type)
+    {
+        type_ = type;
+    }
+
+    TokenType KeywordType() const
+    {
+        return keywordType_;
+    }
+
+    const SourcePosition &Start() const
+    {
+        return loc_.start;
+    }
+
+    const SourcePosition &End() const
+    {
+        return loc_.end;
+    }
+
+    const SourceRange &Loc() const
+    {
+        return loc_;
+    }
+
+    const util::StringView &Ident() const
+    {
+        return src_;
+    }
 ```
 
----
+Read payload accessors only for the corresponding token kind and flags. Numeric tokens distinguish BigInt from ordinary numeric values; escaped identifiers and tagged templates need their original contextual information.
 
-## 关键字生成流程
+## 4. Keyword generation
 
-⚠️ **重要**：关键字文件由GN构建系统自动生成
+### 4.1 Templates and input
 
-### 模板位置
-
-```
-lexer/templates/
-├── keywords.h.erb      # Token关键字定义
-└── keywordsMap.h.erb   # 关键字字符串映射
-```
-
-### 生成说明
-
-**BUILD.gn配置**：
-```gni
-keywords_generator = "lexer/scripts/keywords.rb"
+```text
+lexer/scripts/keywords.rb
+    + lexer/templates/keywords.h.erb
+    + lexer/templates/keywordsMap.h.erb
+    → generated keyword definitions and lookup map
 ```
 
-**修改流程**：
-1. 编辑ERB模板：`lexer/templates/keywords.h.erb`
-2. 重新构建：`./build.sh --product-name rk3568 --build-target ets_frontend_build`
+The build invokes `es2panda/scripts/gen_keywords.sh`. Inspect the actions and dependencies in `es2panda/BUILD.gn`; generated output paths depend on the selected product/toolchain, so do not hardcode a single `out/sdk/` path.
 
-### 生成文件位置
+### 4.2 Modification workflow
 
-```
-out/sdk/clang_x64/obj/arkcompiler/ets_frontend/es2panda/gen/
-├── keywords.h       # Token::Type 枚举中的关键字
-└── keywordsMap.h    # StringView 到关键字的映射
-```
+1. Determine whether the keyword list, lookup behavior, or emitted definitions need to change.
+2. Update `keywords.rb` and/or the corresponding ERB template.
+3. Rebuild `ets_frontend_build` through GN.
+4. Check both generated outputs and the scanner's use of them.
+5. Run lexer and parser regressions, including contextual keywords used as identifiers.
 
-### 添加新关键字
+Never edit generated `keywords.h` or `keywordsMap.h` directly. Adding a keyword does not automatically make it reserved in every JS/TS context.
 
-1. 编辑 `lexer/templates/keywords.h.erb`
-2. 重新运行生成脚本
-3. **不要**直接修改 `keywords.h`
+## 5. Token type system
 
----
+### 5.1 TokenType
 
-## Token类型系统
+`token/tokenType.h` contains the current enum and generated keyword integration. Use actual names such as `EOS` and the existing punctuator/literal names; do not copy the old guide's invented `EOF_TOKEN`, `NEW_LINE`, or literal categories.
 
-### TokenType枚举
+When adding a token, check token predicates and operator tables as well as scanner and parser dispatch. Changes to enum ordering may affect range-based token classification.
 
-```cpp
-enum class TokenType : uint8_t {
-    // 特殊Token
-    EOF_TOKEN = 0,
-    NEW_LINE,
+### 5.2 TokenFlags and next-token flags
 
-    // 标识符和字面量
-    IDENTIFIER,
-    LITERAL_STRING,
-    LITERAL_NUMBER,
-    LITERAL_BOOL,
-    LITERAL_NULL,
+`TokenFlags` in `token/token.h` describes properties of the current token. `LexerNextTokenFlags` in `lexer.h` controls scanning, including keyword-to-identifier conversion, numeric separators, and BigInt handling. These two enums have different owners and uses.
 
-    // 关键字（自动生成）
-    KEYW_IF, KEYW_ELSE, KEYW_FUNCTION, KEYW_CLASS,
-    KEYW_CONST, KEYW_LET, KEYW_VAR,
-    // ... 约100个关键字
+Preserve newline and escape information because automatic semicolon insertion, restricted productions, and template behavior depend on it. Verify a flag's consumers before changing its meaning.
 
-    // 运算符和分隔符
-    L_PAREN, R_PAREN,
-    L_BRACE, R_BRACE,
-    L_BRACKET, R_BRACKET,
-    SEMICOLON, COMMA, DOT,
-    // ... 约50个运算符
-};
-```
+## 6. Regular-expression scanning
 
-### TokenFlags
+The parser and lexer cooperate to interpret `/` in context. `Lexer::ScanRegExp()` and its pattern/flag helpers scan a regular expression when the parser selects that route; do not decide every slash from the previous token alone.
 
-```cpp
-enum class TokenFlags : uint8_t {
-    NONE = 0,
-    NEW_LINE = 1 << 0,        // Token前有换行
-    STRING_VAR = 1 << 1,      // 模板字符串变量
-    ERROR_RECOVERY = 1 << 2,  // 错误恢复模式
-};
-```
+`lexer/regexp/regexp.cpp` implements the regular-expression parser. There is no documented `RegExpLexer::ParseRegExp` wrapper to call.
 
----
+Test these cases together:
 
-## 正则表达式词法分析
+- Division and division assignment.
+- Regex literals at expression starts and after statement boundaries.
+- Escaped slashes and character classes.
+- Valid and invalid flags, including duplicates.
+- Unterminated patterns and source positions in diagnostics.
 
-```cpp
-class RegExpLexer {
-public:
-    static RegExp *ParseRegExp(const std::string &pattern);
+## 7. Source location tracking
 
-private:
-    Token ScanRegExpToken();
-    void ScanRegExpPattern();
-    void ScanRegExpFlags();
-};
-```
+`token/sourceLocation.h` defines separate representations:
 
-**特殊Token**：
-- `DIV` (/) → 可能是除法或正则开始
-- `ASSIGN_DIV` (/=) → 除法赋值
-- `REGEXP_LITERAL` → 正则表达式字面量
+| Type | Fields / purpose |
+|---|---|
+| `SourcePosition` | `index`, `line`: position in source |
+| `SourceRange` | `start`, `end`: source extent |
+| `SourceLocation` | `line`, `col`: mapped diagnostic position |
+| `LineIndex` | Line/offset mapping support |
 
----
+`Token::Loc()` returns a `SourceRange`, not a filename-bearing object with `ToString()`. Preserve offsets through Unicode text, escapes, CRLF, comments, and multiline templates. Confirm indexing conventions at the diagnostic/output consumer before changing them.
 
-## SourceLocation追踪
+## 8. Modification guidance
 
-```cpp
-class SourceLocation {
-public:
-    size_t line;      // 行号（从1开始）
-    size_t column;    // 列号（从1开始）
-    size_t index;     // 在源码中的索引
+### 8.1 Add a token
 
-    const std::string &GetFileName() const;
-    std::string ToString() const;
-};
+1. Update the actual token definitions or their source generator.
+2. Add scanner handling in `lexer.cpp`.
+3. Update parser consumers and token classification helpers.
+4. Cover valid, invalid, boundary, and contextual uses.
+
+### 8.2 Add a keyword
+
+1. Update the keyword source of truth and generation templates as needed.
+2. Rebuild the generated headers and frontend.
+3. Test reserved-word and identifier contexts separately.
+4. Check JS/TS and module/script differences.
+
+### 8.3 Improve performance
+
+Keep source-backed string lifetimes valid and use the existing arena/Unicode helpers. Preserve saved-position state and avoid introducing inconsistent token payloads during lookahead. Measure representative input rather than assuming fewer branches improves scanning.
+
+## 9. Debugging tokens
+
+Set breakpoints in `Lexer::NextToken()` and inspect `GetToken().Type()`, `Ident()` when valid, and `Start()`/`End()`. Use `Save()`/`Rewind()` when tracing speculative parsing.
+
+Use `es2abc --dump-ast input.js` to verify the downstream parse result. The old loop based on `PeekToken()` and a token-returning `NextToken()` was not a valid example for this API.
+
+## 10. Related modules
+
+- Upstream: source text and parser context.
+- Downstream: `es2panda/parser/` and `es2panda/parser/context/`.
+- Supporting code: `es2panda/util/ustring.h`, program-owned allocation, token locations, and IR source ranges.
+
+## 11. Verification and evidence
+
+Build the affected dynamic frontend target from the OpenHarmony source root before running behavior tests:
+
+```bash
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk
+./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests --no-prebuilt-sdk
 ```
 
-**使用**：每个Token携带位置信息，用于错误报告和调试信息，支持SourceMap生成
+Set and validate paths using `docs/knowledge/Build_Environment.md`. Prepare `RUNTIME_DIR` and `TEST_LD_LIBRARY_PATH` using `docs/knowledge/ES2Panda_Testing.md`, then run the relevant suite from the repository root:
 
----
-
-## 修改Lexer的注意事项
-
-### 添加新Token类型
-
-1. 在 `token/token.h` 添加 `TokenType` 枚举值
-2. 在 `lexer.cpp` 的 `ScanToken()` 添加扫描逻辑
-3. 在 `parser/` 更新解析逻辑
-
-### 添加新关键字
-
-1. 修改 `lexer/templates/keywords.h.erb`
-2. 运行生成脚本
-3. 测试 `keywordsUtil::IsKeyword()`
-
-### 性能优化
-
-- 使用 `ArenaAllocator` 分配Token字符串
-- 预读取（Peek）减少回退
-
----
-
-## 调试Lexer
-
-### 查看Token流
-
-```cpp
-while (lexer.PeekToken().Type() != TokenType::EOF_TOKEN) {
-    Token token = lexer.NextToken();
-    std::cout << "Token: " << TokenToString(token.Type())
-              << " '" << token.Ident() << "'"
-              << " at " << token.Loc().ToString() << std::endl;
-}
+```bash
+python3 es2panda/test/runner.py --regression "$FRONTEND_BUILD_DIR"
+python3 es2panda/test/runner.py --compiler --js-runtime "$RUNTIME_DIR" --LD_LIBRARY_PATH "$TEST_LD_LIBRARY_PATH" "$FRONTEND_BUILD_DIR"
 ```
 
----
-
-## 相关模块
-
-**上游**：无（Lexer是编译流水线第一阶段）
-
-**下游**：`parser/`、`parser/context/`
-
-**依赖**：`util/ustring.h`、`util/arena.h`、`ir/astNode.h`
+Use the complete dynamic-route verification procedure in `es2panda/AGENTS.md` for code changes. Record the build mode, commands, logs, unexpected failures, skipped cases, and missing prerequisites. Do not claim an unexecuted test passed. Changes to emitted bytecode require user notification and runtime/verifier coverage.

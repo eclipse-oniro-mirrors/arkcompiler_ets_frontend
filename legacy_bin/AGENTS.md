@@ -1,322 +1,165 @@
-# AGENTS.md
+# legacy_bin Agent Guide
 
-## 项目概述
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**legacy_bin** 为 OpenHarmony API8 应用程序提供向后兼容的编译器工具链。它包含预构建的二进制文件和 Node.js 包，用于将 JavaScript/TypeScript 源码编译为 ARK 字节码，确保与 OpenHarmony 3.1 Release 遗留应用程序的兼容性。
+## 1. Project Overview
 
-### 核心特性
+`legacy_bin` packages the legacy API8 compiler toolchain for existing OpenHarmony SDK consumers. It contains platform binaries and a bundled Node frontend under `api8/`; current compiler development follows the appropriate dynamic or static route instead.
 
-| 维度 | 说明 |
-|------|------|
-| **用途** | API8 向后兼容层 |
-| **目标** | OpenHarmony 3.1 Release 应用程序 |
-| **语言支持** | JavaScript、TypeScript (ES6+) |
-| **输出格式** | ARK 字节码 (.abc 文件) |
-| **支持平台** | Linux x64、Windows x64、macOS x64/arm64 |
-| **打包方式** | Node.js npm 包，附带预构建二进制文件 |
+### 1.1 Core capabilities
 
-### 技术栈
+| Dimension | Source of truth |
+|---|---|
+| Compatibility boundary | API8 package and existing SDK consumers |
+| Node entry | `api8/src/index.js` |
+| Native backend | Platform artifacts under `api8/bin/` |
+| npm package/dependencies | `api8/package.json` and `api8/package-lock.json` |
+| SDK packaging | `BUILD.gn` |
+| Historical reproduction | `prebuilts-readme-legacy.md` |
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                   legacy_bin                            │
-├─────────────────────────────────────────────────────────┤
-│  Node.js 运行时   │  TypeScript 4.2.3  │  Commander    │
-├─────────────────────────────────────────────────────────┤
-│      js2abc 二进制文件 (C++ 编译为 ELF/PE/Mach-O)       │
-├─────────────────────────────────────────────────────────┤
-│         ARK 字节码 (.abc) → ARK 运行时                 │
-└─────────────────────────────────────────────────────────┘
-```
+The directory name records a compatibility responsibility. The presence of a platform binary or a dependency version does not establish that every language feature or host architecture has been tested.
 
-### 为什么叫 "legacy"？
+## 2. Code Map
 
-该组件命名为 **legacy_bin** 的原因：
-1. 维护与 **API8** (OpenHarmony 3.1 Release) 的兼容性
-2. 新版本使用现代化的 `es2panda` 编译器
-3. 包含预构建的二进制文件，不再活跃开发
-4. 为现有应用程序提供向后兼容性支持
+Paths below are relative to `legacy_bin/` unless explicitly repository-relative.
 
----
-
-## 快速开始
-
-### 前置条件
-
-- **Node.js** >= 12.0.0
-- **npm** 或 **yarn**
-- 操作系统：Linux、Windows 或 macOS
-
-### 安装步骤
-
-```bash
-# 进入 legacy_bin 目录
-cd arkcompiler/ets_frontend/legacy_bin/api8
-
-# 安装依赖
-npm install
-
-# 验证安装
-npm ls
-```
-
-### 基本使用
-
-```bash
-# 编译 JavaScript 为 ARK 字节码
-node src/index.js input.js -o output.abc
-
-# 编译 TypeScript 为 ARK 字节码
-node src/index.js input.ts -o output.abc
-
-# 显示帮助信息
-node src/index.js --help
-```
-
----
-
-## 架构设计
-
-### 目录结构
-
-```
+```text
 legacy_bin/
-├── api8/                          # API8 兼容包
-│   ├── bin/                       # 预构建的 js2abc 二进制文件
-│   │   ├── linux/
-│   │   │   └── js2abc            # ELF 64 位可执行文件
-│   │   ├── win/
-│   │   │   └── js2abc.exe        # PE 可执行文件
-│   │   └── mac/
-│   │       └── js2abc            # Mach-O 可执行文件
-│   ├── src/
-│   │   └── index.js              # Webpack 打包的编译器 (3.5MB)
-│   ├── node_modules/             # 依赖包
-│   │   ├── commander/            # CLI 参数解析器
-│   │   └── typescript/           # TypeScript 4.2.3
-│   ├── package.json              # NPM 包清单
-│   ├── package-lock.json         # 依赖锁定文件
-│   └── manifest_tag.xml          # OpenHarmony 清单标签
-├── BUILD.gn                       # GN 构建配置
-└── prebuilts-readme-legacy.md    # 构建说明文档
+├── api8/
+│   ├── bin/linux/             # Linux native artifacts
+│   ├── bin/win/               # Windows native artifacts
+│   ├── bin/mac/               # macOS native artifacts
+│   ├── src/index.js           # Bundled Node frontend
+│   ├── package.json           # Package metadata and scripts
+│   ├── package-lock.json      # Locked dependency graph
+│   └── manifest_tag.xml       # Packaged manifest metadata
+├── BUILD.gn                   # Prebuilt SDK packaging
+└── prebuilts-readme-legacy.md  # Historical checkout/build instructions
 ```
 
-### 编译流水线
+Installed `node_modules/` and local build output may be absent in a clean checkout. GN packaging also uses external prebuilt dependencies; inspect the actual `source` entries before claiming everything is bundled in this directory.
 
-```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│   源码文件    │     │  TypeScript  │     │    js2abc    │
-│  (.js/.ts)   │────▶│   编译器     │────▶│   二进制     │
-└──────────────┘     └──────────────┘     └──────────────┘
-                                                 │
-                                                 ▼
-                                          ┌──────────────┐
-                                          │  .abc 文件   │
-                                          │ (ARK字节码)  │
-                                          └──────────────┘
+### 2.1 Compilation and consumer chain
+
+```text
+Legacy JS/TS input
+    → bundled Node frontend
+    → matching legacy native backend
+    → legacy ABC
+    → matching SDK/runtime consumer
 ```
 
-### 组件关系图
+`BUILD.gn` copies package files and native binaries into host-specific SDK layouts. `js-loader`/`ets-loader` consumers depend on the package location and invocation contract, not only the native file's existence.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    OpenHarmony 构建系统                     │
-├─────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌──────────────┐         ┌──────────────┐                  │
-│  │  legacy_bin  │────────▶│   js-loader  │                  │
-│  │   (api8)     │         │  ets-loader  │                  │
-│  └──────────────┘         └──────────────┘                  │
-│         │                                                      │
-│         │ 提供预构建二进制文件用于                              │
-│         │ 向后兼容                                              │
-│         ▼                                                      │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │              OpenHarmony SDK / 运行时                │   │
-│  └──────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-```
+### 2.2 Components
 
----
+| Component | Responsibilities / review points |
+|---|---|
+| Native binary | File format, architecture, linked libraries, runtime compatibility |
+| Bundled frontend | CLI behavior, backend discovery, emitted representation |
+| npm metadata | Package identity, entry point, dependency versions |
+| GN packaging | Source/destination paths, host selection, external prebuilts |
+| Manifest | SDK package integration |
 
-## 组件详解
+## 3. Knowledge Routing
 
-### js2abc 二进制文件
+| Task | Read first |
+|---|---|
+| Compatibility/packaging | Repository `AGENTS.md`, local `BUILD.gn` |
+| Legacy build provenance | `prebuilts-readme-legacy.md` |
+| Current dynamic compiler behavior | Repository-relative `docs/knowledge/ES2Panda_Knowledge_Base.md` |
+| ABC merging | Repository-relative `merge_abc/AGENTS.md` |
+| Obfuscation | Repository-relative `docs/knowledge/ArkGuard_Knowledge_Base.md` |
 
-**用途**：核心编译器，将 JavaScript/TypeScript 转换为 ARK 字节码
+## 4. Constraints and Compatibility
 
-**二进制文件信息**：
+### 4.1 Do not
 
-| 平台 | 文件 | 大小 | 格式 |
-|------|------|------|------|
-| Linux x64 | `js2abc` | ~3.3 MB | ELF 64 位 |
-| Windows x64 | `js2abc.exe` | ~2.4 MB | PE |
-| macOS x64/arm64 | `js2abc` | ~1.1 MB | Mach-O |
+- Do not remove or replace legacy artifacts merely because current compilers exist.
+- Do not hand-edit bundled/generated frontend output; locate the original build inputs and reproduction process.
+- Do not infer macOS arm64 support from a directory named `mac`; inspect the actual binary architecture and consumer requirements.
+- Do not claim historical platform/feature tests passed without current execution evidence.
+- Do not replace the bundled TypeScript dependency with an unreviewed current version.
+- Do not document a `require(...).compile()` API unless the bundled module actually exports that contract.
+- Do not describe current dynamic es2panda as a full TypeScript semantic checker; its removed in-tree checker is unavailable.
 
-**依赖项**：
-- 动态链接（需要系统库）
-- 平台相关：`ld-linux-x86-64.so.2` (Linux)
+### 4.2 Ask before
 
-### TypeScript 编译器包
+Ask before deleting compatibility shims/legacy behavior, replacing packaged binaries, changing public SDK layout, or adding dependencies. Serialized compatibility changes require approval and coordinated consumer validation.
 
-**文件**：`src/index.js` (3.5 MB webpack 打包文件)
+### 4.3 Compatibility assessment
 
-**包含内容**：
-- TypeScript 4.2.3 编译器
-- Source map 支持
-- Buffer 工具类
-- Commander.js CLI 框架
+The supported contract is determined by the legacy package, its producing toolchain, and target runtime. Test syntax/features against those artifacts rather than maintaining an unsupported table claiming complete ES/TS/decorator/async support.
 
-**注意**：这是一个**预构建的 webpack 打包文件**。源代码位于仓库的其他位置。
+Dependency versions belong in the package manifest/lockfile. Historical OpenHarmony release information in `prebuilts-readme-legacy.md` is a reproduction input, not a statement of the current repository version.
 
-### Node.js 依赖
+## 5. Setup, Usage, and Verification
 
-```json
-{
-  "commander": "9.4.0",    // CLI 参数解析
-  "typescript": "4.2.3"     // TypeScript 语言服务
-}
-```
----
+### 5.1 Prerequisites
 
-## 使用指南
+Use the Node/npm versions required by the package-producing environment and consumer SDK. Verify the host binary's architecture, executable permissions, and dynamic dependencies. Do not infer the minimum supported Node version from an old documentation example.
 
-### 命令行接口
+### 5.2 Local package setup
+
+From the ets_frontend repository root:
 
 ```bash
-# 显示所有选项
+cd legacy_bin/api8
+npm install
+npm ls
 node src/index.js --help
+```
 
-# 基本编译
+Review lockfile differences if setup changes dependency resolution. A dependency update requires the matching lockfile and nearby package/SDK validation.
+
+### 5.3 Basic compilation
+
+Run from `legacy_bin/api8/` after preparing its matching backend and dependencies:
+
+```bash
 node src/index.js input.js -o output.abc
-
-# TypeScript 编译
-node src/index.js --extension ts input.ts -o output.abc
-
-# 指定输出目录
-node src/index.js input.js --out-dir ./output
-
-# 启用 source maps
-node src/index.js input.js --source-map -o output.abc
-
-# 设置模块类型
-node src/index.js input.js --module
-
-# 优化级别
-node src/index.js input.js --opt-level 2
+node src/index.js input.ts -o output.abc
 ```
 
-### 编程式调用
+Confirm option spellings and combinations with the bundled frontend's actual help. Do not copy current `es2abc` flags such as output-directory, source-map, or optimization options into legacy instructions without checking they are implemented.
 
-```javascript
-const { compile } = require('./src/index.js');
+### 5.4 Programmatic invocation
 
-// 编译 JavaScript
-const result = compile('./input.js', {
-  outputFile: './output.abc',
-  extension: 'js'
-});
+Use the supported CLI/loader contract. Before adding a programmatic example, inspect actual module exports and the consumer. A hypothetical `compile(path, options)` export is not evidence that the bundled frontend provides one.
 
-// 编译 TypeScript
-const result = compile('./input.ts', {
-  outputFile: './output.abc',
-  extension: 'ts',
-  sourceMap: true
-});
-```
----
+### 5.5 Binary inspection
 
-## 兼容性说明
+Inspect each selected binary using host tools such as `file` and the platform's dependency inspection tool. Record OS/architecture, backend provenance, dynamic-library availability, and the actual compile/execute result.
 
-### API 版本支持
+Byte size and bundled-source size change with rebuilds; consult the artifacts rather than freezing approximate sizes in this guide. Do not label every platform as tested based on one host run.
 
-| API 级别 | OpenHarmony 版本 | 编译器 | 状态 |
-|----------|------------------|--------|------|
-| API8 | 3.1 Release | legacy_bin (js2abc) | ✅ 维护中 |
-| API9+ | 3.2+ | es2panda | ✅ 活跃开发 |
+### 5.6 SDK build and output
 
-### 功能兼容性
+`prebuilts-readme-legacy.md` describes the historical release checkout, prebuilt preparation, and SDK build used to reproduce these artifacts. Run its build commands from that checkout's OpenHarmony root, not from `legacy_bin/`.
 
-| 功能特性 | API8 (legacy_bin) | API9+ (es2panda) |
-|----------|-------------------|------------------|
-| ES5 | ✅ 完整支持 | ✅ 完整支持 |
-| ES6+ | ⚠️ 部分支持 | ✅ 完整支持 |
-| TypeScript | ⚠️ 4.2.3 有限支持 | ✅ 完整支持 |
-| Async/await | ✅ | ✅ |
-| 装饰器 | ❌ | ✅ |
-| TS 类型检查 | ❌ 仅运行时 | ✅ 完整支持 |
+Inspect `BUILD.gn` for SDK output paths (`js_linux`, `js_win`, `js_mac`) and external `node_modules` sources. The SDK package directory is the consumer contract; `/usr/local/bin/js2abc` is not a guaranteed installation destination.
 
-### 平台支持
+### 5.7 Maintenance scenarios
 
-| 平台 | 架构 | 测试状态 |
-|------|------|----------|
-| Linux | x86_64 | ✅ 已测试 |
-| Windows | x86_64 | ✅ 已测试 |
-| macOS | x86_64, arm64 | ✅ 已测试 |
+| Scenario | Required work |
+|---|---|
+| API8 regression | Reproduce on legacy artifacts; preserve compatible output/consumer behavior |
+| Dependency security fix | Update source manifest/lockfile, rebuild package, validate consumers |
+| Host packaging failure | Check binary architecture, copied paths, permissions, loader lookup |
+| New current-language feature | Route to the appropriate current compiler; do not silently extend legacy ABI |
+| Rebuilt artifacts | Record provenance and compare package contents/legacy behavior |
 
----
+### 5.8 Version management
 
-## 维护指南
+Change package versions according to the release/consumer process. Update `package.json`, lockfile, packaged manifest, and SDK wiring together where applicable. Do not invent an example patch version as a required value.
 
-### 何时更新 legacy_bin
+### 5.9 Verification checklist
 
-**更新场景**：
-1. API8 兼容性的关键 bug 修复
-2. 捆绑依赖的安全漏洞
-3. 平台特定的构建失败
+1. Build/reproduce the affected package using its source-of-truth workflow.
+2. Inspect the selected host artifacts and dependency graph.
+3. Compile representative legacy JS/TS inputs and an expected-error input.
+4. Run the resulting ABC on the matching runtime and compare diagnostics/behavior.
+5. Build the nearest SDK/loader consumer and inspect packaged paths/content.
+6. Record unsupported hosts, absent historical toolchain, and untested runtime combinations.
 
-**何时不应更新**：
-1. 新的 ES/TS 特性（应使用 es2panda）
-2. 性能优化（专注于现代化工具链）
-3. API9+ 应用程序（应使用 es2panda）
-
-### 版本号管理
-
-更新 `package.json` 时：
-
-```json
-{
-  "name": "ts2panda",
-  "version": "1.0.1",  // 递增补丁版本
-  "description": "API8 编译器工具链",
-  "main": "src/index.js"
-}
-```
-
-### 获取帮助
-
-- **OpenHarmony 文档**：https://docs.openharmony.cn
-- **问题追踪**：https://gitee.com/openharmony/arkcompiler_ets_frontend/issues
-- **社区**：https://gitee.com/openharmony/community
-
----
-
-## 参考资料
-
-### 相关组件
-
-| 组件 | 路径 | 用途 |
-|------|------|------|
-| **es2panda** | `../es2panda/` | 现代化编译器 (API9+) |
-| **merge_abc** | `../merge_abc/` | 字节码合并工具 |
-| **arkguard** | `../arkguard/` | 代码混淆工具 |
-| **ets2panda** | `../ets2panda/` | ETS 语言编译器 |
-
-### 文件位置
-
-| 产物 | 构建输出 | 运行时位置 |
-|------|----------|------------|
-| js2abc (Linux) | `out/sdk/.../js_linux/.../js2abc` | `/usr/local/bin/js2abc` |
-| ts2panda 包 | `out/sdk/.../js_linux/.../index.js` | SDK 工具目录 |
-
-### 外部依赖
-
-```
-legacy_bin
-├── Node.js 生态系统
-│   ├── commander: https://www.npmjs.com/package/commander
-│   └── typescript: https://www.npmjs.com/package/typescript
-└── OpenHarmony 运行时
-    ├── arkcompiler_runtime_core
-    └── arkcompiler_ets_runtime
-```
+For help and issue tracking, use the repository's configured upstream and the relevant consumer owners. A successful npm install alone does not establish legacy runtime compatibility.

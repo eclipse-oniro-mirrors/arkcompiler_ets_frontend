@@ -1,98 +1,116 @@
 # Scripts Module - AGENTS.md
 
-## 模块职责
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**代码生成脚本**：GN构建时调用的辅助脚本
+## 1. Module responsibilities
 
-**核心功能**：
-- ISA指令定义生成（gen.rb + isa.yaml → isa.h）
-- 关键字Token生成（keywords.rb → keywords.h）
-- 字节码生成辅助（Python脚本）
-- TypeScript转换辅助
+Build helpers generate ISA and keyword headers and invoke the native frontend to produce bytecode. The Node wrapper launches `es2abc`; it is not an independent TypeScript checker or transformer.
 
-⚠️ **重要**：这些脚本由GN构建系统自动调用，**不需要手动执行**
+Read the repository `AGENTS.md`, `es2panda/AGENTS.md`, and `docs/knowledge/ES2Panda_Knowledge_Base.md`. Paths here are repository-relative unless otherwise stated.
 
----
+## 2. Directory structure
 
-## 目录结构
-
-```
-scripts/
-├── gen_isa.sh              # ISA生成包装脚本（GN调用）
-├── gen_keywords.sh         # 关键字生成包装脚本（GN调用）
-├── generate_js_bytecode.py # Python字节码生成辅助
-└── ts2abc.js               # TypeScript转换辅助
+```text
+es2panda/scripts/
+├── gen_isa.sh                # ISA generator wrapper
+├── gen_keywords.sh           # Keyword generator wrapper
+├── generate_js_bytecode.py   # Native es2abc invocation helper
+└── ts2abc.js                 # Node wrapper around native es2abc
 ```
 
----
+## 3. ISA instruction generation
 
-## ISA指令生成
+### 3.1 gen_isa.sh
 
-### gen_isa.sh（由GN自动调用）
+The wrapper receives the generator, template, ISA data, output directory/name, and Ruby helper from its caller. It invokes the supplied generator with `--template`, `--data`, `--output`, and `--require`.
 
-**功能**：调用gen.rb生成 `isa.h` 和 `formats.h`
+| Wrapper argument | Meaning |
+|---|---|
+| `-g` | Generator executable |
+| `-t` | ERB template |
+| `-a` | ISA data |
+| `-o` | Output filename |
+| `-d` | Output directory |
+| `-r` | Required helper |
 
----
+The ISA templates are `es2panda/compiler/templates/isa.h.erb` and `formats.h.erb`. Runtime ISA inputs and generator code belong to companion `arkcompiler/runtime_core/`.
 
-## 关键字生成
+### 3.2 Modification workflow
 
-### gen_keywords.sh（由GN自动调用）
+1. Determine whether the source of truth is the instruction schema, helper, template, or build wiring.
+2. Edit that source, preserving generated instruction interfaces.
+3. Rebuild the relevant GN target to regenerate the headers.
+4. Compile and link the frontend consumer, then run instruction regressions.
 
-**功能**：调用keywords.rb生成 `keywords.h` 和 `keywordsMap.h`
+Do not hand-edit generated `isa.h` or `formats.h`. Normal builds provide the correctly prepared inputs; ad hoc wrapper invocation is not a substitute for checking the build dependency graph.
 
----
+## 4. Keyword generation
 
-## Python辅助脚本
+### 4.1 gen_keywords.sh
 
-### generate_js_bytecode.py
+The wrapper runs Ruby with a generator, template, and output path. `-g`, `-t`, `-o`, and `-d` supply those values.
 
-**功能**：GN构建时调用的字节码生成辅助
+The generator is `es2panda/lexer/scripts/keywords.rb`. Templates are `es2panda/lexer/templates/keywords.h.erb` and `keywordsMap.h.erb`.
 
-**使用场景**：
-- 由GN的`es2abc_gen_abc`模板调用
-- 将JS文件编译为ABC文件
-- 作为构建规则的一部分
+### 4.2 Modification workflow
 
----
+1. Change the keyword input and/or template that owns the behavior.
+2. Rebuild through GN.
+3. Check both generated definitions and string lookup behavior.
+4. Run lexer and parser regressions, including identifier/contextual-keyword cases.
 
-## TypeScript转换脚本
+Do not update one generated header while leaving the other stale.
 
-### ts2abc.js
+## 5. Python bytecode helper
 
-**功能**：TypeScript到字节码的Node.js转换脚本
+### 5.1 generate_js_bytecode.py
 
-**使用场景**：
-- 工具链辅助
-- 开发调试
-- 非构建主流程
+The helper constructs an `es2abc` command from parsed arguments and runs it with `subprocess.Popen`. It forwards source/destination paths and selected module, debug, patch, annotation, and compatibility options.
 
----
+The `es2abc_gen_abc` build template uses this helper; inspect its definition in `es2panda/es2abc_config.gni` before changing argument names or path assumptions.
 
-## 相关模块
+### 5.2 Usage and error handling
 
-**上游**：
-- `arkcompiler/ets_frontend/es2panda/compiler/templates/` - ISA模板
-- `arkcompiler/ets_frontend/es2panda/lexer/templates/` - 关键字模板
-- `arkcompiler/runtime_core/isa/` - ISA生成器和数据
+Use `python3 es2panda/scripts/generate_js_bytecode.py --help` to inspect the current interface. The frontend-tool argument determines the executable directory and the subprocess working directory; relative paths must be valid there.
 
-**下游**：
-- `compiler/core/` - 使用isa.h
-- `lexer/` - 使用keywords.h
+A nonzero frontend exit is propagated as failure. Do not swallow that failure or treat the presence of a partial ABC file as success. Check debug/non-debug paths, module/CommonJS options, symbol-table inputs, and target API options when modifying forwarding.
 
-**工具**：
-- Ruby (ERB模板引擎)
-- Python (GN构建脚本)
-- Node.js (ts2abc.js)
+### 5.3 Adding a forwarded option
 
----
+1. Register the Python argument with the appropriate value or boolean behavior.
+2. Forward the exact native option spelling and value.
+3. Update the GN caller if the build exposes the setting.
+4. Test both unset/default behavior and explicit values.
+5. Rebuild the nearest consumer to catch mismatched argument contracts.
 
-## 关键文件速查
+## 6. Node frontend wrapper
 
-| 文件 | 职责 | 调用方式 |
-|------|------|---------|
-| `gen_isa.sh` | ISA生成包装 | GN自动调用 |
-| `gen_keywords.sh` | 关键字生成包装 | GN自动调用 |
-| `arkcompiler/ets_frontend/es2panda/compiler/templates/*.erb` | ISA模板 | GN读取 |
-| `arkcompiler/ets_frontend/es2panda/lexer/templates/*.erb` | 关键字模板 | GN读取 |
-| `arkcompiler/runtime_core/isa/gen.rb` | 实际生成器 | gen_isa.sh调用 |
-| `arkcompiler/ets_frontend/es2panda/lexer/scripts/keywords.rb` | 实际生成器 | gen_keywords.sh调用 |
+### 6.1 ts2abc.js
+
+`ts2abc.js` uses Node's `child_process.spawn` to launch native `es2abc` and forward its output. An initial `es2abc=<path>` argument overrides automatic executable discovery; the remaining arguments go to the native frontend.
+
+```bash
+node es2panda/scripts/ts2abc.js es2abc=/absolute/path/to/es2abc --output output.abc input.ts
+```
+
+Without an explicit binary, the script looks for platform-specific build directories relative to the script directory. Check the current discovery branches before diagnosing a missing-binary error.
+
+This wrapper is separate from the legacy Node frontend expected by `testTs/run_testTs.py`. That suite's `index.js` contract must not be replaced merely because this wrapper also uses Node.
+
+## 7. Related modules and tools
+
+| Input / consumer | Role |
+|---|---|
+| `es2panda/compiler/templates/` | ISA templates |
+| `es2panda/lexer/templates/` | Keyword templates |
+| `es2panda/lexer/scripts/keywords.rb` | Keyword generator |
+| Companion `arkcompiler/runtime_core/isa/` | ISA data and generator support |
+| `es2panda/compiler/core/` | Generated instruction consumers |
+| `es2panda/lexer/` | Generated keyword consumers |
+| `es2panda/BUILD.gn`, `es2panda/es2abc_config.gni` | Build actions, inputs, dependencies, invocation |
+
+Ruby/ERB runs generation, Python integrates bytecode commands, and Node hosts the native-binary wrapper. Do not add a dependency or assume a host tool is universally installed without checking the intended build environment.
+
+## 8. Verification
+
+Script-only changes still need validation of their actual callers. For generation changes, rebuild the generated headers and compile/link their consumers. For argument-forwarding changes, run the helper with an actual frontend and a small valid input, plus an invalid input that must fail. Run nearby regression cases and report missing binaries or build inputs explicitly.
