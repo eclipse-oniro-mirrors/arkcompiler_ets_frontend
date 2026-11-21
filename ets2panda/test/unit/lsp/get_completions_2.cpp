@@ -546,7 +546,7 @@ Task
     const std::string source = "@ohos.file.fs";
     ExpectAutoImportEntry(entries, "TaskSignal", CompletionEntryKind::INTERFACE, "TaskSignal", source);
     ExpectAutoImportEntry(entries, "TaskController", CompletionEntryKind::CLASS, "TaskController", source);
-    ExpectAutoImportEntry(entries, "TaskAlias", CompletionEntryKind::ALIAS_TYPE, "TaskAlias", source);
+    ExpectAutoImportEntry(entries, "TaskAlias", CompletionEntryKind::INTERFACE, "TaskAlias", source);
     ExpectAutoImportEntry(entries, "taskFactory", CompletionEntryKind::FUNCTION, "taskFactory()", source);
     ExpectAutoImportEntry(entries, "taskValue", CompletionEntryKind::VARIABLE, "taskValue", source);
     ExpectAutoImportEntry(entries, "taskLimit", CompletionEntryKind::CONSTANT, "taskLimit", source);
@@ -1075,7 +1075,7 @@ cov
     ASSERT_FALSE(varInfos.empty()) << "variable export not collected";
     ASSERT_FALSE(constInfos.empty()) << "const export not collected";
     EXPECT_EQ(annInfos.front().kind, ark::es2panda::lsp::CompletionEntryKind::ANNOTATION);
-    EXPECT_EQ(aliasInfos.front().kind, ark::es2panda::lsp::CompletionEntryKind::ALIAS_TYPE);
+    EXPECT_EQ(aliasInfos.front().kind, ark::es2panda::lsp::CompletionEntryKind::INTERFACE);
     EXPECT_EQ(funcInfos.front().kind, ark::es2panda::lsp::CompletionEntryKind::FUNCTION);
 }
 

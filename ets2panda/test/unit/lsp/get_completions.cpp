@@ -16,6 +16,7 @@
 #include "lsp_api_test.h"
 #include "lsp/include/completions.h"
 #include "lsp/include/internal_api.h"
+#include "lsp/include/symbol_reference_index.h"
 #include "public/es2panda_lib.h"
 
 class LSPCompletionsTests : public LSPAPITests {};
@@ -1678,8 +1679,33 @@ import {  } from "./helper_m1"
     auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
     auto expectedEntries = std::vector<CompletionEntry> {
         CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "default as Logger"),
-        CompletionEntry("UserId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "UserId"),
-        CompletionEntry("OrderId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "OrderId")};
+        CompletionEntry("UserId", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "UserId"),
+        CompletionEntry("OrderId", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "OrderId")};
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionFromOnlyExportedTypeAliasesRepro)
+{
+    std::vector<std::string> files = {"helper_only_types.ets", "main_only_types.ets"};
+    std::vector<std::string> texts = {"export type UserId = string;\nexport type OrderId = string;\n",
+                                      "import { } from \"./helper_only_types\"\n"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = "{ }";
+    auto markerPos = texts[1].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + 1;
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED, texts[1].c_str());
+    auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("UserId", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "UserId"),
+        CompletionEntry("OrderId", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "OrderId")};
     AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -1710,8 +1736,8 @@ import  from "./helper_m2"
     auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
     auto expectedEntries = std::vector<CompletionEntry> {
         CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Logger"),
-        CompletionEntry("UserId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "{ UserId }"),
-        CompletionEntry("OrderId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "{ OrderId }")};
+        CompletionEntry("UserId", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "{ UserId }"),
+        CompletionEntry("OrderId", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "{ OrderId }")};
     AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, {});
     initializer.DestroyContext(ctx);
 }
@@ -1741,9 +1767,9 @@ import /* { */ from "./commentedBraceHelper"
     auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
     auto expectedEntries = std::vector<CompletionEntry> {
         CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Logger"),
-        CompletionEntry("UserId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "{ UserId }")};
+        CompletionEntry("UserId", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "{ UserId }")};
     auto unexpectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("UserId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "UserId")};
+        CompletionEntry("UserId", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "UserId")};
     AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, unexpectedEntries);
     initializer.DestroyContext(ctx);
 }
@@ -2724,6 +2750,59 @@ export function ns_func1(arg1: Mes): void {
                         std::string(SUGGESTED_CLASS_MEMBERS), "isAdmin", std::nullopt, "boolean")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getAutoImportCompletionsForReExportedTypeAlias)
+{
+    ark::es2panda::lsp::ClearSymbolReferenceIndex();
+    std::vector<std::string> files = {"c.ets", "b.ets", "a.ets"};
+    std::vector<std::string> texts = {"export type MyUserId = string;\n",
+                                      "import { MyUserId } from \"./c\";\nexport { MyUserId };\n", " MyUser\n"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctxB = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto ctxA = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ASSERT_TRUE(lspApi->buildSymbolReferenceIndexForContextWithExternal(ctxB));
+    ASSERT_TRUE(lspApi->buildSymbolReferenceIndexForContextWithExternal(ctxA));
+
+    size_t const offset = texts[2].find("MyUser") + std::string("MyUser").size();
+    auto res = lspApi->getCompletionsAtPosition(ctxA, offset);
+    auto entries = res.GetEntries();
+
+    std::vector<CompletionEntry> matched;
+    for (auto &entry : entries) {
+        if (entry.GetName() == "MyUserId") {
+            matched.push_back(entry);
+        }
+    }
+
+    // The defining file and its re-exporting barrel are independent import sources.
+    ASSERT_EQ(matched.size(), 2U);
+    EXPECT_EQ(matched[0].GetCompletionKind(), ark::es2panda::lsp::CompletionEntryKind::INTERFACE);
+    EXPECT_EQ(matched[1].GetCompletionKind(), ark::es2panda::lsp::CompletionEntryKind::INTERFACE);
+
+    std::unordered_set<std::string> importSources;
+    std::unordered_set<std::string> sourceFiles;
+    for (auto &entry : matched) {
+        auto dataOpt = entry.GetCompletionEntryData();
+        ASSERT_TRUE(dataOpt.has_value());
+        importSources.insert(dataOpt->GetImportDeclaration());
+        sourceFiles.insert(dataOpt->GetFileName());
+    }
+    EXPECT_EQ(importSources.size(), 2U);
+    EXPECT_NE(importSources.find("./c"), importSources.end());
+    EXPECT_NE(importSources.find("./b"), importSources.end());
+    EXPECT_EQ(sourceFiles.size(), 2U);
+    EXPECT_NE(sourceFiles.find(filePaths[0]), sourceFiles.end());
+    EXPECT_NE(sourceFiles.find(filePaths[1]), sourceFiles.end());
+
+    initializer.DestroyContext(ctxB);
+    initializer.DestroyContext(ctxA);
+    ark::es2panda::lsp::ClearSymbolReferenceIndex();
 }
 
 }  // namespace

@@ -135,7 +135,7 @@ ecSdkLet
     };
     expectOne("EcSdkClass", CompletionEntryKind::CLASS, "EcSdkClass");
     expectOne("EcSdkIface", CompletionEntryKind::INTERFACE, "EcSdkIface");
-    expectOne("EcSdkAlias", CompletionEntryKind::ALIAS_TYPE, "EcSdkAlias");
+    expectOne("EcSdkAlias", CompletionEntryKind::INTERFACE, "EcSdkAlias");
     expectOne("ecSdkFunc", CompletionEntryKind::FUNCTION, "ecSdkFunc()");
     expectOne("EC_SDK_CONST", CompletionEntryKind::CONSTANT, "EC_SDK_CONST");
     expectOne("ecSdkLet", CompletionEntryKind::VARIABLE, "ecSdkLet");
@@ -598,7 +598,7 @@ RcKindCls
     };
     expectOne("RcKindCls", CompletionEntryKind::CLASS, "RcKindCls");
     expectOne("RcKindIface", CompletionEntryKind::INTERFACE, "RcKindIface");
-    expectOne("RcKindAlias", CompletionEntryKind::ALIAS_TYPE, "RcKindAlias");
+    expectOne("RcKindAlias", CompletionEntryKind::INTERFACE, "RcKindAlias");
     // CURRENT BEHAVIOR: function/const/let exports are lowered away at CHECKED and
     // therefore produce no collected entries (see test comment above).
     EXPECT_TRUE(ark::es2panda::lsp::GetExternalApiCollectInfos("rcKindFn").empty());
@@ -648,7 +648,7 @@ RcSpecLocalCls
     };
     expectOne("RcSpecLocalCls", CompletionEntryKind::CLASS, "RcSpecLocalCls");
     expectOne("RcSpecLocalIface", CompletionEntryKind::INTERFACE, "RcSpecLocalIface");
-    expectOne("RcSpecLocalAlias", CompletionEntryKind::ALIAS_TYPE, "RcSpecLocalAlias");
+    expectOne("RcSpecLocalAlias", CompletionEntryKind::INTERFACE, "RcSpecLocalAlias");
     // CURRENT BEHAVIOR: function/const/let specifier re-exports produce no collected
     // entries at CHECKED either - their declarations are rewritten by lowering before
     // the specifier resolution runs.

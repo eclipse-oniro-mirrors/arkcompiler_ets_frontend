@@ -160,7 +160,8 @@ static bool AddCollectApiEntryByDecl(const std::string &name, const std::string 
         AddCollectApiEntry(name, path, CompletionEntryKind::ANNOTATION, "", isDefault);
         return true;
     } else if (decl->IsTSTypeAliasDeclaration()) {
-        AddCollectApiEntry(name, path, CompletionEntryKind::ALIAS_TYPE, "", isDefault);
+        // Map type alias to INTERFACE (8) to comply with LSP 3.17 CompletionItemKind spec.
+        AddCollectApiEntry(name, path, CompletionEntryKind::INTERFACE, "", isDefault);
         return true;
     } else if (decl->IsTSInterfaceDeclaration()) {
         AddCollectApiEntry(name, path, CompletionEntryKind::INTERFACE, "", isDefault);
@@ -332,7 +333,8 @@ static bool TryCollectTypeAliasExport(const ir::AstNode *node, const std::string
 
     auto *id = node->AsTSTypeAliasDeclaration()->Id();
     if (id != nullptr) {
-        AddCollectApiEntry(std::string(id->Name()), path, CompletionEntryKind::ALIAS_TYPE, "", isDefault);
+        // Map type alias to INTERFACE (8) to comply with LSP 3.17 CompletionItemKind spec.
+        AddCollectApiEntry(std::string(id->Name()), path, CompletionEntryKind::INTERFACE, "", isDefault);
     }
     return true;
 }
@@ -799,7 +801,10 @@ static CompletionEntryKind GetExportDeclarationCompletionKind(const ir::AstNode 
         return CompletionEntryKind::INTERFACE;
     }
     if (node->IsTSTypeAliasDeclaration()) {
-        return CompletionEntryKind::ALIAS_TYPE;
+        // LSP 3.17 defines CompletionItemKind from 1 to 25 without a dedicated ALIAS_TYPE kind.
+        // Type aliases are mapped to INTERFACE (8) following standard TypeScript/LSP conventions
+        // to represent type definitions and ensure IDE client compatibility.
+        return CompletionEntryKind::INTERFACE;
     }
     if (node->IsTSEnumDeclaration()) {
         return CompletionEntryKind::ENUM;
@@ -2871,7 +2876,8 @@ static CompletionEntryKind InferCompletionKindFromDeclType(ir::AstNodeType declT
         case ir::AstNodeType::TS_ENUM_DECLARATION:
             return CompletionEntryKind::ENUM;
         case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
-            return CompletionEntryKind::ALIAS_TYPE;
+            // Map type alias to INTERFACE (8) to comply with LSP 3.17 CompletionItemKind spec.
+            return CompletionEntryKind::INTERFACE;
         case ir::AstNodeType::TS_MODULE_DECLARATION:
             return CompletionEntryKind::MODULE;
         case ir::AstNodeType::VARIABLE_DECLARATION:
@@ -2891,7 +2897,7 @@ static std::vector<CompletionEntry> GetSymbolIndexedApiCompletions(const std::st
     // only the first definition per (name, module specifier) pair is kept.
     std::unordered_set<std::string> seenModuleSpecifiers;
     const ArkTsConfigLookupCache lookupCache(arkTsConfig);
-    auto defs = FindExportSymbolDefinitionsByPrefix(prefix, fileName);
+    auto defs = FindCompletionExportSymbolsByPrefix(prefix, fileName);
     for (const auto &def : defs) {
         auto modulePath = lookupCache.ComputeRelativeImportPath(fileName, def.fileName);
         if (modulePath.empty()) {

@@ -54,18 +54,20 @@ struct SymbolOccurrence {
     SymbolId symbolId = 0;
 };
 
-struct FileIndexData {
-    std::string source;
-    std::vector<SymbolOccurrence> symbolOccurrences;
-    std::vector<std::pair<SymbolId, ReferenceInfo>> references;
-};
-
 struct ExportSymbolInfo {
     uint8_t flags = EXPORT_NONE;
     std::string symbolName;
     std::string fileName;
     ir::AstNodeType declType = static_cast<ir::AstNodeType>(0);
     std::string returnType;
+    std::string sourceFile;
+};
+
+struct FileIndexData {
+    std::string source;
+    std::vector<SymbolOccurrence> symbolOccurrences;
+    std::vector<std::pair<SymbolId, ReferenceInfo>> references;
+    std::vector<ExportSymbolInfo> completionExportSymbols;
 };
 
 std::unordered_map<std::string, FileIndexData> g_fileIndices {};
@@ -97,6 +99,25 @@ bool ShouldCollectExportInfo(const std::string &fileName)
     return NormalizePathForExportFilter(fileName).find(OH_SDK_ETS_DIR) == std::string::npos;
 }
 
+ir::AstNodeType ResolveClassLikeDeclType(const ir::AstNode *node)
+{
+    const ir::ClassDefinition *def = nullptr;
+    if (node->IsClassDeclaration()) {
+        def = node->AsClassDeclaration()->Definition();
+    } else if (node->IsClassDefinition()) {
+        def = node->AsClassDefinition();
+    }
+    if (def != nullptr) {
+        if (def->IsNamespaceTransformed()) {
+            return ir::AstNodeType::TS_MODULE_DECLARATION;
+        }
+        if (def->IsEnumTransformed()) {
+            return ir::AstNodeType::TS_ENUM_DECLARATION;
+        }
+    }
+    return ir::AstNodeType::CLASS_DECLARATION;
+}
+
 ir::AstNodeType GetDeclTypeForCompletion(const ir::AstNode *owner)
 {
     if (owner == nullptr) {
@@ -105,17 +126,15 @@ ir::AstNodeType GetDeclTypeForCompletion(const ir::AstNode *owner)
 
     const ir::AstNode *node = owner;
     while (node != nullptr) {
+        if (node->IsScriptFunction() || node->IsMethodDefinition()) {
+            return ir::AstNodeType::FUNCTION_DECLARATION;
+        }
+        if (node->IsClassDeclaration() || node->IsClassDefinition()) {
+            return ResolveClassLikeDeclType(node);
+        }
         auto type = node->Type();
         switch (type) {
-            case ir::AstNodeType::SCRIPT_FUNCTION:
-            case ir::AstNodeType::METHOD_DEFINITION:
-                return ir::AstNodeType::FUNCTION_DECLARATION;
-            default:
-                break;
-        }
-        switch (type) {
             case ir::AstNodeType::FUNCTION_DECLARATION:
-            case ir::AstNodeType::CLASS_DECLARATION:
             case ir::AstNodeType::TS_INTERFACE_DECLARATION:
             case ir::AstNodeType::TS_ENUM_DECLARATION:
             case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
@@ -557,6 +576,15 @@ bool IsDefinitionNode(const ir::AstNode *node, const ir::AstNode *owner)
 
 void RemoveFileContributions(const std::string &fileName)
 {
+    for (auto &[_, fileData] : g_fileIndices) {
+        fileData.completionExportSymbols.erase(
+            std::remove_if(fileData.completionExportSymbols.begin(), fileData.completionExportSymbols.end(),
+                           [&fileName](const ExportSymbolInfo &info) {
+                               return !info.sourceFile.empty() && info.sourceFile == fileName;
+                           }),
+            fileData.completionExportSymbols.end());
+    }
+
     auto it = g_fileIndices.find(fileName);
     if (it == g_fileIndices.end()) {
         return;
@@ -874,6 +902,7 @@ void AddDefinitionAndExportInfo(SymbolId symbolId, const ReferenceInfo &ref, con
     exportInfo.fileName = ref.fileName;
     exportInfo.declType = ResolveDeclTypeForCompletion(identifier, owner);
     exportInfo.returnType = BuildDisplayNameForExport(exportInfo.declType, owner);
+    exportInfo.sourceFile = ref.fileName;
 }
 
 void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *targetNode,
@@ -905,6 +934,47 @@ void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *tar
     const bool ownerIsImportAlias = owner->IsIdentifier() && IsImportOwnerIdentifier(owner->AsIdentifier());
     if (IsDefinitionNode(targetNode, owner) && !ownerIsImportAlias) {
         AddDefinitionAndExportInfo(symbolId, ref, identifier, owner);
+    }
+}
+
+void CollectCompletionExportSymbols(const public_lib::Context *ctx, parser::Program *program, FileIndexData &fileIndex)
+{
+    if (ctx == nullptr || program == nullptr || ctx->GetChecker() == nullptr) {
+        return;
+    }
+    const std::string fileName = std::string(program->SourceFilePath());
+    if (fileName.empty() || !ShouldCollectExportInfo(fileName)) {
+        return;
+    }
+
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *resolver = checker == nullptr ? nullptr : checker->GetNavigationExportClosureResolver();
+    if (resolver == nullptr) {
+        return;
+    }
+
+    for (const auto &exportEntry : resolver->GetVisibleNamespaceExports(resolver->GetSurface(program))) {
+        const ir::AstNode *node = nullptr;
+        const ir::Identifier *identifier = nullptr;
+        if (exportEntry.entry.variable != nullptr && exportEntry.entry.variable->Declaration() != nullptr) {
+            node = exportEntry.entry.variable->Declaration()->Node();
+            if (node != nullptr && node->IsIdentifier()) {
+                identifier = node->AsIdentifier();
+            }
+        }
+
+        auto declType = exportEntry.entry.surface.program == nullptr ? ResolveDeclTypeForCompletion(identifier, node)
+                                                                     : ir::AstNodeType::TS_MODULE_DECLARATION;
+        std::string sourceFile = fileName;
+        if (exportEntry.entry.originProgram != nullptr && !exportEntry.entry.originProgram->SourceFilePath().Empty()) {
+            sourceFile = std::string(exportEntry.entry.originProgram->SourceFilePath());
+        } else if (exportEntry.entry.surface.program != nullptr &&
+                   !exportEntry.entry.surface.program->SourceFilePath().Empty()) {
+            sourceFile = std::string(exportEntry.entry.surface.program->SourceFilePath());
+        }
+        fileIndex.completionExportSymbols.push_back(
+            ExportSymbolInfo {static_cast<uint8_t>(EXPORT_NAMED), exportEntry.exportedName, fileName, declType,
+                              BuildDisplayNameForExport(declType, node), std::move(sourceFile)});
     }
 }
 
@@ -1196,6 +1266,8 @@ bool BuildSymbolReferenceIndexForProgram(const public_lib::Context *ctx, parser:
         ProcessNodeForSymbolIndex(ctx, node, handledReExportIdentifiers, localDedup, fileIndex);
     });
 
+    CollectCompletionExportSymbols(ctx, program, fileIndex);
+
     std::sort(fileIndex.symbolOccurrences.begin(), fileIndex.symbolOccurrences.end(),
               // CC-OFFNXT(G.FMT.06-CPP) project code style
               [](const SymbolOccurrence &lhs, const SymbolOccurrence &rhs) {
@@ -1265,8 +1337,8 @@ bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context)
     // (e.g. the module-root mapping of a hybrid dependency catching a file whose declaration
     // key is missing) and has been parsed with static semantics. Its symbols are provided by
     // the indexed declaration programs, so the statically parsed copy is skipped. The main
-    // program keeps its index: the queried file is always indexed as compiled, also when a
-    // dynamic source is opened directly for editing.
+    // program keeps its index so the queried file is still indexed as compiled, including
+    // when a dynamic source is opened directly for editing.
     const auto *arkTsConfig = GetArkTsConfigOrNull(ctx);
     auto buildExternalIfNeeded = [&buildIfNeeded, arkTsConfig](parser::Program *program) {
         if (arkTsConfig != nullptr && program != nullptr &&
@@ -1277,20 +1349,19 @@ bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context)
         buildIfNeeded(program);
     };
 
-    buildIfNeeded(ctx->parserProgram);
-
     auto *externalSources = ctx->parserProgram->GetExternalPrograms();
-    if (externalSources == nullptr) {
-        return buildSuccess;
+    if (externalSources != nullptr) {
+        for (const auto &[_, program] : externalSources->Direct()) {
+            buildExternalIfNeeded(program);
+        }
+
+        // Traverse transitive externals across all module kinds:
+        // MODULE, SOURCE_DECL, PACKAGE, ETSCACHE_DECL.
+        externalSources->template Visit<false>(
+            [&buildExternalIfNeeded](auto *program) { buildExternalIfNeeded(program); });
     }
 
-    for (const auto &[_, program] : externalSources->Direct()) {
-        buildExternalIfNeeded(program);
-    }
-
-    // Traverse transitive externals across all module kinds:
-    // MODULE, SOURCE_DECL, PACKAGE, ETSCACHE_DECL.
-    externalSources->template Visit<false>([&buildExternalIfNeeded](auto *program) { buildExternalIfNeeded(program); });
+    buildIfNeeded(ctx->parserProgram);
     return buildSuccess;
 }
 
@@ -1805,6 +1876,46 @@ std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std
         results.push_back(
             SymbolDefSearchResult {defRef.fileName, symbolName, isDefault, info.declType, info.returnType});
     }
+    return results;
+}
+
+std::vector<SymbolDefSearchResult> FindCompletionExportSymbolsByPrefix(const std::string &prefix,
+                                                                       const std::string &excludeFile)
+{
+    auto results = FindExportSymbolDefinitionsByPrefix(prefix, excludeFile);
+    std::unordered_set<std::string> seen;
+    for (const auto &result : results) {
+        seen.insert(result.fileName + ":" + result.symbolName);
+    }
+
+    auto lowerPrefix = prefix;
+    std::transform(lowerPrefix.begin(), lowerPrefix.end(), lowerPrefix.begin(),
+                   [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+    for (const auto &[fileName, fileData] : g_fileIndices) {
+        if (fileName == excludeFile) {
+            continue;
+        }
+        for (const auto &info : fileData.completionExportSymbols) {
+            auto lowerName = info.symbolName;
+            std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(),
+                           [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+            if (!lowerPrefix.empty() && lowerName.find(lowerPrefix) == std::string::npos) {
+                continue;
+            }
+            if (!info.sourceFile.empty() && info.sourceFile != info.fileName &&
+                g_fileIndices.find(info.sourceFile) == g_fileIndices.end()) {
+                continue;
+            }
+            if (!seen.insert(info.fileName + ":" + info.symbolName).second) {
+                continue;
+            }
+            results.push_back(
+                SymbolDefSearchResult {info.fileName, info.symbolName, false, info.declType, info.returnType});
+        }
+    }
+    std::sort(results.begin(), results.end(), [](const auto &lhs, const auto &rhs) {
+        return std::tie(lhs.symbolName, lhs.fileName) < std::tie(rhs.symbolName, rhs.fileName);
+    });
     return results;
 }
 

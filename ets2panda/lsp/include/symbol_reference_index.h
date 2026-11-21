@@ -61,6 +61,8 @@ std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std
 bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &symbolName, const ArkTsConfig *config);
 bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &symbolName,
                                    const ArkTsConfigLookupCache &lookupCache);
+std::vector<SymbolDefSearchResult> FindCompletionExportSymbolsByPrefix(const std::string &prefix,
+                                                                       const std::string &excludeFile);
 
 }  // namespace ark::es2panda::lsp
 
