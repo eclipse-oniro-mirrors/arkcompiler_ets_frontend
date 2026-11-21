@@ -572,7 +572,7 @@ void FunctionEmitter::GenScopeVariableInfo(const binder::Scope *scope)
                 }
 
                 auto &variableDebug = func_->local_variable_debug.emplace_back();
-                variableDebug.name = name.Mutf8();
+                variableDebug.SetName(name.Mutf8());
                 // Register spill causes an offset being applied to all registers in all instructions (refer to
                 // RegAllocator::AdjustInsRegWhenHasSpill for more details). Therefore, we also add this offset
                 // to the variable-to-register mapping before dumping it to the debug information of the abc file

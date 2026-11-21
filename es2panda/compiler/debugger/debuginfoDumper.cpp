@@ -131,7 +131,7 @@ void DebugInfoDumper::WritePosInfo(const pandasm::debuginfo::Ins &posInfo)
 void DebugInfoDumper::WriteVariableInfo(const pandasm::debuginfo::LocalVariable &localVariableDebug)
 {
     ss_ << "{";
-    WriteProperty("name", localVariableDebug.name);
+    WriteProperty("name", localVariableDebug.Name());
     WriteProperty("signature", "any");
     WriteProperty("signatureType", "any");
     WriteProperty("reg", localVariableDebug.reg);

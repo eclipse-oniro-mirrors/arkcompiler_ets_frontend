@@ -28,6 +28,7 @@
 #include <ir/irnode.h>
 #include <gen/formats.h>
 #include <assembly-ins.h>
+#include <ins_create_api.h>
 
 namespace panda::es2panda::compiler {
 
@@ -249,7 +250,7 @@ public:
 %     pa_ins_args_list.push("#{name}_")
 %   end
 % end
-        return new pandasm::<%= class_name %>(<%= pa_ins_args_list.join(", ") %>);
+        return pandasm::Create_<%= node_kind %>(<%= pa_ins_args_list.join(", ") %>);
     }
 
     ICSlot SetIcSlot(IcSizeType slot) override

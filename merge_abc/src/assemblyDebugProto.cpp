@@ -31,7 +31,7 @@ void DebuginfoIns::Deserialize(const protoPanda::DebuginfoIns &protoDebug, panda
 void LocalVariable::Serialize(const panda::pandasm::debuginfo::LocalVariable &debug,
                               protoPanda::LocalVariable &protoDebug)
 {
-    protoDebug.set_name(debug.name);
+    protoDebug.set_name(debug.Name());
     protoDebug.set_reg(debug.reg);
     protoDebug.set_start(debug.start);
     protoDebug.set_length(debug.length);
@@ -40,7 +40,7 @@ void LocalVariable::Serialize(const panda::pandasm::debuginfo::LocalVariable &de
 void LocalVariable::Deserialize(const protoPanda::LocalVariable &protoDebug,
                                 panda::pandasm::debuginfo::LocalVariable &debug)
 {
-    debug.name = protoDebug.name();
+    debug.SetName(protoDebug.name());
     debug.reg = protoDebug.reg();
     debug.start = protoDebug.start();
     debug.length = protoDebug.length();
