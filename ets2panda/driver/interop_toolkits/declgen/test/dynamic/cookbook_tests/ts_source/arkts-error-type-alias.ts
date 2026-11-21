@@ -28,3 +28,4 @@ export class APIError4 extends APIError {
 }
 export class APIError5 implements APIError5 { }
 export class APIError6 extends APIError1 implements APIError6 { }
+export interface APIError7 extends Error { }

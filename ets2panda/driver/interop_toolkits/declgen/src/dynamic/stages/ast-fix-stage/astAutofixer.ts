@@ -453,15 +453,16 @@ export class Autofixer extends VisitorTraverser<undefined, undefined> {
     }
 
     const statements = node.statements.map((stmt) => {
-      if (ts.isInterfaceDeclaration(stmt) && stmt.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)) {
+      if (ts.isInterfaceDeclaration(stmt)) {
+        const modifiers = stmt.modifiers ?? [];
         // If 'declare' already exists, do not add it again
-        if (stmt.modifiers.some((m) => m.kind === ts.SyntaxKind.DeclareKeyword)) {
+        if (modifiers.some((m) => m.kind === ts.SyntaxKind.DeclareKeyword)) {
           return stmt;
         }
 
         // Transform interface nodes by adding the declare keyword
         const newModifiers = [
-          ...stmt.modifiers.filter((m) => ts.isModifier(m)),
+          ...modifiers.filter((m) => ts.isModifier(m)),
           this.context.factory.createModifier(ts.SyntaxKind.DeclareKeyword),
         ] as ts.Modifier[];
 

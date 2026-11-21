@@ -37,7 +37,7 @@ export declare function restFunc(...args: number[]): string | number;
 export declare function singleFunc(a: string): void;
 // ==================== Assembly Type Function Cases ====================
 // Case 10: Type alias param merge — assembly types match → merge
-type FnAlias = string;
+export type FnAlias = string;
 export declare function aliasFunc(a: string | FnAlias): string | number;
 // Case 11: Literal type param → primitive assembly type → merge
 export declare function literalFunc(a: "hello" | string): string | number;
@@ -60,7 +60,7 @@ export declare function retDedupFunc(a: string): string;
 // Case 20: Return type — generic T + any → T | any
 export declare function retGenAnyFunc<T>(a: string): T | Any;
 // Case 21: Namespace function with type alias merge
-type NsAlias = number;
+export type NsAlias = number;
 export declare namespace MyNS2 {
     export function nsAliasFunc(a: number | NsAlias): string | number;
 }

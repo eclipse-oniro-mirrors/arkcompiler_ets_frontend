@@ -19,6 +19,7 @@ export type APIError2 = Error;
 export type APIError3 = Error;
 export type APIError4 = Error;
 export type APIError6 = Error;
+export type APIError7 = Error;
 export declare class APIError5 implements APIError5 {
 }
 

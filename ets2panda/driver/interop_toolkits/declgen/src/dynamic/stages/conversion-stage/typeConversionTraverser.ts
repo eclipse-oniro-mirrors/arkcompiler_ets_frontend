@@ -96,6 +96,7 @@ export class TypeConversionTraverser extends VisitorTraverser<PrevState, LocalSt
           this[FaultID.NoReservedKeywordAsIdentifier].bind(this),
           this[FaultID.NoETSKeyword].bind(this),
           this[FaultID.NoOptionalMemberMethod].bind(this),
+          this[FaultID.ErrorTypeAlias].bind(this),
           this[FaultID.NoInvalidSDKHeritage].bind(this),
         ],
       ],
@@ -112,6 +113,7 @@ export class TypeConversionTraverser extends VisitorTraverser<PrevState, LocalSt
           this[FaultID.DuplicatedDeclaration].bind(this),
           this[FaultID.DuplicatedEnum].bind(this),
           this[FaultID.NoDefaultAccess].bind(this),
+          this[FaultID.TransitiveExport].bind(this)
         ],
       ],
       [
@@ -259,7 +261,7 @@ export class TypeConversionTraverser extends VisitorTraverser<PrevState, LocalSt
    * Rule: `arkts-convert-error-type-alias-to-error`
    */
   private [FaultID.ErrorTypeAlias](node: ts.Node): ts.VisitResult<ts.Node> {
-    if (!ts.isClassDeclaration(node) || !node.name) {
+    if ((!ts.isClassDeclaration(node) && !ts.isInterfaceDeclaration(node)) || !node.name) {
       return node;
     }
 
@@ -1242,6 +1244,34 @@ export class TypeConversionTraverser extends VisitorTraverser<PrevState, LocalSt
       return insertPendingDefaultImports(node, this.state.localState, this.context);
     }
     return node;
+  }
+
+  /**
+   * Rule: `arkts-export-referenced-local-types`
+   *
+   * If an exported declaration references a non-exported local type
+   * (class, interface, type alias, enum), that type must also be exported
+   * so the declaration file is self-contained.
+   */
+  private [FaultID.TransitiveExport](node: ts.Node): ts.VisitResult<ts.Node> {
+    if (!ts.isSourceFile(node) || !hasAnyExport(node)) {
+      return node;
+    }
+
+    const specifierExported = collectSpecifierExportedNames(node);
+
+    const statements = node.statements.map((stmt) => {
+      if (
+        isExportableTypeDeclaration(stmt) &&
+        !hasExportModifier(stmt) &&
+        !specifierExported.has(stmt.name?.text ?? '')
+      ) {
+        return addExportModifier(stmt, this.context);
+      }
+      return stmt;
+    });
+
+    return this.context.factory.updateSourceFile(node, statements);
   }
 }
 
@@ -2299,7 +2329,10 @@ function isHeterogeneousEnum(node: ts.EnumDeclaration): boolean {
   return false;
 }
 
-function isInheritingFromError(decl: ts.ClassDeclaration, typeChecker: ts.TypeChecker): boolean {
+function isInheritingFromError(
+  decl: ts.ClassDeclaration | ts.InterfaceDeclaration,
+  typeChecker: ts.TypeChecker
+): boolean {
   const visited = new Set<ts.Symbol>();
   const type = typeChecker.getTypeAtLocation(decl);
   return hasErrorInBaseTypes(type, typeChecker, visited) || implementsError(decl, typeChecker, visited);
@@ -2325,7 +2358,10 @@ function hasErrorInBaseTypes(type: ts.Type, typeChecker: ts.TypeChecker, visited
   }
 
   for (const decl of symbol.getDeclarations() ?? []) {
-    if (ts.isClassDeclaration(decl) && implementsError(decl, typeChecker, visited)) {
+    if (
+      (ts.isClassDeclaration(decl) || ts.isInterfaceDeclaration(decl)) &&
+      implementsError(decl, typeChecker, visited)
+    ) {
       return true;
     }
   }
@@ -2333,7 +2369,11 @@ function hasErrorInBaseTypes(type: ts.Type, typeChecker: ts.TypeChecker, visited
   return false;
 }
 
-function implementsError(decl: ts.ClassDeclaration, typeChecker: ts.TypeChecker, visited: Set<ts.Symbol>): boolean {
+function implementsError(
+  decl: ts.ClassDeclaration | ts.InterfaceDeclaration,
+  typeChecker: ts.TypeChecker,
+  visited: Set<ts.Symbol>
+): boolean {
   if (!decl.heritageClauses) {
     return false;
   }
@@ -2403,4 +2443,111 @@ function isHeritageTypeFromInvalidSDK(
   }
   const resolved = symbol.flags & ts.SymbolFlags.Alias ? typeChecker.getAliasedSymbol(symbol) : symbol;
   return isSymbolFromInvalidSDK(resolved, currentFile);
+}
+
+// ---------------------------------------------------------------------------
+// Transitive export helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Top-level declarations that carry a type and therefore should be exported to
+ * keep a `.d.ets` self-contained: class, interface, type alias, enum.
+ */
+type ExportableTypeDeclaration =
+  | ts.ClassDeclaration
+  | ts.InterfaceDeclaration
+  | ts.TypeAliasDeclaration
+  | ts.EnumDeclaration;
+
+function isExportableTypeDeclaration(stmt: ts.Statement): stmt is ExportableTypeDeclaration {
+  return (
+    ts.isClassDeclaration(stmt) ||
+    ts.isInterfaceDeclaration(stmt) ||
+    ts.isTypeAliasDeclaration(stmt) ||
+    ts.isEnumDeclaration(stmt)
+  );
+}
+
+function hasExportModifier(stmt: ts.Statement): boolean {
+  return ts.canHaveModifiers(stmt) && (ts.getModifiers(stmt) ?? []).some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
+}
+
+/**
+ * Whether the source file has any exported entry (an `export` modifier on a declaration,
+ *  or an `export { }` / `export default` statement).Modules with no exports are left 
+ * untouched: tsc keeps every declaration there, so exporting all non-exported types would
+ *  wrongly expose internals.
+*/
+function hasAnyExport(sourceFile: ts.SourceFile): boolean {
+  return sourceFile.statements.some(
+    (stmt) => hasExportModifier(stmt) || ts.isExportDeclaration(stmt) || ts.isExportAssignment(stmt)
+  );
+}
+
+/**
+ * Local names exported without an `export` modifier on the declaration itself,
+ * i.e. via `export { Name }` / `export { local as exported }` specifiers or via
+ * `export default <id>` / `export = <id>` assignments. Such declarations are
+ * already public through that statement, so the transitive-export rule must
+ * not also add an `export` modifier to the declaration itself (that would
+ * double-export).
+ */
+function collectSpecifierExportedNames(sourceFile: ts.SourceFile): Set<string> {
+  const names = new Set<string>();
+  for (const stmt of sourceFile.statements) {
+    if (ts.isExportDeclaration(stmt) && stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
+      for (const spec of stmt.exportClause.elements) {
+        names.add(spec.propertyName?.text ?? spec.name.text);
+      }
+    } else if (ts.isExportAssignment(stmt) && ts.isIdentifier(stmt.expression)) {
+      names.add(stmt.expression.text);
+    }
+  }
+  return names;
+}
+
+/**
+ * Prepend `export` to a statement's modifiers.
+ */
+function addExportModifier(stmt: ts.Statement, context: ts.TransformationContext): ts.Statement {
+  const exportToken = context.factory.createToken(ts.SyntaxKind.ExportKeyword);
+
+  if (ts.isClassDeclaration(stmt)) {
+    return context.factory.updateClassDeclaration(
+      stmt,
+      [exportToken, ...(stmt.modifiers ?? [])],
+      stmt.name,
+      stmt.typeParameters,
+      stmt.heritageClauses,
+      stmt.members
+    );
+  }
+  if (ts.isInterfaceDeclaration(stmt)) {
+    return context.factory.updateInterfaceDeclaration(
+      stmt,
+      [exportToken, ...(stmt.modifiers ?? [])],
+      stmt.name,
+      stmt.typeParameters,
+      stmt.heritageClauses,
+      stmt.members
+    );
+  }
+  if (ts.isTypeAliasDeclaration(stmt)) {
+    return context.factory.updateTypeAliasDeclaration(
+      stmt,
+      [exportToken, ...(stmt.modifiers ?? [])],
+      stmt.name,
+      stmt.typeParameters,
+      stmt.type
+    );
+  }
+  if (ts.isEnumDeclaration(stmt)) {
+    return context.factory.updateEnumDeclaration(
+      stmt,
+      [exportToken, ...(stmt.modifiers ?? [])],
+      stmt.name,
+      stmt.members
+    );
+  }
+  return stmt;
 }
