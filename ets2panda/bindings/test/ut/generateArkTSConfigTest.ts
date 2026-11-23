@@ -170,6 +170,366 @@ describe('generateArkTsConfigs dynamic dependency alias test', () => {
     }
   });
 
+  test('dynamic module decl file is picked up from the interop context build output', () => {
+    const emptyDeclgenOutDir = createTempDir();
+    const buildDeclDir = path.join(
+      mockProject,
+      'dynlib',
+      'build',
+      'default',
+      'intermediates',
+      'interop_context',
+      'default'
+    );
+    try {
+      writeBuildDeclFileInfo(buildDeclDir, path.join(emptyDeclgenOutDir, 'decls'));
+      const config = generateStaticAppConfig(emptyDeclgenOutDir, cacheDir);
+      const dependencies = config.compilerOptions.dependencies;
+
+      expect(Object.keys(dependencies)).toContain('dynlib/index');
+      expect(Object.keys(dependencies)).toContain('dynlib/Utils');
+      expect(Object.keys(dependencies)).toContain('dynlib');
+      expect(dependencies['dynlib']).toStrictEqual(dependencies['dynlib/index']);
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(emptyDeclgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  test('stale decl manifest is repaired from the freshly generated declarations', () => {
+    const declgenOutDir = createTempDir();
+    const declsDir = path.join(declgenOutDir, 'decls');
+    const buildDeclDir = path.join(mockProject, 'dynlib', 'build', 'default', 'intermediates', 'declgen', 'default');
+    const repairedPath = path.join(declgenOutDir, 'dynlib', 'declgen', 'dynamic', 'decl-fileInfo.json');
+    try {
+      // The declgen task has generated a new declaration the interop-context task has not
+      // recorded yet: the manifest on disk covers only the previous generation.
+      writeBuildDeclFileInfo(buildDeclDir, declsDir);
+      fs.writeFileSync(path.join(declsDir, 'New.d.ets'), 'declare class DNew { static val: number; }\n');
+
+      const config = generateStaticAppConfig(declgenOutDir, cacheDir);
+      const dependencies = config.compilerOptions.dependencies;
+
+      // The repaired manifest keeps the previous entries and adds the unrecorded one.
+      expect(Object.keys(dependencies)).toContain('dynlib/index');
+      expect(Object.keys(dependencies)).toContain('dynlib/Utils');
+      expect(Object.keys(dependencies)).toContain('dynlib/New');
+      // Known keys keep the manifest metadata, the unrecorded one gets the derived mapping.
+      expect(dependencies['dynlib/Utils'].sourceFilePath).toBe(path.join(mockProject, 'dynlib', 'Utils.ets'));
+      expect(dependencies['dynlib/New'].sourceFilePath).toBe(path.join(mockProject, 'dynlib', 'New.ets'));
+      expect(dependencies['dynlib/New'].path).toBe(path.join(declsDir, 'New.d.ets'));
+      // The repaired copy lands in the LSP declgen cache, marked as non-authoritative.
+      const repaired = JSON.parse(fs.readFileSync(repairedPath, 'utf-8'));
+      expect(repaired.generatedBy).toBe('lsp-repair');
+      expect(Object.keys(repaired.files)).toContain('New');
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  // A manifest whose entries all sit in one leaf directory of a mirrored (nested) layout
+  // must not lock the scan root to that leaf: a sibling directory a fresh declgen run
+  // writes stays outside it, the stale check would pass and the new symbol would never be
+  // registered during the manifest lag window. The layout root (the 'decls' directory
+  // next to the manifest) spans the whole output tree instead.
+  test('sibling declaration outside the entries directory is registered', () => {
+    const declgenOutDir = createTempDir();
+    const buildDeclDir = path.join(mockProject, 'dynlib', 'build', 'default', 'intermediates', 'declgen', 'default');
+    const declsDir = path.join(buildDeclDir, 'decls');
+    try {
+      const aDecl = path.join(declsDir, 'src', 'main', 'ets', 'foo', 'A.d.ets');
+      fs.mkdirSync(path.dirname(aDecl), { recursive: true });
+      fs.writeFileSync(aDecl, 'declare class A {}\n');
+      const aSource = path.join(mockProject, 'dynlib', 'src', 'main', 'ets', 'foo', 'A.ets');
+      fs.writeFileSync(
+        path.join(buildDeclDir, 'decl-fileInfo.json'),
+        JSON.stringify(
+          {
+            packageName: 'dynlib',
+            files: { 'src/main/ets/foo/A': { declPath: aDecl, filePath: aSource, ohmUrl: '' } }
+          },
+          null,
+          2
+        )
+      );
+      // The declgen task has generated a declaration of another subtree; the
+      // interop-context task has not recorded it yet (the window the repair covers).
+      const bDecl = path.join(declsDir, 'src', 'main', 'ets', 'bar', 'B.d.ets');
+      fs.mkdirSync(path.dirname(bDecl), { recursive: true });
+      fs.writeFileSync(bDecl, 'declare class B {}\n');
+
+      const config = generateStaticAppConfig(declgenOutDir, cacheDir);
+      const dependencies = config.compilerOptions.dependencies;
+
+      // The stale manifest is detected and repaired: the sibling is registered under its
+      // full key, the recorded entry keeps key and metadata.
+      expect(Object.keys(dependencies)).toContain('dynlib/src/main/ets/bar/B');
+      expect(Object.keys(dependencies)).toContain('dynlib/src/main/ets/foo/A');
+      expect(dependencies['dynlib/src/main/ets/foo/A'].sourceFilePath).toBe(aSource);
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  // A repair must keep the key form and metadata of the entries the previous manifest
+  // recorded: the scan derives keys from the directory layout, and a flat layout derives
+  // bare names where the manifest recorded full project paths - the import keys the
+  // previous generation served ('dynlib/src/main/ets/Deep' and its 'src/main' stripped
+  // alias) would stop resolving after the repair.
+  test('repair keeps the recorded full-path keys and metadata', () => {
+    const declgenOutDir = createTempDir();
+    const buildDeclDir = path.join(mockProject, 'dynlib', 'build', 'default', 'intermediates', 'declgen', 'default');
+    const declsDir = path.join(declgenOutDir, 'decls');
+    try {
+      writeBuildDeclFileInfo(buildDeclDir, declsDir);
+      fs.writeFileSync(path.join(declsDir, 'New.d.ets'), 'declare class DNew { static val: number; }\n');
+
+      const config = generateStaticAppConfig(declgenOutDir, cacheDir);
+      const dependencies = config.compilerOptions.dependencies;
+
+      // The recorded keys survive the repair under both alias forms, with their metadata.
+      expect(Object.keys(dependencies)).toContain('dynlib/src/main/ets/Deep');
+      expect(Object.keys(dependencies)).toContain('dynlib/ets/Deep');
+      expect(dependencies['dynlib/src/main/ets/Deep'].sourceFilePath).toBe(
+        path.join(mockProject, 'dynlib', 'src', 'main', 'ets', 'Deep.ets')
+      );
+      // The freshly generated declaration is registered with the derived key.
+      expect(Object.keys(dependencies)).toContain('dynlib/New');
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  test('current decl manifest is used as is without a repaired copy', () => {
+    const declgenOutDir = createTempDir();
+    const declsDir = path.join(declgenOutDir, 'decls');
+    const buildDeclDir = path.join(mockProject, 'dynlib', 'build', 'default', 'intermediates', 'declgen', 'default');
+    const hvigorManifestPath = path.join(buildDeclDir, 'decl-fileInfo.json');
+    try {
+      writeBuildDeclFileInfo(buildDeclDir, declsDir);
+
+      const pathConfig: PathConfig = {
+        buildSdkPath: '',
+        projectPath: mockProject,
+        declgenOutDir,
+        cacheDir
+      };
+      const modules: ModuleDescriptor[] = [
+        { name: 'staticapp', moduleType: 'har', srcPath: path.join(mockProject, 'staticapp') },
+        { name: 'dynlib', moduleType: 'har', srcPath: path.join(mockProject, 'dynlib') }
+      ];
+      const buildConfigs = generateBuildConfigs(pathConfig, modules);
+      expect(buildConfigs['dynlib'].declFilesPath).toBe(hvigorManifestPath);
+      // No repaired copy is materialized while the authoritative manifest is current.
+      expect(fs.existsSync(path.join(declgenOutDir, 'dynlib', 'declgen', 'dynamic', 'decl-fileInfo.json'))).toBe(
+        false
+      );
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  test('missing decl manifest is synthesized from the probed declaration layout', () => {
+    const declgenOutDir = createTempDir();
+    const buildDeclDir = path.join(mockProject, 'dynlib', 'build', 'default', 'intermediates', 'declgen', 'default');
+    const repairedPath = path.join(declgenOutDir, 'dynlib', 'declgen', 'dynamic', 'decl-fileInfo.json');
+    try {
+      // First generation: the declgen task wrote the declarations, the interop-context task
+      // has never run, so no manifest exists anywhere yet.
+      const declsDir = path.join(buildDeclDir, 'decls');
+      fs.mkdirSync(declsDir, { recursive: true });
+      fs.writeFileSync(path.join(declsDir, 'index.d.ets'), 'declare function dMul(a: number, b: number): number;\n');
+      fs.writeFileSync(path.join(declsDir, 'Utils.d.ets'), 'declare class DUtil { static val: number; }\n');
+
+      const config = generateStaticAppConfig(declgenOutDir, cacheDir);
+      const dependencies = config.compilerOptions.dependencies;
+
+      expect(Object.keys(dependencies)).toContain('dynlib/index');
+      expect(Object.keys(dependencies)).toContain('dynlib/Utils');
+      expect(Object.keys(dependencies)).toContain('dynlib');
+      expect(dependencies['dynlib/Utils'].sourceFilePath).toBe(path.join(mockProject, 'dynlib', 'Utils.ets'));
+      expect(JSON.parse(fs.readFileSync(repairedPath, 'utf-8')).generatedBy).toBe('lsp-repair');
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  test('missing decl manifest is synthesized from the interop-declaration from-dynamic layout', () => {
+    const declgenOutDir = createTempDir();
+    const fromDynamicDir = path.join(mockProject, 'dynlib', 'interop-declaration', 'default', 'from-dynamic');
+    const repairedPath = path.join(declgenOutDir, 'dynlib', 'declgen', 'dynamic', 'decl-fileInfo.json');
+    try {
+      // First initialization: the interop-declaration task has generated the from-dynamic
+      // declarations next to the module sources (project-shared inputs, outside 'build/'),
+      // while the interop-context task has not materialized any manifest yet.
+      fs.mkdirSync(fromDynamicDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(fromDynamicDir, 'index.d.ets'),
+        'declare function dMul(a: number, b: number): number;\n'
+      );
+      fs.writeFileSync(path.join(fromDynamicDir, 'Utils.d.ets'), 'declare class DUtil { static val: number; }\n');
+
+      const config = generateStaticAppConfig(declgenOutDir, cacheDir);
+      const dependencies = config.compilerOptions.dependencies;
+
+      expect(Object.keys(dependencies)).toContain('dynlib/index');
+      expect(Object.keys(dependencies)).toContain('dynlib/Utils');
+      expect(dependencies['dynlib/Utils'].path).toBe(path.join(fromDynamicDir, 'Utils.d.ets'));
+      // The synthesized copy lands in the LSP declgen cache, marked as non-authoritative.
+      const repaired = JSON.parse(fs.readFileSync(repairedPath, 'utf-8'));
+      expect(repaired.generatedBy).toBe('lsp-repair');
+      expect(Object.keys(repaired.files)).toContain('index');
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'interop-declaration'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  test('stale interop-declaration manifest is repaired from the from-dynamic layout', () => {
+    const declgenOutDir = createTempDir();
+    const fromDynamicDir = path.join(mockProject, 'dynlib', 'interop-declaration', 'default', 'from-dynamic');
+    const buildDeclDir = path.join(
+      mockProject,
+      'dynlib',
+      'build',
+      'default',
+      'intermediates',
+      'interop_context',
+      'default'
+    );
+    const hvigorManifestPath = path.join(buildDeclDir, 'decl-fileInfo.json');
+    const repairedPath = path.join(declgenOutDir, 'dynlib', 'declgen', 'dynamic', 'decl-fileInfo.json');
+    try {
+      // The interop-context manifest landed an earlier generation: it records the
+      // from-dynamic declarations it knew, while the interop-declaration task has since
+      // generated one more. The repair must follow the manifest's own entries into the
+      // from-dynamic directory (the manifest-derived root), not only the probed layouts.
+      fs.mkdirSync(fromDynamicDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(fromDynamicDir, 'index.d.ets'),
+        'declare function dMul(a: number, b: number): number;\n'
+      );
+      const files: Record<string, DeclFileEntry> = {
+        index: {
+          declPath: path.join(fromDynamicDir, 'index.d.ets'),
+          filePath: path.join(mockProject, 'dynlib', 'index.ets'),
+          ohmUrl: '@normalized:N&undefined&mock&dynlib/index&1.0.0'
+        }
+      };
+      fs.mkdirSync(buildDeclDir, { recursive: true });
+      fs.writeFileSync(hvigorManifestPath, JSON.stringify({ packageName: 'dynlib', files }, null, 2));
+      fs.writeFileSync(path.join(fromDynamicDir, 'New.d.ets'), 'declare class DNew { static val: number; }\n');
+
+      const config = generateStaticAppConfig(declgenOutDir, cacheDir);
+      const dependencies = config.compilerOptions.dependencies;
+
+      // The kept entry serves its manifest metadata, the freshly generated one is derived.
+      expect(Object.keys(dependencies)).toContain('dynlib/index');
+      expect(Object.keys(dependencies)).toContain('dynlib/New');
+      expect(dependencies['dynlib/index'].sourceFilePath).toBe(path.join(mockProject, 'dynlib', 'index.ets'));
+      expect(dependencies['dynlib/New'].sourceFilePath).toBe(path.join(mockProject, 'dynlib', 'New.ets'));
+      expect(JSON.parse(fs.readFileSync(repairedPath, 'utf-8')).generatedBy).toBe('lsp-repair');
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(path.join(mockProject, 'dynlib', 'interop-declaration'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  test('authoritative manifest replaces the repaired copy once the interop context lands', () => {
+    const declgenOutDir = createTempDir();
+    const declsDir = path.join(declgenOutDir, 'decls');
+    const buildDeclDir = path.join(mockProject, 'dynlib', 'build', 'default', 'intermediates', 'declgen', 'default');
+    const hvigorManifestPath = path.join(buildDeclDir, 'decl-fileInfo.json');
+    const pathConfig: PathConfig = {
+      buildSdkPath: '',
+      projectPath: mockProject,
+      declgenOutDir,
+      cacheDir
+    };
+    const modules: ModuleDescriptor[] = [
+      { name: 'staticapp', moduleType: 'har', srcPath: path.join(mockProject, 'staticapp') },
+      { name: 'dynlib', moduleType: 'har', srcPath: path.join(mockProject, 'dynlib') }
+    ];
+    try {
+      // First round: the manifest lags behind the declarations, the repaired copy fills in.
+      writeBuildDeclFileInfo(buildDeclDir, declsDir);
+      fs.writeFileSync(path.join(declsDir, 'New.d.ets'), 'declare class DNew { static val: number; }\n');
+      expect(generateBuildConfigs(pathConfig, modules)['dynlib'].declFilesPath).toBe(
+        path.join(declgenOutDir, 'dynlib', 'declgen', 'dynamic', 'decl-fileInfo.json')
+      );
+
+      // Second round: the interop-context task has landed the authoritative manifest that
+      // covers the full declaration set - it wins over the repaired copy.
+      const files = resolveDeclPaths(buildDeclFiles(), declsDir);
+      files['New'] = {
+        declPath: path.join(declsDir, 'New.d.ets'),
+        filePath: path.join(mockProject, 'dynlib', 'New.ets'),
+        ohmUrl: '@normalized:N&undefined&mock&dynlib/New&1.0.0'
+      };
+      fs.writeFileSync(hvigorManifestPath, JSON.stringify({ packageName: 'dynlib', files }, null, 2));
+      expect(generateBuildConfigs(pathConfig, modules)['dynlib'].declFilesPath).toBe(hvigorManifestPath);
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
+  // Deleting the last declaration of a module leaves the interop-context manifest stale
+  // (it still records the deleted file) and the declaration output directory empty: the
+  // repair must publish an empty manifest for the located root instead of falling back to
+  // the stale manifest, otherwise the config keeps registering dependencies that point at
+  // nonexistent files.
+  test('deleting the last declaration repairs to an empty manifest', () => {
+    const declgenOutDir = createTempDir();
+    const buildDeclDir = path.join(
+      mockProject,
+      'dynlib',
+      'build',
+      'default',
+      'intermediates',
+      'interop_context',
+      'default'
+    );
+    const declsDir = path.join(buildDeclDir, 'decls');
+    const repairedPath = path.join(declgenOutDir, 'dynlib', 'declgen', 'dynamic', 'decl-fileInfo.json');
+    try {
+      // The manifest records the module's only declaration; the declaration file itself
+      // was deleted right after (the source is gone), so the located output directory
+      // exists but scans empty.
+      fs.mkdirSync(declsDir, { recursive: true });
+      const files: Record<string, DeclFileEntry> = {
+        Solo: {
+          declPath: path.join(declsDir, 'Solo.d.ets'),
+          filePath: path.join(mockProject, 'dynlib', 'Solo.ets'),
+          ohmUrl: ''
+        }
+      };
+      fs.writeFileSync(
+        path.join(buildDeclDir, 'decl-fileInfo.json'),
+        JSON.stringify({ packageName: 'dynlib', files }, null, 2)
+      );
+
+      const config = generateStaticAppConfig(declgenOutDir, cacheDir);
+      const dependencies = config.compilerOptions.dependencies;
+
+      // The stale manifest must not keep registering the deleted declaration.
+      expect(Object.keys(dependencies).filter((key) => key.startsWith('dynlib'))).toStrictEqual([]);
+      // The repair publishes an empty manifest for the located output root.
+      const repaired = JSON.parse(fs.readFileSync(repairedPath, 'utf-8'));
+      expect(repaired.generatedBy).toBe('lsp-repair');
+      expect(repaired.files).toStrictEqual({});
+    } finally {
+      fs.rmSync(path.join(mockProject, 'dynlib', 'build'), { recursive: true, force: true });
+      fs.rmSync(declgenOutDir, { recursive: true, force: true });
+    }
+  });
+
   test('dynamic module aliases fall back to file level when decl file is missing', () => {
     const emptyDeclgenOutDir = createTempDir();
     try {

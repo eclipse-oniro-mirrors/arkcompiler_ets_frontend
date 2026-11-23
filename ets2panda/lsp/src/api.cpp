@@ -54,6 +54,7 @@
 #include "compiler/lowering/util.h"
 #include "formatting/formatting.h"
 #include "lsp_utils.h"
+#include "parser/program/ImportCache.h"
 #include "symbol_reference_index.h"
 
 using ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl;
@@ -1432,6 +1433,33 @@ int DeleteDependantProgramsForFiles(es2panda_Context *context, const char *fileN
     return BatchDeleteProgramsForFiles(ctx, ctx->parser->GetImportPathManager()->CollectReverseDependencies(fileName));
 }
 
+// Refreshes an external (non active) program source - a dynamic interop declaration file - after
+// its content changed on disk or in the IDE. The declaration text lives in the static sources
+// import cache under the import keys that resolve to it (both the arktsconfig dependency keys,
+// e.g. 'dynlib/Utils', and the absolute declaration path for direct introductions), so a stale
+// entry would keep serving the old exports on every re-introduction. 'declPath' stays the real
+// source file path recorded in the cache entry: programs re-introduced from it keep the
+// declaration file as their AbsoluteName, which the symbol reference index keys on. The entry
+// is refreshed in place and the parsed program (if any) is dropped from the context together
+// with its import-graph edges, forcing the next consumer recompile to re-resolve the import
+// against the new content. A null context only skips the program drop: there is no parsed
+// program to remove, but the static content cache is still refreshed so a later first
+// introduction reads the new text instead of the stale one.
+int RefreshExternalProgram(es2panda_Context *context, const char *importKey, const char *declPath,
+                           const char *sourceText)
+{
+    if (importKey == nullptr || declPath == nullptr || sourceText == nullptr) {
+        return -1;
+    }
+
+    parser::ImportCache<parser::CacheType::SOURCES>::UpdateOnFileModification(
+        importKey, declPath, std::string(sourceText), util::ModuleKind::SOURCE_DECL);
+    if (context == nullptr) {
+        return 0;
+    }
+    return DeleteProgramForFile(context, importKey);
+}
+
 bool CollectApiInfoWrapper(es2panda_Context *context)
 {
     if (context == nullptr) {
@@ -1507,7 +1535,8 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     DeleteProgramForFile,
                     DeleteDependantProgramsForFiles,
                     CollectApiInfoWrapper,
-                    ResetEHeapWrapper};
+                    ResetEHeapWrapper,
+                    RefreshExternalProgram};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()
@@ -1525,6 +1554,9 @@ CAPI_EXPORT bool HasLspCapability(const char *capabilityName)
         return false;
     }
     if (std::strcmp(capabilityName, "resetEHeap") == 0) {
+        return true;
+    }
+    if (std::strcmp(capabilityName, "refreshExternalProgram") == 0) {
         return true;
     }
     return false;

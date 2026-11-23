@@ -1167,6 +1167,10 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _RefreshExternalProgram(contextPtr: KPtr, importKey: String, declPath: String, sourceText: String): KInt {
+    throw new Error('Not implemented');
+  }
+
   _getNameByNodeInfo(nodeInfo: KPtr): KPtr {
     throw new Error('Not implemented');
   }

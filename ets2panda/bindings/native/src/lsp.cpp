@@ -794,6 +794,25 @@ KInt impl_resetEHeap()
 }
 TS_INTEROP_0(resetEHeap, KInt)
 
+KInt impl_RefreshExternalProgram(KNativePointer contextPtr, KStringPtr &importKeyPtr, KStringPtr &declPathPtr,
+                                 KStringPtr &sourceTextPtr)
+{
+    static int canRefresh = -1;
+    if (canRefresh == -1) {
+        canRefresh = ProbeLspCapability("refreshExternalProgram") ? 1 : 0;
+    }
+    if (canRefresh != 1) {
+        return -1;
+    }
+    LSPAPI const *ctx = GetLspApiImpl();
+    if (ctx == nullptr || ctx->RefreshExternalProgram == nullptr) {
+        return -1;
+    }
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    return ctx->RefreshExternalProgram(context, importKeyPtr.Data(), declPathPtr.Data(), sourceTextPtr.Data());
+}
+TS_INTEROP_4(RefreshExternalProgram, KInt, KNativePointer, KStringPtr, KStringPtr, KStringPtr)
+
 KBoolean impl_buildSymbolReferenceIndexForContext(KNativePointer context)
 {
     LSPAPI const *ctx = GetLspApiImpl();
