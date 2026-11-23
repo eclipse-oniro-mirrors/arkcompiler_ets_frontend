@@ -221,6 +221,22 @@ ArkTsConfig::DependenciesLookupResult ArkTsConfig::FindInDependencies(std::strin
     return std::nullopt;
 }
 
+bool ArkTsConfig::IsInternalPath(std::string_view importPath) const
+{
+    for (const auto &internalPath : internalPaths_) {
+        if (importPath == internalPath) {
+            return true;
+        }
+        if (importPath.size() > internalPath.size() && util::Helpers::StartsWith(importPath, internalPath)) {
+            const char nextChar = importPath[internalPath.size()];
+            if (nextChar == '.' || nextChar == '/') {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 static std::string ValidLanguages()
 {
     JsonArrayBuilder builder;
@@ -484,6 +500,27 @@ bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::Json
     return Check(res.second, diagnostic::DUPLICATED_DEPENDENCIES, {normalizedPath, key});
 }
 
+bool ArkTsConfig::ParseInternalPaths(const JsonObject::JsonObjPointer *options)
+{
+    auto internalPathsValue = options->get()->GetValue<JsonObject::ArrayT>(internalPaths);
+    if (internalPathsValue == nullptr) {
+        return true;
+    }
+
+    std::set<std::string, std::less<>> parsedInternalPaths {};
+    for (const auto &internalPath : *internalPathsValue) {
+        const auto *path = internalPath.Get<JsonObject::StringT>();
+        if (!Check(path != nullptr, diagnostic::INVALID_JSON_TYPE, {internalPaths, "string"})) {
+            return false;
+        }
+        if (!path->empty()) {
+            parsedInternalPaths.insert(*path);
+        }
+    }
+    internalPaths_ = std::move(parsedInternalPaths);
+    return true;
+}
+
 bool ArkTsConfig::ParseDependencies(const JsonObject::JsonObjPointer *options,
                                     std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap)
 {
@@ -625,6 +662,10 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
     if (!ParseAtsDependencies(compilerOptions)) {
         return false;
     }
+    // Parse "internalPaths"
+    if (!ParseInternalPaths(compilerOptions)) {
+        return false;
+    }
     // Parse "dependencies"
     if (!ParseDependencies(compilerOptions, dependencies_)) {
         return false;
@@ -711,6 +752,7 @@ void ArkTsConfig::Inherit(const ArkTsConfig &base)
     declgenV2OutPath_ = base.declgenV2OutPath_;
     paths_ = base.paths_;
     atsDependencies_ = base.atsDependencies_;
+    internalPaths_ = base.internalPaths_;
     files_ = base.files_;
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     include_ = base.include_;

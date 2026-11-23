@@ -290,6 +290,10 @@ public:
     }
 
     parser::Program *GatherImportInfo(parser::Program *importer, ir::StringLiteral *importPath);
+    // Whether an import statement found in 'importer' must be rejected as a reference to an SDK-internal module.
+    // Only imports written in user sources are rejected; bytecode HAR/HSP declarations (restored from etscache or
+    // abc metadata, or referencing an abc file) may legally reference SDK-internal modules.
+    bool ShouldRejectInternalImport(const parser::Program *importer, util::StringView importPath) const;
     parser::Program *EnsurePackageIsRegisteredByPackageFraction(parser::Program *fraction,
                                                                 ir::ETSPackageDeclaration *packageDecl);
     // API version for resolving paths. Kept only for API compatibility. Doesn't support 'dependencies'.

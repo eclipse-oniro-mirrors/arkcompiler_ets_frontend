@@ -1,0 +1,8 @@
+{
+    "returncode": 1,
+    "stdout_contains": [
+        "[main.ats:16:19] Fatal error F0016: Can't find prefix for 'arkui.component.builder' in arktsconfig.json",
+        "[main.ats:17:19] Fatal error F0016: Can't find prefix for 'arkui.component.builder/Foo' in arktsconfig.json",
+        "[main.ats:18:19] Fatal error F0016: Can't find prefix for 'arkui.component/other' in arktsconfig.json"
+    ]
+}

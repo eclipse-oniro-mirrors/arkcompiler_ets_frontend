@@ -232,6 +232,12 @@ public:
     {
         return mockSources_;
     }
+    const std::set<std::string, std::less<>> &InternalPaths() const
+    {
+        return internalPaths_;
+    }
+
+    bool IsInternalPath(std::string_view importPath) const;
 
     using DependenciesLookupResult = std::optional<std::pair<const std::string &, const ExternalModuleData &>>;
     DependenciesLookupResult FindInDependencies(std::string_view importString) const;
@@ -267,6 +273,7 @@ private:
     bool ParseAtsDependency(const std::string &name, const JsonObject::JsonObjPointer *entry,
                             const std::string &projectRoot);
     bool ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap &pathsMap, const std::string &baseUrl);
+    bool ParseInternalPaths(const JsonObject::JsonObjPointer *options);
     bool ParseDependencies(const JsonObject::JsonObjPointer *options,
                            std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
     bool ParseMockList(const JsonObject::JsonObjPointer *options,
@@ -291,6 +298,7 @@ private:
     static constexpr const char *CACHE_DIR = "cacheDir";         // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
     static constexpr const char *DECLGEN_V2_OUT_PATH =           // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
         "declgenV2OutPath";                                      // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
+    static constexpr const char *internalPaths = "internalPaths";
 
     void Inherit(const ArkTsConfig &base);
     bool ParseDependency(size_t keyIdx, const std::unique_ptr<ark::JsonObject> *dependencies,
@@ -322,6 +330,7 @@ private:
     std::map<std::string_view, std::string_view> sourcePathMap_ {};
     std::map<std::string, std::string, std::less<>> mocks_ {};
     std::set<std::string, std::less<>> mockSources_ {};
+    std::set<std::string, std::less<>> internalPaths_ {};
     std::vector<std::string> files_ {};
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     std::vector<Pattern> include_ {};

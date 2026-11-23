@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "outDir": "outdir",
+        "cacheDir": "cache",
+        "paths": {
+            "arkui.component.builder": ["./internal/builder.d.ats"]
+        },
+        "internalPaths": [
+            "arkui.component.builder"
+        ],
+        "dependencies": {
+            "hardecl": { "path": "./har_stub.txt" }
+        }
+    }
+}

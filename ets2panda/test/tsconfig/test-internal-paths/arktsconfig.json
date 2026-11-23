@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "outDir": "outdir",
+        "paths": {
+            "arkui.component.builder": ["./internal/arkui/component/builder.d.ats"],
+            "arkui.component": ["./internal/arkui/component"],
+            "@ohos.mockapi": ["./internal/api/mockapi.d.ats"]
+        },
+        "internalPaths": [
+            "arkui.component.builder",
+            "arkui.component"
+        ]
+    }
+}
