@@ -163,6 +163,12 @@ class IncreGraph {
     }
 }
 
+interface DynamicImportTraversal {
+    pending: string[];
+    visited: Set<string>;
+    affectedImporters: Set<string>;
+}
+
 /**
  * Dependency Analyzer when incremental build
  */
@@ -246,12 +252,38 @@ export class IncreDepAnalyzer extends DepAnalyzer {
         return modifiedFiles;
     }
 
+    private processDynamicDependant(
+        dependant: string,
+        inputs: string[],
+        prevDepMap: DependencyFileMap,
+        entryFiles: Set<string>,
+        traversal: DynamicImportTraversal
+    ): void {
+        if (!traversal.visited.has(dependant)) {
+            traversal.pending.push(dependant);
+        }
+        if (!entryFiles.has(dependant) || traversal.affectedImporters.has(dependant)) {
+            return;
+        }
+        const output: string | undefined = prevDepMap.outputMatching[dependant];
+        const inputChanged: boolean = output !== undefined &&
+            inputs.some((input: string) => shouldBeUpdated(input, output));
+        if (!inputChanged) {
+            return;
+        }
+        // Force recompilation in filterGraph: the importer itself is
+        // fresh by hash/mtime, but one of its dynamic inputs is stale
+        this.getOrInitFileChangeStatus(dependant);
+        this.setAbcOutdatedChanged(dependant, true);
+        traversal.affectedImporters.add(dependant);
+    }
+
     /**
-     * Finds static entry files that import a dynamic module (an arktsconfig
-     * dependency with language 'js') whose source or decl file has changed.
+     * Finds static entry files affected by changed dynamic inputs by walking
+     * the reverse dependency graph. Dynamic modules can import other dynamic
+     * modules, so a change can reach an entry through several dependants.
      * Such files must be recompiled even when their own content is unchanged:
-     * their compilation consumes the dynamic module's decl, which is derived
-     * from the changed dynamic source.
+     * their compilation consumes dynamic declarations derived from the inputs.
      */
     private findImportersAffectedByDynamicInputs(
         modules: ModuleInfo[],
@@ -261,24 +293,21 @@ export class IncreDepAnalyzer extends DepAnalyzer {
         const affectedImporters: Set<string> = new Set<string>();
         const keyToInputs: Map<string, string[]> = this.collectDynamicDependencyInputs(modules);
         for (const [key, inputs] of keyToInputs) {
-            const importers: string[] = prevDepMap.dependants[key] ?? [];
-            for (const importer of importers) {
-                if (!entryFiles.has(importer) || affectedImporters.has(importer)) {
+            const traversal: DynamicImportTraversal = {
+                pending: [key],
+                visited: new Set<string>(),
+                affectedImporters
+            };
+            for (let index = 0; index < traversal.pending.length; index++) {
+                const dependency: string = traversal.pending[index];
+                if (traversal.visited.has(dependency)) {
                     continue;
                 }
-                const output: string | undefined = prevDepMap.outputMatching[importer];
-                if (output === undefined) {
-                    continue;
+                traversal.visited.add(dependency);
+
+                for (const dependant of prevDepMap.dependants[dependency] ?? []) {
+                    this.processDynamicDependant(dependant, inputs, prevDepMap, entryFiles, traversal);
                 }
-                const inputChanged: boolean = inputs.some((input: string) => shouldBeUpdated(input, output));
-                if (!inputChanged) {
-                    continue;
-                }
-                // Force recompilation in filterGraph: the importer itself is
-                // fresh by hash/mtime, but one of its dynamic inputs is stale
-                this.getOrInitFileChangeStatus(importer);
-                this.setAbcOutdatedChanged(importer, true);
-                affectedImporters.add(importer);
             }
         }
         return Array.from(affectedImporters);

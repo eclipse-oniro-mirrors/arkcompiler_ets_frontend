@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+import { getMessageDynamic2 } from 'dynhar2'
+
 export function getMessageDynamic(): string {
-    return 'dynamic message';
+    return getMessageDynamic2();
 }

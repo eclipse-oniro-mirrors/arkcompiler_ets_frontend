@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "dependencies": {
+            "dyn1": {
+                "language": "js",
+                "sourceFilePath": "./file2.ats",
+                "ohmUrl": "dyn1"
+            },
+            "dyn2": {
+                "language": "js",
+                "sourceFilePath": "./file3.ats",
+                "ohmUrl": "dyn2"
+            }
+        }
+    }
+}
