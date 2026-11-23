@@ -18,11 +18,17 @@
 #include <fstream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 #include "lsp_api_test.h"
 #include "lsp/include/internal_api.h"
 #include "lsp/include/symbol_reference_index.h"
+#include "ir/ets/etsImportDeclaration.h"
+#include "parser/parserImpl.h"
+#include "parser/program/program.h"
 #include "public/es2panda_lib.h"
+#include "public/public.h"
+#include "util/importPathManager.h"
 
 using ark::es2panda::lsp::Initializer;
 
@@ -475,4 +481,180 @@ console.log(counter);)"};
     // The number of references should be the same after rebuild (no duplication)
     ASSERT_EQ(result1.referenceInfos.size(), result2.referenceInfos.size());
     ASSERT_GE(result2.referenceInfos.size(), 1U);
+}
+
+namespace {
+
+struct CheckedModuleContext {
+    const es2panda_Impl *impl = nullptr;
+    es2panda_Config *cfg = nullptr;
+    es2panda_Context *ctx = nullptr;
+
+    CheckedModuleContext() = default;
+    NO_COPY_SEMANTIC(CheckedModuleContext);
+    NO_MOVE_SEMANTIC(CheckedModuleContext);
+
+    ~CheckedModuleContext()
+    {
+        if (impl == nullptr) {
+            return;
+        }
+        if (ctx != nullptr) {
+            impl->DestroyContext(ctx);
+        }
+        if (cfg != nullptr) {
+            impl->DestroyConfig(cfg);
+        }
+    }
+
+    bool Init(const std::string &buildDir, const std::string &filePath, const std::string &source)
+    {
+        impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+        if (impl == nullptr) {
+            return false;
+        }
+        std::array<const char *, 4> argv = {buildDir.c_str(), "--extension=ets", "--ets-module", filePath.c_str()};
+        cfg = impl->CreateConfig(argv.size(), argv.data());
+        if (cfg == nullptr) {
+            return false;
+        }
+        ctx = impl->CreateCacheContextFromString(cfg, source.c_str(), filePath.c_str(), nullptr, false, true);
+        ctx = ctx != nullptr ? impl->ProceedToState(ctx, ES2PANDA_STATE_PARSED) : nullptr;
+        ctx = ctx != nullptr ? impl->ProceedToState(ctx, ES2PANDA_STATE_CHECKED) : nullptr;
+        return ctx != nullptr;
+    }
+};
+
+std::vector<std::string> BuildMutualImportTexts(const std::string &declStem, const std::string &refStem)
+{
+    const std::string declSrc =
+        "'use static'\n"
+        "import { Animal } from './" +
+        refStem +
+        "'\n"
+        "export class Dog extends Animal {\n"
+        "    breed: string;\n"
+        "    constructor(name: string, breed: string) { super(name); this.breed = breed; }\n"
+        "}";
+    const std::string refSrc =
+        "'use static'\n"
+        "import { Dog } from './" +
+        declStem +
+        "'\n"
+        "export class Animal {\n"
+        "    name: string;\n"
+        "    constructor(name: string) { this.name = name; }\n"
+        "}\n"
+        "export function runDog(): void {\n"
+        "    let myDog = new Dog(\"ErHa\", \"husky\");\n"
+        "    console.log(myDog.breed);\n"
+        "}";
+    return {declSrc, refSrc};
+}
+
+bool RewriteContextPathsToWindows(es2panda_Context *ctx, const std::vector<std::string> &filePaths,
+                                  const std::vector<std::string> &texts,
+                                  const std::pair<std::string, std::string> &winPaths)
+{
+    auto *pubCtx = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    if (pubCtx == nullptr || pubCtx->parserProgram == nullptr || pubCtx->parser == nullptr ||
+        pubCtx->parserProgram->GetExternalPrograms() == nullptr || pubCtx->parser->GetImportPathManager() == nullptr) {
+        return false;
+    }
+    auto *declProg = pubCtx->parserProgram;
+    ark::es2panda::parser::Program *refProg = nullptr;
+    for (const auto &entry : declProg->GetExternalPrograms()->Direct()) {
+        auto *extProg = entry.second;
+        if (extProg != nullptr && std::string(extProg->SourceFilePath()) == filePaths[1]) {
+            refProg = extProg;
+            break;
+        }
+    }
+    if (refProg == nullptr || refProg->Ast() == nullptr) {
+        return false;
+    }
+    declProg->SetSource(ark::es2panda::SourceFile(winPaths.first, texts[0], true));
+    pubCtx->sourceFileName = winPaths.first;
+    refProg->SetSource(ark::es2panda::SourceFile(winPaths.second, texts[1], true));
+    for (auto *stmt : refProg->Ast()->Statements()) {
+        if (stmt == nullptr || !stmt->IsETSImportDeclaration()) {
+            continue;
+        }
+        auto *imp = stmt->AsETSImportDeclaration();
+        if (std::string(imp->ResolvedSource()) == filePaths[0]) {
+            ark::es2panda::util::ImportInfo winInfo(*pubCtx->parser->GetImportPathManager(), winPaths.first);
+            const_cast<ark::es2panda::util::ImportInfo &>(imp->ImportInfo()) = winInfo;
+            return true;
+        }
+    }
+    return false;
+}
+
+}  // namespace
+
+TEST_F(LSPSymbolReferenceIndexTests, WindowsBackslashImportMatchesNormalizedExportModuleKey)
+{
+    const std::vector<std::string> files = {"test1_plus1_win.ets", "test1_win.ets"};
+    const auto texts = BuildMutualImportTexts("test1_plus1_win", "test1_win");
+    const auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const auto dogPos = texts[0].find("Dog extends");
+    ASSERT_NE(dogPos, std::string::npos);
+    const std::string buildDir = ResolveBuildFolder() + "/bin/es2panda";
+    const std::pair<std::string, std::string> winPaths = {R"(D:\lsp\LSP-1.2\entry\CodeJump\test1_plus1_win.ets)",
+                                                          R"(D:\lsp\LSP-1.2\entry\CodeJump\test1_win.ets)"};
+
+    CheckedModuleContext moduleCtx;
+    ASSERT_TRUE(moduleCtx.Init(buildDir, filePaths[0], texts[0]));
+    ASSERT_TRUE(RewriteContextPathsToWindows(moduleCtx.ctx, filePaths, texts, winPaths));
+
+    ark::es2panda::lsp::ClearSymbolReferenceIndex();
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(moduleCtx.ctx));
+
+    EXPECT_EQ(ark::es2panda::lsp::GetReferencesAtPositionFromIndex(moduleCtx.ctx, dogPos).referenceInfos.size(), 3U);
+    EXPECT_FALSE(ark::es2panda::lsp::GetIndexedFileSource("D:/lsp/LSP-1.2/entry/CodeJump/test1_plus1_win.ets").empty());
+    EXPECT_FALSE(
+        ark::es2panda::lsp::GetIndexedFileSource(R"(d:\lsp\LSP-1.2\entry\CodeJump\test1_plus1_win.ets)").empty());
+    EXPECT_EQ(ark::es2panda::lsp::GetFileReferencesFromIndex(moduleCtx.ctx,
+                                                             "D:/lsp/LSP-1.2/entry/CodeJump/test1_plus1_win.ets", false)
+                  .referenceInfos.size(),
+              1U);
+    EXPECT_TRUE(ark::es2panda::lsp::RemoveSymbolReferenceIndexForFile("D:/lsp/LSP-1.2/entry/CodeJump/test1_win.ets"));
+    EXPECT_EQ(ark::es2panda::lsp::GetReferencesAtPositionFromIndex(moduleCtx.ctx, dogPos).referenceInfos.size(), 1U);
+    ark::es2panda::lsp::ClearSymbolReferenceIndex();
+}
+
+TEST_F(LSPSymbolReferenceIndexTests, MutualImportReferencesStayConsistentAcrossExternalAndMainCompilation)
+{
+    const std::vector<std::string> files = {"test1_plus1_mutual.ets", "test1_mutual.ets"};
+    const auto texts = BuildMutualImportTexts("test1_plus1_mutual", "test1_mutual");
+    const auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const auto dogPos = texts[0].find("Dog extends");
+    ASSERT_NE(dogPos, std::string::npos);
+    const std::string buildDir = ResolveBuildFolder() + "/bin/es2panda";
+
+    ark::es2panda::lsp::ClearSymbolReferenceIndex();
+    {
+        // Stage 1: test1_plus1 as main, test1 as external
+        CheckedModuleContext decl1;
+        ASSERT_TRUE(decl1.Init(buildDir, filePaths[0], texts[0]));
+        ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(decl1.ctx));
+        EXPECT_EQ(ark::es2panda::lsp::GetReferencesAtPositionFromIndex(decl1.ctx, dogPos).referenceInfos.size(), 3U);
+
+        // Stage 2: test1 as main
+        CheckedModuleContext ref;
+        ASSERT_TRUE(ref.Init(buildDir, filePaths[1], texts[1]));
+        ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(ref.ctx));
+        EXPECT_EQ(ark::es2panda::lsp::GetReferencesAtPositionFromIndex(decl1.ctx, dogPos).referenceInfos.size(), 3U);
+    }
+
+    // Stage 3: recompile test1_plus1 as main so test1 reverts to an external program
+    CheckedModuleContext decl2;
+    ASSERT_TRUE(decl2.Init(buildDir, filePaths[0], texts[0]));
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(decl2.ctx));
+    EXPECT_EQ(ark::es2panda::lsp::GetReferencesAtPositionFromIndex(decl2.ctx, dogPos).referenceInfos.size(), 3U);
+    ark::es2panda::lsp::ClearSymbolReferenceIndex();
 }

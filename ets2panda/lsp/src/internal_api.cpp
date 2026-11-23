@@ -14,6 +14,7 @@
  */
 
 #include <algorithm>
+#include <cctype>
 #include <cstddef>
 #include <optional>
 #include <sstream>
@@ -69,12 +70,6 @@ std::string StripExtension(const std::string &path)
     return result;
 }
 
-std::string NormalizeModuleSeparators(std::string path)
-{
-    std::replace(path.begin(), path.end(), '\\', '/');
-    return path;
-}
-
 std::string TrimTrailingSeparators(std::string path)
 {
     while (!path.empty() && path.back() == '/') {
@@ -96,10 +91,10 @@ constexpr std::string_view MODULE_SOURCE_ROOT_PREFIX = "src/main/";
 // full form, transformed form and the bare package name of the module entry) share them.
 bool IsSameDependencyFile(const ArkTsConfig::ExternalModuleData &left, const ArkTsConfig::ExternalModuleData &right)
 {
-    const auto sameDeclaration = StripExtension(NormalizeModuleSeparators(left.Path())) ==
-                                 StripExtension(NormalizeModuleSeparators(right.Path()));
-    const auto sameSource = StripExtension(NormalizeModuleSeparators(std::string(left.SourceFilePath()))) ==
-                            StripExtension(NormalizeModuleSeparators(std::string(right.SourceFilePath())));
+    const auto sameDeclaration =
+        StripExtension(NormalizeLspFilePath(left.Path())) == StripExtension(NormalizeLspFilePath(right.Path()));
+    const auto sameSource = StripExtension(NormalizeLspFilePath(std::string(left.SourceFilePath()))) ==
+                            StripExtension(NormalizeLspFilePath(std::string(right.SourceFilePath())));
     return sameDeclaration && sameSource;
 }
 
@@ -130,14 +125,14 @@ std::string FirstModuleSegment(const std::string &moduleSpecifier)
 // aliases are preferred because 'Paths()' is ordered by descending key length.
 std::optional<PathsMatch> FindPathsMatch(const std::string &file, const ArkTsConfig &config)
 {
-    const auto normalizedFile = NormalizeModuleSeparators(file);
+    const auto normalizedFile = NormalizeLspFilePath(file);
     if (normalizedFile.empty()) {
         return std::nullopt;
     }
     const auto fileWithoutExtension = StripExtension(normalizedFile);
     for (const auto &[alias, targets] : config.Paths()) {
         for (const auto &target : targets) {
-            const auto normalizedTarget = TrimTrailingSeparators(NormalizeModuleSeparators(target));
+            const auto normalizedTarget = TrimTrailingSeparators(NormalizeLspFilePath(target));
             if (normalizedTarget.empty()) {
                 continue;
             }
@@ -165,7 +160,7 @@ std::optional<PathsMatch> FindPathsMatch(const std::string &file, const ArkTsCon
 // needs the sub-path form to stay importable.
 std::string ImportSpecifierForPathsMatch(const std::string &toFile, const PathsMatch &match)
 {
-    const auto normalizedFile = StripExtension(NormalizeModuleSeparators(toFile));
+    const auto normalizedFile = StripExtension(NormalizeLspFilePath(toFile));
     if (normalizedFile == StripExtension(match.target)) {
         return std::move(match.alias);
     }
@@ -185,19 +180,19 @@ std::string ImportSpecifierForPathsMatch(const std::string &toFile, const PathsM
 std::pair<const std::string *, const ArkTsConfig::ExternalModuleData *> FindDependencyEntryForFile(
     const std::string &file, const ArkTsConfig &config)
 {
-    const auto normalizedFile = NormalizeModuleSeparators(file);
+    const auto normalizedFile = NormalizeLspFilePath(file);
     if (normalizedFile.empty()) {
         return {nullptr, nullptr};
     }
     const auto fileWithoutExtension = StripExtension(normalizedFile);
     for (const auto &[dependencyKey, moduleData] : config.Dependencies()) {
         if (!moduleData.SourceFilePath().empty()) {
-            const auto sourcePath = StripExtension(NormalizeModuleSeparators(std::string(moduleData.SourceFilePath())));
+            const auto sourcePath = StripExtension(NormalizeLspFilePath(std::string(moduleData.SourceFilePath())));
             if (sourcePath == fileWithoutExtension) {
                 return {&dependencyKey, &moduleData};
             }
         }
-        const auto declPath = NormalizeModuleSeparators(moduleData.Path());
+        const auto declPath = NormalizeLspFilePath(moduleData.Path());
         if (!declPath.empty() && StripExtension(declPath) == fileWithoutExtension) {
             return {&dependencyKey, &moduleData};
         }
@@ -215,6 +210,15 @@ std::pair<const std::string *, const ArkTsConfig::ExternalModuleData *> FindDepe
 // twin.
 
 }  // namespace
+
+std::string NormalizeLspFilePath(std::string filePath)
+{
+    std::replace(filePath.begin(), filePath.end(), '\\', '/');
+    if (filePath.size() >= 2U && filePath[1] == ':' && std::isalpha(static_cast<unsigned char>(filePath[0])) != 0) {
+        filePath[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(filePath[0])));
+    }
+    return filePath;
+}
 
 // The dynamic import form of a dependency key (see internal_api.h for the format rules);
 // completions.cpp and the module-name resolution share this single implementation.
@@ -357,7 +361,7 @@ std::string FindModuleEntryFile(const std::string &file, const ArkTsConfig &conf
 {
     if (auto dynamicKey = FindDynamicDeclModuleKey(file, config)) {
         if (dynamicKey->find('/') == std::string::npos) {
-            return StripExtension(NormalizeModuleSeparators(file));
+            return StripExtension(NormalizeLspFilePath(file));
         }
         const auto package = FirstModuleSegment(*dynamicKey);
         const auto &dependencies = config.Dependencies();
@@ -371,14 +375,14 @@ std::string FindModuleEntryFile(const std::string &file, const ArkTsConfig &conf
         if (entryFile.empty()) {
             return "";
         }
-        return StripExtension(NormalizeModuleSeparators(entryFile));
+        return StripExtension(NormalizeLspFilePath(entryFile));
     }
     auto match = FindPathsMatch(file, config);
     if (!match.has_value()) {
         return "";
     }
-    const auto normalizedFile = StripExtension(NormalizeModuleSeparators(file));
-    const auto normalizedTarget = StripExtension(NormalizeModuleSeparators(match->target));
+    const auto normalizedFile = StripExtension(NormalizeLspFilePath(file));
+    const auto normalizedTarget = StripExtension(NormalizeLspFilePath(match->target));
     if (normalizedFile == normalizedTarget) {
         return normalizedTarget;
     }
@@ -398,7 +402,7 @@ ArkTsConfigLookupCache::ArkTsConfigLookupCache(const ArkTsConfig *config) : conf
         const auto hasSourceFile = !moduleData.SourceFilePath().empty();
         if (hasSourceFile) {
             auto &matches =
-                dependencyByFile_[StripExtension(NormalizeModuleSeparators(std::string(moduleData.SourceFilePath())))];
+                dependencyByFile_[StripExtension(NormalizeLspFilePath(std::string(moduleData.SourceFilePath())))];
             if (matches.keyWithSource == nullptr) {
                 matches.keyWithSource = &key;
                 matches.dataWithSource = &moduleData;
@@ -409,7 +413,7 @@ ArkTsConfigLookupCache::ArkTsConfigLookupCache(const ArkTsConfig *config) : conf
             }
         }
         if (!moduleData.Path().empty()) {
-            auto &matches = dependencyByFile_[StripExtension(NormalizeModuleSeparators(moduleData.Path()))];
+            auto &matches = dependencyByFile_[StripExtension(NormalizeLspFilePath(moduleData.Path()))];
             if (matches.key == nullptr) {
                 matches.key = &key;
                 matches.data = &moduleData;
@@ -424,7 +428,7 @@ ArkTsConfigLookupCache::ArkTsConfigLookupCache(const ArkTsConfig *config) : conf
     // prefix matching relies on.
     for (const auto &[alias, targets] : config_->Paths()) {
         for (const auto &target : targets) {
-            auto normalizedTarget = TrimTrailingSeparators(NormalizeModuleSeparators(target));
+            auto normalizedTarget = TrimTrailingSeparators(NormalizeLspFilePath(target));
             if (normalizedTarget.empty()) {
                 continue;
             }
@@ -440,7 +444,7 @@ DependencyEntry ArkTsConfigLookupCache::FindDependencyEntryForFile(const std::st
     if (config_ == nullptr) {
         return {nullptr, nullptr};
     }
-    const auto normalizedFile = NormalizeModuleSeparators(file);
+    const auto normalizedFile = NormalizeLspFilePath(file);
     if (normalizedFile.empty()) {
         return {nullptr, nullptr};
     }
@@ -456,7 +460,7 @@ std::optional<std::string> ArkTsConfigLookupCache::FindDynamicDependencyModuleNa
     if (config_ == nullptr) {
         return std::nullopt;
     }
-    const auto normalizedFile = NormalizeModuleSeparators(file);
+    const auto normalizedFile = NormalizeLspFilePath(file);
     if (normalizedFile.empty()) {
         return std::nullopt;
     }
@@ -487,7 +491,7 @@ std::optional<PathsMatch> ArkTsConfigLookupCache::FindPathsMatch(const std::stri
     if (config_ == nullptr) {
         return std::nullopt;
     }
-    const auto normalizedFile = NormalizeModuleSeparators(file);
+    const auto normalizedFile = NormalizeLspFilePath(file);
     if (normalizedFile.empty()) {
         return std::nullopt;
     }
@@ -511,7 +515,7 @@ std::string ArkTsConfigLookupCache::FindModuleEntryFile(const std::string &file)
     }
     if (auto dynamicKey = FindDynamicDeclModuleKey(file)) {
         if (dynamicKey->find('/') == std::string::npos) {
-            return StripExtension(NormalizeModuleSeparators(file));
+            return StripExtension(NormalizeLspFilePath(file));
         }
         const auto package = FirstModuleSegment(*dynamicKey);
         const auto &dependencies = config_->Dependencies();
@@ -525,14 +529,14 @@ std::string ArkTsConfigLookupCache::FindModuleEntryFile(const std::string &file)
         if (entryFile.empty()) {
             return "";
         }
-        return StripExtension(NormalizeModuleSeparators(entryFile));
+        return StripExtension(NormalizeLspFilePath(entryFile));
     }
     auto match = FindPathsMatch(file);
     if (!match.has_value()) {
         return "";
     }
-    const auto normalizedFile = StripExtension(NormalizeModuleSeparators(file));
-    const auto normalizedTarget = StripExtension(NormalizeModuleSeparators(match->target));
+    const auto normalizedFile = StripExtension(NormalizeLspFilePath(file));
+    const auto normalizedTarget = StripExtension(NormalizeLspFilePath(match->target));
     if (normalizedFile == normalizedTarget) {
         return normalizedTarget;
     }

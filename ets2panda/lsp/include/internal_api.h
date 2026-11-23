@@ -310,6 +310,11 @@ std::string CanonicalizeDynamicImportSource(const std::string &source, const Ark
 // matches module-relative keys ('dynlib/src/main/ets/Index'), so it covers every dynamic
 // dependency of a generated arktsconfig, not only the interop SDK entries.
 bool IsDynamicDependencyFile(const std::string &file, const ArkTsConfig &config);
+
+// Normalizes a file path for cross-platform LSP lookup and index keys: replaces Windows
+// backslashes with '/' and uppercases a leading Windows drive letter ('d:\a' -> 'D:/a'),
+// preserving case for the rest of the path.
+std::string NormalizeLspFilePath(std::string filePath);
 }  // namespace ark::es2panda::lsp
 
 #endif
