@@ -283,7 +283,6 @@ public:
     void ValidateAbstractMethodsToBeImplemented(std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                 ETSObjectType *classType,
                                                 const std::vector<Signature *> &implementedSignatures);
-    void ValidateOptionalPropOverriding(const std::vector<ETSFunctionType *> &optionalProps, ETSObjectType *classType);
     void ApplyModifiersAndRemoveImplementedAbstracts(std::vector<ETSFunctionType *>::iterator &it,
                                                      std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                      ETSObjectType *classType, bool &functionOverridden,
@@ -305,11 +304,9 @@ public:
     void CheckInterfaceFunctions(ETSObjectType *classType);
     void CollectImplementedMethodsFromInterfaces(ETSObjectType *classType,
                                                  std::vector<Signature *> *implementedSignatures,
-                                                 std::vector<ETSFunctionType *> *optionalProps,
                                                  const std::vector<ETSFunctionType *> &abstractsToBeImplemented);
     void AddImplementedSignature(std::vector<Signature *> *implementedSignatures, varbinder::LocalVariable *function,
                                  ETSFunctionType *it);
-    void AddOptionalProps(std::vector<ETSFunctionType *> *optionalPropSignatures, varbinder::LocalVariable *function);
     void CheckInnerClassMembers(const ETSObjectType *classType);
     void CheckLocalClass(ir::ClassDefinition *classDef, CheckerStatus &checkerStatus);
     void CheckClassDefinition(ir::ClassDefinition *classDef);
@@ -740,8 +737,10 @@ public:
 
     ir::Expression *GenerateImplicitInstantiateArg(const std::string &className);
     void GenerateGetterSetterBody(ArenaVector<ir::Statement *> &stmts, ArenaVector<ir::Expression *> &params,
-                                  ir::ClassProperty *field, varbinder::FunctionParamScope *paramScope, bool isSetter);
-    static ir::MethodDefinition *GenerateDefaultGetterSetter(ir::ClassProperty *property, ir::ClassProperty *field,
+                                  varbinder::LocalVariable *fieldVar, varbinder::FunctionParamScope *paramScope,
+                                  bool isSetter);
+    static ir::MethodDefinition *GenerateDefaultGetterSetter(ir::ClassProperty *property,
+                                                             varbinder::LocalVariable *fieldVar,
                                                              varbinder::ClassScope *scope, bool isSetter,
                                                              ETSChecker *checker);
     void GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *originalProp, ETSObjectType *classType);
