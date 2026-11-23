@@ -337,17 +337,41 @@ public:
         return fileDependencies_;
     }
 
+    static std::string NormalizeDriveLetter(std::string_view path)
+    {
+        std::string normalized {path};
+#ifdef PANDA_TARGET_WINDOWS
+        if (normalized.size() >= 2U && normalized[1] == ':' && normalized[0] >= 'a' && normalized[0] <= 'z') {
+            normalized[0] = static_cast<char>(normalized[0] - 'a' + 'A');
+        }
+#endif
+        return normalized;
+    }
+
+    static std::string AlternateWindowsDriveLetter([[maybe_unused]] std::string_view path)
+    {
+#ifdef PANDA_TARGET_WINDOWS
+        if (path.size() < 2U || path[1] != ':') {
+            return {};
+        }
+        std::string alt {path};
+        if (alt[0] >= 'a' && alt[0] <= 'z') {
+            alt[0] = static_cast<char>(alt[0] - 'a' + 'A');
+            return alt;
+        }
+        if (alt[0] >= 'A' && alt[0] <= 'Z') {
+            alt[0] = static_cast<char>(alt[0] - 'A' + 'a');
+            return alt;
+        }
+#endif
+        return {};
+    }
+
     std::unordered_set<std::string> CollectReverseDependencies(std::string_view root) const;
     void RemoveFileDependencies(std::string_view file);
     void RemoveProgramsFromFileDependencies(const std::unordered_set<std::string> &files);
 
-    void AddFileDependencies(std::string_view file, std::string_view depFile)
-    {
-        auto fileKey = ArenaString {file};
-        auto depKey = ArenaString {depFile};
-        fileDependencies_[fileKey].emplace(depKey);
-        reverseFileDependencies_[depKey].emplace(fileKey);
-    }
+    void AddFileDependencies(std::string_view file, std::string_view depFile);
 
     const auto &GetOutputMatching() const
     {

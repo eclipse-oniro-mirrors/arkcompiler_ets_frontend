@@ -17,6 +17,7 @@
 
 #include "lsp/include/internal_api.h"
 #include "public/es2panda_lib.h"
+#include "util/diagnosticEngine.h"
 
 #include <algorithm>
 #include <fstream>
@@ -28,6 +29,7 @@
 namespace {
 
 using ark::es2panda::lsp::Initializer;
+using ark::es2panda::util::DiagnosticType;
 
 class LspIncrementalPrepareTest : public LSPAPITests {};
 
@@ -51,6 +53,28 @@ void WriteFile(const std::string &fileName, const std::string &text)
     std::ofstream out {fileName, std::ios::trunc};
     ASSERT_TRUE(out.is_open());
     out << text;
+}
+
+bool HasDiagnosticsOfType(es2panda_Context *ctx, DiagnosticType type)
+{
+    auto *rawCtx = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    return !rawCtx->diagnosticEngine->GetDiagnosticStorage(type).empty();
+}
+
+void PrepareAndCheck(const es2panda_Impl *publicApi, es2panda_Context *&ctx, const std::string &fileName,
+                     const std::string &text, bool isChanged)
+{
+    ASSERT_EQ(publicApi->IncrementalPrepareProgram(ctx, fileName.c_str(), text.c_str(), isChanged),
+              INCREMENTAL_PREPARE_REPARSE);
+    ctx = publicApi->ProceedToState(ctx, ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(ctx, nullptr);
+}
+
+void WritePrepareAndCheck(const es2panda_Impl *publicApi, es2panda_Context *&ctx, const std::string &fileName,
+                          const std::string &text)
+{
+    ASSERT_NO_FATAL_FAILURE(WriteFile(fileName, text));
+    ASSERT_NO_FATAL_FAILURE(PrepareAndCheck(publicApi, ctx, fileName, text, FILE_CHANGED));
 }
 
 TEST_F(LspIncrementalPrepareTest, IncrementalPrepareInvalidatesChangedExportWithoutClearingUnrelatedProgram)
@@ -148,6 +172,267 @@ TEST_F(LspIncrementalPrepareTest, IncrementalPrepareChangedFileCanProceedToCheck
     ASSERT_EQ(publicApi->ContextState(ctx), ES2PANDA_STATE_CHECKED)
         << publicApi->ContextErrorMessage(ctx) << " diagnostic count=" << diagnostics.diagnostic.size();
 
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspIncrementalPrepareTest, IncrementalPrepareReparsesWhenSourceDiffersDespiteUnchangedFlag)
+{
+    std::vector<std::string> files = {
+        "provider.ets",
+        "consumer.ets",
+    };
+    std::vector<std::string> texts = {
+        R"ETS(export function A(): string { return "ok"; })ETS",
+        R"ETS(
+            import { A } from "./provider.ets";
+            let x: string = A();
+        )ETS",
+    };
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+    const auto &providerFile = filePaths[0];
+    const auto &consumerFile = filePaths[1];
+
+    auto *publicApi = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    Initializer initializer;
+    auto *ctx = initializer.CreateContext(consumerFile.c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(ctx, nullptr);
+
+    const std::string modifiedProvider = R"ETS(export function A(): number { return 1; })ETS";
+    ASSERT_NO_FATAL_FAILURE(WriteFile(providerFile, modifiedProvider));
+
+    // Even if caller passes FILE_UNCHANGED (e.g. after cache recycle + immediate save),
+    // C++ must detect that targetProgram->SourceCode() differs from modifiedProvider and force reparse.
+    ASSERT_EQ(publicApi->IncrementalPrepareProgram(ctx, providerFile.c_str(), modifiedProvider.c_str(), FILE_UNCHANGED),
+              INCREMENTAL_PREPARE_REPARSE);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspIncrementalPrepareTest, IncrementalPrepareReparsesCrlfToLfAndAlignsDefinitionOffset)
+{
+    const std::string crlfText = "function targetFn(): int {\r\n    return 1;\r\n}\r\nlet res = targetFn();\r\n";
+    const std::string lfText = "function targetFn(): int {\n    return 1;\n}\nlet res = targetFn();\n";
+    auto filePaths = CreateTempFile({"crlf_def.ets"}, {crlfText});
+    ASSERT_EQ(filePaths.size(), 1U);
+    const auto &crlfFile = filePaths[0];
+
+    auto *publicApi = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    auto *lspApi = GetImpl();
+    ark::es2panda::EHeap::Scope eheapScope;
+    Initializer initializer;
+    std::vector<std::string> activeTexts {crlfText};
+    auto *ctx = initializer.CreateContextWithCache(crlfFile.c_str(), ES2PANDA_STATE_CHECKED, activeTexts);
+    ASSERT_NE(ctx, nullptr);
+    ASSERT_EQ(publicApi->ContextState(ctx), ES2PANDA_STATE_CHECKED);
+
+    ASSERT_EQ(publicApi->IncrementalPrepareProgram(ctx, crlfFile.c_str(), lfText.c_str(), FILE_UNCHANGED),
+              INCREMENTAL_PREPARE_REPARSE);
+    ctx = publicApi->ProceedToState(ctx, ES2PANDA_STATE_CHECKED);
+    ASSERT_EQ(publicApi->ContextState(ctx), ES2PANDA_STATE_CHECKED);
+
+    const std::string targetName = "targetFn";
+    const size_t declPos = lfText.find(targetName);
+    const size_t callPos = lfText.rfind(targetName);
+    ASSERT_NE(declPos, std::string::npos);
+    ASSERT_NE(callPos, std::string::npos);
+    ASSERT_NE(declPos, callPos);
+
+    const auto def = lspApi->getDefinitionAtPosition(ctx, callPos);
+    EXPECT_EQ(def.fileName, crlfFile);
+    EXPECT_EQ(def.start, declPos);
+    EXPECT_EQ(def.length, targetName.size());
+
+    ASSERT_EQ(publicApi->IncrementalPrepareProgram(ctx, crlfFile.c_str(), lfText.c_str(), FILE_UNCHANGED),
+              INCREMENTAL_PREPARE_REUSE_AST);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspIncrementalPrepareTest, IncrementalPrepareReimportingDeletedDependantAvoidsRuntimeNameClash)
+{
+    constexpr size_t leafFileIndex = 0;
+    constexpr size_t entryFileIndex = 2;
+    const std::vector<std::string> files = {"clash_leaf.ets", "clash_middle.ets", "clash_entry.ets"};
+    const std::vector<std::string> texts = {
+        "export function foo(): number { return 1; }\n",
+        "import { foo } from './clash_leaf.ets';\n"
+        "export function bar(): void { let x: number = foo(); console.log(x); }\n",
+        "import { bar } from './clash_middle.ets';\nexport function main(): void { bar(); }\n"
+        "export function missRet(flag: boolean): number { if (flag) { return 1; } }\n"};
+    const auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+    const auto &leafFile = filePaths[leafFileIndex];
+    const auto &entryFile = filePaths[entryFileIndex];
+    const auto &entryText = texts[entryFileIndex];
+
+    auto *publicApi = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    auto *lspApi = GetImpl();
+    ASSERT_NE(publicApi, nullptr);
+    ASSERT_NE(lspApi, nullptr);
+
+    ark::es2panda::EHeap::Scope eheapScope;
+    Initializer initializer;
+    std::vector<std::string> activeTexts {entryText};
+    auto *ctx = initializer.CreateContextWithCache(entryFile.c_str(), ES2PANDA_STATE_CHECKED, activeTexts);
+    ASSERT_NE(ctx, nullptr);
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::FATAL));
+    EXPECT_TRUE(HasDiagnosticContaining(lspApi->getSemanticDiagnostics(ctx), "Not all code paths return a value"));
+
+    const std::string leafUpdatedText = "export function foo(): string { return 'hello'; }\n";
+    ASSERT_NO_FATAL_FAILURE(WritePrepareAndCheck(publicApi, ctx, leafFile, leafUpdatedText));
+
+    // Deleting leaf's dependants drops middle and entry; re-preparing entry must re-import middle without clashing.
+    ASSERT_EQ(lspApi->DeleteDependantProgramsForFiles(ctx, leafFile.c_str()), LSP_API_SUCCESS);
+    ASSERT_NO_FATAL_FAILURE(PrepareAndCheck(publicApi, ctx, entryFile, entryText, FILE_UNCHANGED));
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::FATAL));
+    EXPECT_TRUE(HasDiagnosticContaining(lspApi->getSemanticDiagnostics(ctx), "Not all code paths return a value"));
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspIncrementalPrepareTest, IncrementalPrepareCircularDependencyPreservesReverseInvalidation)
+{
+    constexpr size_t xFileIndex = 0;
+    constexpr size_t yFileIndex = 1;
+    const std::vector<std::string> files = {"cycle_x.ets", "cycle_y.ets"};
+    const std::vector<std::string> texts = {
+        "import { g } from './cycle_y.ets';\nexport function f(): number { return 1; }\n"
+        "export function useG(): void { let v: number = g(); console.log(v); }\n",
+        "import { f } from './cycle_x.ets';\nexport function g(): number { return 1; }\n"
+        "export function useF(): void { let v: number = f(); console.log(v); }\n"};
+    const auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+    const auto &xFile = filePaths[xFileIndex];
+    const auto &yFile = filePaths[yFileIndex];
+    const auto &yInitialText = texts[yFileIndex];
+
+    auto *publicApi = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    auto *lspApi = GetImpl();
+    ASSERT_NE(publicApi, nullptr);
+    ASSERT_NE(lspApi, nullptr);
+
+    ark::es2panda::EHeap::Scope eheapScope;
+    Initializer initializer;
+    std::vector<std::string> activeTexts {texts[xFileIndex]};
+    auto *ctx = initializer.CreateContextWithCache(xFile.c_str(), ES2PANDA_STATE_CHECKED, activeTexts);
+    ASSERT_NE(ctx, nullptr);
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::FATAL));
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::SEMANTIC));
+
+    // Round 1: change X and evict Y while keeping X's outgoing edge to Y in the dependency graph.
+    const std::string xUpdatedText =
+        "import { g } from './cycle_y.ets';\nexport function f(): string { return 'a'; }\n"
+        "export function useG(): void { let v: number = g(); console.log(v); }\n";
+    ASSERT_NO_FATAL_FAILURE(WritePrepareAndCheck(publicApi, ctx, xFile, xUpdatedText));
+    ASSERT_EQ(lspApi->DeleteDependantProgramsForFiles(ctx, xFile.c_str()), LSP_API_SUCCESS);
+    ASSERT_EQ(publicApi->IncrementalPrepareProgram(ctx, xFile.c_str(), xUpdatedText.c_str(), FILE_UNCHANGED),
+              INCREMENTAL_PREPARE_REUSE_AST);
+    ASSERT_NO_FATAL_FAILURE(PrepareAndCheck(publicApi, ctx, yFile, yInitialText, FILE_UNCHANGED));
+    EXPECT_TRUE(HasDiagnosticContaining(lspApi->getSemanticDiagnostics(ctx),
+                                        "Type 'String' cannot be assigned to type 'Double'"));
+
+    // Round 2: fix f() usage in Y, change g(), evict X, and verify X reparses and reports g() mismatch.
+    const std::string yUpdatedText =
+        "import { f } from './cycle_x.ets';\nexport function g(): string { return 'b'; }\n"
+        "export function useF(): void { let v: string = f(); console.log(v); }\n";
+    ASSERT_NO_FATAL_FAILURE(WritePrepareAndCheck(publicApi, ctx, yFile, yUpdatedText));
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::FATAL));
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::SEMANTIC));
+    ASSERT_EQ(lspApi->DeleteDependantProgramsForFiles(ctx, yFile.c_str()), LSP_API_SUCCESS);
+    ASSERT_NO_FATAL_FAILURE(PrepareAndCheck(publicApi, ctx, xFile, xUpdatedText, FILE_UNCHANGED));
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::FATAL));
+    EXPECT_TRUE(HasDiagnosticContaining(lspApi->getSemanticDiagnostics(ctx),
+                                        "Type 'String' cannot be assigned to type 'Double'"));
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspIncrementalPrepareTest, IncrementalPrepareThreeFileCyclePreservesTransitiveInvalidation)
+{
+    constexpr size_t xFileIndex = 0;
+    constexpr size_t zFileIndex = 2;
+    const std::vector<std::string> files = {"cycle3_x.ets", "cycle3_y.ets", "cycle3_z.ets"};
+    const std::vector<std::string> texts = {
+        "import { mid } from './cycle3_y.ets';\nexport function root(): number { return 1; }\n"
+        "export function useMid(): void { let m: number = mid(); console.log(m); }\n",
+        "import { leaf } from './cycle3_z.ets';\nexport function mid(): number { return leaf(); }\n",
+        "import { root } from './cycle3_x.ets';\nexport function leaf(): number { return 1; }\n"
+        "export function useRoot(): void { let r: number = root(); console.log(r); }\n"};
+    const auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+    const auto &xFile = filePaths[xFileIndex];
+    const auto &zFile = filePaths[zFileIndex];
+
+    auto *publicApi = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    auto *lspApi = GetImpl();
+    ASSERT_NE(publicApi, nullptr);
+    ASSERT_NE(lspApi, nullptr);
+
+    ark::es2panda::EHeap::Scope eheapScope;
+    Initializer initializer;
+    std::vector<std::string> activeTexts {texts[xFileIndex]};
+    auto *ctx = initializer.CreateContextWithCache(xFile.c_str(), ES2PANDA_STATE_CHECKED, activeTexts);
+    ASSERT_NE(ctx, nullptr);
+
+    // Round 1: edit X and evict Y and Z without reopening Y.
+    const std::string xUpdatedText =
+        "import { mid } from './cycle3_y.ets';\nexport function root(): string { return 'x'; }\n"
+        "export function useMid(): void { let m: number = mid(); console.log(m); }\n";
+    ASSERT_NO_FATAL_FAILURE(WritePrepareAndCheck(publicApi, ctx, xFile, xUpdatedText));
+    ASSERT_EQ(lspApi->DeleteDependantProgramsForFiles(ctx, xFile.c_str()), LSP_API_SUCCESS);
+
+    // Round 2: edit Z directly; transitive edge Z <- Y <- X must survive so X gets invalidated and reparses.
+    const std::string zUpdatedText =
+        "import { root } from './cycle3_x.ets';\nexport function leaf(): string { return 'z'; }\n"
+        "export function useRoot(): void { let r: string = root(); console.log(r); }\n";
+    ASSERT_NO_FATAL_FAILURE(WritePrepareAndCheck(publicApi, ctx, zFile, zUpdatedText));
+    ASSERT_EQ(lspApi->DeleteDependantProgramsForFiles(ctx, zFile.c_str()), LSP_API_SUCCESS);
+    ASSERT_NO_FATAL_FAILURE(PrepareAndCheck(publicApi, ctx, xFile, xUpdatedText, FILE_UNCHANGED));
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::FATAL));
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspIncrementalPrepareTest, IncrementalPrepareReparsesLazyCheckedExternalDependant)
+{
+    constexpr size_t leafFileIndex = 0;
+    constexpr size_t middleFileIndex = 1;
+    constexpr size_t entryFileIndex = 2;
+    const std::vector<std::string> files = {"lazy_leaf.ets", "lazy_middle.ets", "lazy_entry.ets"};
+    const std::vector<std::string> texts = {
+        "export class Leaf { foo(): number { return 1; } }\n",
+        "import { Leaf } from './lazy_leaf.ets';\n"
+        "export class Middle { bar(): void { let x: number = new Leaf().foo(); console.log(x); } }\n",
+        "import { Middle } from './lazy_middle.ets';\nexport function main(): void { new Middle().bar(); }\n"};
+    const auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+    const auto &leafFile = filePaths[leafFileIndex];
+    const auto &middleFile = filePaths[middleFileIndex];
+    const auto &entryFile = filePaths[entryFileIndex];
+
+    auto *publicApi = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    auto *lspApi = GetImpl();
+    ASSERT_NE(publicApi, nullptr);
+    ASSERT_NE(lspApi, nullptr);
+
+    ark::es2panda::EHeap::Scope eheapScope;
+    Initializer initializer;
+    std::vector<std::string> activeTexts {texts[entryFileIndex]};
+    auto *ctx = initializer.CreateContextWithCache(entryFile.c_str(), ES2PANDA_STATE_CHECKED, activeTexts);
+    ASSERT_NE(ctx, nullptr);
+
+    const std::string leafUpdatedText = "export class Leaf { foo(): string { return 'hello'; } }\n";
+    ASSERT_NO_FATAL_FAILURE(WritePrepareAndCheck(publicApi, ctx, leafFile, leafUpdatedText));
+    ASSERT_EQ(lspApi->DeleteDependantProgramsForFiles(ctx, leafFile.c_str()), LSP_API_SUCCESS);
+
+    // Recompiling entry first re-imports middle only as a lazy-checked external program.
+    ASSERT_NO_FATAL_FAILURE(PrepareAndCheck(publicApi, ctx, entryFile, texts[entryFileIndex], FILE_UNCHANGED));
+    // Querying middle afterwards must reparse it because its AST never completed full analysis.
+    ASSERT_NO_FATAL_FAILURE(PrepareAndCheck(publicApi, ctx, middleFile, texts[middleFileIndex], FILE_UNCHANGED));
+    EXPECT_FALSE(HasDiagnosticsOfType(ctx, DiagnosticType::FATAL));
+    EXPECT_TRUE(HasDiagnosticContaining(lspApi->getSemanticDiagnostics(ctx),
+                                        "Type 'String' cannot be assigned to type 'Double'"));
+    ASSERT_EQ(
+        publicApi->IncrementalPrepareProgram(ctx, middleFile.c_str(), texts[middleFileIndex].c_str(), FILE_UNCHANGED),
+        INCREMENTAL_PREPARE_REUSE_AST);
     initializer.DestroyContext(ctx);
 }
 

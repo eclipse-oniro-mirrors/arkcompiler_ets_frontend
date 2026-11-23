@@ -175,6 +175,27 @@ void ImportCache<TYPE>::Clear() noexcept
     cache_.clear();
 }
 
+#ifdef PANDA_TARGET_WINDOWS
+namespace {
+std::string AlternateWindowsDriveKey(std::string_view key)
+{
+    if (key.size() < 2U || key[1] != ':') {
+        return {};
+    }
+    std::string alt {key};
+    if (alt[0] >= 'a' && alt[0] <= 'z') {
+        alt[0] = static_cast<char>(alt[0] - 'a' + 'A');
+        return alt;
+    }
+    if (alt[0] >= 'A' && alt[0] <= 'Z') {
+        alt[0] = static_cast<char>(alt[0] - 'A' + 'a');
+        return alt;
+    }
+    return {};
+}
+}  // namespace
+#endif
+
 template <CacheType TYPE>
 void ImportCache<TYPE>::Get(CacheReference<> *importInfo) const noexcept
 {
@@ -200,6 +221,18 @@ void ImportCache<TYPE>::UpdateModifyfile(std::string_view key, std::string textS
         std::tie(ref.key_, ref.textSource_, ref.data_) = *newElem;
         ref.kind_ = kind;
         cache_[std::string(key)] = ref;
+#ifdef PANDA_TARGET_WINDOWS
+        if (auto altKey = AlternateWindowsDriveKey(key); !altKey.empty()) {
+            auto *altElem = dataStorage_
+                                .emplace_back(std::make_unique<NamedData>(altKey, std::string(ref.textSource_),
+                                                                          std::string(ref.data_)))
+                                .get();
+            CacheReference<SelectCacheDataType<TYPE>> altRef {};
+            std::tie(altRef.key_, altRef.textSource_, altRef.data_) = *altElem;
+            altRef.kind_ = kind;
+            cache_[std::move(altKey)] = altRef;
+        }
+#endif
     }
 }
 

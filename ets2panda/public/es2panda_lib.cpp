@@ -415,8 +415,18 @@ extern "C" __attribute__((unused)) void InvalidateFileCache(es2panda_GlobalConte
 static parser::Program *FindResolvedProgramForFilePath(util::ImportPathManager *importPathManager,
                                                        std::string_view fileName)
 {
-    util::ImportInfo importInfo {*importPathManager, fileName, Language::Id::ETS};
-    return importPathManager->SearchResolved(importInfo);
+    auto normalizedPath = util::ImportPathManager::NormalizeDriveLetter(fileName);
+    util::ImportInfo importInfo {*importPathManager, normalizedPath, Language::Id::ETS};
+    auto *resolved = importPathManager->SearchResolved(importInfo);
+#ifdef PANDA_TARGET_WINDOWS
+    if (resolved == nullptr) {
+        if (auto alt = util::ImportPathManager::AlternateWindowsDriveLetter(normalizedPath); !alt.empty()) {
+            util::ImportInfo altImportInfo {*importPathManager, alt, Language::Id::ETS};
+            resolved = importPathManager->SearchResolved(altImportInfo);
+        }
+    }
+#endif
+    return resolved;
 }
 
 static void PrepareIncrementalExportImportCaches(Context *ctx, parser::Program *program, bool programChanged)
@@ -441,6 +451,7 @@ static void ResetContextAndProgram(Context *ctx, parser::Program *program)
     ctx->state = ES2PANDA_STATE_NEW;
     delete ctx->sourceFile;
     ctx->sourceFile = nullptr;
+    ctx->lspFullyAnalyzedPrograms.erase(program);
     PrepareIncrementalExportImportCaches(ctx, program, true);
     program->Clear();
 }
@@ -465,14 +476,14 @@ static void AddDirectDependenciesToExternalSourcesForIncremental(Context *ctx, p
     externalSources.Get<util::ModuleKind::MODULE>().clear();
     externalSources.Get<util::ModuleKind::SOURCE_DECL>().clear();
 
-    auto depsIt = importPathManager->GetFileDependencies().find(ArenaString {targetProgram->AbsoluteName().Utf8()});
+    auto normalizedTargetPath = util::ImportPathManager::NormalizeDriveLetter(targetProgram->AbsoluteName().Utf8());
+    auto depsIt = importPathManager->GetFileDependencies().find(ArenaString {normalizedTargetPath});
     if (depsIt == importPathManager->GetFileDependencies().end()) {
         return;
     }
 
     for (const auto &dep : depsIt->second) {
-        auto *depProgram =
-            importPathManager->FindOrIntroduceProgramForIncremental(std::string_view {dep.data(), dep.size()});
+        auto *depProgram = FindResolvedProgramForFilePath(importPathManager, std::string_view {dep.data(), dep.size()});
         if (depProgram == nullptr || depProgram == targetProgram) {
             continue;
         }
@@ -487,11 +498,16 @@ extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Contex
     auto *ctx = reinterpret_cast<Context *>(context);
     parser::Program *targetProgram =
         ctx->parser->GetImportPathManager()->FindOrIntroduceProgramForIncremental(fileName);
-    // If source is unchanged, reuse existing AST and skip recompilation.
-    if (!isChanged && targetProgram->Ast() != nullptr) {
+    const std::string_view incomingSource =
+        (sourceText != nullptr) ? std::string_view {sourceText} : std::string_view {};
+    const bool analysisSatisfied = !ctx->isLspUsage || (ctx->state == ES2PANDA_STATE_PARSED) ||
+                                   (ctx->lspFullyAnalyzedPrograms.count(targetProgram) != 0);
+    // If source is unchanged and program completed full analysis, reuse existing AST and skip recompilation.
+    if (!isChanged && targetProgram->Ast() != nullptr && analysisSatisfied &&
+        targetProgram->SourceCode() == incomingSource) {
         ctx->parserProgram = targetProgram;
         ctx->sourceFileName = fileName;
-        ctx->input = std::string(sourceText);
+        ctx->input = std::string(incomingSource);
         delete ctx->sourceFile;
         ctx->sourceFile = new SourceFile(ctx->sourceFileName, ctx->input, ctx->config->options->IsModule());
         AddDirectDependenciesToExternalSourcesForIncremental(ctx, targetProgram);
@@ -502,9 +518,9 @@ extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Contex
     ResetContextAndProgram(ctx, targetProgram);
     ctx->parserProgram = targetProgram;
     ctx->sourceFileName = fileName;
-    ctx->input = std::string(sourceText);
+    ctx->input = std::string(incomingSource);
     ctx->sourceFile = new SourceFile(ctx->sourceFileName, ctx->input, ctx->config->options->IsModule());
-    UpdateProgramTextForIncremental(ctx, targetProgram, std::string(sourceText));
+    UpdateProgramTextForIncremental(ctx, targetProgram, std::string(incomingSource));
     ctx->parser->GetImportPathManager()->PrepareParseQueueForProgram(targetProgram);
     return 0;
 }
@@ -781,6 +797,26 @@ __attribute__((unused)) static void SaveCache(Context *ctx)
     });
 }
 
+__attribute__((unused)) static void MarkAsFullyAnalyzed(Context *ctx)
+{
+    auto markIfFullyAnalyzed = [ctx](parser::Program *program) {
+        if (program == nullptr || program->Ast() == nullptr || program->Is<util::ModuleKind::SIMULT_MAIN>()) {
+            return;
+        }
+        ctx->lspFullyAnalyzedPrograms.insert(program);
+    };
+
+    markIfFullyAnalyzed(ctx->parserProgram);
+    ctx->parserProgram->GetExternalPrograms()->Visit<false>([&markIfFullyAnalyzed](auto *extProgram) {
+        if (!extProgram->IsBuiltSimultaneously() || extProgram->IsASTLowered()) {
+            return;
+        }
+        markIfFullyAnalyzed(extProgram);
+        extProgram->MaybeIteratePackage(
+            [&markIfFullyAnalyzed](parser::Program *fractionOrSelf) { markIfFullyAnalyzed(fractionOrSelf); });
+    });
+}
+
 __attribute__((unused)) static void MarkAsLowered(Context *ctx)
 {
     auto markAsLowered = [](parser::Program *program) {
@@ -812,9 +848,13 @@ __attribute__((unused)) static Context *Check(Context *ctx)
     }
 
     ES2PANDA_ASSERT(ctx->state >= ES2PANDA_STATE_PARSED && ctx->state < ES2PANDA_STATE_CHECKED);
+    bool checkerRan = false;
     while (auto phase = ctx->phaseManager->NextPhase()) {
         if (phase->Name() == "plugins-after-check") {
             break;
+        }
+        if (phase->Name() == "CheckerPhase") {
+            checkerRan = true;
         }
         ES2PANDA_PERF_EVENT_SCOPE("@phases/" + std::string(phase->Name()));
         phase->Apply(ctx);
@@ -822,6 +862,9 @@ __attribute__((unused)) static Context *Check(Context *ctx)
     ctx->phaseManager->SetCurrentPhaseIdToAfterCheck();
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_CHECKED : ES2PANDA_STATE_ERROR;
     if (ctx->isLspUsage) {
+        if (checkerRan && !ctx->config->options->IsParseOnly()) {
+            MarkAsFullyAnalyzed(ctx);
+        }
         MarkAsLowered(ctx);
     }
     return ctx;

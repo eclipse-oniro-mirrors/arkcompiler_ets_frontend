@@ -232,9 +232,9 @@ describe('Lsp reverse dependency cache', () => {
     lsp.filesMap = new Map([[activeFile, activeCache]]);
     lsp.compiledFileHashes = new Map([[diagnosticFile, fileHash]]);
     lsp.diagnosticFiles = new Set([diagnosticFile]);
-    lsp.shouldInvalidateDependantsOnSwitch = jest.fn(() => false);
+    lsp.pendingInvalidationRoots = new Set();
     lsp.proceedPreparedContext = jest.fn();
-    lsp.tryBuildSymbolReferenceIndex = jest.fn();
+    lsp.tryBuildSymbolReferenceIndexWithExternal = jest.fn();
     lsp.updateDiagnosticFilesForContext = jest.fn();
     lsp.recordCompilationState = jest.fn();
     (Es2pandaGlobal as any)._es2pandaPublic = {
@@ -252,6 +252,131 @@ describe('Lsp reverse dependency cache', () => {
     } finally {
       (Es2pandaGlobal as any)._es2pandaPublic = previousPublicApi;
     }
+  });
+
+  test('recompiled file without prior compiled hash marks pendingInvalidationRoot without reading disk', () => {
+    const lsp = createLspForTest(new Map());
+    const consumerFile = '/project/consumer.ets';
+    const providerFile = '/project/provider.ets';
+    const providerSource = 'export function A(): number { return 1; }';
+    const providerHash = 'new-provider-hash';
+    const fileContext = {};
+    const activeCache = {
+      fileContent: 'let x: string = A();',
+      fileConfig: {},
+      fileContext,
+      fileHash: 'consumer-hash',
+      arktsConfigPath: path.resolve('/project/arktsconfig.json')
+    };
+    const incrementalPrepareProgram = jest.fn(() => 0);
+    const previousPublicApi = (Es2pandaGlobal as any)._es2pandaPublic;
+
+    lsp.filesMap = new Map([[consumerFile, activeCache]]);
+    lsp.compiledFileHashes = new Map([[consumerFile, 'consumer-hash']]);
+    lsp.diagnosticFiles = new Set();
+    lsp.pendingInvalidationRoots = new Set();
+    lsp.proceedPreparedContext = jest.fn();
+    lsp.tryBuildSymbolReferenceIndexWithExternal = jest.fn();
+    lsp.updateDiagnosticFilesForContext = jest.fn();
+    (Es2pandaGlobal as any)._es2pandaPublic = {
+      _IncrementalPrepareProgram: incrementalPrepareProgram
+    };
+
+    try {
+      lsp.prepareFileCacheFromActiveContext(providerFile, providerSource, providerHash);
+
+      expect(incrementalPrepareProgram).toHaveBeenCalledWith(fileContext, providerFile, providerSource, 1);
+      expect(lsp.proceedPreparedContext).toHaveBeenCalledWith(providerFile, fileContext, true);
+      expect(lsp.pendingInvalidationRoots.has(providerFile)).toBe(true);
+      expect(lsp.compiledFileHashes.get(providerFile)).toBe(providerHash);
+    } finally {
+      (Es2pandaGlobal as any)._es2pandaPublic = previousPublicApi;
+    }
+  });
+
+  test('pendingInvalidationRoots invalidates all non-target roots regardless of activeFilePath', () => {
+    const lsp = createLspForTest(new Map());
+    const fileA = '/project/A.ets';
+    const fileB = '/project/B.ets';
+    const fileC = '/project/C.ets';
+    const fileContext = {};
+    const activeCache = {
+      fileContent: 'let c = 1;',
+      fileConfig: {},
+      fileContext,
+      fileHash: 'hash-c',
+      arktsConfigPath: path.resolve('/project/arktsconfig.json')
+    };
+    const incrementalPrepareProgram = jest.fn(() => 0);
+    const previousPublicApi = (Es2pandaGlobal as any)._es2pandaPublic;
+
+    lsp.filesMap = new Map([[fileC, activeCache]]);
+    lsp.compiledFileHashes = new Map([[fileB, 'hash-b']]);
+    lsp.diagnosticFiles = new Set();
+    lsp.pendingInvalidationRoots = new Set([fileA, fileB]);
+    lsp.invalidateDependantsByRoot = jest.fn();
+    lsp.proceedPreparedContext = jest.fn();
+    lsp.tryBuildSymbolReferenceIndexWithExternal = jest.fn();
+    lsp.updateDiagnosticFilesForContext = jest.fn();
+    lsp.recordCompilationState = jest.fn();
+    (Es2pandaGlobal as any)._es2pandaPublic = {
+      _IncrementalPrepareProgram: incrementalPrepareProgram
+    };
+
+    try {
+      lsp.prepareFileCacheFromActiveContext(fileB, 'import { foo } from "./A";', 'hash-b');
+
+      expect(lsp.invalidateDependantsByRoot).toHaveBeenCalledTimes(1);
+      expect(lsp.invalidateDependantsByRoot).toHaveBeenCalledWith(fileContext, fileA);
+      expect(Array.from(lsp.pendingInvalidationRoots)).toEqual([fileB]);
+    } finally {
+      (Es2pandaGlobal as any)._es2pandaPublic = previousPublicApi;
+    }
+  });
+
+  test('modifyFilesMap prepares active context when starting from an empty filesMap', () => {
+    const lsp = createLspForTest(new Map());
+    const fileA = '/project/A.ets';
+    const newDoc = 'export function A(): number { return 1; }';
+    const fileCache = {
+      fileContent: newDoc,
+      fileConfig: {},
+      fileContext: {},
+      fileHash: 'hash-a',
+      arktsConfigPath: path.resolve('/project/arktsconfig.json')
+    };
+
+    lsp.filesMap = new Map();
+    lsp.inMemoryFileContents = new Map();
+    lsp.consecutiveEditsCount = 0;
+    lsp.checkAndProactivelyRecycleBeforeEdit = jest.fn();
+    lsp.scheduleIdleContextRecycle = jest.fn();
+    lsp.prepareFileCache = jest.fn(() => {
+      lsp.filesMap.set(fileA, fileCache);
+      return fileCache;
+    });
+    lsp.prepareFileCacheFromActiveContext = jest.fn();
+
+    lsp.modifyFilesMap(fileA, { newDoc });
+
+    expect(lsp.prepareFileCache).toHaveBeenCalledWith(fileA, { newDoc }, true);
+    expect(lsp.prepareFileCacheFromActiveContext).toHaveBeenCalledTimes(1);
+    expect(lsp.prepareFileCacheFromActiveContext).toHaveBeenCalledWith(fileA, newDoc, 'hash-a', true);
+  });
+
+  test('getSemanticDiagnostics forces refresh when diagnosticsOwnerFile belongs to another file', () => {
+    const lsp = createLspForTest(new Map());
+    const fileA = '/project/A.ets';
+    const fileB = '/project/B.ets';
+    const diagnostics = { diagnostics: [{ message: 'expected diagnostic' }] };
+    lsp.enablePerfMetric = false;
+    lsp.pendingInitialDiagnosticFiles = new Set();
+    lsp.diagnosticFiles = new Set([fileA]);
+    lsp.diagnosticsOwnerFile = fileB;
+    lsp.withFileCacheForQuery = jest.fn(() => diagnostics);
+
+    expect(lsp.getSemanticDiagnostics(fileA)).toBe(diagnostics);
+    expect(lsp.withFileCacheForQuery.mock.calls[0][2]).toBe(true);
   });
 
 });
