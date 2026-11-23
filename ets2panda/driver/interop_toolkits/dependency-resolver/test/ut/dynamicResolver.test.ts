@@ -190,6 +190,25 @@ describe('DynamicResolver.resolveSpecifier', () => {
     expect(result.nodes.get(second)?.dependencies).toEqual([first]);
   });
 
+  it('does not stack overflow on a file with deeply nested string concatenation', () => {
+    const segments = Array.from({ length: 2555 }, (_, i) => `"seg${i}"`);
+    const content = `export const data: string = ${segments.join(' + ')};\nimport './leaf';`;
+    const entry = createFile('src/entry.ts', content);
+    const leaf = createFile('src/leaf.ts', 'export const leaf = true;');
+    resolver.setContext({
+      fileManager: {
+        dynamicFiles: new Set([entry, leaf]),
+        staticFiles: new Set(),
+        isStaticInteropSdkFile: () => false,
+      } as unknown as common.fileManager.FileManager,
+      cachePath: projectRoot,
+    } satisfies Context);
+
+    const result = resolver.resolve([entry]);
+
+    expect(result.nodes.get(entry)?.dependencies).toEqual([leaf]);
+  });
+
   it('relocates a static interop SDK dependency to the same-named static SDK sentinel', () => {
     const entry = createFile('src/entry.ts', "import 'static@ohos.example';");
     const interopSdkFile = createFile('sdk/static-interop/@ohos.example.d.ts', 'export declare const value: number;');

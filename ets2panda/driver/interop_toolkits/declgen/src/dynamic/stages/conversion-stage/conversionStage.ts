@@ -40,6 +40,7 @@ export class ConversionStage extends TransformationStage<PrevState, NextState, C
         existingTypeNames: new Set<string>(),
         pendingDefaultImports: new Map<string, string>(),
         defaultAccessMap: new Map<string, string>(),
+        importBindings: new Map<string, ts.Symbol>(),
       }),
       () => undefined,
       false,
