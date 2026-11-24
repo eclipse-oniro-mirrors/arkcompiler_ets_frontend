@@ -1,307 +1,233 @@
 # Parser Module - AGENTS.md
 
-## 模块职责
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**语法分析器（Parser）**：将Token流转换为抽象语法树（AST）
+## 1. Module responsibilities
 
-**核心功能**：Token流 → AST、表达式解析（优先级、结合性）、语句解析（控制流、声明）、TypeScript类型解析、模块系统、错误恢复、AST转换
+The parser builds AST nodes from the token stream, handles expression precedence and statement/declaration syntax, creates program/module structures, and coordinates declaration binding. TS syntax and TS-to-JS transformation are supported; the removed TypeScript checker is not part of this route.
 
----
+Read the repository `AGENTS.md`, `es2panda/AGENTS.md`, and `docs/knowledge/ES2Panda_Knowledge_Base.md` before changes. Paths below are repository-relative.
 
-## 目录结构
+## 2. Directory structure
 
+```text
+es2panda/parser/
+├── parserImpl.cpp              # Core parser implementation
+├── parserImpl.h                # Parser declarations and TS parsing helpers
+├── expressionParser.cpp        # Expression parsing
+├── statementParser.cpp         # Statements and declarations
+├── commonjs.cpp                # CommonJS handling
+├── parserFlags.h               # Parser expression/statement flags
+├── context/parserContext.h     # Nested parse context and status
+├── context/parserContext.cpp   # Context behavior
+├── program/program.h           # Compilation unit
+├── program/program.cpp         # Program behavior
+├── module/sourceTextModuleRecord.h   # Import/export structures
+├── module/sourceTextModuleRecord.cpp # Module record behavior
+└── transformer/transformer.cpp # TS AST transformation
 ```
-parser/
-├── parserImpl.cpp         # 核心解析逻辑
-├── parserImpl.h           # ParserImpl类定义
-├── expressionParser.cpp   # 表达式解析
-├── statementParser.cpp    # 语句解析
-├── commonjs.cpp           # CommonJS支持
-├── parserFlags.h          # 解析标志位
-├── context/parserContext.h # 状态管理
-└── transformer/transformer.cpp # AST转换（TS→ES）
-```
 
----
+## 3. Core classes and APIs
 
-## 核心类和API
+### 3.1 ParserImpl
 
-### ParserImpl类
+Current public entry declarations from `parserImpl.h`:
 
 ```cpp
-class ParserImpl {
-public:
-    ParserImpl(ArenaAllocator *allocator, std::string source, ScriptExtension extension);
-    parser::Program *ParseProgram();
+    explicit ParserImpl(es2panda::ScriptExtension extension);
+    NO_COPY_SEMANTIC(ParserImpl);
+    NO_MOVE_SEMANTIC(ParserImpl);
+    ~ParserImpl() = default;
 
-    Token PeekToken();
-    Token NextToken();
-    bool CheckToken(TokenType type);
-    bool ConsumeToken(TokenType type);
+    Program Parse(const SourceFile &sourceFile, const CompilerOptions &options);
 
-    parser::ParserContext *Context();
-    ArenaAllocator *Allocator();
+    ScriptExtension Extension() const;
 
-private:
-    Lexer *lexer_;
-    ParserContext *context_;
-    ScriptExtension extension_;
-};
-```
+    void AddPatchFixHelper(util::PatchFix *patchFixHelper);
 
-### ParserContext类
-
-```cpp
-class ParserContext {
-public:
-    void PushScope(ScopeType type);
-    void PopScope();
-    binder::Scope *CurrentScope();
-
-    bool InFunction() const;
-    bool InLoop() const;
-    bool InClass() const;
-
-    void AddLabel(const util::StringView &label);
-    binder::Variable *FindLabel(const util::StringView &label);
-};
-```
-
----
-
-## 表达式解析
-
-### 优先级层次（从低到高）
-
-```
-1. Assignment   = += -= *= /= %=
-2. Conditional  ? :
-3. Logical OR   || ??
-4. Logical AND  &&
-5. Bitwise OR   |
-6. Bitwise XOR  ^
-7. Bitwise AND  &
-8. Equality     == != === !==
-9. Relational   < > <= >= instanceof in
-10. Shift        << >> >>>
-11. Additive     + -
-12. Multiplicative * / %
-13. Exponential  **
-14. Unary        + - ~ ! typeof void delete
-15. Postfix      () [] . ?.
-16. Primary      Identifier, Literal, this
-```
-
-### 解析方法
-
-```cpp
-Expression *ParseExpression();              // 任何表达式
-Expression *ParseAssignmentExpression();     // 赋值
-Expression *ParseConditionalExpression();    // 三元
-Expression *ParseLogicalOrExpression();      // ||
-Expression *ParseLogicalAndExpression();     // &&
-Expression *ParseEqualityExpression();      // == !=
-Expression *ParseRelationalExpression();     // < >
-Expression *ParseAdditiveExpression();       // + -
-Expression *ParseMultiplicativeExpression(); // * /
-Expression *ParseUnaryExpression();          // + - ~ !
-Expression *ParsePrimaryExpression();        // 基础
-```
-
-### 示例：二元表达式
-
-```cpp
-Expression *ParseBinaryExpression(ParseFunc parseOperand, TokenType stopType) {
-    Expression *left = parseOperand();
-    while (MatchToken(stopType)) {
-        Token op = PeekToken();
-        NextToken();
-        Expression *right = parseOperand();
-        left = AllocNode<BinaryExpression>(left, op, right);
+    ArenaAllocator *Allocator() const
+    {
+        return program_.Allocator();
     }
-    return left;
-}
+    bool IsDtsFile() const;
 ```
 
----
+`Parse()` returns a `Program` value. The program owns the arena, AST, binder, source metadata, and module records. New nodes must use the existing program allocator and preserve source ranges.
 
-## 语句解析
+Expression and statement parsers are implementation files for `ParserImpl`, not separate public `ExpressionParser` and `StatementParser` interfaces. Most parsing routines are private helpers.
 
-```cpp
-Statement *ParseStatement();               // 任何语句
-Statement *ParseBlockStatement();          // {}
-Statement *ParseIfStatement();             // if-else
-Statement *ParseSwitchStatement();         // switch
-Statement *ParseWhileStatement();          // while
-Statement *ParseForStatement();            // for
-Statement *ParseForInStatement();          // for..in
-Statement *ParseForOfStatement();          // for..of
-Statement *ParseBreakStatement();          // break
-Statement *ParseContinueStatement();       // continue
-Statement *ParseReturnStatement();         // return
-Statement *ParseTryStatement();            // try-catch
-Statement *ParseVariableStatement();       // var/let/const
-Statement *ParseFunctionDeclaration();     // function
-Statement *ParseClassDeclaration();        // class
-Statement *ParseImportDeclaration();       // import
-Statement *ParseExportDeclaration();       // export
+### 3.2 ParserContext
+
+`context/parserContext.h` defines `ParserStatus` and a nested context chain. It exposes status queries such as `IsGenerator()`, `IsAsync()`, `IsModule()`, `IsTsModule()`, and `FindLabel()`.
+
+Use existing context helpers to enter/leave functions, loops, classes, and labels. Binding scope and parse context are related but distinct; do not assume the context owns a generic `PushScope()` API.
+
+## 4. Expression parsing
+
+### 4.1 Precedence and associativity
+
+Inspect `expressionParser.cpp`, token classification, and the relevant `ParserImpl` helpers together. The following groups are useful review points, rather than a replacement grammar:
+
+| Group | Operators / concerns |
+|---|---|
+| Sequence and assignment | Comma, assignment targets, compound assignments |
+| Conditional | `?:` and branch parsing |
+| Short-circuit | `||`, `&&`, `??`; nullish/logical mixing restrictions |
+| Bitwise | `|`, `^`, `&` |
+| Equality | `==`, `!=`, `===`, `!==` |
+| Relational | `<`, `>`, `<=`, `>=`, `in`, `instanceof` |
+| Shift | `<<`, `>>`, `>>>` |
+| Additive / multiplicative | `+`, `-`, `*`, `/`, `%` |
+| Exponentiation | `**`, right associativity, unary-left restrictions |
+| Unary / update | Prefix unary operators and prefix/postfix updates |
+| Member / call | Property access, calls, optional chains, `new` |
+| Primary | Identifiers, literals, grouping, arrays, objects, functions |
+
+Assignment, exponentiation, and binary operators do not all share the same associativity. Cover parentheses and mixed operators when changing precedence.
+
+### 4.2 Expression parsing methods
+
+`ParserImpl::ParseExpression` accepts `ExpressionParseFlags`. Other helpers handle arrays, yield, TS assertions, `as`, `satisfies`, arrow parameters, and expression sequences. Check declarations in `parserImpl.h`; the old guide's list of one method per precedence level did not match this implementation.
+
+### 4.3 Binary-expression example
+
+```javascript
+const result = a + b * c;
+const power = a ** b ** c;
+const chosen = test ? left : right;
 ```
 
-### 示例：If语句
+Compare the dumped AST with expected nesting and associativity. A generic loop that repeatedly consumes the same operator would incorrectly model right-associative expressions and miss syntax restrictions.
+
+## 5. Statement parsing
+
+`statementParser.cpp` handles control flow, blocks, declarations, loops, returns, throws, try/catch/finally, and module syntax. Inspect both dispatch and context validation.
+
+### 5.1 If-statement review
+
+```javascript
+if (first)
+    if (second) left();
+    else right();
+```
+
+The `else` binds to the nearest unmatched `if`. Preserve source ranges, statement parsing flags, scope setup, and error positions. Also test a block body and an absent alternate branch.
+
+### 5.2 Other statements
+
+For loops, distinguish `for`, `for-in`, `for-of`, lexical declarations, and iteration binding rules. For `return`, `throw`, `break`, and `continue`, test newline restrictions and legal surrounding context. For declarations, check binder insertion as well as AST shape.
+
+## 6. TypeScript-specific parsing
+
+### 6.1 Type annotations
+
+Current helpers use names such as `ParseTsTypeAnnotation`, `ParseTsArrayType`, `ParseTsUnionType`, `ParseTsIntersectionType`, `ParseTsTypeReferenceOrQuery`, and `ParseTsFunctionType`. Some return `ir::Expression *`, so do not impose a nonexistent universal `TypeNode` API.
+
+Inspect type references, generic parameters/arguments, tuples, mapped types, conditional types, predicates, assertions, and function types near the changed syntax. Parsing these types does not mean full semantic type checking is performed.
+
+### 6.2 Decorators and annotations
+
+`ParseDecoratorAndAnnotation` and `ParseDecoratorsAndAnnotations` are declared in `parserImpl.h`. Verify the relevant feature/API gates and transformation consumers. Test placement, invalid targets, multiple decorators, and runtime transformation ordering where supported.
+
+## 7. AST transformation
+
+`parser/transformer/` contains TS transformation implementation, but orchestration belongs to `Compiler::ProcessAstForTS` in `es2panda.cpp`.
+
+The current orchestration body is:
 
 ```cpp
-IfStatement *ParseIfStatement() {
-    ConsumeToken(TokenType::KEYW_IF);
-    ConsumeToken(TokenType::L_PAREN);
-    Expression *test = ParseExpression();
-    ConsumeToken(TokenType::R_PAREN);
-    Statement *consequent = ParseStatement();
-
-    Statement *alternate = nullptr;
-    if (MatchToken(TokenType::KEYW_ELSE)) {
-        NextToken();
-        alternate = ParseStatement();
+void Compiler::ProcessAstForTS(parser::Program *ast, const es2panda::CompilerOptions &options)
+{
+    if (ast->Extension() != ScriptExtension::TS) {
+        return;
     }
 
-    return AllocNode<IfStatement>(test, consequent, alternate);
+    transformer_->Transform(ast);
+    ast->Binder()->IdentifierAnalysis(binder::ResolveBindingFlags::TS_AFTER_TRANSFORM);
+    if (options.dumpTransformedAst) {
+        std::cout << ast->Dump() << std::endl;
+    }
+    if (options.checkTransformedAstStructure) {
+        transformer_->CheckTransformedAstStructure(ast);
+    }
 }
 ```
 
----
+### 7.1 Transformation coverage
 
-## TypeScript特定解析
+- Type-only declarations and annotations must not become unintended runtime operations.
+- Enums and namespaces may create runtime objects and generated bindings.
+- Parameter properties interact with constructor initialization.
+- Decorators may generate runtime calls and affect evaluation order.
 
-### 类型注解
+Trace each behavior in the concrete transformer implementation before changing it. Test both the original and transformed AST and the generated program; there is no checker stage after transformation to repair invalid bindings.
 
-```cpp
-ir::TypeNode *ParseType();
-ir::TSTypeKeyword *ParsePrimitiveType();         // string, number
-ir::TSArrayType *ParseArrayType();               // string[]
-ir::TSTypeReference *ParseTypeReference();       // MyClass<string>
-ir::TSUnionType *ParseUnionType();               // string | number
-ir::TSFunctionType *ParseFunctionType();         // (x: string) => number
-```
+## 8. Errors and recovery
 
-### 装饰器
+`ParserImpl` declares `[[noreturn]] ThrowSyntaxError` overloads. Do not assume a general recovery AST or an error-collection mode exists merely because other compiler frontends have one.
 
-```cpp
-Expression *ParseDecorator();  // @Decorator
-void ParseDecorators(ir::AstNode *node);
-```
+For speculative parsing, inspect saved lexer positions and context state. Failed alternatives must not leave stale tokens, scope changes, or source ranges. For invalid syntax, compare the diagnostic and location and ensure the failure is propagated to the caller.
 
----
+## 9. Parser flags
 
-## AST转换（Transformer）
+`parserFlags.h` and `context/parserContext.h` define the current flag families. `ExpressionParseFlags`, statement-related flags, `TypeAnnotationParsingOptions`, and `ParserStatus` are separate mechanisms.
 
-```cpp
-if (extension_ == ScriptExtension::TS) {
-    transformer_ = std::make_unique<Transformer>(allocator_);
-    transformer_->Transform(program);
-}
-```
+Do not copy the former guide's illustrative `ParseFlags` enum or bit values. A new flag requires an audit of where it is set, inherited, cleared, and consumed, including nested functions and TS parsing.
 
-**转换内容**：
-1. 类型擦除：移除TypeScript类型注解
-2. 枚举处理：`enum` → IIFE + 对象
-3. 命名空间：`namespace` → IIFE
-4. 参数属性：构造函数参数 → 类属性
-5. 装饰器：转换为运行时调用
+## 10. Module systems
 
-```cpp
-class Transformer {
-public:
-    explicit Transformer(ArenaAllocator *allocator);
-    void Transform(parser::Program *program);
+`ScriptKind::MODULE` and `COMMONJS` are separate paths. Inspect `commonjs.cpp`, program kind, and `module/sourceTextModuleRecord.*` together.
 
-private:
-    ir::Statement *TransformStatement(ir::Statement *stmt);
-    ir::Expression *TransformExpression(ir::Expression *expr);
-    ir::ClassDefinition *TransformEnum(ir::TSEnumDeclaration *enumDecl);
-};
-```
+ES module records distinguish requests, imports, and exports, including lazy/type-only information. CommonJS wrapper handling must preserve its own binding semantics. Do not translate `require()` into ES imports as a routine parser fix.
 
----
+## 11. Modification guidance
 
-## 错误恢复
+### 11.1 Add a statement
 
-### 策略
+1. Define/update the IR node and mapping if a new node kind is required.
+2. Add parser dispatch and syntax/context checks.
+3. Construct declarations and scopes using the existing binder interfaces.
+4. Implement traversal, dumping, transformation, and compilation as applicable.
+5. Test valid syntax, invalid syntax, source positions, and runtime behavior.
 
-1. **同步点**：语句结束（`;`, `}`）、块结束（`}`）、声明开始
-2. **错误标记**：标记错误但不停止解析
-3. **AST错误节点**：返回错误节点继续解析
+### 11.2 Add an expression
 
-```cpp
-if (PeekToken().Type() == TokenType::KEYW_ASYNC) {
-    ErrorIncompatibleAsync();
-    NextToken();  // 跳过async关键字
-}
-```
+1. Choose the actual precedence/associativity and allowed contexts from the spec.
+2. Update the parser and IR representation.
+3. Check assignments, patterns, optional chains, and TS ambiguities.
+4. Preserve evaluation order through transformation and compilation.
+5. Run adjacent expression and statement regressions.
 
----
-
-## ParseFlags
-
-```cpp
-enum ParseFlags : uint32_t {
-    NONE = 0,
-    STMT = 1 << 0,           // 语句模式
-    EXPRESSION = 1 << 1,      // 表达式模式
-    ALLOW_SUPER = 1 << 3,     // 允许super
-    ALLOW_NEW_TARGET = 1 << 4,// 允许new.target
-    IN_GENERATOR = 1 << 5,    // 在generator中
-    IN_ASYNC = 1 << 6,        // 在async中
-    IN_CLASS = 1 << 8,        // 在class中
-    TYPE_ANNOTATION = 1 << 10,// 允许类型注解（TS）
-};
-```
-
----
-
-## 模块系统
-
-```cpp
-// ES Modules
-ir::ImportDeclaration *ParseImportDeclaration();
-ir::ExportNamedDeclaration *ParseExportNamedDeclaration();
-ir::ExportDefaultDeclaration *ParseExportDefaultDeclaration();
-
-// CommonJS
-ir::Expression *ParseRequireCall();      // require("fs")
-ir::Expression *ParseModuleExports();    // module.exports
-```
-
----
-
-## 修改Parser的注意事项
-
-### 添加新语句
-
-1. 在 `ir/statements/` 创建AST节点类
-2. 在 `ir/astNode.h` 添加 `Type` 枚举值
-3. 在 `statementParser.cpp` 实现 `ParseXxxStatement()`
-4. 在 `compiler/` 实现编译逻辑
-
-### 添加新表达式
-
-1. 在 `ir/expressions/` 创建AST节点类
-2. 在 `expressionParser.cpp` 实现 `ParseXxxExpression()`
-3. 考虑优先级和结合性
-4. 更新 `compiler/` 编译逻辑
-
----
-
-## 调试Parser
+## 12. Debugging
 
 ```bash
 es2abc --dump-ast input.js
+es2abc --extension ts --dump-transformed-ast input.ts
 ```
 
----
+Break in `ParserImpl::Parse` and the actual syntax helper, then follow lexer token/range and binder scope state. Do not infer a parser defect solely from final runtime behavior.
 
-## 相关模块
+## 13. Related modules
 
-**上游**：`lexer/` - Token流输入
+- Upstream: `es2panda/lexer/` supplies tokens.
+- Coordinated analysis: `es2panda/binder/` manages declarations and references.
+- Downstream: `es2panda/parser/transformer/` and `es2panda/compiler/`.
+- Shared structures: `es2panda/ir/`, `binder/scope.h`, and the program allocator.
 
-**下游**：`binder/`、`typescript/`、`compiler/`
+## 14. Verification and evidence
 
-**依赖**：`ir/`、`binder/scope.h`、`util/arena.h`
+Build the affected dynamic frontend target from the OpenHarmony source root before running behavior tests:
+
+```bash
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk
+./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests --no-prebuilt-sdk
+```
+
+Set and validate paths using `docs/knowledge/Build_Environment.md`. Prepare `RUNTIME_DIR` and `TEST_LD_LIBRARY_PATH` using `docs/knowledge/ES2Panda_Testing.md`, then run the relevant suite from the repository root:
+
+```bash
+python3 es2panda/test/runner.py --regression "$FRONTEND_BUILD_DIR"
+python3 es2panda/test/runner.py --compiler --js-runtime "$RUNTIME_DIR" --LD_LIBRARY_PATH "$TEST_LD_LIBRARY_PATH" "$FRONTEND_BUILD_DIR"
+```
+
+Use the complete dynamic-route verification procedure in `es2panda/AGENTS.md` for code changes. Record the build mode, commands, logs, unexpected failures, skipped cases, and missing prerequisites. Do not claim an unexecuted test passed. Changes to emitted bytecode require user notification and runtime/verifier coverage.

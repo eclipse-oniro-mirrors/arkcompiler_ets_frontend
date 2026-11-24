@@ -1,5 +1,7 @@
 # Arkguard – AI Knowledge Base (Source Code Obfuscation)
 
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
+
 ---
 
 ## 1. Basic Information

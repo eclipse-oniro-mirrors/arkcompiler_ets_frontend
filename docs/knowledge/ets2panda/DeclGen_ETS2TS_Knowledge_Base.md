@@ -1,5 +1,8 @@
 # ETS2Panda DeclGen ETS2TS Knowledge Base
 
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > Document Version: v1.0
 > Last Updated: 2026-05-28
 > Scope: `ets_frontend` frontend compiler knowledge base entry
@@ -19,9 +22,9 @@
 - `declgenEts2Ts.h` / `declgenEts2Ts.cpp` — Core generation engine, containing the `TSDeclGen` class and top-level entry function `GenerateTsDeclarations()`
 - `isolatedDeclgenChecker.h` / `isolatedDeclgenChecker.cpp` — Isolated-mode validator `IsolatedDeclgenChecker`; does not depend on the global symbol table; checks whether properties/parameters/functions have explicit type annotations
 - `main.cpp` — Standalone CLI entry point; parses `--export-all`, `--output-dets`, `--output-ets`, and other arguments; drives the full compilation pipeline via the `es2panda_lib` public API before calling `GenerateTsDeclarations()`
-- `declgen_ets2ts_error.yaml` — Error diagnostic definitions (IDENT_KEY_SUPPORT, UNSUPPORTED_LITERAL_TYPE, etc.; 10 entries total)
-- `declgen_ets2ts_warning.yaml` — Warning diagnostic definitions (EMPTY_TYPE_NAME, UNTYPED_METHOD; 2 entries total)
-- `isolated_declgen.yaml` — Diagnostic definitions for isolated declaration generation mode (variables/properties/parameters must have explicit type annotations, etc.; 8 entries total)
+- `declgen_ets2ts_error.yaml` — Error diagnostic definitions (IDENT_KEY_SUPPORT, UNSUPPORTED_LITERAL_TYPE, etc.)
+- `declgen_ets2ts_warning.yaml` — Warning diagnostic definitions (EMPTY_TYPE_NAME, UNTYPED_METHOD)
+- `isolated_declgen.yaml` — Diagnostic definitions for isolated declaration generation mode (variables/properties/parameters must have explicit type annotations, etc.)
 - `CMakeLists.txt` / `BUILD.gn` — Build configuration
 
 ## Key Files and Responsibilities
@@ -73,8 +76,8 @@ IsolatedDeclgenChecker::Check()
 - Isolated mode reports "must have explicit type annotation" → this document (`IsolatedDeclgenChecker`, see `isolated_declgen.yaml`)
 - Type resolution error during declaration generation → first check whether checker has completed (whether the AST is in `CHECKED` state)
 - Output file path / parameter configuration issues → check `DeclgenOptions` and `declgenV1OutPath`/`declgenV2OutPath` passed by `build_system`
-- Upstream AST issues (parse errors, checker not completed) → `Static_Frontend_Knowledge_Base.md`
-- declgen trigger logic on the `build_system` side → `Driver_Knowledge_Base.md`
+- Upstream AST issues (parse errors, checker not completed) → `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md`
+- declgen trigger logic on the `build_system` side → `docs/knowledge/ets2panda/Driver_Knowledge_Base.md`
 
 ## Expert Tips
 
@@ -95,7 +98,7 @@ IsolatedDeclgenChecker::Check()
 - Run CLI tool standalone: `declgen_ets2ts --output-dets=out.d.ets --output-ets=out.ets input.ets`
 - Invocation via `build_system`: set `enableDeclgenEts2Ts: true` and configure `declgenV1OutPath`, then trigger through the build system
 - Related tests: declgen-related test cases under `ets2panda/test/` (including `.d.ets` and `.ets` expected output comparisons)
-- Diagnostic definitions: `declgen_ets2ts_error.yaml` (10 errors), `declgen_ets2ts_warning.yaml` (2 warnings), `isolated_declgen.yaml` (8 isolated-mode diagnostics)
+- Diagnostic definitions: `declgen_ets2ts_error.yaml`, `declgen_ets2ts_warning.yaml`, and `isolated_declgen.yaml` (current definitions are authoritative)
 
 ## Debugging Methods
 
@@ -114,7 +117,7 @@ IsolatedDeclgenChecker::Check()
 
 ## Related Documents
 
-- `docs/ets2panda/Static_Frontend_Knowledge_Base.md` -- upstream parser/checker/lowering pipeline context
-- `docs/ets2panda/Driver_Knowledge_Base.md` -- build-system trigger path for declgen
+- `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md` -- upstream parser/checker/lowering pipeline context
+- `docs/knowledge/ets2panda/Driver_Knowledge_Base.md` -- build-system trigger path for declgen
 - `ets2panda/declgen_ets2ts/AGENTS.md` -- directory-level architecture overview and constraints
 - `ets2panda/docs/lowering-phases.md` -- compiler pipeline phase overview

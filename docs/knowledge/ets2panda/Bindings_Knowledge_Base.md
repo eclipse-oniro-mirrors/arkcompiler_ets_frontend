@@ -1,5 +1,11 @@
 # ETS2Panda Bindings Knowledge Base
 
+Path setup and validation: `docs/knowledge/Build_Environment.md` (repository-relative).
+
+
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > Document version: v2.0
 > Last updated: 2026-06-04
 > Scope: non-obvious constraints for `ets_frontend/ets2panda/bindings`, including TypeScript wrappers, Node native modules, generated bindings, LSP wrappers, and bindings tests
@@ -9,7 +15,7 @@ This file is intentionally short. Do not use it as a directory map. Read the cod
 ## Must Do
 
 - Read the closest rules before editing:
-  - `ets_frontend/ets2panda/bindings/README.md`
+  - `ets2panda/bindings/README.md`
   - nearest directory-level rules for `public`, `lsp`, or tests when those areas are involved
 - First locate the failing layer before changing code:
   - TypeScript wrapper
@@ -77,7 +83,7 @@ This file is intentionally short. Do not use it as a directory map. Read the cod
 
 - If only TypeScript wrapper behavior changed, run the nearest bindings unit or e2e test.
 - If native bridge, N-API conversion, or `.node` output changed, build the native binding target and run related bindings tests.
-- If `src/lsp/*` changed, run the relevant LSP bindings e2e test and consider the matching C++ LSP unit test.
+- If `ets2panda/bindings/src/lsp/` or `ets2panda/bindings/native/src/lsp.cpp` changed (repository-relative paths), run the relevant LSP bindings e2e test. For changes to C++ LSP behavior or interfaces under `ets2panda/lsp/`, also run the matching C++ LSP tests in `ets2panda/test/unit/lsp/`.
 - If a public API wrapper changed, verify the public C API result independently when practical.
 - If result conversion changed, test at least:
   - empty result
@@ -96,7 +102,8 @@ This file is intentionally short. Do not use it as a directory map. Read the cod
 Common commands:
 
 ```sh
-cd ets_frontend/ets2panda/bindings
+# Start from the ets_frontend repository root.
+cd ets2panda/bindings
 npm run run
 npm run test:build
 npm run test
@@ -106,15 +113,16 @@ npm run ut_test
 Use only after confirming behavior is intended:
 
 ```sh
-cd ets_frontend/ets2panda/bindings
+# Start from the ets_frontend repository root.
+cd ets2panda/bindings
 npm run test:update
 ```
 
-Native target examples:
+Native target examples (use absolute paths to configured build directories; these commands can run from any working directory):
 
 ```sh
-ninja -C <out-dir> ts_bindings
-cmake --build <build-dir> --target public
+ninja -C "$STATIC_BUILD_DIR" ts_bindings
+cmake --build "$STATIC_BUILD_DIR" --target public
 ```
 
 ## Routing Rules

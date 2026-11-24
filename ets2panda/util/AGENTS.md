@@ -1,8 +1,10 @@
 # Util Agent Guide
 
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
+
 Use this file for work under `util/` together with the repository-level `AGENTS.md`.
 
-## Core Metadata
+## 1. Core Metadata
 
 | Attribute | Value |
 |-----------|--------|
@@ -10,7 +12,7 @@ Use this file for work under `util/` together with the repository-level `AGENTS.
 | **Purpose** | Shared infrastructure for the ets2panda front end: diagnostics and error recovery, configuration and options, paths and strings, AST builders, name mangling, plugins, and build helpers. |
 | **Primary Language** | C++ (some scripts and config: YAML/Ruby/Python) |
 
-## Directory Layout
+## 2. Directory Layout
 
 ```
 util/
@@ -27,25 +29,25 @@ util/
 └── Other utilities (doubleLinkedList.h, enumbitops.h, etc.)
 ```
 
-## Responsibilities
+## 3. Responsibilities
 
 - **Diagnostics**: Unified error codes and messages; YAML under diagnostic/ is the single source of truth; templates generate C++ constants and messages.
 - **Options and config**: options.yaml and arktsconfig drive command-line and project config; read by driver and all stages.
 - **AST builders**: ast-builders/ provides typed, fluent AST construction to reduce manual node construction errors.
 - **Shared utilities**: Paths, strings, name mangling, error recovery, and plugin interface are used by lexer, parser, checker, compiler, etc.
 
-## Dependencies
+## 4. Dependencies
 
 - **Used by**: Nearly all ets2panda modules (lexer, parser, varbinder, checker, compiler, driver).
 - **Depends on**: No other ets2panda front-end modules (only C++ stdlib and build/script environment).
 
-## Extending or Modifying
+## 5. Extending or Modifying
 
 - **New diagnostic**: Add an entry in the appropriate YAML under diagnostic/, run the generator to update diagnostic.h/.cpp.
 - **New option**: Define in options.yaml, parse and expose in options.cpp.
 - **New AST builder**: Add *Builder.h under ast-builders/ following existing naming and style.
 
-## Cross-Repo Guardrails
+## 6. Cross-Repo Guardrails
 
 - If util changes affect frontend behavior or diagnostics, keep them spec-aligned and avoid introducing ad-hoc diagnostics outside spec-defined behavior.
 - Do not weaken review gates via util changes (tests required for behavior changes; no assertion-removal workarounds).

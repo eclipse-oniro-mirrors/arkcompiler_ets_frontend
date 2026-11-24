@@ -1,248 +1,172 @@
-# AGENTS.md
+# Test262 Agent Guide
 
-## 项目概述
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**test262** 是 ECMAScript 标准测试套件（Test262）的集成测试框架，用于验证 ARK 编译器对 JavaScript/TypeScript 标准的兼容性。该框架支持 ES5.1 到 ES2023 的各个版本测试，以及国际化（Intl）测试。
+## 1. Project Overview
 
-### 测试覆盖
+`test262` integrates ECMAScript conformance tests with the dynamic frontend, ARK VM, host adapter, and test harness. Edition, Intl, Sendable, and other selections are defined by the current runner and configuration.
 
-| 版本 | 说明 |
-|------|------|
-| **ES5.1** | ECMAScript 5.1 标准测试 |
-| **ES2015** | ES6 标准测试（箭头函数、类、Promise 等） |
-| **ES2021** | ES2021 新特性测试 |
-| **ES2022** | ES2022 新特性测试 |
-| **ES2023** | ES2023 新特性测试 |
-| **Intl** | 国际化 API 测试 |
-| **Sendable** | 并发特性测试 |
-| **Other** | 其他非标准测试 |
-
-### 技术栈
-
-```
-Python 3 + Node.js + Test262 Suite → es2panda → ARK VM → 测试结果
+```text
+Python orchestration + Node harness + selected Test262 data
+    → frontend compilation → ARK VM execution → classified results
 ```
 
----
+### 1.1 Coverage selections
 
-## 快速开始
+| Selection | Purpose |
+|---|---|
+| ES5.1 / ES2015 | Earlier ECMAScript suites |
+| ES2021 / ES2022 / ES2023 | Edition-filtered or cumulative selections |
+| Intl | Internationalization tests |
+| Sendable | Relevant concurrency extension tests |
+| Other | Additional nonstandard selections |
+| ABC-to-program | Mixed compilation/recompilation route |
 
-### 基本用法
+Inspect `run_test262.py` and `config.py` rather than treating this list as a fixed latest-version guarantee.
+
+## 2. Code Map
+
+Paths in this table are relative to `test262/`; generated/downloaded paths may be absent until preparation.
+
+| Path | Responsibility |
+|---|---|
+| `run_test262.py` | Arguments, preparation, test orchestration |
+| `config.py` | Suite/tool/output paths and host defaults |
+| `utils.py` | Process and test helpers |
+| `mix_compile.py` | Mixed compilation support |
+| `run_sunspider.py` | Separate performance helper |
+| Edition/list files | Selected test inventory |
+| `skip_tests.json`, `intl_skip_tests.json` | Known exclusions |
+| `ignored-test262-*.txt`, `skip-test262-*.txt` | Scenario/platform exclusions |
+| `data/` | Prepared external Test262 data |
+| `harness/`, `eshost/` | Prepared/patched Node harness and VM adapter |
+
+Output paths are controlled by `config.py` and selected mode; the base output directory is repository-relative `out/test262/`, not an unconditional `test262/output/` directory.
+
+## 3. Knowledge Routing
+
+| Task | Read first |
+|---|---|
+| Dynamic compiler regression | Repository-relative `es2panda/AGENTS.md` |
+| Route constraints and required suites | `docs/knowledge/ES2Panda_Knowledge_Base.md` |
+| Runner flag/path issue | `test262/run_test262.py`, `test262/config.py` |
+| Harness/VM mismatch | Runner preparation, patches, host adapter, matching runtime |
+| SDK/XTS/workload | `test/AGENTS.md` |
+
+## 4. Constraints
+
+### 4.1 Do not
+
+- Do not update skip/ignored lists merely because many tests fail; trace environment failures and regressions first.
+- Do not report selected/skipped tests as executed passes.
+- Do not substitute static `ets2panda` semantics for this dynamic conformance route.
+- Do not assume generated suite/harness/output directories are tracked source files.
+- Do not confuse a disassembler/tool build with runtime conformance execution.
+- Do not copy the obsolete `--ark-frontend-tool` spelling; the current binary option is `--ark-frontend-binary`.
+
+### 4.2 Ask before
+
+Follow repository approval gates for dependencies, serialized/bytecode compatibility, and environment-affecting actions. Inspect preparation/download/patch behavior before running a full suite in an unprepared checkout.
+
+## 5. Usage and Verification
+
+### 5.1 Working directory and prerequisites
+
+Run Python commands from the ets_frontend repository root. `config.py` constructs paths such as `test262/data` relative to that root; changing into `test262/` first can duplicate the path prefix.
+
+Prepare the selected compiler, matching runtime and shared libraries, suite data, Node harness, and any required ICU resources. Use absolute binary paths to avoid resolving an OpenHarmony output path relative to this repository.
+
+### 5.2 Basic usage
+
+The following are parameterized recipes. Set actual absolute binary paths before execution:
 
 ```bash
-cd test262
-
-# 运行完整测试套件
-python3 run_test262.py
-
-# 运行 ES5.1 测试
-python3 run_test262.py --es51
-
-# 运行 ES2022 测试（全部）
-python3 run_test262.py --es2022 all
-
-# 运行 ES2023 测试（仅 ES2023）
-python3 run_test262.py --es2023 only
-
-# 运行单个测试文件
-python3 run_test262.py --file data/test/language/statements/break/12.8-1.js
-
-# 运行目录下所有测试
-python3 run_test262.py --dir data/test/language/statements
+ES2ABC="<absolute_es2abc_binary>"
+ARK_VM="<absolute_ark_js_vm_binary>"
+python3 test262/run_test262.py --es2022 all --ark-frontend=es2panda --ark-frontend-binary="$ES2ABC" --ark-tool="$ARK_VM" --product-name=rk3568
+python3 test262/run_test262.py --es2022 all --ark-frontend=es2panda --ark-frontend-binary="$ES2ABC" --ark-tool="$ARK_VM" --product-name=rk3568 --abc2program
 ```
 
-### 常用选项
+For dynamic code changes, run both ordinary and mixed modes as required by `es2panda/AGENTS.md`; focused cases supplement the full required regression.
 
-| 选项 | 说明 |
-|------|------|
-| `--es51` | 运行 ES5.1 测试 |
-| `--es2015` | 运行 ES2015 测试 |
-| `--es2021 all\|only` | 运行 ES2021 测试 |
-| `--es2022 all\|only` | 运行 ES2022 测试 |
-| `--es2023 all\|only` | 运行 ES2023 测试 |
-| `--intl` | 运行国际化测试 |
-| `--sendable` | 运行并发特性测试 |
-| `--other` | 运行其他测试 |
-| `--file FILE` | 运行单个测试文件 |
-| `--dir DIR` | 运行目录下所有测试 |
-| `--mode 1\|2\|3` | 1: default, 2: strict, 3: both |
-| `--skip-list FILE` | 指定忽略列表 |
-
----
-
-## 目录结构
-
-```
-test262/
-├── run_test262.py              # 主测试运行器
-├── config.py                   # 测试配置
-├── utils.py                    # 工具函数
-├── mix_compile.py              # 混合编译工具
-├── run_sunspider.py           # SunSpider 性能测试
-├── es5_tests.txt              # ES5 测试列表
-├── es2015_tests.txt           # ES2015 测试列表
-├── es2021_tests.txt           # ES2021 测试列表
-├── es2022_tests.txt           # ES2022 测试列表
-├── es2023_tests.txt           # ES2023 测试列表
-├── intl_tests.txt             # 国际化测试列表
-├── sendable_tests.txt         # 并发特性测试列表
-├── other_tests.txt            # 其他测试列表
-├── skip_tests.json            # 标准跳过列表
-├── intl_skip_tests.json       # 国际化跳过列表
-├── ignored-test262-*.txt      # 场景特定忽略列表
-├── skip-test262-*.txt         # 平台特定跳过列表
-├── data/                       # Test262 测试用例
-│   └── test/                   # 官方 Test262 仓库
-├── harness/                    # 测试工具（npm 包）
-│   ├── bin/run.js             # 测试执行器
-│   └── lib/                   # 测试库
-├── eshost/                     # eshost npm 包
-│   └── panda/                 # ARK VM 适配器
-└── output/                     # 测试输出目录
-    ├── *.abc                   # 生成的字节码文件
-    ├── *.err                   # 错误日志
-    ├── *.fail                  # 失败测试详情
-    └── result.txt             # 测试统计结果
-```
-
----
-
-## 测试流程
-
-### 完整测试流程
-
-```
-1. 准备环境（安装 npm 依赖）
-   ↓
-2. 拉取 Test262 用例（data/test）
-   ↓
-3. 应用 ARK 补丁（harness.patch, eshost.patch）
-   ↓
-4. 编译测试用例（es2panda）
-   ↓
-5. 执行测试（ARK VM）
-   ↓
-6. 收集结果（passed/failed）
-   ↓
-7. 生成报告（result.txt）
-```
-
-### 测试模式
-
-| 模式 | 说明 |
-|------|------|
-| `--mode 1` | 仅 default 模式（非严格模式） |
-| `--mode 2` | 仅 strict 模式 |
-| `--mode 3` | 同时运行两种模式 |
-
----
-
-## 忽略列表
-
-### 标准忽略列表
-
-**skip_tests.json** - 不符合要求的测试用例：
-```json
-{
-  "test_name": {
-    "comment": "Reason for skipping"
-  }
-}
-```
-
-### 场景特定忽略列表
-
-**ignored-test262-{scenario}-{mode}-{arch}.txt**
-
-| 场景 | 文件示例 |
-|------|----------|
-| Release x64 | `ignored-test262-release-x64.txt` |
-| Debug x64 | `ignored-test262-debug-x64.txt` |
-| FastVerify QEMU | `ignored-test262-fastverify-qemu-aot-pgo.txt` |
-| AOT PGO LiteCG | `ignored-test262-release-x64-aot-pgo-litecg.txt` |
-
-### 平台特定忽略列表
-
-**skip-test262-*.txt** - 特定平台的已知问题
-
----
-
-## 测试输出
-
-### 输出文件
-
-测试完成后在 `output/` 目录生成：
-
-| 文件 | 说明 |
-|------|------|
-| `*.abc` | 编译后的字节码文件 |
-| `*.err` | 错误日志 |
-| `*.fail` | 失败测试详情 |
-| `*.pass` | 通过测试详情 |
-| `result.txt` | 测试统计报告 |
-
-### 结果示例
-
-```
-FAIL test/language/statements/break/12.8-1.js (strict mode)
-
-Ran 1000 tests
-950 passed
-50 failed
-used time is: 0:15:30
-```
-
----
-
-## 高级用法
-
-### 指定编译器工具
+### 5.3 Select a smaller suite
 
 ```bash
-python3 run_test262.py \
-  --ark-tool=/path/to/ark_js_vm \
-  --ark-frontend-tool=/path/to/es2abc \
-  --ark-frontend=es2panda
+python3 test262/run_test262.py --es51
+python3 test262/run_test262.py --es2023 only
+python3 test262/run_test262.py --file <prepared_test_file>
+python3 test262/run_test262.py --dir <prepared_test_directory>
 ```
 
-### 使用 Babel 转换
+The last two commands are parameterized selectors; use real prepared test paths and the same explicit tool/runtime options as the full-suite recipe when defaults do not match your checkout.
 
-```bash
-python3 run_test262.py --babel --file test.js
-```
+### 5.4 Common options
 
-### 并行测试
+| Option | Meaning |
+|---|---|
+| `--es51`, `--es2015` | Earlier edition selectors |
+| `--es2021`, `--es2022`, `--es2023` | Edition selection; inspect `all`/`only` choices |
+| `--intl`, `--sendable`, `--other` | Additional selection groups |
+| `--file`, `--dir`, `--test-list` | Focused selection |
+| `--mode 1` | Default (non-strict) mode |
+| `--mode 2` | Strict mode |
+| `--mode 3` | Both modes |
+| `--skip-list` | Additional skip-list input |
+| `--timeout`, `--threads` | Timeout and parallelism |
+| `--ark-frontend`, `--ark-frontend-binary` | Frontend route and executable |
+| `--ark-tool`, `--libs-dir` | Runtime and library paths |
+| `--abc2program` | Mixed route |
+| `--babel` | Runner's optional transformation path |
 
-```bash
-# 使用 15 个线程
-python3 run_test262.py --threads 15
-```
+Use `python3 test262/run_test262.py --help` for exact current types/defaults. Set parallelism to the prepared environment rather than freezing a specific worker count.
 
----
+### 5.5 Execution flow
 
-## 故障排查
+1. Parse selection and tool configuration.
+2. Prepare dependencies, suite checkout, and relevant patches as implemented by the runner.
+3. Compile test inputs in the selected route.
+4. Execute the matching VM/harness mode.
+5. Classify compile failures, runtime failures, timeouts, skips, and passes.
+6. Write logs/results in the configured output directory.
 
-### 常见问题
+Check subprocess failures and preparation completion before interpreting suite totals. A missing tool can cause broad failure without indicating a language regression.
 
-| 问题 | 原因 | 解决方案 |
-|------|------|----------|
-| npm 依赖失败 | 网络问题 | 检查网络，使用国内镜像 |
-| 测试超时 | 超时时间太短 | 使用 `--timeout` 增加时间 |
-| 编译失败 | es2abc 路径错误 | 检查 `--ark-frontend-tool` |
-| 大量失败 | 忽略列表未更新 | 更新对应的 ignored-*.txt |
+### 5.6 Skip lists
 
-### 调试技巧
+Read the actual JSON/list schema and scenario matching code before adding an entry. The filename pattern describes a scenario; it does not prove a particular mode, architecture, or test was exercised.
 
-```bash
-# 查看详细日志
-python3 run_test262.py --file test.js 2>&1 | tee test.log
+Every new exclusion needs a reason and reproducible evidence. Keep strict/default and ordinary/mixed results distinguishable. Do not automatically accept changed baselines after a compiler change.
 
-# 查看生成的字节码
-ls output/*.abc
+### 5.7 Output and diagnostics
 
-# 查看失败详情
-cat output/*.fail
+Inspect configured output roots for compiled ABCs, harness/process logs, and result summaries. Exact suffixes and report filenames depend on the runner path. Preserve the selected command/configuration with the report.
 
-# 使用 es2abc 手动编译
-es2abc test.js -o test.abc
-```
+A report should distinguish:
+
+| Outcome | Evidence |
+|---|---|
+| Pass | Actual harness/VM execution with intended mode |
+| Compile failure | Frontend command and diagnostic |
+| Runtime failure | VM/harness output and exit status |
+| Timeout | Tool, timeout setting, and case |
+| Skip | Applied list/reason; not counted as executed pass |
+| Preparation failure | Missing/downloaded tool or fixture prerequisite |
+
+### 5.8 Advanced use
+
+For custom tools, supply `--ark-frontend-binary` and `--ark-tool` explicitly and verify dependencies. Use `--babel` only for the intended runner path, since transformation can change what is being measured. Compare single-worker and parallel failures when diagnosing nondeterminism.
+
+SunSpider/performance helpers are separate measurements; conformance passes do not establish performance, and timing results do not replace conformance.
+
+### 5.9 Troubleshooting
+
+| Symptom | First action |
+|---|---|
+| npm/data preparation fails | Diagnose actual registry/network/tool error and preserve logs |
+| Frontend cannot launch | Check binary option, file architecture, permissions, libraries |
+| Widespread runtime failures | Check compiler/runtime compatibility and harness patch state |
+| Timeout | Reproduce focused case before changing timeout |
+| Unexpected skipped cases | Inspect selection and scenario list resolution |
+| Mixed-only failure | Trace ABC-to-program inputs and matching runtime versions |
+
+Re-run the minimal failing case, inspect generated input/ABC and diagnostics, then fix the owning layer and rerun relevant suites. Never present sample result counts as measured output.

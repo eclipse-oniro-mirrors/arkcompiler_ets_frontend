@@ -1,8 +1,10 @@
 # Linter Agent Guide
 
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
+
 Use this file for work under `linter/` together with the repository-level `AGENTS.md`.
 
-## Core Metadata
+## 1. Core Metadata
 
 | Attribute | Value |
 |-----------|--------|
@@ -12,11 +14,11 @@ Use this file for work under `linter/` together with the repository-level `AGENT
 
 ArkTS-dynamic is based on TypeScript with additional static restrictions required by ArkTS-static mode.
 
-## Cross-Component Rules
+## 2. Cross-Component Rules
 
 - For compiler/frontend semantic changes triggered by linter work, follow root `AGENTS.md` rules (spec-first behavior, tests for behavior changes, no assertion-removal shortcuts).
 
-## Directory Structure
+## 3. Directory Structure
 
 ```
 linter/
@@ -94,9 +96,9 @@ linter/
 └── webpack.config.js      # Webpack bundling config
 ```
 
-## Build Commands
+## 4. Build Commands
 
-### Building
+### 4.1 Building
 
 ```bash
 npm install
@@ -104,7 +106,7 @@ npm run install-ohos-typescript   # you need to execute this command to update t
 npm run build           #  build: after npm run install-ohos-typescript
 ```
 
-### Code Quality
+### 4.2 Code Quality
 
 ```bash
 npm run fix             # Run prettier and eslint fixes
@@ -112,13 +114,13 @@ npm run eslint-check    # Check code style with eslint
 npm run prettier-fix    # Format code with prettier
 ```
 
-### Distribution
+### 4.3 Distribution
 
 ```bash
 npm run pack:linter     # Create distributable .tgz package in bundle/
 ```
 
-## Test Suite
+## 5. Test Suite
 
 This command will use tslinter to scan the target file and generate a series of JSON files to compare with the expected JSON files. If they are consistent, pass the test.
 The a-positive.ets file will include a positive example: an example that conforms to ArkTS-static syntax 'a', and will not report an error for rule 'a'.
@@ -131,7 +133,7 @@ For the expected JSON files in testing, an example is as follows:
 When performing issue fixes or requirement design, it is essential to strictly adhere to the error points specified in the task description. You must not alter the expected JSON files of acceptance test cases in an unintended manner simply to pass tests and achieve acceptance.
 After each final modification, you need to run 'npm test' to pass all test suites.
 
-### Running Tests
+### 5.1 Running Tests
 
 ```bash
 npm test                # Run all tests in parallel
@@ -140,7 +142,7 @@ npm run testrunner -- [args]  # Custom test runner with options
 npm run testrunner -- -d test/main -p xxx.ets       #Run test on xxx.ets alone
 ```
 
-### Test Runner Usage
+### 5.2 Test Runner Usage
 
 ```bash
 # Run tests in specific directory with pattern
@@ -153,13 +155,13 @@ npm run testrunner -- -d test/rules --sdk
 npm run testrunner -- -d test/main,test/rules
 ```
 
-### Coverage
+### 5.3 Coverage
 
 ```bash
 npm run coverage        # Generate test coverage reports
 ```
 
-### Updating Test Results
+### 5.4 Updating Test Results
 
 ```bash
 npm run update-tests    # Update test result files (use carefully)
@@ -167,21 +169,21 @@ npm run update-tests    # Update test result files (use carefully)
 
 This command allows modification of expected JSON results based on discrepancies between actual scanned JSON results and expected JSON results. However, note that this usage requires user confirmation and must be employed with caution.
 
-## Architecture
+## 6. Architecture
 
-### Build Pipeline
+### 6.1 Build Pipeline
 
 1. **TypeScript Compilation** (`tsc`) - Compiles `src/` to `build/`
 2. **Webpack Bundling** - Bundles into `dist/tslinter.js` (Node.js target)
 3. **Packaging** - Creates distributable in `bundle/` directory
 
-### Entry Points
+### 6.2 Entry Points
 
 - **Built executable**: `dist/tslinter.js`
 - **Binary symlink**: `bin/tslinter.js`
 - **Package**: `bundle/panda-tslinter-*.tgz`
 
-## Running the Linter
+## 7. Running the Linter
 
 ```bash
 node dist/tslinter.js [options] [input files]
@@ -193,7 +195,7 @@ e.g
 
 `node dist/tslinter.js --ide-interactive --arkts-2 --autofix --homecheck --migrate --sdk-external-api-path /home/xxx/sdk/default/hms/ets/dynamic --sdk-default-api-path /home/xxx/sdk/default/openharmony/ets/dynamic /home/xxx/test.ets` # After building easytrans, you can directly use its scanning and fixing capabilities by executing this command.
 
-### Key Options
+### 7.1 Key Options
 
 
 `--ide-interactive` # Generate JSON files to support IDE parsing.
@@ -209,7 +211,7 @@ e.g
 `--autofix-check` ＃ Used in combination with --migrate. After scanning, prompt the user to confirm whether to proceed with the fix.
 `--homecheck` # Add runtime error checks.
 
-## Dependencies
+## 8. Dependencies
 
 **Runtime:**
 
@@ -229,9 +231,9 @@ e.g
 - `glob` - File pattern matching
 - `rimraf` - Cross-platform delete
 
-## Development Notes
+## 9. Development Notes
 
-### Bug Fix Workflow
+### 9.1 Bug Fix Workflow
 1. The task will provide a test sample file test.ets and its corresponding expected JSON file (line and column numbers may not be precise, but the count of reported errors is definitive). You must ensure this test case passes—this is the non-negotiable baseline.
 
 2. Based on these test cases, you need to analyze the issues and code logic, and propose a solution. If you identify scenarios not covered by the provided test cases, you must supplement them and develop the corresponding detection logic.
@@ -245,6 +247,6 @@ e.g
 
 5. After testing and fixing all test cases, synchronize and archive the test.ets test cases into the corresponding rule's test files like xxx-positive.ets/xxx-negative.ets. At this point, the test.ets file can be deleted.
 
-### Precautions During Development
+### 9.2 Precautions During Development
 1. When you modify the code in homecheck, you need to execute the "npm run install-ohos-typescript" command to reinstall the homecheck on which tslinter source code depends.
 2. Always remember to execute npm run install-ohos-typescript before running npm run build every time! This is crucial.

@@ -1,10 +1,14 @@
 # driver Module
 
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
+
+Before planning or editing, read `docs/knowledge/ets2panda/Driver_Knowledge_Base.md` (repository-relative) and follow the root verification/evidence rules.
+
 **Name**: driver
 **Purpose**: Orchestrates ArkTS/ETS compilation pipeline: build configuration, dependency analysis, compilation execution, and output linking. Bridges the compiler (ets2panda) with build systems (hvigor).
 **Primary Language**: TypeScript (build_system) + C++ (dependency_analyzer)
 
-## Directory Structure
+## 1. Directory Structure
 
 ```
 driver/
@@ -52,9 +56,9 @@ driver/
     └── BUILD.gn
 ```
 
-## Build Commands
+## 2. Build Commands
 
-### Building
+### 2.1 Building
 
 ```bash
 npm install
@@ -62,9 +66,9 @@ npm run build            # Compile TypeScript to dist/
 npm run build_debug      # Build with source maps
 ```
 
-## Architecture
+## 3. Architecture
 
-### Build Pipeline
+### 3.1 Build Pipeline
 
 1. **Configuration Processing** - Parse and validate build config JSON
 2. **Module Collection** - Build module dependency graph
@@ -73,7 +77,7 @@ npm run build_debug      # Build with source maps
 5. **Compilation** - Execute compilation (parallel/simultaneous/sequential)
 6. **Linking** - Merge ABC files into final output
 
-### Key Components
+### 3.2 Key Components
 
 - **Build Modes**: BaseMode (parallel/concurrent/simultaneous), BuildMode, BuildFrameworkMode
 - **Dependency Analysis**: TypeScript wrapper + C++ analyzer tool
@@ -81,14 +85,14 @@ npm run build_debug      # Build with source maps
 - **Plugin System**: PARSED, CHECKED, CLEAN hooks
 - **Task Management**: Worker pool for parallel compilation
 
-## Dependencies
+## 4. Dependencies
 
 ****Used by**: hvigor (build system)
 **Uses**: ets2panda (C++ compiler), Koala bindings
 
-## Development Notes
+## 5. Development Notes
 
-### Build Configuration
+### 5.1 Build Configuration
 
 Build config is passed as JSON from hvigor. Key fields include:
 - buildType, buildMode, es2pandaMode
@@ -97,18 +101,18 @@ Build config is passed as JSON from hvigor. Key fields include:
 - dependencyModuleList
 - paths, plugins, SDK paths
 
-### Incremental Builds
+### 5.2 Incremental Builds
 
 File hash caching (hash_cache.json) enables incremental compilation. Unchanged files are filtered from the dependency graph.
 
-### Graph Clustering
+### 5.3 Graph Clustering
 
 Optional clustering merges files into batches when file count exceeds CLUSTER_FILES_THRESHOLD (460) for improved parallelism.
 
-### Worker Communication
+### 5.4 Worker Communication
 
 Workers communicate via message passing. Message types include DECL_GENERATED, ABC_COMPILED, ERROR_OCCURED, ASSIGN_TASK.
 
-### Plugin Development
+### 5.5 Plugin Development
 
 Plugins can hook into PARSED (after parsing), CHECKED (after type checking), and CLEAN (after compilation) stages. Use PluginDriver to register and execute plugins.

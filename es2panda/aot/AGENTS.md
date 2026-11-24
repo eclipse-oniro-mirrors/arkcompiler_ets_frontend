@@ -1,228 +1,181 @@
 # AOT Module - AGENTS.md
 
-## 模块职责
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**AOT（Ahead-Of-Time）编译器入口**：命令行接口和编译驱动
+## 1. Module responsibilities
 
-**核心功能**：命令行参数解析、多文件编译协调、并行编译调度、输出文件生成、热重载支持、模块依赖解析
+The ahead-of-time compiler entry provides the command-line interface and compilation driver. It parses options, coordinates source and ABC inputs, schedules compilation, emits output files, handles patch/reload modes, and resolves module dependencies.
 
----
+Read the repository `AGENTS.md`, `es2panda/AGENTS.md`, and `docs/knowledge/ES2Panda_Knowledge_Base.md` before modifying this module. Paths in this guide are repository-relative unless a block states another working directory.
 
-## 目录结构
+## 2. Directory structure
 
+```text
+es2panda/aot/
+├── main.cpp                  # Entry point and orchestration
+├── options.cpp               # Option parsing and validation
+├── options.h                 # Options accessors and input collection
+├── emitFiles.cpp             # File emission jobs and queues
+├── emitFiles.h               # Emission job declarations
+├── resolveDepsRelation.cpp   # Dependency traversal and pruning
+└── resolveDepsRelation.h     # Dependency resolver declarations
 ```
-aot/
-├── main.cpp                 # 主入口
-├── options.cpp/h            # 命令行选项解析
-├── emitFiles.cpp/h          # 多文件发射
-└── resolveDepsRelation.cpp  # 依赖关系解析
-```
 
----
+## 3. Main entry point
 
-## 主入口（main.cpp）
+Follow `main.cpp` and `es2panda.cpp` together: options are parsed, inputs are collected, compilation produces cached programs, dependency information is processed where enabled, and emission jobs write the requested outputs. Check return values and diagnostics along each path.
+
+`Compiler` is declared in `es2panda/es2panda.h`; do not replace its orchestration with a separate hand-written file loop. Source compilation and ABC recompilation have different input requirements.
+
+## 4. Command-line options
+
+### 4.1 Options class
+
+`aot/options.h` defines the real `Options` class. Selected declarations from that header:
 
 ```cpp
-int main(int argc, char **argv)
-{
-    Options options;
-    if (!ParseOptions(argc, argv, options)) return 1;
+    bool Parse(int argc, const char **argv);
 
-    std::map<std::string, util::ProgramCache*> progCache;
-    int result = es2panda::Compiler::CompileFiles(options, progCache);
-
-    if (result == 0) EmitOutputFiles(options, progCache);
-    CleanupProgCache(progCache);
-    return result;
-}
-```
-
----
-
-## 命令行选项
-
-### Options类
-
-```cpp
-struct Options {
-    std::vector<std::string> inputFiles;
-    std::string outputFile;
-    ScriptExtension extension = ScriptExtension::JS;
-
-    bool parseOnly = false;
-    bool dumpAst = false;
-    bool dumpAssembly = false;
-    int optLevel = 0;
-    bool enableTypeCheck = false;
-    bool module = false;
-    bool strict = false;
-
-    int fileThreadCount = 2;
-    int functionThreadCount = 0;
-
-    std::string transformLib;
-    bool mergeAbc = false;
-    PatchFixOptions patchFixOptions;
-};
-```
-
-### 命令行帮助
-
-```bash
-Usage: es2abc [OPTIONS] [input files]
-
-Options:
-  -o, --output <file>           Output ABC file
-  --extension <js|ts|as>        Input file extension
-  --parse-only                  Parse only, don't compile
-  --dump-ast                    Dump AST to stdout
-  --dump-assembly               Dump assembly to stdout
-  --opt-level <0|1|2>           Optimization level
-  --module                      Parse as module
-  --file-thread-count <n>       File-level parallel threads
-  --merge-abc                   Merge multiple ABC files
-```
-
----
-
-## 多文件发射
-
-```cpp
-class EmitFiles {
-public:
-    bool Emit(const std::map<std::string, util::ProgramCache*> &progs);
-    bool MergeAbcFiles(const std::vector<panda::pandasm::Program*> &programs);
-
-private:
-    bool WriteAbcFile(const panda::pandasm::Program *program, const std::string &filename);
-    bool WriteDebugInfo(const panda::pandasm::Program *program, const std::string &filename);
-    bool WriteAsmFile(const panda::pandasm::Program *program, const std::string &filename);
-};
-
-bool EmitFiles::Emit(const std::map<std::string, util::ProgramCache*> &progs)
-{
-    if (options_.output.empty()) {
-        for (auto &entry : progs) {
-            if (!WriteAbcFile(entry.second->program, GetOutputFileName(entry.first)))
-                return false;
-        }
-        return true;
+    const es2panda::CompilerOptions &CompilerOptions() const
+    {
+        return compilerOptions_;
     }
 
-    if (options_.mergeAbc && progs.size() > 1) {
-        std::vector<panda::pandasm::Program*> programs;
-        for (auto &entry : progs) programs.push_back(entry.second->program);
-        return WriteAbcFile(MergeAbcFiles(programs), options_.output);
+    es2panda::CompilerOptions &CompilerOptions()
+    {
+        return compilerOptions_;
     }
 
-    return WriteAbcFile(progs.begin()->second->program, options_.output);
-}
-```
-
----
-
-## 依赖关系解析
-
-```cpp
-class DepsGraph {
-public:
-    void AddNode(const std::string &fileName);
-    void AddEdge(const std::string &from, const std::string &to);
-    std::vector<std::string> TopologicalSort();
-    bool DetectCircularDeps();
-};
-
-void ResolveImports(const ir::Statement *stmt, DepsGraph &graph)
-{
-    if (stmt->Type() == ir::AstNodeType::IMPORT_DECLARATION) {
-        graph.AddEdge(currentFile_, stmt->AsImportDeclaration()->GetSource()->AsString());
+    es2panda::parser::ScriptKind ScriptKind() const
+    {
+        return scriptKind_;
     }
-}
 ```
 
----
+Use `Options::CompilerOptions()` for the compiler configuration. Query existing accessors before adding fields or duplicating state; the CLI options object is not the same type as `es2panda::CompilerOptions`.
 
-## 并行编译调度
+### 4.2 Command-line help and supported flags
 
-```cpp
-// 文件级并行
-for (size_t i = 0; i < options.fileThreadCount; i++) {
-    threads.emplace_back([&, i]() {
-        for (size_t j = i; j < files.size(); j += options.fileThreadCount)
-            CompileFile(files[j]);
-    });
-}
+`aot/options.cpp` is the option-registration source of truth. Confirm built-binary behavior with `es2abc --help`.
 
-// 函数级并行
-CompileFuncQueue queue(options.functionThreadCount, options);
-queue.Schedule();
-queue.Consume();
-queue.Wait();
-```
+| Flag | Purpose |
+|---|---|
+| `--output <file>` | ABC output path |
+| `--extension <js|ts|as|abc>` | Input extension; check validation for the selected input route |
+| `--parse-only` | Parse without bytecode compilation |
+| `--dump-ast` | Dump the parsed AST |
+| `--dump-transformed-ast` | Dump the transformed AST |
+| `--dump-assembly` | Dump generated assembly |
+| `--opt-level <0|1|2>` | Select optimization level; currently defaults to 2 |
+| `--module` | Parse source as an ES module |
+| `--commonjs` | Select CommonJS handling |
+| `--file-threads <n>` | File worker count |
+| `--function-threads <n>` | Function worker count |
+| `--abc-class-threads <n>` | ABC class worker count |
+| `--merge-abc` | Emit merged ABC output |
+| `--enable-abc-input` | Permit ABC input |
 
----
+There is no supported `--enable-type-check` flag. TS syntax is parsed and transformed without the removed in-tree checker.
 
-## 热重载支持
+## 5. Multiple-file emission
 
-```cpp
-struct PatchFixOptions {
-    std::string dumpSymbolTable;
-    std::string symbolTable;
-    bool generatePatch = false;
-    bool hotReload = false;
-    bool coldReload = false;
-};
-```
+`emitFiles.h` and `emitFiles.cpp` define `EmitFileQueue` and the `EmitSingleAbcJob`, `EmitMergedAbcJob`, and `EmitCacheJob` jobs. They use the worker dependency system in `util/workerQueue.h`.
+
+- Single-output jobs consume the matching compiled program.
+- Merged output must wait for all required compilation jobs.
+- Cache emission must preserve the program cache and output mapping contracts.
+- Error propagation must reach the CLI exit status; producing a partial output is not success.
+
+Inspect these classes instead of introducing the old documentation's nonexistent `EmitFiles` wrapper.
+
+## 6. Dependency resolution
+
+`resolveDepsRelation.cpp` implements `DepsRelationResolver`. Trace its entry points from `main.cpp` and inspect compile-context inputs in `options.cpp` before changing dependency traversal or record pruning.
+
+This path can remove records from generated ABC files. Check lazy imports, entry records, shared/HSP records, and record replacement together. Do not assume it is a generic topological-sort graph or reject cycles without checking the actual module semantics.
+
+## 7. Parallel compilation scheduling
+
+There are three levels of work:
+
+1. File compilation is scheduled through the source/ABC compilation queues.
+2. Function compilation uses `CompileFuncQueue` in `compiler/core/compileQueue.*`.
+3. ABC recompilation can use class-level workers.
+
+The main thread may consume work as well as wait for workers. Preserve queue dependencies, ownership of cached programs, and completion before emission; changing a thread count must not introduce a second ownership model.
+
+## 8. Patch and reload support
+
+The CLI registers `--dump-symbol-table`, `--input-symbol-table`, `--generate-patch`, `--hot-reload`, `--cold-reload`, and `--cold-fix`. Inspect mode validation and `util/patchFix.*` before combining these options.
+
+The symbol-table input flag is `--input-symbol-table`, not `--symbol-table`. Use the symbol table generated from the corresponding baseline; do not reuse unrelated build metadata.
 
 ```bash
-es2abc --dump-symbol-table symbols.json input.js
-es2abc --symbol-table symbols.json input.js -o output.abc
+es2abc --dump-symbol-table baseline.symbols --output baseline.abc input.js
+es2abc --generate-patch --input-symbol-table baseline.symbols --output patch.abc input.js
 ```
 
----
+These command shapes illustrate baseline and patch inputs. Actual patch validation also needs baseline/new sources and the matching runtime.
 
-## 使用示例
+## 9. Usage examples
 
 ```bash
-# 基础编译
-es2abc input.js -o output.abc
-es2abc --extension ts input.ts -o output.abc
+# Basic source compilation
+es2abc --output output.abc input.js
+es2abc --extension ts --output output.abc input.ts
 
-# 调试
+# AST and assembly diagnostics
 es2abc --dump-ast input.js
+es2abc --dump-transformed-ast --extension ts input.ts
 es2abc --dump-assembly input.js
 
-# 优化
-es2abc --opt-level 2 input.js -o output.abc
+# Optimization and modules
+es2abc --opt-level 2 --output output.abc input.js
+es2abc --module --output module.abc input.js
 
-# 多文件
-es2abc file1.js file2.js -o output.abc
-es2abc --merge-abc file1.abc file2.abc -o merged.abc
+# ABC recompilation requires explicit opt-in
+es2abc --enable-abc-input --output rebuilt.abc input.abc
 ```
 
----
+For multiple inputs, follow `Options` input-file/list collection and merge-mode validation in the current source. Do not assume arbitrary positional source files form a supported merged invocation.
 
-## 修改AOT的注意事项
+## 10. Modification guidance
 
-### 添加新命令行选项
+### 10.1 Add a command-line option
 
-1. 在 `Options` 添加字段
-2. 在 `ParseOptions()` 添加解析逻辑
-3. 在 `PrintHelp()` 添加帮助文本
-4. 传递到 `CompilerOptions`
+1. Register the flag and its help text in `options.cpp`.
+2. Add storage/accessors only where the parsed value is owned.
+3. Validate combinations and transfer the setting into `CompilerOptions` where needed.
+4. Trace the setting to compilation/emission consumers.
+5. Add positive and invalid-option cases near existing CLI regressions.
 
-### 添加新的输出格式
+### 10.2 Add or modify an output path
 
-1. 在 `EmitFiles` 添加新方法
-2. 在 `CompilerOptions` 添加标志
-3. 实现写入逻辑
+1. Identify the emission job and cache ownership involved.
+2. Preserve dependencies between compilation and output jobs.
+3. Check merged and non-merged modes and diagnostic exit codes.
+4. Obtain approval before changing ABC serialization or compatibility behavior.
 
----
+## 11. Related modules
 
-## 相关模块
+- Upstream: command-line callers and build integrations.
+- Downstream: `es2panda/es2panda.h`, `es2panda/compiler/`, and `es2panda/util/programCache.h`.
+- Supporting structures: `es2panda/ir/`, `es2panda/binder/`, patch helpers, and worker queues.
 
-**上游**：无（AOT是程序入口）
+## 12. Verification and evidence
 
-**下游**：`es2panda.h`、`compiler/`、`util/programCache.h`
+Build the affected dynamic frontend target from the OpenHarmony source root before running behavior tests:
 
-**依赖**：`ir/`、`binder/`、`typescript/`
+```bash
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk
+./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests --no-prebuilt-sdk
+```
+
+Set and validate paths using `docs/knowledge/Build_Environment.md`. Prepare `RUNTIME_DIR` and `TEST_LD_LIBRARY_PATH` using `docs/knowledge/ES2Panda_Testing.md`, then run the relevant suite from the repository root:
+
+```bash
+python3 es2panda/test/runner.py --regression "$FRONTEND_BUILD_DIR"
+python3 es2panda/test/runner.py --compiler --js-runtime "$RUNTIME_DIR" --LD_LIBRARY_PATH "$TEST_LD_LIBRARY_PATH" "$FRONTEND_BUILD_DIR"
+```
+
+Use the complete dynamic-route verification procedure in `es2panda/AGENTS.md` for code changes. Record the build mode, commands, logs, unexpected failures, skipped cases, and missing prerequisites. Do not claim an unexecuted test passed. Changes to emitted bytecode require user notification and runtime/verifier coverage.

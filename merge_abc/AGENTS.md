@@ -1,242 +1,174 @@
-# AGENTS.md
+# merge_abc Agent Guide
 
-## 项目概述
+> Maintenance: When using an agent to modify code, any new code structure or functional feature must be reflected in this AGENTS.md in the same change.
 
-**merge_abc** 是一个专门用于合并多个 ARK 字节码（.abc）文件的工具。它使用 Protocol Buffers 进行序列化和反序列化，将多个独立的 .abc 文件合并为一个单一的输出文件。
+## 1. Project Overview
 
-### 核心特性
+`merge_abc` collects serialized protobuf program snapshots, reconstructs Pandasm programs, and emits a merged ARK bytecode file. Inspect `src/options.cpp` and `src/main.cpp` for the accepted input contract: input files are proto-bin snapshots, even when a caller uses a custom suffix.
 
-| 维度 | 说明 |
-|------|------|
-| **用途** | 合并多个 .abc 文件为一个 |
-| **输入** | .abc 文件或目录 |
-| **输出** | 合并后的 .abc 文件 |
-| **序列化** | Protocol Buffers (protobuf) |
-| **支持平台** | Linux、Windows、macOS |
+### 1.1 Core capabilities
 
-### 技术栈
+| Dimension | Description | Risk |
+|---|---|---|
+| Input | Snapshot file, directory, or `@` file list | Serialized producer/consumer contract |
+| Collection | Recursive directory traversal and suffix filtering | Missing/extra inputs change output |
+| Reconstruction | Protobuf snapshot to Pandasm program | Field/tag and representation compatibility |
+| Output | Merged ABC emitted by the assembler | Runtime bytecode compatibility |
+| Hosts | Windows and Unix code paths in collection | Validate each intended host separately |
 
-```
-merge_abc → Protocol Buffers → Pandasm Program → 合并后的 .abc 文件
-```
-
----
-
-## 快速开始
-
-### 基本使用
-
-```bash
-# 合并单个文件
-merge_abc --input module1.abc --output merged.abc
-
-# 合并目录中的所有 .abc 文件
-merge_abc --input ./modules/ --suffix abc --output merged.abc
-
-# 从文件列表合并（@前缀表示列表文件）
-merge_abc --input @file_list.txt --output merged.abc
-
-# 指定输出路径
-merge_abc --input ./modules/ --suffix abc --output merged.abc --outputFilePath /tmp/
+```text
+Snapshot input → protobuf decoding → Pandasm programs → assembler → merged ABC
 ```
 
-### 命令行选项
+## 2. Code Map
 
-| 选项 | 说明 |
-|------|------|
-| `--input` | 输入路径（文件/目录/@列表文件） |
-| `--suffix` | 文件后缀过滤（如 "abc"） |
-| `--output` | 输出文件名 |
-| `--outputFilePath` | 输出目录路径 |
-| `--help` | 显示帮助信息 |
+Paths here are relative to `merge_abc/` unless prefixed with another repository directory.
 
----
+| Path | Responsibility |
+|---|---|
+| `protos/assemblyProgram.proto` | Program message and nested table entries |
+| `protos/assemblyFunction.proto` | Function representation |
+| `protos/assemblyRecord.proto` | Record representation |
+| `protos/` | Other snapshot messages |
+| `src/main.cpp` | CLI orchestration and merged emission |
+| `src/options.cpp`, `src/options.h` | Option parsing |
+| `src/mergeProgram.cpp`, `src/mergeProgram.h` | Input collection |
+| `src/protobufSnapshotGenerator.cpp`, `src/protobufSnapshotGenerator.h` | Snapshot conversion |
+| `script/build_proto.sh` | Protobuf generation wrapper |
+| `BUILD.gn` | Build targets, generated sources, dependencies |
 
-## 架构设计
+### 2.1 Merge flow
 
-### 目录结构
-
-```
-merge_abc/
-├── protos/                        # Protocol Buffer 定义
-│   ├── assemblyProgram.proto     # 程序结构
-│   ├── assemblyFunction.proto    # 函数定义
-│   ├── assemblyRecord.proto      # 记录定义
-│   └── ...                       # 其他定义（14个文件）
-├── src/                          # C++ 实现
-│   ├── main.cpp                  # 程序入口
-│   ├── options.cpp/h             # 命令行解析
-│   ├── mergeProgram.cpp/h        # 文件收集与合并
-│   ├── protobufSnapshotGenerator.cpp/h  # 序列化引擎
-│   └── *Proto.cpp/h              # 各类序列化器
-├── script/build_proto.sh         # Protobuf 生成脚本
-└── BUILD.gn                      # GN 构建配置
+```text
+File / directory / @list
+    → collect matching snapshot inputs
+    → reconstruct each program with ProtobufSnapshotGenerator
+    → preserve strings, records, functions, literals and metadata
+    → AsmEmitter::EmitPrograms
+    → merged ABC output
 ```
 
-### 合并流程
+### 2.2 Core classes
 
-```
-输入源（文件/目录/列表）
-    ↓
-文件收集（递归遍历、后缀过滤）
-    ↓
-Protobuf 反序列化（.abc → Program）
-    ↓
-程序合并（函数表、记录表、字面量）
-    ↓
-输出（merged.abc）
-```
+| Class | Responsibility |
+|---|---|
+| `Options` | Parse input/output options |
+| `MergeProgram` | Collect files and expand directories/lists |
+| `ProtobufSnapshotGenerator` | Convert between snapshot and program representations |
+| Serialization helpers in `src/` | Convert individual message types |
 
-### 核心类
+## 3. Knowledge Routing
 
-| 类 | 职责 |
-|------|------|
-| `Options` | 命令行参数解析 |
-| `MergeProgram` | 文件收集与合并逻辑 |
-| `ProtobufSnapshotGenerator` | Protobuf 序列化引擎 |
-| `*Proto` | 各类消息序列化器（14种） |
+| Task | Read first |
+|---|---|
+| Input collection and options | Current `src/options.cpp` and `src/mergeProgram.cpp` |
+| Snapshot representation | Matching file under `protos/` and converter in `src/` |
+| Dynamic frontend producer | Repository-relative `docs/knowledge/ES2Panda_Knowledge_Base.md` |
+| Generation/build changes | `BUILD.gn`, `script/build_proto.sh`, repository C++ compatibility rules |
+| Legacy packaging | Repository-relative `legacy_bin/AGENTS.md` |
 
----
+Use the repository `AGENTS.md` before editing. Source obfuscation belongs to `arkguard/`; it is separate from snapshot merge behavior.
 
-## 使用指南
+## 4. Constraints and Compatibility
 
-### 常用场景
+### 4.1 Do not
 
-#### 场景 1：应用打包
+- Do not assume arbitrary native `.abc` input can be decoded as protobuf snapshots.
+- Do not hand-edit generated protobuf C++ files; modify schema or conversion sources.
+- Do not renumber/reuse protobuf field tags or change wire representation without compatibility review.
+- Do not treat a changed suffix as a conversion between file formats.
+- Do not discard duplicate-record/function errors or silently remove inputs to produce a successful merge.
+- Do not claim all host branches work after checking only one platform.
 
-```bash
-# 编译模块
-es2abc module1.js -o build/module1.abc
-es2abc module2.js -o build/module2.abc
+### 4.2 Ask before
 
-# 合并所有模块
-merge_abc --input ./build/ --suffix abc --output app.abc
-```
+Ask before changing protobuf schema, serialization layout, ABC compatibility behavior, or adding dependencies. Notify the user before changes that may affect generated bytecode.
 
-#### 场景 2：从文件列表合并
+### 4.3 Protobuf source of truth
 
-```bash
-# 创建列表文件
-cat > files.txt <<EOF
-./modules/core.abc
-./modules/utils.abc
-./modules/ui.abc
-EOF
+`protos/assemblyProgram.proto` uses proto3 and the `protoPanda` package. Its `Program` message owns nested record/function/literal table entries and their repeated fields. Use the actual schema for field numbers and names rather than reproducing an abbreviated message that assigns the wrong tags.
 
-# 合并
-merge_abc --input @files.txt --output app.abc
-```
+| Schema feature | C++ conversion concern |
+|---|---|
+| Unsigned scalar | Width and default-value handling |
+| `bytes` / string-like storage | Preserve raw bytes and intended encoding |
+| Repeated message | Order, multiplicity, and table keys |
+| Optional/alternative representation | Correct discriminator and absent-field behavior |
 
-### 输出文件结构
+Generated protobuf accessors are not identical to a hand-written `std::vector`/`std::variant` model. Inspect the converter before modifying storage assumptions. Consult the schema/compiler contract when allocating new tags; preserve existing consumers.
 
-合并后的 .abc 文件包含：
-- Header（文件标识）
-- String Table（去重后的字符串）
-- Record Table（类定义）
-- Function Table（函数）
-- Literal Arrays（字面量）
-- Type Infos（类型信息）
-- Debug Info（调试信息）
+## 5. Build, Usage, and Verification
 
----
+### 5.1 Build
 
-## Protocol Buffers 规范
+Run from the OpenHarmony source root containing `build.sh`:
 
-### .proto 文件语法
-
-```protobuf
-syntax = "proto3";
-package protoPanda;
-
-message Program {
-    uint32 lang = 1;
-    repeated FunctionTable functionTable = 2;
-    repeated RecordTable recordTable = 3;
-}
-```
-
-### 数据类型映射
-
-| Protobuf | C++ | 说明 |
-|----------|-----|------|
-| `uint32` | `uint32_t` | 32位无符号整数 |
-| `string` | `std::string` | 字符串 |
-| `bytes` | `std::string` | 字节数组 |
-| `repeated` | `std::vector` | 数组 |
-| `oneof` | `std::variant` | 联合类型 |
-
-### 编号标签规范
-
-- **1-15**: 常用字段（1字节编码）
-- **16-2048**: 较少使用的字段
-- **19000-19999**: 保留（不可使用）
-
-### C++ 映射规则
-
-**基本类型**：
-```protobuf
-uint32 count = 1;  // → uint32_t count
-```
-
-**嵌套消息**：
-```protobuf
-message Function { repeated uint32 params = 2; }  // → std::vector<uint32_t>
-```
-
-**std::variant**：
-```cpp
-// C++: std::variant<uint32_t, double, std::string> value_;
-// Proto: oneof value { uint32 value_u32 = 1; double value_f64 = 2; }
-```
-
----
-
-## 开发指南
-
-### 添加新的 Proto 定义
-
-1. **定义 .proto 文件**：
-```bash
-vim protos/myNewProto.proto
-```
-
-2. **更新 BUILD.gn**：
-```gni
-proto_file_defines = ["myNewProto", ...]
-```
-
-3. **实现 C++ 序列化器**（src/myNewProtoProto.cpp/h）
-
-4. **重新构建**：
 ```bash
 ./build.sh --product-name rk3568 --build-target ets_frontend_build
 ```
----
 
-## 故障排查
+Inspect `merge_abc/BUILD.gn` for the affected target and generated dependencies. Locate the resulting executable in the selected product/host output; do not assume the same artifact path on every host.
 
-### 常见问题
+### 5.2 Basic usage
 
-| 问题 | 原因 | 解决方案 |
-|------|------|----------|
-| 无法找到文件 | 路径错误 | 验证路径和后缀匹配 |
-| Protobuf 解析失败 | 版本不匹配 | 重新生成 Protobuf 代码 |
-| 内存不足 | 文件过大 | 增加内存限制或分批合并 |
-| 权限拒绝 | 文件不可读 | 检查文件权限 |
----
+These examples use snapshot inputs produced by the matching frontend, not arbitrary native ABC files. Replace example input paths with actual snapshot artifacts.
 
-## 参考资料
+```bash
+merge_abc --input module.protoBin --output merged.abc --outputFilePath /tmp
+merge_abc --input ./snapshots/ --suffix protoBin --output merged.abc --outputFilePath /tmp
+merge_abc --input @snapshot_files.txt --output merged.abc --outputFilePath /tmp
+```
 
-### 相关组件
+| Option | Meaning |
+|---|---|
+| `--input` | Snapshot file/directory or `@` list |
+| `--suffix` | Directory file suffix filter |
+| `--output` | Merged output filename |
+| `--outputFilePath` | Output directory |
+| `--help` | Print option help; check exit behavior in `Options::Parse` |
 
-| 组件 | 路径 | 用途 |
-|------|------|------|
-| **es2panda** | `../es2panda/` | 编译 JS/TS 为 .abc |
-| **arkguard** | `../arkguard/` | 代码混淆 |
-| **legacy_bin** | `../legacy_bin/` | API8 兼容工具 |
+If the output directory is omitted, `main.cpp` derives it from the executable location. Specify it explicitly when the caller expects output elsewhere.
 
-### 构建产物
+### 5.3 Application packaging
 
-| 产物 | 位置 |
-|------|------|
-| merge_abc | `out/rk3568/clang_x64/arkcompiler/ets_frontend/merge_abc` |
+1. Produce compatible snapshots through the actual frontend build/serialization path.
+2. Collect only the intended module snapshots.
+3. Merge through the tool and record exit status/diagnostics.
+4. Verify the merged output's records, functions, strings, literal arrays, type information, and debug information.
+5. Execute/verify the output with the matching runtime where compatibility is relevant.
+
+Do not replace the snapshot-production step with ordinary `es2abc --output module.abc` and assume the formats are interchangeable. The frontend's snapshot output option is registered in `es2panda/aot/options.cpp`.
+
+### 5.4 File-list scenario
+
+A list file contains the actual input file/directory paths expected by `CollectProtoFiles`. Inspect list expansion and suffix handling before changing the format; test direct input and directory entries as well as missing inputs.
+
+```text
+./snapshots/core.protoBin
+./snapshots/utils.protoBin
+./snapshots/ui.protoBin
+```
+
+### 5.5 Add a schema/converter component
+
+1. Obtain approval for serialized-contract changes.
+2. Add/update the actual schema and converter together.
+3. Update the proto source list and generated dependencies in `BUILD.gn`.
+4. Regenerate through the build wrapper and compile/link the consumer.
+5. Compare old/new producer-consumer combinations and merged behavior.
+
+### 5.6 Troubleshooting
+
+| Symptom | First check | Acceptance evidence |
+|---|---|---|
+| Missing inputs | Paths, list expansion, suffix, permissions | Intended files selected; invalid inputs fail clearly |
+| Parse failure | Snapshot producer, schema and conversion compatibility | Matching snapshots decode; corrupt input fails |
+| Output mismatch | Program tables, assembler diagnostics, output directory | Intended records/metadata and runtime behavior |
+| Memory failure | Program lifetime and input size | Measured reproduction and preserved diagnostics |
+| Host-only failure | Platform traversal and final link graph | Affected host compile/link plus collection test |
+
+A parse error is not automatically fixed by regenerating code: check the input format and schema mismatch first. Splitting a merge batch can change semantics and must not be a silent workaround.
+
+### 5.7 Done definition
+
+Build/link the affected tool, run focused collection/serialization/merge cases, and compare bytecode/metadata and runtime behavior where impacted. Record commands, host/toolchain, results, unsupported combinations, and compatibility gaps. Generated artifact presence alone is not a passed regression.

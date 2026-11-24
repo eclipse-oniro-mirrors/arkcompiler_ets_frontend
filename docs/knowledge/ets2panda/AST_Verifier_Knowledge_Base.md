@@ -1,8 +1,14 @@
 # ETS2Panda AST Verifier Knowledge Base
 
+Path setup and validation: `docs/knowledge/Build_Environment.md` (repository-relative).
+
+
+> Knowledge-base paths beginning with `docs/knowledge/` are relative to the repository root.
+
+
 > v1.0 | 2026-06-01 | Scope: `ets_frontend/ets2panda/ast_verifier/`
 > Not covered: parser AST definitions (see `../parser/`), lowering (see `../lowering/`), checker type logic (see `../checker/`), codegen (see `../compiler/`).
-> Read before modifying: `ast_verifier/AGENTS.md`, `ast_verifier/README.md`.
+> Read before modifying: `ets2panda/ast_verifier/AGENTS.md`, `ets2panda/ast_verifier/README.md`.
 
 ## Core Model
 
@@ -77,11 +83,11 @@
 6. Add unit test: `test/unit/public/ast_verifier_yourcheck.cpp` (positive + negative case).
 7. Verify phase name matches `compiler/lowering/phase.cpp::GetETSPhaseList()` exactly. Typo = silent deactivation.
 
-Active invariant count is ~18 (may drift — check `invariants/` directory for current count).
+The active invariant set is defined by the current verifier registration and `ets2panda/ast_verifier/invariants/` sources; inspect those sources rather than relying on a stored count.
 
 ## Pre-Modification Checklist
 
-- [ ] Read `ast_verifier/AGENTS.md` and `ast_verifier/README.md`
+- [ ] Read `ets2panda/ast_verifier/AGENTS.md` and `ets2panda/ast_verifier/README.md`
 - [ ] New invariant registered in all four: `options.yaml` (enum + group), `ASTVerifier.h` (registry), `CMakeLists.txt`, `BUILD.gn`
 - [ ] Dependencies declared via `RequiredInvariants` if the invariant reads another's data
 - [ ] Activation group matches data dependencies (no type checks before CheckerPhase, no scope checks before ScopesInitPhase)
@@ -102,26 +108,29 @@ Read order for understanding the verifier: `compilerImpl.cpp` (invocation) → `
 | Shared utility predicates | `ast_verifier/helpers.h`, `helpers.cpp` |
 | CLI options, enum definitions | `util/options.yaml` (section `ast-verifier`) |
 | Canonical phase names | `compiler/lowering/phase.cpp` (`GetETSPhaseList()`) |
-| Unit tests (16 files) | `test/unit/public/ast_verifier_*.cpp` |
+| Unit tests (inventory in the source directory) | `test/unit/public/ast_verifier_*.cpp` |
 | Test base class | `test/utils/ast_verifier_test.h` |
 
 ## Build & Verification
 
-Build (from repository root):
+Build from any working directory using an absolute path to the configured static build (parameterized recipe):
 ```sh
-cmake --build <out_dir> -j8    # es2panda including ast_verifier
+: "${STATIC_BUILD_DIR:?Set and validate the configured static output directory}"
+cmake --build "$STATIC_BUILD_DIR" --target es2panda    # includes ast_verifier
 ```
 
 Test commands:
 ```sh
+# Parameterized recipe: replace the absolute checkout path before running.
+: "${OH_ROOT:?Set and validate OH_ROOT using Build_Environment.md}"
 # AST checker / verifier unit tests
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier astchecker --extension=ats --load-runtimes=ets --force-generate --processes=all
+"$OH_ROOT/arkcompiler/runtime_core/static_core/tests/tests-u-runner-2/runner.sh" es2panda-verifier astchecker --extension=ats --load-runtimes=ets --force-generate --processes=all
 # Parser tests
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier parser --extension=ats --load-runtimes=ets --force-generate --processes=all
+"$OH_ROOT/arkcompiler/runtime_core/static_core/tests/tests-u-runner-2/runner.sh" es2panda-verifier parser --extension=ats --load-runtimes=ets --force-generate --processes=all
 # Runtime tests
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-runtime --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
+"$OH_ROOT/arkcompiler/runtime_core/static_core/tests/tests-u-runner-2/runner.sh" es2panda-verifier ets-runtime --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
 # CTS tests
-runtime_core/static_core/tests/tests-u-runner-2/runner.sh es2panda-verifier ets-cts --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
+"$OH_ROOT/arkcompiler/runtime_core/static_core/tests/tests-u-runner-2/runner.sh" es2panda-verifier ets-cts --extension=ats --load-runtimes=ets --force-generate --processes=all --es2panda-args=--simultaneous=true
 ```
 
 New files must be added to both `CMakeLists.txt` and `BUILD.gn`.
@@ -140,5 +149,5 @@ New files must be added to both `CMakeLists.txt` and `BUILD.gn`.
 
 - `ets2panda/ast_verifier/AGENTS.md` -- development rules and directory-level constraints
 - `ets2panda/ast_verifier/README.md` -- CLI options, adding-invariant guide
-- `docs/ets2panda/Static_Frontend_Knowledge_Base.md` -- covers all upstream/downstream stages: AST nodes (IR), parser, checker (type data), lowering (AST producer), compiler core (runs after verifier)
+- `docs/knowledge/ets2panda/Static_Frontend_Knowledge_Base.md` -- covers all upstream/downstream stages: AST nodes (IR), parser, checker (type data), lowering (AST producer), compiler core (runs after verifier)
 - `AGENTS.md` -- build/test expectations and repository-level guidance
