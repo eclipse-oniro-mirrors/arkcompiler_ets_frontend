@@ -86,6 +86,7 @@
 /ets2panda/test/test-lists/declgenets2ts ^Nojpg ^v-cherkashin ^trubachevilya ^shimenkovmikhail ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11
 /ets2panda/test/test-lists/parser @xingshunxiang ^igelhaus ^Prof
 /ets2panda/test/unit/arktsconfig-parser ^trubachevilya ^Nojpg ^v-cherkashin ^shimenkovmikhail ^igelhaus ^Prof
+/ets2panda/test/unit/import_path_manager @luchenxu @Wchlove_
 /ets2panda/test/unit/lsp ^Nojpg @jokerxd-liu ^igelhaus ^Prof @H_awson @zmw1 ^blue_gym ^m0_59467138 @huyunhui1
 /ets2panda/test/unit/plugin* @xingshunxiang ^zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/test/unit/public @xingshunxiang ^mbolshov ^igelhaus ^Prof

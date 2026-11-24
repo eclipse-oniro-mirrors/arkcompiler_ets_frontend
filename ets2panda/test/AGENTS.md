@@ -17,6 +17,7 @@ Use this file for work under `test/` together with the repository-level `AGENTS.
 - `test/ast/`: negative compile-time diagnostics and warning checks.
 - `test/parser/ets/`: legacy parser tests; maintain existing tests, avoid extending for new behavior.
 - `test/runtime/ets/`: runnable positive tests; must compile, verify, and execute.
+- C++ module resolution, project configuration, and program lifecycle regressions belong in `test/unit/import_path_manager/`. Run `cmake --build . --target es2panda_module_resolution_tests` from the configured host static build directory to run this suite and the existing `arktsconfig-parser` tests.
 
 ## 3. Mandatory Rules
 

@@ -78,6 +78,7 @@ Useful options: `--processes 6`, `--verbose short`.
 - Negative compile-time diagnostics: `test/ast/`.
 - Legacy parser tests (maintain only): `test/parser/ets/`.
 - Runnable positive tests with `arktest.*` assertions: `test/runtime/ets/`.
+- C++ import path manager and ArkTsConfig regressions: `test/unit/import_path_manager/`.
 
 ## 8. Test Design Notes
 
