@@ -2102,7 +2102,7 @@ class BytecodeRunner(Runner):
 class ArkJsVmDownload:  # Obtain different versions of ark_js_vm and their dependent libraries
     def __init__(self, args):
         self.build_dir = args.build_dir
-        self.url = "https://gitee.com/zhongmingwei123123/ark_js_vm_version.git"
+        self.url = "https://gitcode.com/zmw1/ark_js_vm_version.git"
         self.local_path = path.join(self.build_dir, "ark_js_vm_version")
         self.max_retries = 3
 
@@ -3185,11 +3185,11 @@ def add_directory_for_version_control(runners, args):
         print("[Prepare] cleaned %d stale abc artifacts from previous runs" % removed)
     tools = [
         {
-            "url": "https://gitee.com/zhongmingwei123123/ark_js_vm_version.git",
+            "url": "https://gitcode.com/zmw1/ark_js_vm_version.git",
             "components_name": "ark_js_vm_version"
         },
         {
-            "url": "https://gitee.com/li_yue1999/es2abc_version.git",
+            "url": "https://gitcode.com/li_yue1999/es2abc_version.git",
             "components_name": "es2abc_version"
         }
     ]
