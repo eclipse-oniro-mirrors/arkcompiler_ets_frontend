@@ -27,7 +27,7 @@ Each immediate subdirectory of `positive-cases/` or `negative-cases/` is one tes
 ```
 <case-name>/
 ├── case.json          # optional; see schema below
-├── input/*.ets         # source files (default inputFiles discovery: all *.ets here, sorted)
+├── input/*.ats         # static sources (default discovery also accepts legacy *.ets files)
 ├── arktsconfig.json     # optional, only needed to override args.arktsconfig
 └── expected/
     └── output.json      # positive-cases only; compared against gluegen's --output
@@ -62,10 +62,11 @@ All fields are optional; defaults depend on whether the case lives under `positi
     "cachePath": null
   },
 
-  // Paths relative to this case directory. Defaults to every *.ets file under input/, sorted.
+  // Paths relative to this case directory. Defaults to every *.ats and legacy *.ets file under
+  // input/, sorted.
   // A path that doesn't actually exist on disk is still passed to gluegen (not copied) -- used to
   // simulate a missing source file.
-  "inputFiles": ["input/a.ets"],
+  "inputFiles": ["input/a.ats"],
 
   "expect": {
     "exitCode": 0,                        // default: 0 for positive-cases, 1 for negative-cases
@@ -99,7 +100,7 @@ Each case runs against a private, temporary scratch copy of its `input/` files (
 in parallel and never pollute the source tree), so absolute paths inside gluegen's actual output
 never match a golden file literally. Before comparing, every occurrence of the scratch directory's
 absolute path is replaced with the placeholder `<CASE_DIR>` -- write your `expected/output.json`
-using that same placeholder (e.g. `"<CASE_DIR>/input/a.ets"`).
+using that same placeholder (e.g. `"<CASE_DIR>/input/a.ats"`).
 
 ## Updating golden files
 

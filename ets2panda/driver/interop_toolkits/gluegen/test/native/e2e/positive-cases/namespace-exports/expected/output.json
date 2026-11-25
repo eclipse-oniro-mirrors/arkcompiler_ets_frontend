@@ -1,6 +1,6 @@
 {
   "files": {
-    "<CASE_DIR>/input/a.ets": {
+    "<CASE_DIR>/input/a.ats": {
       "globalClassDescriptor": "La/ETSGLOBAL;",
       "root": {
         "OutsideNamespaceClass": {

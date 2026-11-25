@@ -162,7 +162,7 @@ protected:
 TEST_F(GluegenRunTest, RunProducesExpectedSymbolsForValidSource)
 {
     ScopedTempDir dir("gluegen_run_valid");
-    const auto sourceFile = dir.Path() / "a.ets";
+    const auto sourceFile = dir.Path() / "a.ats";
     {
         std::ofstream out(sourceFile);
         out << "export class Foo {}\n";
@@ -201,7 +201,7 @@ TEST_F(GluegenRunTest, RunProducesExpectedSymbolsForValidSource)
 TEST_F(GluegenRunTest, RunWithCacheDirPopulatesDiskCacheAndSecondRunSucceeds)
 {
     ScopedTempDir dir("gluegen_run_cache");
-    const auto sourceFile = dir.Path() / "a.ets";
+    const auto sourceFile = dir.Path() / "a.ats";
     {
         std::ofstream out(sourceFile);
         out << "export class Foo {}\n";

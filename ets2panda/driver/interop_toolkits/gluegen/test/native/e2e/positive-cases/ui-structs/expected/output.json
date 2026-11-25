@@ -1,6 +1,6 @@
 {
   "files": {
-    "<CASE_DIR>/input/ui.ets": {
+    "<CASE_DIR>/input/ui.ats": {
       "globalClassDescriptor": "Lui/ETSGLOBAL;",
       "root": {
         "default": {

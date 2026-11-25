@@ -1,6 +1,6 @@
 {
   "files": {
-    "<CASE_DIR>/input/a.ets": {
+    "<CASE_DIR>/input/a.ats": {
       "globalClassDescriptor": "La/ETSGLOBAL;",
       "root": {
         "B2": {
@@ -41,7 +41,7 @@
         }
       }
     },
-    "<CASE_DIR>/input/b.ets": {
+    "<CASE_DIR>/input/b.ats": {
       "globalClassDescriptor": "Lb/ETSGLOBAL;",
       "root": {
         "C1": {
@@ -82,7 +82,7 @@
         }
       }
     },
-    "<CASE_DIR>/input/c.ets": {
+    "<CASE_DIR>/input/c.ats": {
       "globalClassDescriptor": "Lc/ETSGLOBAL;",
       "root": {
         "C1": {
@@ -169,7 +169,7 @@
         }
       }
     },
-    "<CASE_DIR>/input/d.ets": {
+    "<CASE_DIR>/input/d.ats": {
       "globalClassDescriptor": "Ld/ETSGLOBAL;",
       "root": {
         "C5": {

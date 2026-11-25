@@ -113,20 +113,18 @@ void PrepareContextForDestruction(ark::es2panda::public_lib::Context *ctx)
     }
 }
 
-// Strips known source-file extensions (.d.ets, .d.ts, .ets, .ts) from `filename`, returning the
-// stem. Longer patterns are checked first so ".d.ets" isn't mis-recognized as ".ets".
+// Strips known source-file extensions (.d.ats, .d.ets, .d.ts, .ats, .ets, .ts) from `filename`,
+// returning the stem. Longer patterns are checked first so declaration suffixes aren't
+// mis-recognized as their corresponding source suffixes.
 // On case-insensitive filesystems (Windows, macOS) the comparison is case-insensitive so that
-// "foo.ETS" / "foo.Ets" are recognised -- the OS itself treats those as the same file. On
-// case-sensitive filesystems (Linux) the comparison stays case-sensitive, because "foo.ETS" and
-// "foo.ets" really are two distinct files there. Every known extension is pure ASCII, so
+// "foo.ATS" / "foo.Ats" are recognised -- the OS itself treats those as the same file. On
+// case-sensitive filesystems (Linux) the comparison stays case-sensitive, because "foo.ATS" and
+// "foo.ats" really are two distinct files there. Every known extension is pure ASCII, so
 // per-character std::tolower is sufficient for the case-insensitive path.
 std::string StripSourceExtension(const std::string &filename)
 {
     static constexpr std::pair<const char *, std::size_t> EXTENSIONS[] = {
-        {".d.ets", 6},
-        {".d.ts", 5},
-        {".ets", 4},
-        {".ts", 3},
+        {".d.ats", 6}, {".d.ets", 6}, {".d.ts", 5}, {".ats", 4}, {".ets", 4}, {".ts", 3},
     };
     for (const auto &[ext, len] : EXTENSIONS) {
         if (filename.size() < len) {
@@ -323,7 +321,7 @@ std::vector<const char *> BuildCreateConfigArgv(const std::string &arktsconfigPa
     static constexpr const char *simultaneous = "--simultaneous";
     static constexpr const char *arktsconfig = "--arktsconfig";
     static constexpr const char *extension = "--extension";
-    static constexpr const char *extensionValue = "ets";
+    static constexpr const char *extensionValue = "ats";
     // Reaching ES2PANDA_STATE_BOUND runs the `plugins-after-parse` phase, after which the AST
     // verifier's CheckStructDeclaration invariant fires (see options.yaml's ast-verifier:errors
     // default list). It expects `struct` (UI/ArkUI) syntax to have already been lowered to plain

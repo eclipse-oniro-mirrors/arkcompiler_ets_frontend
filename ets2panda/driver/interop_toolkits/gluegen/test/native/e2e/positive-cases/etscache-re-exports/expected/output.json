@@ -1,6 +1,6 @@
 {
   "files": {
-    "<CASE_DIR>/input/entry.ets": {
+    "<CASE_DIR>/input/entry.ats": {
       "globalClassDescriptor": "Lentry/ETSGLOBAL;",
       "root": {
         "AliasedFunction": {

@@ -116,3 +116,7 @@ Workers communicate via message passing. Message types include DECL_GENERATED, A
 ### 5.5 Plugin Development
 
 Plugins can hook into PARSED (after parsing), CHECKED (after type checking), and CLEAN (after compilation) stages. Use PluginDriver to register and execute plugins.
+
+### 5.6 Gluegen Static Source Extensions
+
+Gluegen treats `.ats` as the canonical static ArkTS suffix. Legacy `.ets` sources remain supported when their first trimmed line is exactly `'use static'`. Native simultaneous parsing uses `--extension ats`, and single-file JSON emission strips both `.ats` and `.d.ats` in addition to the legacy source suffixes.
