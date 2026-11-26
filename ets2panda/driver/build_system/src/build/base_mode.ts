@@ -810,6 +810,14 @@ export abstract class BaseMode {
         let arktsConfig = this.arktsConfigGenerator.getArktsConfigByPackageName(this.mainPackageName)!;
         arktsConfig.mergeArktsConfigByDependencies(dependenciesSets.get(this.mainPackageName)!, dependenciesSets!, this.arktsConfigGenerator);
 
+        // Populate externalDeclPackages for each module after paths are merged
+        this.moduleInfos.forEach((moduleInfo: ModuleInfo) => {
+            const cfg = this.arktsConfigGenerator.getArktsConfigByPackageName(moduleInfo.packageName);
+            if (cfg) {
+                this.arktsConfigGenerator.addExternalDeclPackages(moduleInfo, cfg);
+            }
+        });
+
         // only add mock field in mainModule's arktsConfig
         if (this.isMockEnabled) {
             const mockConfigInfo = this.mockConfigGenerator!.getMockConfigInfo();

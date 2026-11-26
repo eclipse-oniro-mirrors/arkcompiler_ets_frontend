@@ -216,6 +216,7 @@ struct CAPI_EXPORT es2panda_Impl {
     es2panda_ExternalSource **(*ProgramDirectExternalSources)(es2panda_Context *context, es2panda_Program *program,
                                                               size_t *lenP);
     bool (*ProgramLocalNameIsExported)(es2panda_Context *context, const es2panda_Program *program, const char *name);
+    bool (*ProgramIsFromABC)(es2panda_Context *context, const es2panda_Program *program);
     char const *(*ExternalSourceName)(es2panda_ExternalSource *e_source);
     es2panda_Program **(*ExternalSourcePrograms)(es2panda_ExternalSource *e_source, size_t *len_p);
     void (*AstNodeForEach)(es2panda_AstNode *ast, void (*func)(es2panda_AstNode *, void *), void *arg);

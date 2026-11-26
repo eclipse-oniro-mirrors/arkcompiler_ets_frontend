@@ -566,6 +566,10 @@ export interface AtsDependency {
     entryFile?: string;
 }
 
+export interface ExternalDeclPackage {
+    paths: string[];
+}
+
 export interface CompilerOptions {
     package: string;
     baseUrl: string;
@@ -573,6 +577,7 @@ export interface CompilerOptions {
     paths: Record<string, string[]>;
     dependencies: Record<string, DependencyItem>;
     atsDependencies?: Record<string, AtsDependency>;
+    externalDeclPackages?: Record<string, ExternalDeclPackage>;
     useEmptyPackage?: boolean;
     cacheDir?: string;
     declgenV2OutPath?: string;

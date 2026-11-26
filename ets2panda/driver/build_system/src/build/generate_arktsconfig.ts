@@ -40,7 +40,9 @@ import {
     ArkTSConfigObject,
     BuildConfig,
     DependencyItem,
+    DependencyModuleConfig,
     DynamicFileContext,
+    ExternalDeclPackage,
     ModuleInfo,
     OHOS_MODULE_TYPE,
 } from '../types';
@@ -134,6 +136,14 @@ export class ArkTSConfig {
 
     public get pathSection(): Record<string, string[]> {
         return this.object.compilerOptions.paths;
+    }
+
+    public get externalDeclPackages(): Record<string, ExternalDeclPackage> | undefined {
+        return this.object.compilerOptions.externalDeclPackages;
+    }
+
+    public set externalDeclPackages(value: Record<string, ExternalDeclPackage> | undefined) {
+        this.object.compilerOptions.externalDeclPackages = value;
     }
 
     public get mockSection(): Record<string, { source: string }> | undefined {
@@ -359,7 +369,8 @@ export class ArkTSConfigGenerator {
             return
         }
 
-        if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_2 && moduleInfo.packageName) {
+        if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_2 && moduleInfo.packageName &&
+            !this.isExternalDeclPackage(moduleInfo)) {
             const searchPath = [...moduleInfo.sourceRoots].reverse()
                 .map(source => path.resolve(moduleInfo.moduleRootPath, source));
             searchPath.push(path.resolve(moduleInfo.moduleRootPath));
@@ -673,6 +684,47 @@ export class ArkTSConfigGenerator {
 
         this.logger.printDebug(`arktsconfig for ${moduleInfo.packageName}:\n${JSON.stringify(arktsConfig, null, 1)}`)
         return arktsConfig;
+    }
+
+    /**
+     * Judges whether the module is an external declaration package:
+     * for a har the byteCodeHar field is true, and for an hsp it is false;
+     * either way a non-empty abcPath must carry the compiled abc.
+     */
+    private isExternalDeclPackage(module: { byteCodeHar?: boolean; abcPath?: string }): boolean {
+        return !!module.abcPath && module.byteCodeHar !== undefined;
+    }
+
+    public addExternalDeclPackages(moduleInfo: ModuleInfo, arktsConfig: ArkTSConfig): void {
+        if (!moduleInfo.dependencies || moduleInfo.dependencies.length === 0) {
+            return;
+        }
+
+        const externalDeclPackages: Record<string, ExternalDeclPackage> = {};
+        for (const depPackageName of moduleInfo.dependencies) {
+            const depModuleConfig = this.buildConfig.dependencyModuleList.find(
+                (dep: DependencyModuleConfig) => dep.packageName === depPackageName
+            );
+            if (!depModuleConfig) {
+                continue;
+            }
+            if (!this.isExternalDeclPackage(depModuleConfig)) {
+                continue;
+            }
+
+            // Collect all path keys that belong to this package:
+            // the package name itself and all sub-keys.
+            const prefix = depPackageName + '/';
+            for (const [pathKey, pathValue] of Object.entries(arktsConfig.pathSection)) {
+                if (pathKey === depPackageName || pathKey.startsWith(prefix)) {
+                    externalDeclPackages[pathKey] = { paths: [...pathValue] };
+                }
+            }
+        }
+
+        if (Object.keys(externalDeclPackages).length > 0) {
+            arktsConfig.externalDeclPackages = externalDeclPackages;
+        }
     }
 
     private processAlias(arktsconfigs: ArkTSConfig): void {

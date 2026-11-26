@@ -1314,6 +1314,20 @@ extern "C" __attribute__((unused)) bool ProgramLocalNameIsExported(es2panda_Cont
     return ParsedAstHasLocalExportName(programE2p, nameE2p);
 }
 
+extern "C" __attribute__((unused)) bool ProgramIsFromABC(es2panda_Context *context, const es2panda_Program *program)
+{
+    if (context == nullptr || program == nullptr) {
+        return false;
+    }
+    auto *ctx = reinterpret_cast<Context *>(context);
+    auto *programE2p = reinterpret_cast<const parser::Program *>(program);
+    if (ctx->config == nullptr || ctx->config->options == nullptr) {
+        return false;
+    }
+    const auto &arktsConfig = ctx->config->options->ArkTSConfig();
+    return arktsConfig.IsExternalDeclPackage(programE2p->ModuleName());
+}
+
 extern "C" __attribute__((unused)) char const *ExternalSourceName(es2panda_ExternalSource *eSource)
 {
     auto *entry = reinterpret_cast<ExternalSourceEntry *>(eSource);
@@ -2598,6 +2612,7 @@ es2panda_Impl g_impl = {
     ProgramExternalSources,
     ProgramDirectExternalSources,
     ProgramLocalNameIsExported,
+    ProgramIsFromABC,
     ExternalSourceName,
     ExternalSourcePrograms,
     AstNodeForEach,

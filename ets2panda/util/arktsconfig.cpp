@@ -418,6 +418,21 @@ bool ArkTsConfig::ParseMockList(const JsonObject::JsonObjPointer *options,
     return true;
 }
 
+void ArkTsConfig::ParseExternalDeclPackages(const JsonObject::JsonObjPointer *options)
+{
+    if (options == nullptr) {
+        return;
+    }
+    auto extDeclPkgs = options->get()->GetValue<JsonObject::JsonObjPointer>(externalDeclPackages);
+    if (extDeclPkgs == nullptr) {
+        return;
+    }
+    for (size_t keyIdx = 0; keyIdx < extDeclPkgs->get()->GetSize(); ++keyIdx) {
+        auto &key = extDeclPkgs->get()->GetKeyByIndex(keyIdx);
+        externalDeclPackages_.insert(key);
+    }
+}
+
 static constexpr auto LANGUAGE = "language";  // CC-OFF(G.NAM.03-CPP) project code style
 static constexpr auto PATH = "path";          // CC-OFF(G.NAM.03-CPP) project code style
 static constexpr auto OHM_URL = "ohmUrl";     // CC-OFF(G.NAM.03-CPP) project code style
@@ -674,6 +689,8 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
     if (!ParseMockList(compilerOptions, mocks_, baseUrl_)) {
         return false;
     }
+    // Parse "externalDeclPackages"
+    ParseExternalDeclPackages(compilerOptions);
     return true;
 }
 
@@ -754,6 +771,7 @@ void ArkTsConfig::Inherit(const ArkTsConfig &base)
     atsDependencies_ = base.atsDependencies_;
     internalPaths_ = base.internalPaths_;
     files_ = base.files_;
+    externalDeclPackages_ = base.externalDeclPackages_;
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     include_ = base.include_;
     exclude_ = base.exclude_;
