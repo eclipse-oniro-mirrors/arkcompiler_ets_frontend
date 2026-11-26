@@ -257,6 +257,144 @@ let count = newLocal;
     initializer->DestroyContext(refactorContext->context);
 }
 
+TEST_F(LspExtractSymbolBoundaryTests, ExtractVariableReplacesOnlySelectedIdentifier)
+{
+    const std::string code = R"(
+let x: int = 5;
+let y = /*start*/x/*end*/;
+)";
+    const std::string startMarker = "/*start*/";
+    const size_t markerStart = code.find(startMarker);
+    ASSERT_NE(markerStart, std::string::npos);
+    const size_t spanStart = markerStart + startMarker.size();
+    const size_t spanEnd = code.find("/*end*/", spanStart);
+    ASSERT_NE(spanEnd, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name);
+    EXPECT_TRUE(HasApplicableAction(applicable, actionName));
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    initializer->DestroyContext(refactorContext->context);
+
+    ASSERT_NE(edits, nullptr);
+    const auto &fileChanges = edits->GetFileTextChanges();
+    EXPECT_EQ(fileChanges.size(), 1U);
+    const std::vector<size_t> expectedReplacementStarts = {spanStart};
+    for (const auto &fileChange : fileChanges) {
+        std::vector<size_t> replacementStarts;
+        for (const auto &change : fileChange.textChanges) {
+            if (change.span.length != 0U) {
+                replacementStarts.push_back(change.span.start);
+                EXPECT_EQ(change.span.length, spanEnd - spanStart);
+                EXPECT_EQ(change.newText, "newLocal");
+            }
+        }
+        EXPECT_EQ(replacementStarts, expectedReplacementStarts) << ApplyEdits(code, fileChange.textChanges);
+    }
+}
+
+TEST_F(LspExtractSymbolBoundaryTests, ExtractVariableReplacesRepeatedReferencesToSameIdentifier)
+{
+    const std::string code = R"(
+let x: int = 5;
+let y = /*start*/x/*end*/;
+let z = x;
+function read(x: int): int {
+    return x;
+}
+)";
+    const std::string expected = R"(
+let x: int = 5;
+let newLocal: Int = x;
+let y = /*start*/newLocal/*end*/;
+let z = newLocal;
+function read(x: int): int {
+    return x;
+}
+)";
+    const std::string startMarker = "/*start*/";
+    const size_t markerStart = code.find(startMarker);
+    ASSERT_NE(markerStart, std::string::npos);
+    const size_t spanStart = markerStart + startMarker.size();
+    const size_t spanEnd = code.find("/*end*/", spanStart);
+    ASSERT_NE(spanEnd, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name);
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    initializer->DestroyContext(refactorContext->context);
+
+    ASSERT_NE(edits, nullptr);
+    const auto &fileChanges = edits->GetFileTextChanges();
+    ASSERT_EQ(fileChanges.size(), 2U);
+    EXPECT_EQ(StripWs(ApplyEdits(code, fileChanges.back().textChanges)), StripWs(expected));
+}
+
+TEST_F(LspExtractSymbolBoundaryTests, ExtractVariableKeepsReadsAndWritesAcrossMutation)
+{
+    const std::array<std::string, 4> statements = {"x = 2;", "x += 2;", "x++;", "setX();"};
+    const std::string setter = "function setX(): void { x = 2; }\n";
+    const std::string before = "let before = ";
+    for (const auto &statement : statements) {
+        SCOPED_TRACE(statement);
+        const std::string suffix = statement + "\nlet after = x;\n" + (statement == "setX();" ? setter : "");
+        const std::string code = std::string("let x: int = 1;\n").append(before).append("x;\n").append(suffix);
+        const std::string expected = std::string("let x: int = 1;\nlet newLocal: Int = x;\n")
+                                         .append(before)
+                                         .append("newLocal;\n")
+                                         .append(suffix);
+        const size_t beforeStart = code.find(before);
+        ASSERT_NE(beforeStart, std::string::npos);
+        const size_t spanStart = beforeStart + before.size();
+
+        auto initializer = std::make_unique<Initializer>();
+        auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanStart + 1U);
+        const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name);
+        const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
+        ExpectExtractionApplies(code, refactorContext, refactorName, actionName, expected);
+        initializer->DestroyContext(refactorContext->context);
+    }
+}
+
+TEST_F(LspExtractSymbolBoundaryTests, BigIntLiteralExtractsGlobalConstant)
+{
+    const std::string code = R"(
+let floatVar: float = 1.2e3; // Constant 1.2e3 : auto\
+const bigintVar: bigint = 9007199254740991n; // Constant 9007199254740991n; : error
+)";
+    const std::string expected = R"(
+let floatVar: float = 1.2e3; // Constant 1.2e3 : auto\
+const newLocal: bigint = 9007199254740991n;
+const bigintVar: bigint = newLocal; // Constant 9007199254740991n; : error
+)";
+    const std::string target = "9007199254740991n";
+    const size_t spanStart = code.find(target);
+    ASSERT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + target.size();
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
+    EXPECT_TRUE(HasApplicableAction(applicable, actionName));
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    initializer->DestroyContext(refactorContext->context);
+
+    ASSERT_NE(edits, nullptr);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
+    EXPECT_EQ(ApplyEdits(code, edits->GetFileTextChanges().front().textChanges), expected);
+}
+
 TEST_F(LspExtractSymbolBoundaryTests, WholeReturnStatementExtractsFunction)
 {
     const std::string code = BOUNDARY_RETURN_PREFIX_CODE;
@@ -365,6 +503,98 @@ function accumulate(seed: number): number {
     const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
     ExpectExtractionApplies(code, refactorContext, refactorName, globalAction, expected);
 
+    initializer->DestroyContext(refactorContext->context);
+}
+
+constexpr const char *NESTED_NAMESPACE_CODE_WITH_COMMENT = R"('use static'
+
+namespace A {
+  let x = 1;
+  function foo() {
+  }
+  namespace B {
+    function a() {
+      let a = 1;
+      /*start*/
+      let y = 5;
+      let z = x;
+      a = y;
+      foo();/*end*/
+    }
+  }
+}
+//   getOrigin(): /*start*/{ readonly x: number, readonly y: number }/*end*/ {
+)";
+
+constexpr const char *NESTED_NAMESPACE_EXPECTED_WITH_COMMENT = R"('use static'
+
+namespace A {
+  let x = 1;
+  function foo() {
+  }
+  namespace B {
+    function a() {
+      let a = 1;
+      /*start*/
+      a = newFunction(x, a, foo);/*end*/
+    }
+  }
+}
+function newFunction(x: int, a: int, foo: (() => undefined)): Int {
+  let y = 5;
+  let z = x;
+  a = y;
+  foo();
+  return a;
+}
+
+//   getOrigin(): /*start*/{ readonly x: number, readonly y: number }/*end*/ {
+)";
+
+TEST_F(LspExtractSymbolCaptureTests, NestedNamespaceStatementsExtractGlobalFunctionWithComments)
+{
+    const std::string code = NESTED_NAMESPACE_CODE_WITH_COMMENT;
+    const std::string expected = NESTED_NAMESPACE_EXPECTED_WITH_COMMENT;
+    const size_t spanStart = code.find("let y = 5;");
+    ASSERT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = code.find("/*end*/", spanStart);
+    ASSERT_NE(spanEnd, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
+    EXPECT_TRUE(HasApplicableAction(applicable, actionName));
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    initializer->DestroyContext(refactorContext->context);
+
+    ASSERT_NE(edits, nullptr);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
+    EXPECT_EQ(ApplyEdits(code, edits->GetFileTextChanges().front().textChanges), expected);
+}
+
+TEST_F(LspExtractSymbolCaptureTests, DeclarationUsedAfterSelectionBlocksGlobalFunctionExtraction)
+{
+    const std::string code = R"(
+function compute(): int {
+    let a = 1;
+    let y: int = 5;
+    a = y;/*end*/
+    return a + y;
+}
+)";
+    const size_t spanStart = code.find("let y: int");
+    ASSERT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = code.find("/*end*/", spanStart);
+    ASSERT_NE(spanEnd, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    const auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
+    EXPECT_FALSE(HasApplicableAction(applicable, actionName));
     initializer->DestroyContext(refactorContext->context);
 }
 
