@@ -33,9 +33,10 @@ function listSubdirectoriesSorted(dir) {
 }
 
 // Default `inputFiles` discovery for a case that doesn't specify one explicitly in case.json:
-// every `*.ets` file directly under `<caseDir>/input/`, sorted by name, returned as paths relative
-// to `caseDir` (e.g. "input/a.ets") -- the same relative form `case.json`'s explicit `inputFiles`
-// uses, so both paths through case-runner.js can be treated uniformly.
+// every static `*.ats` file (plus legacy `*.ets` files) directly under `<caseDir>/input/`, sorted
+// by name, returned as paths relative to `caseDir` (e.g. "input/a.ats") -- the same relative form
+// `case.json`'s explicit `inputFiles` uses, so both paths through case-runner.js can be treated
+// uniformly.
 function discoverDefaultInputFiles(caseDir) {
   const inputDir = path.join(caseDir, 'input');
   if (!fs.existsSync(inputDir)) {
@@ -43,7 +44,7 @@ function discoverDefaultInputFiles(caseDir) {
   }
   return fs
     .readdirSync(inputDir)
-    .filter((name) => name.endsWith('.ets'))
+    .filter((name) => name.endsWith('.ats') || name.endsWith('.ets'))
     .sort()
     .map((name) => path.posix.join('input', name));
 }
@@ -62,7 +63,7 @@ function copyIfExists(srcPath, destPath) {
 
 // Recursively copies the entire `input/` subdirectory of `caseDir` into `scratchDir`,
 // so scratch directory contains every file under input/ (including prefabs / dynamic
-// modules that the test case's .ets sources may reference via arktsconfig paths).
+// modules that the test case's sources may reference via arktsconfig paths).
 function copyInputDirectory(caseDir, scratchDir) {
   const srcInputDir = path.join(caseDir, 'input');
   const destInputDir = path.join(scratchDir, 'input');

@@ -18,7 +18,7 @@
 // gluegen's output JSON embeds absolute paths (source file paths, used as `files` map keys) that
 // depend on where this run's scratch directory happened to land -- never stable across machines
 // or even across two runs on the same machine. Golden files therefore spell those paths using the
-// placeholder "<CASE_DIR>" instead (e.g. "<CASE_DIR>/input/a.ets"); this replaces every literal
+// placeholder "<CASE_DIR>" instead (e.g. "<CASE_DIR>/input/a.ats"); this replaces every literal
 // occurrence of `scratchDir` in the *actual* output with that same placeholder before comparison,
 // so the two sides line up regardless of where the scratch dir actually was.
 //

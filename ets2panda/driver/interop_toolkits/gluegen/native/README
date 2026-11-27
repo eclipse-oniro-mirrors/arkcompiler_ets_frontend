@@ -1,6 +1,6 @@
 # Gluegen Native Tool
 
-`gluegen` is a native command-line tool for ArkTS and TypeScript interop workflows. It analyzes `.ets` and `.ts` source files and writes JSON metadata describing their exported symbols, runtime names, and resolved re-exports. Downstream binding and interop generators consume this metadata; `gluegen` does not generate source code itself.
+`gluegen` is a native command-line tool for ArkTS and TypeScript interop workflows. It analyzes static `.ats` and `.ts` source files and writes JSON metadata describing their exported symbols, runtime names, and resolved re-exports. Legacy static `.ets` inputs with `'use static'` remain supported during the suffix migration. Downstream binding and interop generators consume this metadata; `gluegen` does not generate source code itself.
 
 ## What It Produces
 
@@ -37,8 +37,8 @@ Example:
 
 ```sh
 cat > sources.txt <<'EOF'
-src/main.ets
-src/shared.ets
+src/main.ats
+src/shared.ats
 EOF
 
 gluegen \
@@ -55,7 +55,7 @@ By default, Gluegen writes one `GlueConfig` JSON file:
 ```json
 {
   "files": {
-    "src/main.ets": {
+    "src/main.ats": {
       "root": {
         "createApp": {
           "name": "createApp",
@@ -76,7 +76,7 @@ By default, Gluegen writes one `GlueConfig` JSON file:
 
 `files` keys always use forward slashes for deterministic, cross-platform output. Symbol kinds are `function`, `class`, `property`, `namespace`, `dynamic-re-export`, and `init-module`.
 
-With `--single-file-emit`, Gluegen uses `rootDir` from `arktsconfig.json` and mirrors the source directory structure beneath the output directory. Each generated JSON contains one `files` entry.
+With `--single-file-emit`, Gluegen uses `rootDir` from `arktsconfig.json` and mirrors the source directory structure beneath the output directory. Each generated JSON contains one `files` entry. Source suffixes are removed from output names, so `main.ats` and `main.d.ats` both map to `main.json`.
 
 When source parsing fails, Gluegen writes:
 
