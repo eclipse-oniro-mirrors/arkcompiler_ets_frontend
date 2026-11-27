@@ -303,7 +303,7 @@ bool TypeRelation::IsCastableTo(Type *const source, Type *const target)
             return false;
         }
 
-        if (UncheckedCast() && !node_->HasAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF)) {
+        if (UncheckedCast() && node_ != nullptr && !node_->HasAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF)) {
             auto key = RelationHolder::MakeKey(source->Id(), target->Id());
             UncheckedCastableResults().Insert(key, {result_, RelationType::UNCHECKED_CASTABLE});
         }

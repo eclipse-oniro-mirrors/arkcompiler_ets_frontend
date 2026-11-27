@@ -122,3 +122,24 @@ This first problem was mostly solved by sorting diagnostics by their name.
 That still left the problem of unique but human-friendly identifiers, which was (mostly) solved by generating IDs randomly.  `normalize_yaml` has an explanation of the math behind this.
 
 The deleted ids were also not tracked, so the graveyard was added.  It is also kept sorted to minimize conflicts and to make it easier to find ids.
+## Stable map
+
+`stable_map.json` in this directory is the registry of **stable ordered codes** for every
+diagnostic: one counter per diagnostic kind, starting from 1.  It decouples the ordered
+code from the YAML file order, which is (re)sorted by `normalize_yaml` and therefore must
+never be used as the source of a mapping.
+
+The map is **append-only** and maintained automatically:
+
+* A **new** diagnostic gets the next free code of its kind on the next build (the
+  `es2panda_stable_map_sync` CMake target runs `scripts/sync_stable_map`), or immediately
+  by running `scripts/sync_stable_map` by hand.
+* **Renaming** a diagnostic (same `id`, new `name`) keeps its code.
+* **Deleting** a diagnostic requires putting its `id` into the `graveyard` first —
+  exactly as described in [deleting](#deleting-already-committed-diagnostics); the map
+  entry then moves to `retired` and its code is never reused.
+
+Commit `stable_map.json` together with the YAML change, like any other generated file.
+CI verifies that the committed map is up to date: `scripts/lint_yaml` runs
+`scripts/sync_stable_map --check`, which never writes and fails with instructions when
+the map is stale.

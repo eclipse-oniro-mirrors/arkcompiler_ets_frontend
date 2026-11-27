@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Optional narrowing (aligned with Scala's `T | Null` literal typing): a `T | undefined`
+// union whose single narrow integer member is byte/short folds an in-range integer
+// literal to that member, exactly like `val x: Byte | Null = 12` in Scala.
+
+class Msg {
+    fieldOptionalByte?: byte = 12
+    fieldOptionalShort?: short = 123
+}
+
+function main(): void {
+    // Optional local variables
+    let a1: byte | undefined = 12
+    arktest.assertTrue(a1 instanceof byte)
+    arktest.assertEQ(a1, 12)
+
+    let a2: short | undefined = 123
+    arktest.assertTrue(a2 instanceof short)
+    arktest.assertEQ(a2, 123)
+
+    // Boundary values stay in range
+    let a3: byte | undefined = 127
+    arktest.assertTrue(a3 instanceof byte)
+
+    let a4: short | undefined = 32767
+    arktest.assertTrue(a4 instanceof short)
+
+    // Optional class fields
+    let m = new Msg()
+    arktest.assertTrue(m.fieldOptionalByte instanceof byte)
+    arktest.assertEQ(m.fieldOptionalByte, 12)
+    arktest.assertTrue(m.fieldOptionalShort instanceof short)
+    arktest.assertEQ(m.fieldOptionalShort, 123)
+
+    // Assignment to an optional field keeps folding
+    m.fieldOptionalByte = 56
+    arktest.assertTrue(m.fieldOptionalByte instanceof byte)
+    arktest.assertEQ(m.fieldOptionalByte, 56)
+
+    // An explicit `as` cast remains equivalent
+    let a5: byte | undefined = 90 as byte
+    arktest.assertTrue(a5 instanceof byte)
+    arktest.assertEQ(a5, 90)
+}

@@ -194,7 +194,10 @@ void ETSUnionType::Identical(TypeRelation *relation, Type *other)
 static void AmbiguousUnionOperation(TypeRelation *relation)
 {
     auto checker = relation->GetChecker()->AsETSChecker();
-    checker->LogError(diagnostic::AMBIGUOUS_UNION_TYPE_OP, {}, relation->GetNode()->Start());
+    auto const *node = relation->GetNode();
+    if (node != nullptr) {
+        checker->LogError(diagnostic::AMBIGUOUS_UNION_TYPE_OP, {}, node->Start());
+    }
     conversion::Forbidden(relation);
 }
 
@@ -263,6 +266,29 @@ void ETSUnionType::CastTarget(TypeRelation *relation, Type *source)
 {
     auto const relFn = [](TypeRelation *rel, Type *src, Type *tgt) -> bool { return rel->IsCastableTo(src, tgt); };
     RelationTarget(relation, source, relFn);
+
+    if (!relation->IsTrue() && source->IsBuiltinNumeric()) {
+        TryNumericMemberCast(relation, source);
+    }
+}
+
+void ETSUnionType::TryNumericMemberCast(TypeRelation *relation, Type *source)
+{
+    auto *const checker = relation->GetChecker()->AsETSChecker();
+    bool related = false;
+    for (auto *ct : ConstituentTypes()) {
+        auto *unboxed = checker->MaybeUnboxType(ct);
+        if (unboxed == ct || unboxed->IsETSUnionType() || source->IsETSUnionType() ||
+            !relation->IsCastableTo(source, unboxed)) {
+            continue;
+        }
+        if (related) {
+            AmbiguousUnionOperation(relation);
+            return;
+        }
+        related = true;
+    }
+    relation->Result(related);
 }
 
 static std::optional<Type *> LightMerge(TypeRelation *relation, Type *const t1, Type *const t2)

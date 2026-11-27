@@ -1295,6 +1295,7 @@ ohos_source_set("libes2panda_frontend_static") {
   deps = [
     ":es2panda_diagnostic_gen_diagnostic_h",
     ":es2panda_options_gen_options_h",
+    ":es2panda_stable_map_gen",
     ":gen_${LIB_NAME}_decl_inc",
     ":gen_${LIB_NAME}_enums_inc",
     ":gen_${LIB_NAME}_idl",
@@ -1469,6 +1470,36 @@ ark_gen("es2panda_diagnostic_gen") {
     "util/diagnostic/diagnostic.rb",
     "util/diagnostic/diagnostic.rb",
     "util/diagnostic/diagnostic.rb",
+  ]
+}
+
+# Emits generated/stableMap.h (the C++ lookup table for ordered diagnostic
+# codes) from the committed registry. Emit-only: the GN build never writes
+# to the source tree; the registry itself is synced by developers via
+# scripts/sync_stable_map (wired into the CMake build). The script first
+# validates stable_map.json against the diagnostic YAMLs and fails when the
+# registry is stale, so the table can never drift from the committed
+# diagnostics.
+action("es2panda_stable_map_gen") {
+  script = "./scripts/sync_stable_map"
+  inputs = [
+    "scripts/sync_stable_map",
+    "util/diagnostic/stable_map.json",
+    "util/diagnostic/fatal.yaml",
+    "util/diagnostic/syntax.yaml",
+    "util/diagnostic/semantic.yaml",
+    "util/diagnostic/warning.yaml",
+    "util/diagnostic/arktsconfig_error.yaml",
+    "declgen_ets2ts/declgen_ets2ts_error.yaml",
+    "declgen_ets2ts/declgen_ets2ts_warning.yaml",
+    "declgen_ets2ts/isolated_declgen.yaml",
+  ]
+  outputs = [ "$target_gen_dir/generated/stableMap.h" ]
+  args = [
+    "--root",
+    rebase_path(".", root_build_dir),
+    "--emit-header",
+    rebase_path(outputs[0], root_build_dir),
   ]
 }
 

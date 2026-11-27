@@ -1,0 +1,31 @@
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Record keys with a union key type: an integer literal key resolves via unique widening
+// to the numeric member of the key union (`string|number` widens int to the number member).
+
+function main(): void {
+    let r: Record<string|number, bigint> = {
+        "A": 1n,
+        "B": 2n,
+        1: 100n,
+        2: 200n,
+    };
+    arktest.assertTrue(r["A"] == 1n && r["B"] == 2n);
+    arktest.assertTrue(r[1] == 100n && r[2] == 200n);
+    r[3] = 300n;
+    arktest.assertTrue(r[3] == 300n);
+    arktest.assertTrue(r["C"] == undefined && r[4] == undefined);
+}

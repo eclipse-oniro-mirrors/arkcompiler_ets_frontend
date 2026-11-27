@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,19 +14,16 @@
  */
 
 /*---
-desc: Test if ambiguity check works for numeric union types
+desc: Test subtype matching for numeric union types
 name: union_numeric_init_0
 tags:
-- negative
 - compile-only
 ---*/
 
 function main() {
 
     const a = 127;
-    let b: Byte | Short | Int = /* @@ label */ a;
+    let b: Byte | Short | Int = a;
 
 }
 
-
-/* @@? 27:48 Error Semantic error ESE101680: Ambiguous value 127, fits into multiple types */

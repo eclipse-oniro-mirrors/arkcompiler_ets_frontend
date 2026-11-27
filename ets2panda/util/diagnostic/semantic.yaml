@@ -114,10 +114,6 @@ semantic:
   id: 255
   message: "Ambiguous union type operation"
 
-- name: AMBIGUOUS_UNION_VALUE
-  id: 101680
-  message: "Ambiguous value {}, fits into multiple types"
-
 - name: ANNOTATION_ARG_COUNT_MISMATCH
   id: 68
   message: "The number of arguments provided for the annotation exceeds the number of fields defined."
@@ -1802,5 +1798,6 @@ graveyard:
 - 383
 - 4101
 - 53205
+- 101680
 
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

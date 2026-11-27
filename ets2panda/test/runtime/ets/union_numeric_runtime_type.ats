@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Runtime type verification: unique widening must produce the widened type at runtime,
+// not the literal's default type. E.g. number|undefined = 10 must store Double, not Int.
+
+class Msg {
+    public numOptional: number | undefined = 10;
+    public longOptional: long | undefined = 1;
+    public floatOptional: float | undefined = 1;
+}
+
+function main(): void {
+    // Class property with optional number (number = double)
+    let m = new Msg();
+    arktest.assertTrue(m.numOptional instanceof double);
+    arktest.assertTrue(m.longOptional instanceof long);
+    arktest.assertTrue(m.floatOptional instanceof float);
+
+    // Variable declarations with unique widening
+    let a: double | undefined = 1;
+    arktest.assertTrue(a instanceof double);
+
+    let b: long | undefined = 1;
+    arktest.assertTrue(b instanceof long);
+
+    let c: float | undefined = 1;
+    arktest.assertTrue(c instanceof float);
+
+    // Exact match keeps original type
+    let d: int | long = 1;
+    arktest.assertTrue(d instanceof int);
+
+    // Function parameter via unique widening
+    arktest.assertTrue(widenDouble(1) instanceof double);
+    arktest.assertTrue(widenLong(1) instanceof long);
+}
+
+function widenDouble(p: double | undefined): double | undefined { return p }
+function widenLong(p: long | undefined): long | undefined { return p }

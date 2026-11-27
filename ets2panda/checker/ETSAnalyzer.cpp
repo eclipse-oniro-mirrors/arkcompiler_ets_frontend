@@ -2303,89 +2303,6 @@ static bool IsInvalidMethodAssignment(const ir::AssignmentExpression *const expr
     return false;
 }
 
-static bool TryExtractNumberFromIdentifier(ir::Expression *expr, lexer::Number &outNum, std::string &outStr)
-{
-    auto *id = expr->AsIdentifier();
-    auto *var = id->Variable();
-    if (var == nullptr || var->Declaration() == nullptr || var->Declaration()->Node() == nullptr) {
-        return false;
-    }
-
-    auto *declNode = var->Declaration()->Node();
-    auto *parent = declNode->Parent();
-    if (parent->IsClassProperty() || parent->IsVariableDeclarator()) {
-        declNode = parent;
-    }
-
-    auto getNumberFromLiteral = [&](ir::Expression *literal) -> bool {
-        if (literal == nullptr || !literal->IsNumberLiteral()) {
-            return false;
-        }
-        outNum = literal->AsNumberLiteral()->Number();
-        outStr = literal->DumpEtsSrc();
-        return true;
-    };
-
-    if (declNode->IsClassProperty()) {
-        auto *prop = declNode->AsClassProperty();
-        return prop->IsConst() && getNumberFromLiteral(prop->Value());
-    }
-
-    if (declNode->IsVariableDeclarator()) {
-        auto *decl = declNode->AsVariableDeclarator();
-        bool isConst = decl->Flag() == ir::VariableDeclaratorFlag::CONST;
-        return isConst && getNumberFromLiteral(decl->Init());
-    }
-
-    return false;
-}
-
-static bool TryExtractNumber(ir::Expression *expr, lexer::Number &outNum, std::string &outStr)
-{
-    if (expr->IsNumberLiteral()) {
-        outNum = expr->AsNumberLiteral()->Number();
-        outStr = expr->DumpEtsSrc();
-        return true;
-    }
-    if (expr->IsIdentifier()) {
-        return TryExtractNumberFromIdentifier(expr, outNum, outStr);
-    }
-    return false;
-}
-
-static bool FitsNumericType(Type *ctype, const lexer::Number &number)
-{
-    if (!ctype->IsETSObjectType()) {
-        return false;
-    }
-
-    auto *obj = ctype->AsETSObjectType();
-
-    struct FitCase {
-        ETSObjectFlags flag;
-        bool isInteger;
-        std::function<bool()> canFit;
-    };
-
-    const std::vector<FitCase> fitCases = {
-        {ETSObjectFlags::BUILTIN_BYTE, true, [&] { return number.CanGetValue<int8_t>(); }},
-        {ETSObjectFlags::BUILTIN_SHORT, true, [&] { return number.CanGetValue<int16_t>(); }},
-        {ETSObjectFlags::BUILTIN_INT, true, [&] { return number.CanGetValue<int32_t>(); }},
-        {ETSObjectFlags::BUILTIN_LONG, true, [&] { return number.CanGetValue<int64_t>(); }},
-        {ETSObjectFlags::BUILTIN_FLOAT, false, [&] { return number.CanGetValue<float>(); }},
-        {ETSObjectFlags::BUILTIN_DOUBLE, false, [&] { return number.CanGetValue<double>(); }},
-    };
-
-    for (const auto &f : fitCases) {
-        if (obj->HasObjectFlag(f.flag) && f.canFit() &&
-            ((f.isInteger && number.IsInteger()) || (!f.isInteger && number.IsReal()))) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 // In assignment expression or object literal, we need the type of the setter instead of the type of the getter
 static checker::Type *GetSetterType(varbinder::Variable *const var, ETSChecker *checker)
 {
@@ -2420,33 +2337,6 @@ bool ETSAnalyzer::SetAssignmentExpressionTarget(ir::AssignmentExpression *const 
         return false;
     }
     return true;
-}
-
-static void IsAmbiguousUnionInit(checker::ETSUnionType *unionType, ir::Expression *initExpr, ETSChecker *checker)
-{
-    // A folded `as` expression already carries the explicit target type; the
-    // ambiguity rule applies only to untyped integer literals.
-    if (initExpr->IsNumberLiteral() && initExpr->AsNumberLiteral()->IsFolded() && initExpr->TsType() != nullptr) {
-        return;
-    }
-
-    lexer::Number initNumber;
-    std::string str;
-    // CC-OFFNXT(G.FMT.17-CPP) false positive
-    if (!TryExtractNumber(initExpr, initNumber, str)) {
-        return;
-    }
-    // Per spec examples, real literals without explicit narrowing are inferred as 'double'
-    // in union contexts (e.g. float|double <- 3.14), so ambiguity check applies to integer literals only.
-    if (initNumber.IsReal()) {
-        return;
-    }
-    lexer::Number number {initNumber.GetValueAndCastTo<int64_t>()};
-    int fits = std::count_if(unionType->ConstituentTypes().begin(), unionType->ConstituentTypes().end(),
-                             [&](Type *t) { return FitsNumericType(t, number); });
-    if (fits > 1) {
-        checker->LogError(diagnostic::AMBIGUOUS_UNION_VALUE, {str}, initExpr->Start());
-    }
 }
 
 checker::Type *ETSAnalyzer::Check(ir::ETSDestructuring *const expr) const
@@ -2622,10 +2512,6 @@ checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
     auto [rightType, relationNode] = CheckAssignmentExprOperatorType(expr, leftType);
     if (rightType->IsTypeError()) {
         return expr->SetTsType(leftType);
-    }
-
-    if (leftType->IsETSUnionType()) {
-        IsAmbiguousUnionInit(leftType->AsETSUnionType(), expr->Right(), checker);
     }
 
     return expr->SetTsType(GetSmartTypeForAssignment(expr, leftType, rightType, relationNode));
@@ -4893,6 +4779,137 @@ static bool CheckIfLiteralValueIsAppropriate(ETSChecker *checker, Type *type, ir
     return true;
 }
 
+struct UnionNumericScan {
+    TypeRelation *relation = nullptr;
+    Type *defaultType = nullptr;
+    ETSObjectFlags defaultKind = ETSObjectFlags::NO_OPTS;
+
+    Type *narrowMember = nullptr;
+    int narrowCount = 0;
+    bool hasUndefined = false;
+    bool foldingHasOther = false;
+    Type *uniqueWidening = nullptr;
+    bool multipleWidening = false;
+};
+
+static ETSObjectFlags NumericKindOf(Type *type)
+{
+    if (!type->IsETSObjectType()) {
+        return ETSObjectFlags::NO_OPTS;
+    }
+    auto const *obj = type->AsETSObjectType();
+    if (obj->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE)) {
+        return ETSObjectFlags::BUILTIN_BYTE;
+    }
+    if (obj->HasObjectFlag(ETSObjectFlags::BUILTIN_SHORT)) {
+        return ETSObjectFlags::BUILTIN_SHORT;
+    }
+    if (obj->HasObjectFlag(ETSObjectFlags::BUILTIN_INT)) {
+        return ETSObjectFlags::BUILTIN_INT;
+    }
+    if (obj->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG)) {
+        return ETSObjectFlags::BUILTIN_LONG;
+    }
+    if (obj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT)) {
+        return ETSObjectFlags::BUILTIN_FLOAT;
+    }
+    if (obj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
+        return ETSObjectFlags::BUILTIN_DOUBLE;
+    }
+    return ETSObjectFlags::NO_OPTS;
+}
+
+static ETSObjectFlags WidenableTo(ETSObjectFlags targetKind)
+{
+    constexpr ETSObjectFlags WIDENABLE_TO_SHORT = ETSObjectFlags::BUILTIN_BYTE;
+    constexpr ETSObjectFlags WIDENABLE_TO_INT = ETSObjectFlags::BUILTIN_SHORT | WIDENABLE_TO_SHORT;
+    constexpr ETSObjectFlags WIDENABLE_TO_LONG = ETSObjectFlags::BUILTIN_INT | WIDENABLE_TO_INT;
+    constexpr ETSObjectFlags WIDENABLE_TO_FLOAT = ETSObjectFlags::BUILTIN_LONG | WIDENABLE_TO_LONG;
+    constexpr ETSObjectFlags WIDENABLE_TO_DOUBLE = ETSObjectFlags::BUILTIN_FLOAT | WIDENABLE_TO_FLOAT;
+
+    switch (targetKind) {
+        case ETSObjectFlags::BUILTIN_SHORT:
+            return WIDENABLE_TO_SHORT;
+        case ETSObjectFlags::BUILTIN_INT:
+            return WIDENABLE_TO_INT;
+        case ETSObjectFlags::BUILTIN_LONG:
+            return WIDENABLE_TO_LONG;
+        case ETSObjectFlags::BUILTIN_FLOAT:
+            return WIDENABLE_TO_FLOAT;
+        case ETSObjectFlags::BUILTIN_DOUBLE:
+            return WIDENABLE_TO_DOUBLE;
+        default:
+            return ETSObjectFlags::NO_OPTS;
+    }
+}
+
+static bool ScanUnionNumericMembers(UnionNumericScan *scan, checker::ETSUnionType *unionType)
+{
+    auto *const relation = scan->relation;
+    auto *const defaultType = scan->defaultType;
+    bool const isInt = scan->defaultKind == ETSObjectFlags::BUILTIN_INT;
+
+    for (auto *ct : unionType->ConstituentTypes()) {
+        if (relation->IsIdenticalTo(ct, defaultType)) {
+            return true;
+        }
+
+        auto const kind = NumericKindOf(ct);
+        if (kind == ETSObjectFlags::NO_OPTS) {
+            if (relation->IsSupertypeOf(ct, defaultType)) {
+                return true;
+            }
+            if (ct->IsETSUndefinedType()) {
+                scan->hasUndefined = true;
+            } else {
+                scan->foldingHasOther = true;
+            }
+            continue;
+        }
+
+        if ((WidenableTo(kind) & scan->defaultKind) != 0) {
+            if (scan->uniqueWidening != nullptr) {
+                scan->multipleWidening = true;
+            } else {
+                scan->uniqueWidening = ct;
+            }
+        }
+
+        bool const isNarrow = kind == ETSObjectFlags::BUILTIN_BYTE || kind == ETSObjectFlags::BUILTIN_SHORT;
+        if (isNarrow && isInt) {
+            ++scan->narrowCount;
+            scan->narrowMember = ct;
+        } else {
+            scan->foldingHasOther = true;
+        }
+    }
+    return false;
+}
+
+static Type *GetUniqueWideningTarget(ir::NumberLiteral *expr, checker::ETSUnionType *unionType, ETSChecker *checker)
+{
+    bool const isInt = expr->Number().IsInt();
+    if (!isInt && !expr->Number().IsLong()) {
+        return nullptr;
+    }
+    auto *defaultType = isInt ? checker->GlobalIntBuiltinType() : checker->GlobalLongBuiltinType();
+    auto const defaultKind = isInt ? ETSObjectFlags::BUILTIN_INT : ETSObjectFlags::BUILTIN_LONG;
+
+    UnionNumericScan scan {checker->Relation(), defaultType, defaultKind};
+    if (ScanUnionNumericMembers(&scan, unionType)) {
+        return nullptr;
+    }
+
+    if (isInt && scan.narrowCount == 1 && scan.hasUndefined && !scan.foldingHasOther) {
+        return scan.narrowMember;
+    }
+
+    if (scan.multipleWidening) {
+        return nullptr;
+    }
+    return scan.uniqueWidening;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::NumberLiteral *expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -4902,10 +4919,16 @@ checker::Type *ETSAnalyzer::Check(ir::NumberLiteral *expr) const
     ETSChecker *checker = GetETSChecker();
     Type *type;
 
-    if (auto *preferredType =
-            GetAppropriatePreferredType(expr->PreferredType(), [&](Type *tp) { return checker->CheckIfNumeric(tp); });
-        preferredType != nullptr && CheckIfLiteralValueIsAppropriate(checker, preferredType, expr)) {
-        type = preferredType;
+    auto *origPreferred = expr->PreferredType();
+    Type *preferred = nullptr;
+    if (origPreferred != nullptr && origPreferred->IsETSUnionType()) {
+        preferred = GetUniqueWideningTarget(expr, origPreferred->AsETSUnionType(), checker);
+    } else if (origPreferred != nullptr) {
+        preferred = GetAppropriatePreferredType(origPreferred, [&](Type *tp) { return checker->CheckIfNumeric(tp); });
+    }
+
+    if (preferred != nullptr && CheckIfLiteralValueIsAppropriate(checker, preferred, expr)) {
+        type = preferred;
     } else if (expr->Number().IsDouble()) {
         type = checker->GlobalDoubleBuiltinType();
     } else if (expr->Number().IsFloat()) {
@@ -5724,6 +5747,10 @@ bool ETSAnalyzer::CheckReturnStatementArgumentType(ir::ReturnStatement *st, ir::
 
     if (st->Argument()->IsMemberExpression()) {
         checker->SetArrayPreferredTypeForNestedMemberExpressions(st->Argument()->AsMemberExpression(), preferredType);
+    } else if (st->Argument()->IsNumberLiteral() && preferredType->IsETSUnionType() &&
+               funcReturnType->IsETSObjectType() && checker->IsPromiseType(funcReturnType)) {
+        auto *promiseArg = checker->PromiseTypeArg(funcReturnType->AsETSObjectType());
+        st->Argument()->SetPreferredType(promiseArg);
     } else {
         st->Argument()->SetPreferredType(preferredType);
     }
@@ -5734,9 +5761,6 @@ bool ETSAnalyzer::CheckReturnStatementArgumentType(ir::ReturnStatement *st, ir::
         if (!ValidateThisReturnOperand(st->Argument(), st, checker)) {
             return false;
         }
-    }
-    if (funcReturnType->IsETSUnionType()) {
-        IsAmbiguousUnionInit(funcReturnType->AsETSUnionType(), st->Argument(), checker);
     }
     return CheckReturnType(checker, funcReturnType, argumentType, st->Argument(), containingFunc);
 }
@@ -6027,10 +6051,6 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
     //  Now try to define the actual type of Identifier so that smart cast can be used in further checker processing
     //  NOTE: T_S and K_o_t_l_i_n don't act in such way, but we can try - why not? :)
     auto *smartType = InferSmartType(checker, variableType, ident, init);
-
-    if (variableType != nullptr && variableType->IsETSUnionType() && init != nullptr) {
-        IsAmbiguousUnionInit(variableType->AsETSUnionType(), init, checker);
-    }
 
     return st->SetTsType(smartType);
 }

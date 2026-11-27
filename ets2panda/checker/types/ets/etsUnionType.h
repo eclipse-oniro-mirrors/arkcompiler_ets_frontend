@@ -102,6 +102,7 @@ private:
 
     template <typename RelFN>
     void RelationTarget(TypeRelation *relation, Type *source, RelFN const &relFn);
+    void TryNumericMemberCast(TypeRelation *relation, Type *source);
     static void ExtractTypes(TypeRelation *relation, Type *testedType, std::vector<Type *> &consTypes,
                              std::vector<Type *> &altTypes) noexcept;
 

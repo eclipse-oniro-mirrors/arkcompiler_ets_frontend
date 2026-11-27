@@ -40,7 +40,7 @@ function maybePromiseOrUndefined(): Promise<string> | undefined {
 async function testAwaitConditionalPromise(): Promise<void> {
     // Conditional that may be Promise or non-Promise
     let condition: boolean = true;
-    let value: Promise<number> | number = condition ? Promise.resolve(100.0) : 200;
+    let value: Promise<number> | number = condition ? Promise.resolve(100.0) : 200.0;
     
     let result: number = await value;
     arktest.assertEQ(result, 100);

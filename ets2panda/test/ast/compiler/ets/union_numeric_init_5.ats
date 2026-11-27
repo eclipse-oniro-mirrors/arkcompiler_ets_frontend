@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,15 +14,12 @@
  */
 
 /*---
-desc: Test if ambiguity check works for numeric union types
+desc: Test subtype matching for numeric union types
 name: union_numeric_init_5
 tags:
-- negative
 - compile-only
 ---*/
 
 const a = 32767;
-let b: Short | Int = /* @@ label */ a;
+let b: Short | Int = a;
 
-
-/* @@? 25:37 Error Semantic error ESE101680: Ambiguous value 32767, fits into multiple types */

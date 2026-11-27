@@ -1,0 +1,77 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Unique widening: default inferred type (int) is not in the union and not a
+// subtype of any non-numeric member, but exactly one numeric member is reachable
+// via widening numeric conversion → OK with the widened type.
+
+function main(): void {
+    // byte|long: int→long is the only widening (int→byte is narrowing)
+    let a1: byte | long = 1
+    arktest.assertTrue(a1 instanceof long)
+
+    let a2: byte | long = 127
+    arktest.assertTrue(a2 instanceof long)
+
+    let a3: byte | long = 128
+    arktest.assertTrue(a3 instanceof long)
+
+    // short|long: int→long is the only widening
+    let b1: short | long = 1
+    arktest.assertTrue(b1 instanceof long)
+
+    let b2: short | long = 127
+    arktest.assertTrue(b2 instanceof long)
+
+    // byte|float: int→float is the only widening
+    let c1: byte | float = 1
+    arktest.assertTrue(c1 instanceof float)
+
+    // byte|double: int→double is the only widening
+    let d1: byte | double = 1
+    arktest.assertTrue(d1 instanceof double)
+
+    // short|float, short|double
+    let e1: short | float = 1
+    arktest.assertTrue(e1 instanceof float)
+
+    let e2: short | double = 1
+    arktest.assertTrue(e2 instanceof double)
+
+    // long|string: int→long is the only widening
+    let f1: long | string = 1
+    arktest.assertTrue(f1 instanceof long)
+
+    // float|string, double|string
+    let g1: float | string = 1
+    arktest.assertTrue(g1 instanceof float)
+
+    let g2: double | string = 1
+    arktest.assertTrue(g2 instanceof double)
+
+    // Three-way: byte|long|string — int→long unique widening
+    let h1: byte | long | string = 1
+    arktest.assertTrue(h1 instanceof long)
+
+    let h2: short | long | string = 1
+    arktest.assertTrue(h2 instanceof long)
+
+    // Scenario consistency: return and function parameter
+    arktest.assertTrue(retByteLong() instanceof long)
+    arktest.assertTrue(passByteLong(1) instanceof long)
+}
+
+function retByteLong(): byte | long { return 1 }
+function passByteLong(p: byte | long): byte | long { return p }
