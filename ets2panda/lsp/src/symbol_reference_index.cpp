@@ -87,7 +87,7 @@ bool HasExportFlag(SymbolId symbolId, ExportFlag flag)
 
 std::string NormalizePathForExportFilter(std::string fileName)
 {
-    std::replace(fileName.begin(), fileName.end(), '\\', '/');
+    fileName = NormalizeLspFilePath(std::move(fileName));
     std::transform(fileName.begin(), fileName.end(), fileName.begin(),
                    [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
     return fileName;
@@ -283,6 +283,7 @@ std::string GetImportSourcePath(const ir::Identifier *declIdentifier, const ArkT
     if (sourcePath.empty()) {
         return "";
     }
+    sourcePath = NormalizeLspFilePath(std::move(sourcePath));
     // A resolved dependency key canonicalizes to its file-level form, matching the
     // declaration side of the module symbol key regardless of the key form written.
     if (config != nullptr) {
@@ -306,7 +307,7 @@ std::string NormalizeDynamicDeclModuleKey(std::string fileName, const ArkTsConfi
     }
     constexpr std::string_view INTEROP_DECL_SEGMENT = "build-tools/interop/declaration/";
     constexpr std::string_view DECL_SUFFIX = ".d.ets";
-    std::replace(fileName.begin(), fileName.end(), '\\', '/');
+    fileName = NormalizeLspFilePath(std::move(fileName));
     auto segmentPos = fileName.find(INTEROP_DECL_SEGMENT);
     if (segmentPos == std::string::npos) {
         return fileName;
@@ -417,7 +418,7 @@ std::string BuildExportedDeclModuleKey(const ir::Identifier *declIdentifier, con
         return "";
     }
 
-    auto moduleFileName = GetNodeFileName(declIdentifier, ctx);
+    auto moduleFileName = NormalizeLspFilePath(GetNodeFileName(declIdentifier, ctx));
     if (moduleFileName.empty()) {
         return "";
     }
@@ -474,7 +475,8 @@ std::optional<std::string> FindNamedImportAliasKey(const ir::Identifier *identif
                 imported->Name() == local->Name() || imported->Name().Is("default")) {
                 continue;
             }
-            return "import-alias:" + GetNodeFileName(identifier, ctx) + ":" + std::string(local->Name());
+            return "import-alias:" + NormalizeLspFilePath(GetNodeFileName(identifier, ctx)) + ":" +
+                   std::string(local->Name());
         }
     }
     return std::nullopt;
@@ -510,7 +512,7 @@ SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identi
         if (auto aliasSymbol = FindNamedImportAliasSymbolId(declNode, identifier, ctx); aliasSymbol.has_value()) {
             return *aliasSymbol;
         }
-        const auto declFileName = GetNodeFileName(declNode, ctx);
+        const auto declFileName = NormalizeLspFilePath(GetNodeFileName(declNode, ctx));
         auto start = declNode->Start().index;
         auto end = declNode->End().index;
         // For "ETSGLOBAL" and the "main" function within it, there is no need to add them to the symbol table.
@@ -530,7 +532,7 @@ SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identi
 
 SymbolId BuildFileReferenceSymbolId(const std::string &targetPath)
 {
-    return static_cast<SymbolId>(std::hash<std::string> {}("file_ref:" + targetPath));
+    return static_cast<SymbolId>(std::hash<std::string> {}("file_ref:" + NormalizeLspFilePath(targetPath)));
 }
 
 const checker::Type *GetTypeReferenceType(const ir::AstNode *targetNode)
@@ -576,16 +578,18 @@ bool IsDefinitionNode(const ir::AstNode *node, const ir::AstNode *owner)
 
 void RemoveFileContributions(const std::string &fileName)
 {
+    const std::string normalizedFileName = NormalizeLspFilePath(fileName);
     for (auto &[_, fileData] : g_fileIndices) {
         fileData.completionExportSymbols.erase(
             std::remove_if(fileData.completionExportSymbols.begin(), fileData.completionExportSymbols.end(),
-                           [&fileName](const ExportSymbolInfo &info) {
-                               return !info.sourceFile.empty() && info.sourceFile == fileName;
+                           [&normalizedFileName](const ExportSymbolInfo &info) {
+                               return !info.sourceFile.empty() &&
+                                      NormalizeLspFilePath(info.sourceFile) == normalizedFileName;
                            }),
             fileData.completionExportSymbols.end());
     }
 
-    auto it = g_fileIndices.find(fileName);
+    auto it = g_fileIndices.find(normalizedFileName);
     if (it == g_fileIndices.end()) {
         return;
     }
@@ -598,7 +602,7 @@ void RemoveFileContributions(const std::string &fileName)
         }
 
         auto defIt = g_symbolDefinitions.find(symbolId);
-        if (defIt != g_symbolDefinitions.end() && defIt->second.fileName == fileName) {
+        if (defIt != g_symbolDefinitions.end() && NormalizeLspFilePath(defIt->second.fileName) == normalizedFileName) {
             g_symbolDefinitions.erase(defIt);
             g_symbolExportInfos.erase(symbolId);
         }
@@ -671,15 +675,9 @@ bool IsNestedExportMember(const ir::AstNode *owner)
     return false;
 }
 
-std::string NormalizeModuleFilePath(std::string path)
-{
-    std::replace(path.begin(), path.end(), '\\', '/');
-    return path;
-}
-
 std::string StripModuleFileExtension(std::string path)
 {
-    path = NormalizeModuleFilePath(std::move(path));
+    path = NormalizeLspFilePath(std::move(path));
     static constexpr std::string_view SUFFIXES[] = {".d.ets", ".d.ats", ".ets", ".ats", ".ts"};
     for (const auto suffix : SUFFIXES) {
         if (path.size() >= suffix.size() && path.compare(path.size() - suffix.size(), suffix.size(), suffix) == 0) {
@@ -1221,10 +1219,7 @@ bool IsImmutableSdkDeclFile(const std::string &fileName)
 {
     static constexpr std::string_view INTEROP_DECL_SEGMENT = "build-tools/interop/";
     static constexpr std::string_view DECL_SUFFIX = ".d.ets";
-    std::string normalized;
-    normalized.reserve(fileName.size());
-    std::transform(fileName.begin(), fileName.end(), std::back_inserter(normalized),
-                   [](char c) { return c == '\\' ? '/' : c; });
+    const std::string normalized = NormalizeLspFilePath(fileName);
     // Only the declaration files are immutable; the sibling bridge/*.ts sources under the
     // same interop directories are not part of the indexed content.
     if (normalized.find(INTEROP_DECL_SEGMENT) != std::string::npos && normalized.size() >= DECL_SUFFIX.size() &&
@@ -1246,7 +1241,7 @@ bool IsImmutableSdkDeclFile(const std::string &fileName)
 
 bool BuildSymbolReferenceIndexForProgram(const public_lib::Context *ctx, parser::Program *program)
 {
-    const std::string fileName = std::string(program->SourceFilePath());
+    const std::string fileName = NormalizeLspFilePath(std::string(program->SourceFilePath()));
     if (IsImmutableSdkDeclFile(fileName) && g_fileIndices.find(fileName) != g_fileIndices.end()) {
         return true;
     }
@@ -1325,7 +1320,8 @@ bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context)
         if (program == nullptr || program->Ast() == nullptr) {
             return;
         }
-        std::string fileName = std::string(program->AbsoluteName());
+        const auto rawName = !program->AbsoluteName().Empty() ? program->AbsoluteName() : program->SourceFilePath();
+        std::string fileName = NormalizeLspFilePath(std::string(rawName));
         if (!indexedFiles.emplace(fileName).second) {
             return;
         }
@@ -1380,8 +1376,11 @@ References GetReferencesAtPositionFromIndex(es2panda_Context *context, size_t po
     }
 
     auto *ctx = reinterpret_cast<public_lib::Context *>(context);
-    const std::string fileName = ctx->sourceFileName;
+    const std::string fileName = NormalizeLspFilePath(ctx->sourceFileName);
     auto fileIt = g_fileIndices.find(fileName);
+    if (fileIt == g_fileIndices.end() && ctx->parserProgram != nullptr) {
+        fileIt = g_fileIndices.find(NormalizeLspFilePath(std::string(ctx->parserProgram->SourceFilePath())));
+    }
     if (fileIt == g_fileIndices.end()) {
         return result;
     }
@@ -1456,7 +1455,7 @@ References GetFileReferencesFromIndex(es2panda_Context *context, const std::stri
 
 std::string GetIndexedFileSource(const std::string &fileName)
 {
-    auto it = g_fileIndices.find(fileName);
+    auto it = g_fileIndices.find(NormalizeLspFilePath(fileName));
     if (it == g_fileIndices.end()) {
         return "";
     }
@@ -1628,7 +1627,7 @@ std::vector<std::string> FindSimilarSymbolNames(const std::string &query, const 
                 continue;
             }
             // Extract symbol name from g_fileIndices source using the reference position
-            auto fileIt = g_fileIndices.find(refInfo.fileName);
+            auto fileIt = g_fileIndices.find(NormalizeLspFilePath(refInfo.fileName));
             if (fileIt == g_fileIndices.end()) {
                 continue;
             }
@@ -1762,11 +1761,12 @@ bool IsSymbolExportedByModuleEntry(const std::string &file, const std::string &s
         if (targetFile.empty()) {
             continue;
         }
+        const auto normalizedTargetFile = NormalizeLspFilePath(targetFile);
         for (const auto &[indexedFile, fileData] : g_fileIndices) {
-            if (StripModuleFileExtension(indexedFile) != targetFile) {
+            if (StripModuleFileExtension(indexedFile) != normalizedTargetFile) {
                 continue;
             }
-            if (HasDirectExportFromFile(targetFile, symbolName, fileData) ||
+            if (HasDirectExportFromFile(normalizedTargetFile, symbolName, fileData) ||
                 HasReExportOfName(fileData.source, symbolName)) {
                 return true;
             }
@@ -1793,9 +1793,10 @@ std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string
 {
     std::vector<SymbolDefSearchResult> results;
     std::unordered_set<std::string> seen;
+    const std::string normalizedExcludeFile = NormalizeLspFilePath(excludeFile);
 
     for (const auto &[symbolId, defRef] : g_symbolDefinitions) {
-        if (defRef.fileName == excludeFile) {
+        if (NormalizeLspFilePath(defRef.fileName) == normalizedExcludeFile) {
             continue;
         }
         // Only module exports are importable: nested members (class/interface/namespace/
@@ -1817,7 +1818,7 @@ std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string
         }
 
         bool isDefault = HasExportFlag(symbolId, EXPORT_DEFAULT);
-        auto fileIt = g_fileIndices.find(defRef.fileName);
+        auto fileIt = g_fileIndices.find(NormalizeLspFilePath(defRef.fileName));
         if (!isDefault && fileIt != g_fileIndices.end() && HasDefaultExportReference(fileIt->second.source, name)) {
             isDefault = true;
         }
@@ -1833,6 +1834,7 @@ std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std
 {
     std::vector<SymbolDefSearchResult> results;
     std::unordered_set<std::string> seen;
+    const std::string normalizedExcludeFile = NormalizeLspFilePath(excludeFile);
     auto lowerPrefix = prefix;
     std::transform(lowerPrefix.begin(), lowerPrefix.end(), lowerPrefix.begin(),
                    [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
@@ -1846,7 +1848,7 @@ std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std
             continue;
         }
         const auto &defRef = defIt->second;
-        if (defRef.fileName == excludeFile) {
+        if (NormalizeLspFilePath(defRef.fileName) == normalizedExcludeFile) {
             continue;
         }
 
@@ -1868,7 +1870,7 @@ std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std
         }
 
         bool isDefault = HasExportFlag(symbolId, EXPORT_DEFAULT);
-        auto fileIt = g_fileIndices.find(defRef.fileName);
+        auto fileIt = g_fileIndices.find(NormalizeLspFilePath(defRef.fileName));
         if (!isDefault && fileIt != g_fileIndices.end() &&
             HasDefaultExportReference(fileIt->second.source, symbolName)) {
             isDefault = true;
@@ -1888,11 +1890,12 @@ std::vector<SymbolDefSearchResult> FindCompletionExportSymbolsByPrefix(const std
         seen.insert(result.fileName + ":" + result.symbolName);
     }
 
+    const std::string normalizedExcludeFile = NormalizeLspFilePath(excludeFile);
     auto lowerPrefix = prefix;
     std::transform(lowerPrefix.begin(), lowerPrefix.end(), lowerPrefix.begin(),
                    [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
     for (const auto &[fileName, fileData] : g_fileIndices) {
-        if (fileName == excludeFile) {
+        if (fileName == normalizedExcludeFile) {
             continue;
         }
         for (const auto &info : fileData.completionExportSymbols) {
@@ -1902,8 +1905,9 @@ std::vector<SymbolDefSearchResult> FindCompletionExportSymbolsByPrefix(const std
             if (!lowerPrefix.empty() && lowerName.find(lowerPrefix) == std::string::npos) {
                 continue;
             }
-            if (!info.sourceFile.empty() && info.sourceFile != info.fileName &&
-                g_fileIndices.find(info.sourceFile) == g_fileIndices.end()) {
+            if (!info.sourceFile.empty() &&
+                NormalizeLspFilePath(info.sourceFile) != NormalizeLspFilePath(info.fileName) &&
+                g_fileIndices.find(NormalizeLspFilePath(info.sourceFile)) == g_fileIndices.end()) {
                 continue;
             }
             if (!seen.insert(info.fileName + ":" + info.symbolName).second) {
